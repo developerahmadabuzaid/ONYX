@@ -1,5 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
+    <PackageReference Include="FluentValidation" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Onyx.Domain\Onyx.Domain.csproj" />
     <ProjectReference Include="..\Onyx.Contracts\Onyx.Contracts.csproj" />
   </ItemGroup>

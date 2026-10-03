@@ -12,8 +12,8 @@
 ## Status
 | Stage | Status |
 |---|---|
-| 0 Repository and solution skeleton | approved, in progress |
-| 1 Backend foundation and test infrastructure | approved, in progress |
+| 0 Repository and solution skeleton | **done**, commit `85f6016` |
+| 1 Backend foundation and test infrastructure | **done**: 104/104 tests passed against local PostgreSQL 18 (0 skipped); build 0 warnings; no vulnerable packages. **Awaiting owner review before Stage 2.** |
 | 2–13 | awaiting approval |
 
 ---
