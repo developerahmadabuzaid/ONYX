@@ -70,6 +70,13 @@ public static class DependencyInjection
         services.AddScoped<IAuditTrail, AuditTrail>();
         services.AddScoped<IAuditLogQueries, AuditLogQueries>();
 
+        services.AddOptions<Privacy.PrivacyOptions>()
+            .Bind(configuration.GetSection(Privacy.PrivacyOptions.SectionName))
+            .Validate(options => Privacy.PrivacyOptions.IsValidKey(options.IpHashKey), "Privacy:IpHashKey, when set, must be base64 of at least 32 bytes.")
+            .ValidateOnStart();
+        services.AddSingleton<Application.Privacy.IIpAddressHasher, Privacy.HmacIpAddressHasher>();
+        services.AddScoped<Application.Privacy.ICookieConsentRepository, Privacy.CookieConsentRepository>();
+
         services.AddSingleton<IEmailTemplate, ProviderTestEmailTemplate>();
         services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
         services.AddScoped<IEmailOutbox, EmailOutbox>();

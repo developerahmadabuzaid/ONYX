@@ -1,0 +1,18 @@
+@model EnrollModel
+@{ ViewData["TitleKey"] = "Enroll.Title"; }
+<h1>@T["Enroll.Title"]</h1>
+<p>@T["Enroll.Intro"]</p>
+<dl>
+    <dt>@T["Enroll.Key"]</dt>
+    <dd><code dir="ltr">@Model.SharedKey</code></dd>
+    <dt>@T["Enroll.Uri"]</dt>
+    <dd><code dir="ltr" class="wrap">@Model.AuthenticatorUri</code></dd>
+</dl>
+<partial name="_ValidationSummary" />
+<form method="post" asp-action="Enroll">
+    <input type="hidden" asp-for="SharedKey">
+    <input type="hidden" asp-for="AuthenticatorUri">
+    <label asp-for="Code">@T["Field.Code"]</label>
+    <input asp-for="Code" autocomplete="one-time-code" inputmode="numeric" dir="ltr">
+    <button type="submit">@T["Enroll.Submit"]</button>
+</form>

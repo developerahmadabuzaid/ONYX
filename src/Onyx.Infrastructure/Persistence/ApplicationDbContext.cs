@@ -42,6 +42,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<DataProtectionKeyRecord> DataProtectionKeys => Set<DataProtectionKeyRecord>();
 
+    public DbSet<Domain.Privacy.CookieConsentReceipt> CookieConsentReceipts => Set<Domain.Privacy.CookieConsentReceipt>();
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
         configurationBuilder.ApplyOnyxConventionDefaults();
 

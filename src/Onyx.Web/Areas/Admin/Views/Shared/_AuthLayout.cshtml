@@ -1,0 +1,28 @@
+@using System.Globalization
+@inject LanguageCatalog Languages
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var here = Context.Request.Path.Value ?? "/admin/account/login";
+}
+<!DOCTYPE html>
+<html lang="@lang" dir="@Languages.Direction(lang)">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>@T[(string?)ViewData["TitleKey"] ?? "Admin.Title"] | @T["Admin.Title"]</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+</head>
+<body class="auth">
+    <main class="auth-panel">
+        <p class="brand">@T["Admin.Title"]</p>
+        @RenderBody()
+        <nav class="lang" aria-label="@T["Language.Label"]">
+            @foreach (var language in Languages.Languages.Where(l => l.Code != lang))
+            {
+                <a href="/admin/language?to=@language.Code&amp;returnUrl=@Uri.EscapeDataString(here)" lang="@language.Code">@language.NativeName</a>
+            }
+        </nav>
+    </main>
+</body>
+</html>

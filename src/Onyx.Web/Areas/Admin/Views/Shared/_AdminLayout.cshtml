@@ -1,0 +1,43 @@
+@using System.Globalization
+@inject LanguageCatalog Languages
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var shell = ViewData[AdminShellFilter.ViewDataKey] as AdminShellModel;
+}
+<!DOCTYPE html>
+<html lang="@lang" dir="@Languages.Direction(lang)">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>@T[(string?)ViewData["TitleKey"] ?? "Admin.Title"] | @T["Admin.Title"]</title>
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+</head>
+<body class="admin">
+    <header class="admin-header">
+        <a class="brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">@T["Admin.Title"]</a>
+        @if (shell is not null)
+        {
+            <span class="user">@shell.DisplayName</span>
+            <a asp-area="Admin" asp-controller="Notifications" asp-action="Index" class="unread">@T["Notifications.UnreadCount", shell.UnreadNotifications]</a>
+        }
+        <a asp-area="Admin" asp-controller="Account" asp-action="ChangePassword">@T["Nav.ChangePassword"]</a>
+        <form method="post" asp-area="Admin" asp-controller="Account" asp-action="Logout" class="inline">
+            <button type="submit">@T["Nav.SignOut"]</button>
+        </form>
+    </header>
+    <div class="admin-body">
+        <nav class="admin-nav" aria-label="@T["Nav.Main"]">
+            <ul>
+                @foreach (var item in shell?.Navigation ?? [])
+                {
+                    <li><a asp-area="Admin" asp-controller="@item.Controller" asp-action="@item.Action">@T[item.ResourceKey]</a></li>
+                }
+            </ul>
+        </nav>
+        <main id="main">
+            @RenderBody()
+        </main>
+    </div>
+</body>
+</html>

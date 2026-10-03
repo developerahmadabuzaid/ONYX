@@ -1,0 +1,70 @@
+@using System.Globalization
+@using Microsoft.Extensions.Options
+@using Onyx.Web.Configuration
+@inject LanguageCatalog Languages
+@inject LanguageSuggestion Suggestion
+@inject SeoContext Seo
+@inject ConsentState Consent
+@inject IOptions<SiteOptions> Site
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var baseUrl = (Site.Value.PublicBaseUrl ?? string.Empty).TrimEnd('/');
+    var suggested = Suggestion.Suggest(Context, lang);
+    var siteName = T["Site.Name"].Value;
+    var title = string.IsNullOrEmpty(Seo.Title) ? siteName : $"{Seo.Title} | {siteName}";
+    var returnPath = Context.Request.Path.Value ?? $"/{lang}/";
+    string PathIn(string code) => Seo.Alternates.TryGetValue(code, out var path) ? path : $"/{code}/";
+}
+<!DOCTYPE html>
+<html lang="@lang" dir="@Languages.Direction(lang)">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@title</title>
+    @if (!string.IsNullOrEmpty(Seo.Description))
+    {
+        <meta name="description" content="@Seo.Description">
+    }
+    @if (!Site.Value.AllowIndexing || Seo.NoIndex)
+    {
+        <meta name="robots" content="noindex, nofollow">
+    }
+    @if (Seo.CanonicalPath is not null)
+    {
+        <link rel="canonical" href="@(baseUrl + Seo.CanonicalPath)">
+    }
+    @foreach (var alternate in Seo.Alternates)
+    {
+        <link rel="alternate" hreflang="@alternate.Key" href="@(baseUrl + alternate.Value)">
+    }
+    @if (Seo.Alternates.TryGetValue(Languages.DefaultLanguage, out var defaultPath))
+    {
+        <link rel="alternate" hreflang="x-default" href="@(baseUrl + defaultPath)">
+    }
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+</head>
+<body>
+    @if (suggested is not null)
+    {
+        <aside class="notice" lang="@suggested" dir="@Languages.Direction(suggested)">
+            <a href="/@suggested/language?return=@Uri.EscapeDataString(PathIn(suggested))">@Languages.NativeName(suggested)</a>
+        </aside>
+    }
+    <header class="site-header">
+        <a class="brand" href="/@lang/">@siteName</a>
+        <nav aria-label="@T["Language.Label"]">
+            @foreach (var language in Languages.Languages.Where(l => l.Code != lang))
+            {
+                <a href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code">@language.NativeName</a>
+            }
+        </nav>
+    </header>
+    <main id="main">
+        @RenderBody()
+    </main>
+    @if (!Consent.HasDecision)
+    {
+        <partial name="_ConsentBanner" model="returnPath" />
+    }
+</body>
+</html>

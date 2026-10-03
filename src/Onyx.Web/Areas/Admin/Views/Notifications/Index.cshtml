@@ -1,0 +1,47 @@
+@using System.Globalization
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Notifications
+@model PagedResult<AdminNotificationResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Notifications";
+}
+<h1>@T["Nav.Notifications"]</h1>
+@if (Model.Items.Count == 0)
+{
+    <p>@T["Notifications.Empty"]</p>
+}
+else
+{
+    <ul class="notifications">
+        @foreach (var item in Model.Items)
+        {
+            var label = T[$"Notification.Type.{item.Type}"];
+            <li class="@(item.IsRead ? "read" : "unread")">
+                <span>@(label.ResourceNotFound ? item.Type : label.Value)</span>
+                <time datetime="@item.CreatedAtUtc.ToString("O", CultureInfo.InvariantCulture)" dir="ltr">@item.CreatedAtUtc.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) UTC</time>
+                @if (!item.IsRead)
+                {
+                    <span class="badge">@T["Notifications.Unread"]</span>
+                    <form method="post" asp-action="MarkRead" asp-route-notificationId="@item.Id" class="inline">
+                        <button type="submit">@T["Notifications.MarkRead"]</button>
+                    </form>
+                }
+            </li>
+        }
+    </ul>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pager" dir="ltr">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Page - 1)">@(Model.Page - 1)</a>
+            }
+            <span>@Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Page + 1)">@(Model.Page + 1)</a>
+            }
+        </nav>
+    }
+}

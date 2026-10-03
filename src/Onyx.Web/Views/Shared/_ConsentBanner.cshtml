@@ -1,0 +1,19 @@
+@model string
+@{
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<section class="consent" aria-labelledby="consent-title">
+    <h2 id="consent-title">@T["Consent.Title"]</h2>
+    <p>@T["Consent.Body"]</p>
+    <form method="post" action="/@lang/consent" asp-antiforgery="true">
+        <input type="hidden" name="returnUrl" value="@Model">
+        <fieldset>
+            <label><input type="checkbox" checked disabled> @T["Consent.Necessary"]</label>
+            <label><input type="checkbox" name="analytics" value="true"> @T["Consent.Analytics"]</label>
+            <label><input type="checkbox" name="marketing" value="true"> @T["Consent.Marketing"]</label>
+        </fieldset>
+        <button type="submit" name="choice" value="accept-all">@T["Consent.AcceptAll"]</button>
+        <button type="submit" name="choice" value="reject-all">@T["Consent.RejectAll"]</button>
+        <button type="submit" name="choice" value="custom">@T["Consent.Save"]</button>
+    </form>
+</section>

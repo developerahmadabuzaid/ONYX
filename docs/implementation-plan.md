@@ -23,8 +23,9 @@
 | 0 Repository and solution skeleton | **done**, commit `85f6016` |
 | 1 Backend foundation and test infrastructure | **done**, commits `bca0181`, `c9d0e2a` (Asp.Versioning.OpenApi follow-up) |
 | 2 Worker, outbox, email, notifications | **done**, commit `5529048` |
-| 3 Identity, permissions, audit | **done**: 272/272 tests against local PostgreSQL 18; build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 4. |
-| 3, 4, 6–12, 5, 13 | awaiting approval (in execution order) |
+| 3 Identity, permissions, audit | **done**, commit `6301cc3` |
+| 4 Onyx.Web foundation | **done**: 334/334 tests (local PostgreSQL 18); build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 6. |
+| 6–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -111,6 +112,29 @@
   - antiforgery, CSP nonces, cookie consent (receipts via API);
   - Admin shell (login, 2FA, permission-aware navigation, notifications badge); minimal neutral styles.
 - **Verify:** Arabic URL resolution and encoding; redirects; hreflang/canonical; CSRF; cookie flags and size budget; end-to-end login/refresh/logout with no token reaching the browser; analytics scripts absent without consent.
+
+**Stage 4 delivered notes:**
+- **Public foundation:**
+  - `/` → `/ar/` (or the explicit `onyx.lang` choice); `/{ar|en}/` home shell (site name only; no invented content).
+  - Language switcher and an Accept-Language *suggestion* (never a redirect).
+  - Canonical, hreflang (ar/en/x-default) and `<html lang dir>`; localized 404/500 pages.
+  - `LocalizedRouteTable` + dynamic route transformer ready for Arabic/English segments and slugs (pages register in Stage 6).
+  - `Site:AllowIndexing=false` adds `noindex` until launch.
+- **Cookie consent:** banner (Necessary / Analytics / Marketing), `onyx.consent` cookie versioned by `Consent:PolicyVersion`, and a server-side receipt via `POST /api/v1/consents`. Receipts are append-only, with the IP stored only as an optional keyed hash. No analytics scripts exist yet; they must check `ConsentState`.
+- **Admin:**
+  - BFF sign-in with 2FA and enrolment.
+  - Refresh, revocation handling, logout, change password, forgot/reset password, invitation acceptance.
+  - Admin shell with a permission-filtered menu, dashboard placeholder, Notification Center (list, mark read, unread badge).
+  - Admin UI language follows the admin's preference.
+- **Security:** CSP with per-request nonces, security headers, global antiforgery, `__Host-` cookies, `no-store` on admin pages, `no-referrer` on account pages, token-stripping redirects for emailed links, `/admin`-only return URLs.
+- **Web↔API:** typed clients with resilience (POSTs never retried). Visitor IP sent as `X-Forwarded-For` (Web resolves it via its own trusted-proxy list), plus correlation id and language. API outages become a service message or a 503 page and never sign the admin out.
+- **Migration** `CookieConsentReceipts` is additive only (1 table, 2 indexes).
+- **Deferred:**
+  - QR code for authenticator enrolment (needs a package; the key and setup link are shown as text).
+  - Visual design (Stage 5).
+  - Turnstile on sign-in and forms (Stage 8).
+  - Analytics script loading (Stage 12).
+  - An admin "active sessions" view.
 
 ### Stage 5 — Design system → **STOP for design approval** *(deferred: runs after Stage 12, before Stage 13)*
 - **Build:** white-first tokens; Arabic + English type pairing; grid; core components (nav, mega menu, footer, buttons, forms, sections); Onyx stone signature (SVG first) based on the **real logo** (no replacement logo); reduced motion; performance budget; **preview page**.

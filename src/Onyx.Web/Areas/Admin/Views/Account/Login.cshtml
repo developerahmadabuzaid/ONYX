@@ -1,0 +1,13 @@
+@model LoginModel
+@{ ViewData["TitleKey"] = "Login.Title"; }
+<h1>@T["Login.Title"]</h1>
+<partial name="_Notice" />
+<partial name="_ValidationSummary" />
+<form method="post" asp-action="Login">
+    <label asp-for="Email">@T["Field.Email"]</label>
+    <input asp-for="Email" autocomplete="username" dir="ltr">
+    <label asp-for="Password">@T["Field.Password"]</label>
+    <input asp-for="Password" autocomplete="current-password" dir="ltr">
+    <button type="submit">@T["Login.Submit"]</button>
+</form>
+<p><a asp-action="ForgotPassword">@T["Login.Forgot"]</a></p>

@@ -298,6 +298,57 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                     b.ToTable("notification_read_states", (string)null);
                 });
 
+            modelBuilder.Entity("Onyx.Domain.Privacy.CookieConsentReceipt", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("Analytics")
+                        .HasColumnType("boolean")
+                        .HasColumnName("analytics");
+
+                    b.Property<Guid>("ConsentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("consent_id");
+
+                    b.Property<string>("IpHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("ip_hash");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<bool>("Marketing")
+                        .HasColumnType("boolean")
+                        .HasColumnName("marketing");
+
+                    b.Property<string>("PolicyVersion")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("policy_version");
+
+                    b.Property<DateTimeOffset>("RecordedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_cookie_consent_receipts");
+
+                    b.HasIndex("ConsentId")
+                        .HasDatabaseName("ix_cookie_consent_receipts_consent_id");
+
+                    b.HasIndex("RecordedAtUtc")
+                        .HasDatabaseName("ix_cookie_consent_receipts_recorded_at_utc");
+
+                    b.ToTable("cookie_consent_receipts", (string)null);
+                });
+
             modelBuilder.Entity("Onyx.Domain.Providers.ProviderConnection", b =>
                 {
                     b.Property<Guid>("Id")

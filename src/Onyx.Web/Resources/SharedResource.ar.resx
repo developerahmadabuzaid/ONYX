@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Site.Name" xml:space="preserve"><value>Onyx Vanguard Solutions</value></data>
+  <data name="Language.Suggest" xml:space="preserve"><value>هل تفضّل لغة أخرى؟</value></data>
+  <data name="Language.Stay" xml:space="preserve"><value>متابعة بالعربية</value></data>
+  <data name="Language.Label" xml:space="preserve"><value>اللغة</value></data>
+  <data name="Consent.Title" xml:space="preserve"><value>ملفات تعريف الارتباط</value></data>
+  <data name="Consent.Body" xml:space="preserve"><value>نستخدم ملفات تعريف الارتباط الضرورية لتشغيل الموقع. ويمكنك اختيار السماح بملفات التحليلات والتسويق أو رفضها.</value></data>
+  <data name="Consent.Necessary" xml:space="preserve"><value>ضرورية (مفعّلة دائماً)</value></data>
+  <data name="Consent.Analytics" xml:space="preserve"><value>التحليلات</value></data>
+  <data name="Consent.Marketing" xml:space="preserve"><value>التسويق</value></data>
+  <data name="Consent.AcceptAll" xml:space="preserve"><value>قبول الكل</value></data>
+  <data name="Consent.RejectAll" xml:space="preserve"><value>رفض غير الضرورية</value></data>
+  <data name="Consent.Save" xml:space="preserve"><value>حفظ الاختيارات</value></data>
+  <data name="Error.Title" xml:space="preserve"><value>تعذّر عرض الصفحة</value></data>
+  <data name="Error.NotFound" xml:space="preserve"><value>الصفحة غير موجودة.</value></data>
+  <data name="Error.Generic" xml:space="preserve"><value>حدث خطأ غير متوقع. حاول مرة أخرى لاحقاً.</value></data>
+  <data name="Error.Home" xml:space="preserve"><value>العودة إلى الصفحة الرئيسية</value></data>
+  <data name="Admin.Title" xml:space="preserve"><value>لوحة الإدارة</value></data>
+  <data name="Nav.Main" xml:space="preserve"><value>القائمة الرئيسية</value></data>
+  <data name="Nav.Dashboard" xml:space="preserve"><value>الرئيسية</value></data>
+  <data name="Nav.Notifications" xml:space="preserve"><value>الإشعارات</value></data>
+  <data name="Nav.ChangePassword" xml:space="preserve"><value>تغيير كلمة المرور</value></data>
+  <data name="Nav.SignOut" xml:space="preserve"><value>تسجيل الخروج</value></data>
+  <data name="Field.Email" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="Field.Password" xml:space="preserve"><value>كلمة المرور</value></data>
+  <data name="Field.Code" xml:space="preserve"><value>رمز التحقق</value></data>
+  <data name="Field.RecoveryCode" xml:space="preserve"><value>أو رمز استرداد</value></data>
+  <data name="Field.NewPassword" xml:space="preserve"><value>كلمة المرور الجديدة</value></data>
+  <data name="Field.ConfirmPassword" xml:space="preserve"><value>تأكيد كلمة المرور</value></data>
+  <data name="Field.CurrentPassword" xml:space="preserve"><value>كلمة المرور الحالية</value></data>
+  <data name="Validation.Required" xml:space="preserve"><value>هذا الحقل مطلوب.</value></data>
+  <data name="Validation.Email" xml:space="preserve"><value>أدخل بريداً إلكترونياً صالحاً.</value></data>
+  <data name="Validation.PasswordLength" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من 12 إلى 128 حرفاً.</value></data>
+  <data name="Password.Mismatch" xml:space="preserve"><value>كلمتا المرور غير متطابقتين.</value></data>
+  <data name="Password.Hint" xml:space="preserve"><value>12 حرفاً على الأقل. يُنصح باستخدام عبارة مرور طويلة.</value></data>
+  <data name="Password.Rejected" xml:space="preserve"><value>كلمة المرور لا تستوفي سياسة الحساب. استخدم 12 حرفاً على الأقل مع تنوّع في الأحرف.</value></data>
+  <data name="Login.Title" xml:space="preserve"><value>تسجيل الدخول</value></data>
+  <data name="Login.Submit" xml:space="preserve"><value>دخول</value></data>
+  <data name="Login.Forgot" xml:space="preserve"><value>نسيت كلمة المرور؟</value></data>
+  <data name="Login.Invalid" xml:space="preserve"><value>البريد الإلكتروني أو كلمة المرور غير صحيحة.</value></data>
+  <data name="Login.Unavailable" xml:space="preserve"><value>الخدمة غير متاحة حالياً. حاول مرة أخرى لاحقاً.</value></data>
+  <data name="TwoFactor.Title" xml:space="preserve"><value>التحقق بخطوتين</value></data>
+  <data name="TwoFactor.Prompt" xml:space="preserve"><value>أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة، أو أحد رموز الاسترداد.</value></data>
+  <data name="TwoFactor.Submit" xml:space="preserve"><value>تحقّق</value></data>
+  <data name="TwoFactor.Invalid" xml:space="preserve"><value>الرمز غير صحيح.</value></data>
+  <data name="TwoFactor.Expired" xml:space="preserve"><value>انتهت صلاحية خطوة الدخول. سجّل الدخول من جديد.</value></data>
+  <data name="Enroll.Title" xml:space="preserve"><value>إعداد تطبيق المصادقة</value></data>
+  <data name="Enroll.Intro" xml:space="preserve"><value>يتطلب حسابك التحقق بخطوتين. أضف الحساب إلى تطبيق مصادقة باستخدام مفتاح الإعداد التالي، ثم أدخل الرمز الذي يظهر في التطبيق.</value></data>
+  <data name="Enroll.Key" xml:space="preserve"><value>مفتاح الإعداد</value></data>
+  <data name="Enroll.Uri" xml:space="preserve"><value>رابط الإعداد (للتطبيقات التي تدعمه)</value></data>
+  <data name="Enroll.Submit" xml:space="preserve"><value>تفعيل</value></data>
+  <data name="Recovery.Title" xml:space="preserve"><value>رموز الاسترداد</value></data>
+  <data name="Recovery.Intro" xml:space="preserve"><value>احفظ هذه الرموز في مكان آمن. يمكن استخدام كل رمز مرة واحدة إذا فقدت الوصول إلى تطبيق المصادقة، ولن تُعرض مرة أخرى.</value></data>
+  <data name="Recovery.Continue" xml:space="preserve"><value>متابعة إلى لوحة الإدارة</value></data>
+  <data name="Forgot.Title" xml:space="preserve"><value>استعادة كلمة المرور</value></data>
+  <data name="Forgot.Intro" xml:space="preserve"><value>أدخل بريدك الإلكتروني وسنرسل إليك رابط إعادة التعيين إذا كان الحساب موجوداً.</value></data>
+  <data name="Forgot.Submit" xml:space="preserve"><value>إرسال الرابط</value></data>
+  <data name="Forgot.Sent" xml:space="preserve"><value>إذا كان هناك حساب بهذا البريد الإلكتروني، فستصلك رسالة تحتوي على رابط إعادة التعيين.</value></data>
+  <data name="Reset.Title" xml:space="preserve"><value>تعيين كلمة مرور جديدة</value></data>
+  <data name="Reset.Submit" xml:space="preserve"><value>حفظ كلمة المرور</value></data>
+  <data name="Reset.Done" xml:space="preserve"><value>تم تغيير كلمة المرور. يمكنك تسجيل الدخول الآن.</value></data>
+  <data name="Link.Invalid" xml:space="preserve"><value>الرابط غير صالح أو انتهت صلاحيته.</value></data>
+  <data name="Invite.Title" xml:space="preserve"><value>تفعيل حسابك</value></data>
+  <data name="Invite.Submit" xml:space="preserve"><value>تفعيل الحساب</value></data>
+  <data name="Invite.Done" xml:space="preserve"><value>تم تفعيل حسابك. يمكنك تسجيل الدخول الآن.</value></data>
+  <data name="ChangePassword.Submit" xml:space="preserve"><value>تغيير كلمة المرور</value></data>
+  <data name="ChangePassword.Done" xml:space="preserve"><value>تم تغيير كلمة المرور. سجّل الدخول من جديد.</value></data>
+  <data name="ChangePassword.WrongCurrent" xml:space="preserve"><value>كلمة المرور الحالية غير صحيحة.</value></data>
+  <data name="AccessDenied.Title" xml:space="preserve"><value>غير مسموح</value></data>
+  <data name="AccessDenied.Body" xml:space="preserve"><value>ليست لديك صلاحية الوصول إلى هذه الصفحة.</value></data>
+  <data name="Dashboard.Welcome" xml:space="preserve"><value>مرحباً، {0}</value></data>
+  <data name="Notifications.Empty" xml:space="preserve"><value>لا توجد إشعارات.</value></data>
+  <data name="Notifications.MarkRead" xml:space="preserve"><value>تعليم كمقروء</value></data>
+  <data name="Notifications.Unread" xml:space="preserve"><value>غير مقروء</value></data>
+  <data name="Notifications.UnreadCount" xml:space="preserve"><value>الإشعارات غير المقروءة: {0}</value></data>
+  <data name="Notification.Type.NewLead" xml:space="preserve"><value>عميل محتمل جديد</value></data>
+  <data name="Notification.Type.NewBooking" xml:space="preserve"><value>حجز استشارة جديد</value></data>
+  <data name="Notification.Type.ArticleReadyForReview" xml:space="preserve"><value>مقال جاهز للمراجعة</value></data>
+  <data name="Notification.Type.JobFailed" xml:space="preserve"><value>فشل مهمة مجدولة</value></data>
+  <data name="Notification.Type.NewsIngestionFailed" xml:space="preserve"><value>فشل جلب الأخبار</value></data>
+  <data name="Notification.Type.IntegrationFailed" xml:space="preserve"><value>تعطّل تكامل خارجي</value></data>
+  <data name="Notification.Type.ToolAttention" xml:space="preserve"><value>أداة تحتاج إلى متابعة</value></data>
+  <data name="Notification.Type.EmailDeliveryFailed" xml:space="preserve"><value>فشل إرسال بريد إلكتروني</value></data>
+  <data name="Notification.Type.OutboxMessageFailed" xml:space="preserve"><value>فشل معالجة حدث داخلي</value></data>
+  <data name="Notification.Type.SecurityAlert" xml:space="preserve"><value>تنبيه أمني</value></data>
+</root>

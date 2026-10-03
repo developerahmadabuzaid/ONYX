@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="Site.Name" xml:space="preserve"><value>Onyx Vanguard Solutions</value></data>
+  <data name="Language.Suggest" xml:space="preserve"><value>Prefer another language?</value></data>
+  <data name="Language.Stay" xml:space="preserve"><value>Continue in English</value></data>
+  <data name="Language.Label" xml:space="preserve"><value>Language</value></data>
+  <data name="Consent.Title" xml:space="preserve"><value>Cookies</value></data>
+  <data name="Consent.Body" xml:space="preserve"><value>We use necessary cookies to run this website. You can choose whether to allow analytics and marketing cookies.</value></data>
+  <data name="Consent.Necessary" xml:space="preserve"><value>Necessary (always on)</value></data>
+  <data name="Consent.Analytics" xml:space="preserve"><value>Analytics</value></data>
+  <data name="Consent.Marketing" xml:space="preserve"><value>Marketing</value></data>
+  <data name="Consent.AcceptAll" xml:space="preserve"><value>Accept all</value></data>
+  <data name="Consent.RejectAll" xml:space="preserve"><value>Reject non-essential</value></data>
+  <data name="Consent.Save" xml:space="preserve"><value>Save choices</value></data>
+  <data name="Error.Title" xml:space="preserve"><value>This page could not be shown</value></data>
+  <data name="Error.NotFound" xml:space="preserve"><value>Page not found.</value></data>
+  <data name="Error.Generic" xml:space="preserve"><value>An unexpected error occurred. Please try again later.</value></data>
+  <data name="Error.Home" xml:space="preserve"><value>Back to the home page</value></data>
+  <data name="Admin.Title" xml:space="preserve"><value>Admin</value></data>
+  <data name="Nav.Main" xml:space="preserve"><value>Main menu</value></data>
+  <data name="Nav.Dashboard" xml:space="preserve"><value>Dashboard</value></data>
+  <data name="Nav.Notifications" xml:space="preserve"><value>Notifications</value></data>
+  <data name="Nav.ChangePassword" xml:space="preserve"><value>Change password</value></data>
+  <data name="Nav.SignOut" xml:space="preserve"><value>Sign out</value></data>
+  <data name="Field.Email" xml:space="preserve"><value>Email</value></data>
+  <data name="Field.Password" xml:space="preserve"><value>Password</value></data>
+  <data name="Field.Code" xml:space="preserve"><value>Verification code</value></data>
+  <data name="Field.RecoveryCode" xml:space="preserve"><value>Or a recovery code</value></data>
+  <data name="Field.NewPassword" xml:space="preserve"><value>New password</value></data>
+  <data name="Field.ConfirmPassword" xml:space="preserve"><value>Confirm password</value></data>
+  <data name="Field.CurrentPassword" xml:space="preserve"><value>Current password</value></data>
+  <data name="Validation.Required" xml:space="preserve"><value>This field is required.</value></data>
+  <data name="Validation.Email" xml:space="preserve"><value>Enter a valid email address.</value></data>
+  <data name="Validation.PasswordLength" xml:space="preserve"><value>The password must be 12 to 128 characters long.</value></data>
+  <data name="Password.Mismatch" xml:space="preserve"><value>The passwords do not match.</value></data>
+  <data name="Password.Hint" xml:space="preserve"><value>At least 12 characters. A long passphrase is recommended.</value></data>
+  <data name="Password.Rejected" xml:space="preserve"><value>The password does not meet the account policy. Use at least 12 characters with some variety.</value></data>
+  <data name="Login.Title" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Login.Submit" xml:space="preserve"><value>Sign in</value></data>
+  <data name="Login.Forgot" xml:space="preserve"><value>Forgot your password?</value></data>
+  <data name="Login.Invalid" xml:space="preserve"><value>Invalid email or password.</value></data>
+  <data name="Login.Unavailable" xml:space="preserve"><value>The service is unavailable. Please try again later.</value></data>
+  <data name="TwoFactor.Title" xml:space="preserve"><value>Two-step verification</value></data>
+  <data name="TwoFactor.Prompt" xml:space="preserve"><value>Enter the 6-digit code from your authenticator app, or one of your recovery codes.</value></data>
+  <data name="TwoFactor.Submit" xml:space="preserve"><value>Verify</value></data>
+  <data name="TwoFactor.Invalid" xml:space="preserve"><value>The code is not valid.</value></data>
+  <data name="TwoFactor.Expired" xml:space="preserve"><value>This sign-in step has expired. Please sign in again.</value></data>
+  <data name="Enroll.Title" xml:space="preserve"><value>Set up your authenticator app</value></data>
+  <data name="Enroll.Intro" xml:space="preserve"><value>Your account requires two-step verification. Add it to an authenticator app using the setup key below, then enter the code the app shows.</value></data>
+  <data name="Enroll.Key" xml:space="preserve"><value>Setup key</value></data>
+  <data name="Enroll.Uri" xml:space="preserve"><value>Setup link (for apps that support it)</value></data>
+  <data name="Enroll.Submit" xml:space="preserve"><value>Activate</value></data>
+  <data name="Recovery.Title" xml:space="preserve"><value>Recovery codes</value></data>
+  <data name="Recovery.Intro" xml:space="preserve"><value>Store these codes somewhere safe. Each can be used once if you lose access to your authenticator app. They will not be shown again.</value></data>
+  <data name="Recovery.Continue" xml:space="preserve"><value>Continue to the dashboard</value></data>
+  <data name="Forgot.Title" xml:space="preserve"><value>Reset your password</value></data>
+  <data name="Forgot.Intro" xml:space="preserve"><value>Enter your email and we will send you a reset link if the account exists.</value></data>
+  <data name="Forgot.Submit" xml:space="preserve"><value>Send link</value></data>
+  <data name="Forgot.Sent" xml:space="preserve"><value>If an account exists for this email address, you will receive a message with a reset link.</value></data>
+  <data name="Reset.Title" xml:space="preserve"><value>Set a new password</value></data>
+  <data name="Reset.Submit" xml:space="preserve"><value>Save password</value></data>
+  <data name="Reset.Done" xml:space="preserve"><value>Your password has been changed. You can sign in now.</value></data>
+  <data name="Link.Invalid" xml:space="preserve"><value>This link is invalid or has expired.</value></data>
+  <data name="Invite.Title" xml:space="preserve"><value>Activate your account</value></data>
+  <data name="Invite.Submit" xml:space="preserve"><value>Activate account</value></data>
+  <data name="Invite.Done" xml:space="preserve"><value>Your account is active. You can sign in now.</value></data>
+  <data name="ChangePassword.Submit" xml:space="preserve"><value>Change password</value></data>
+  <data name="ChangePassword.Done" xml:space="preserve"><value>Your password has been changed. Please sign in again.</value></data>
+  <data name="ChangePassword.WrongCurrent" xml:space="preserve"><value>The current password is incorrect.</value></data>
+  <data name="AccessDenied.Title" xml:space="preserve"><value>Access denied</value></data>
+  <data name="AccessDenied.Body" xml:space="preserve"><value>You do not have permission to view this page.</value></data>
+  <data name="Dashboard.Welcome" xml:space="preserve"><value>Welcome, {0}</value></data>
+  <data name="Notifications.Empty" xml:space="preserve"><value>No notifications.</value></data>
+  <data name="Notifications.MarkRead" xml:space="preserve"><value>Mark as read</value></data>
+  <data name="Notifications.Unread" xml:space="preserve"><value>Unread</value></data>
+  <data name="Notifications.UnreadCount" xml:space="preserve"><value>Unread notifications: {0}</value></data>
+  <data name="Notification.Type.NewLead" xml:space="preserve"><value>New lead</value></data>
+  <data name="Notification.Type.NewBooking" xml:space="preserve"><value>New consultation booking</value></data>
+  <data name="Notification.Type.ArticleReadyForReview" xml:space="preserve"><value>Article ready for review</value></data>
+  <data name="Notification.Type.JobFailed" xml:space="preserve"><value>Scheduled job failed</value></data>
+  <data name="Notification.Type.NewsIngestionFailed" xml:space="preserve"><value>News ingestion failed</value></data>
+  <data name="Notification.Type.IntegrationFailed" xml:space="preserve"><value>External integration failed</value></data>
+  <data name="Notification.Type.ToolAttention" xml:space="preserve"><value>A tool needs attention</value></data>
+  <data name="Notification.Type.EmailDeliveryFailed" xml:space="preserve"><value>Email delivery failed</value></data>
+  <data name="Notification.Type.OutboxMessageFailed" xml:space="preserve"><value>Internal event processing failed</value></data>
+  <data name="Notification.Type.SecurityAlert" xml:space="preserve"><value>Security alert</value></data>
+</root>

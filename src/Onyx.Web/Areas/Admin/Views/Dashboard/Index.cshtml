@@ -1,0 +1,7 @@
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Dashboard";
+    var shell = ViewData[AdminShellFilter.ViewDataKey] as AdminShellModel;
+}
+<h1>@T["Nav.Dashboard"]</h1>
+<p>@T["Dashboard.Welcome", shell?.DisplayName ?? string.Empty]</p>

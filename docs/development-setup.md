@@ -98,3 +98,34 @@ Remove-Item Env:ONYX_BOOTSTRAP_PASSWORD
 The command refuses to run if a SuperAdmin already exists. At first sign-in the SuperAdmin must enrol an authenticator app.
 
 `IdentitySecurity:AdminPortalBaseUrl` (the Onyx.Web admin URL, used in invitation and password-reset links) is `https://localhost:7200` in Development and must be set for production.
+
+## 6. Running Onyx.Web with the API
+
+Onyx.Web talks only to Onyx.API over HTTPS. It never touches the database. Trust the development certificate once (`dotnet dev-certs https --trust`), then start both hosts in separate terminals:
+
+```powershell
+dotnet run --project src/Onyx.API --launch-profile https   # https://localhost:7180
+dotnet run --project src/Onyx.Web --launch-profile https   # https://localhost:7200
+```
+
+- Public site: `https://localhost:7200/` (redirects to `/ar/`). Admin: `https://localhost:7200/admin`.
+- Development settings (`src/Onyx.Web/appsettings.Development.json`):
+  - `OnyxApi:BaseUrl = https://localhost:7180`;
+  - `Site:PublicBaseUrl = https://localhost:7200`;
+  - `DataProtection:KeysDirectory = ../../.local/web-keys`, resolved from the project directory to `<repo>/.local/web-keys` (git-ignored).
+- Onyx.Web needs no secrets in development. Its Data Protection keys encrypt the admin cookie. Deleting them only signs admins out.
+- **Client address:** Onyx.Web sends the visitor IP to the API as `X-Forwarded-For`. In development both run on loopback, which ASP.NET Core trusts by default, so the API's rate limits and audit records see the real visitor address.
+
+**Production settings (no defaults; set per environment):**
+
+| App | Setting | Value |
+|---|---|---|
+| Onyx.Web | `OnyxApi:BaseUrl` | the API's internal HTTPS address |
+| Onyx.Web | `Site:PublicBaseUrl` | the public site origin (used for canonical/hreflang) |
+| Onyx.Web | `Site:AllowIndexing` | `true` only at launch |
+| Onyx.Web | `DataProtection:KeysDirectory` | a directory shared by all Web instances and **included in backups** |
+| Onyx.Web | `ForwardedHeaders:KnownProxies` / `KnownNetworks` | the reverse proxy / load balancer in front of Web |
+| Onyx.Web | `AllowedHosts` | the public host name(s) |
+| Onyx.API | `ForwardedHeaders:KnownProxies` / `KnownNetworks` | **Onyx.Web's address(es)**, so only Web can supply the visitor IP |
+| Onyx.API | `IdentitySecurity:AdminPortalBaseUrl` | the public Web origin (for emailed admin links) |
+| Onyx.API | `Privacy:IpHashKey` (optional secret) | enables keyed hashing of IP addresses on consent receipts; without it, no IP is stored |

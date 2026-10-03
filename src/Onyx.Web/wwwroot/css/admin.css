@@ -1,0 +1,19 @@
+/* Neutral structural baseline for the admin area; no design work yet. */
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, "Segoe UI", Tahoma, sans-serif; color: #111; background: #fff; line-height: 1.5; }
+.auth-panel { max-inline-size: 28rem; margin-block: 4rem; margin-inline: auto; padding: 1.5rem; border: 1px solid #ddd; }
+form label { display: block; margin-block-start: 0.75rem; }
+form input:not([type="checkbox"], [type="hidden"]) { display: block; inline-size: 100%; padding: 0.5rem; }
+button { margin-block-start: 1rem; padding-block: 0.5rem; padding-inline: 1rem; }
+form.inline { display: inline; }
+form.inline button { margin-block-start: 0; }
+.errors { color: #8a1c1c; }
+.hint { font-size: 0.875rem; color: #555; }
+.wrap { overflow-wrap: anywhere; }
+.admin-header { display: flex; gap: 1rem; align-items: center; padding-block: 0.75rem; padding-inline: 1.5rem; border-block-end: 1px solid #ddd; }
+.admin-header .brand { margin-inline-end: auto; font-weight: 600; color: inherit; text-decoration: none; }
+.admin-body { display: flex; }
+.admin-nav { min-inline-size: 12rem; padding: 1rem; border-inline-end: 1px solid #ddd; }
+.admin-body main { flex: 1; padding: 1.5rem; }
+.notifications li.unread { font-weight: 600; }
+:focus-visible { outline: 2px solid #111; outline-offset: 2px; }

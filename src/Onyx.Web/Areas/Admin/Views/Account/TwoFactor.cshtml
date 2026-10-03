@@ -1,0 +1,12 @@
+@model TwoFactorModel
+@{ ViewData["TitleKey"] = "TwoFactor.Title"; }
+<h1>@T["TwoFactor.Title"]</h1>
+<p>@T["TwoFactor.Prompt"]</p>
+<partial name="_ValidationSummary" />
+<form method="post" asp-action="TwoFactor">
+    <label asp-for="Code">@T["Field.Code"]</label>
+    <input asp-for="Code" autocomplete="one-time-code" inputmode="numeric" dir="ltr">
+    <label asp-for="RecoveryCode">@T["Field.RecoveryCode"]</label>
+    <input asp-for="RecoveryCode" autocomplete="off" dir="ltr">
+    <button type="submit">@T["TwoFactor.Submit"]</button>
+</form>

@@ -18,6 +18,7 @@ public static class DependencyInjection
         services.AddScoped<IProviderConnectionService, ProviderConnectionService>();
         services.AddScoped<IProviderConnectionAdministrationService, ProviderConnectionAdministrationService>();
         services.AddScoped<Identity.ICurrentAdmin, Identity.CurrentAdmin>();
+        services.AddScoped<Privacy.ICookieConsentService, Privacy.CookieConsentService>();
 
         AddDomainEventHandlers(services, assembly);
         return services;

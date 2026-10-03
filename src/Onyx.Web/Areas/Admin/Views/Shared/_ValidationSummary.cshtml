@@ -1,0 +1,11 @@
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="errors" role="alert">
+        <ul>
+            @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).Distinct())
+            {
+                <li>@T[error]</li>
+            }
+        </ul>
+    </div>
+}

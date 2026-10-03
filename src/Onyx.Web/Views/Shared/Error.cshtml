@@ -1,0 +1,7 @@
+@model int
+@{
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<h1>@T["Error.Title"]</h1>
+<p>@(Model == 404 ? T["Error.NotFound"] : T["Error.Generic"])</p>
+<p><a href="/@lang/">@T["Error.Home"]</a></p>

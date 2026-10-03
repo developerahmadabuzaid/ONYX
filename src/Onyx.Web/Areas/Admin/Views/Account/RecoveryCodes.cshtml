@@ -1,0 +1,11 @@
+@model IReadOnlyList<string>
+@{ ViewData["TitleKey"] = "Recovery.Title"; }
+<h1>@T["Recovery.Title"]</h1>
+<p>@T["Recovery.Intro"]</p>
+<ul class="codes" dir="ltr">
+    @foreach (var code in Model)
+    {
+        <li><code>@code</code></li>
+    }
+</ul>
+<p><a asp-controller="Dashboard" asp-action="Index">@T["Recovery.Continue"]</a></p>
