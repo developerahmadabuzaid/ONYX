@@ -22,8 +22,16 @@ builder.WebHost.ConfigureKestrel((context, kestrel) =>
 builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration)
+    .AddOnyxIdentity(builder.Configuration)
     .AddOnyxApi();
 
 var app = builder.Build();
+
+// Operator commands (seed-identity, bootstrap-superadmin) run instead of the web host.
+if (await AdminCommandRunner.TryRunAsync(app, args))
+{
+    return;
+}
+
 app.UseOnyxApi();
 app.Run();

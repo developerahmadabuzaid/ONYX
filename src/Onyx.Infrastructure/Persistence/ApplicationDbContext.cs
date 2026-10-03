@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Onyx.Application.Abstractions.Persistence;
 using Onyx.Domain.Auditing;
@@ -5,11 +6,13 @@ using Onyx.Domain.Notifications;
 using Onyx.Domain.Providers;
 using Onyx.Infrastructure.BackgroundJobs;
 using Onyx.Infrastructure.Email;
+using Onyx.Infrastructure.Identity;
 using Onyx.Infrastructure.Persistence.Outbox;
 
 namespace Onyx.Infrastructure.Persistence;
 
-public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : DbContext(options), IUnitOfWork
+public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+    : IdentityDbContext<ApplicationUser, ApplicationRole, Guid>(options), IUnitOfWork
 {
     public const string MigrationsHistoryTable = "__ef_migrations_history";
 
@@ -29,16 +32,28 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<JobRun> JobRuns => Set<JobRun>();
 
+    public DbSet<RolePermission> RolePermissions => Set<RolePermission>();
+
+    public DbSet<UserSession> UserSessions => Set<UserSession>();
+
+    public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
+
+    public DbSet<LoginChallenge> LoginChallenges => Set<LoginChallenge>();
+
+    public DbSet<DataProtectionKeyRecord> DataProtectionKeys => Set<DataProtectionKeyRecord>();
+
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>
         configurationBuilder.ApplyOnyxConventionDefaults();
 
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder builder)
     {
-        modelBuilder.ApplyCoreInfrastructureModel();
-        modelBuilder.ApplyConfigurationsFromAssembly(
+        // Identity's own model first, then Onyx configurations, then conventions (snake_case) last.
+        base.OnModelCreating(builder);
+        builder.ApplyCoreInfrastructureModel();
+        builder.ApplyConfigurationsFromAssembly(
             typeof(ApplicationDbContext).Assembly,
             type => type.Namespace?.StartsWith("Onyx.Infrastructure.Persistence.Configurations.Application", StringComparison.Ordinal) == true);
 
-        modelBuilder.ApplyOnyxConventions();
+        builder.ApplyOnyxConventions();
     }
 }

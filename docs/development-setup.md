@@ -73,3 +73,28 @@ dotnet ef database update --project src/Onyx.Infrastructure --startup-project sr
 ```
 
 The API never migrates the database on startup.
+
+## 5. API secrets and the first administrator
+
+The JWT signing key is a secret (≥ 32 random bytes, base64). It is never committed. Generate and store it in user secrets:
+
+```powershell
+$bytes = New-Object byte[] 48
+[Security.Cryptography.RandomNumberGenerator]::Create().GetBytes($bytes)
+cd src/Onyx.API
+dotnet user-secrets set "Jwt:SigningKey" ([Convert]::ToBase64String($bytes))
+```
+
+Seed the roles, then create the first SuperAdmin. The password is read from an environment variable, never from the command line, and is never printed:
+
+```powershell
+dotnet run --project src/Onyx.API -- seed-identity
+
+$env:ONYX_BOOTSTRAP_PASSWORD = '<choose a long passphrase (12+ characters)>'
+dotnet run --project src/Onyx.API -- bootstrap-superadmin --email <your admin email> --name "<your name>" --language ar
+Remove-Item Env:ONYX_BOOTSTRAP_PASSWORD
+```
+
+The command refuses to run if a SuperAdmin already exists. At first sign-in the SuperAdmin must enrol an authenticator app.
+
+`IdentitySecurity:AdminPortalBaseUrl` (the Onyx.Web admin URL, used in invitation and password-reset links) is `https://localhost:7200` in Development and must be set for production.

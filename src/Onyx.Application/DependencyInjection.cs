@@ -16,6 +16,8 @@ public static class DependencyInjection
 
         services.AddScoped<INotificationService, NotificationService>();
         services.AddScoped<IProviderConnectionService, ProviderConnectionService>();
+        services.AddScoped<IProviderConnectionAdministrationService, ProviderConnectionAdministrationService>();
+        services.AddScoped<Identity.ICurrentAdmin, Identity.CurrentAdmin>();
 
         AddDomainEventHandlers(services, assembly);
         return services;

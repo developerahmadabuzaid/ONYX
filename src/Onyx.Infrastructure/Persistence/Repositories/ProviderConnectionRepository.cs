@@ -10,4 +10,7 @@ internal sealed class ProviderConnectionRepository(ApplicationDbContext dbContex
         dbContext.ProviderConnections.SingleOrDefaultAsync(connection => connection.ProviderKey == providerKey, cancellationToken);
 
     public void Add(ProviderConnection connection) => dbContext.ProviderConnections.Add(connection);
+
+    public async Task<IReadOnlyList<ProviderConnection>> ListAsync(CancellationToken cancellationToken) =>
+        await dbContext.ProviderConnections.AsNoTracking().OrderBy(connection => connection.ProviderKey).ToListAsync(cancellationToken).ConfigureAwait(false);
 }

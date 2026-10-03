@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Net;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authorization;
+using Onyx.API.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +62,12 @@ public static class ApiServiceCollectionExtensions
 
         AddForwardedHeaders(services);
         AddRateLimiting(services);
+
+        // Secure default: every endpoint requires an authenticated admin unless it explicitly opts out with [AllowAnonymous].
+        services.AddAuthorization(options =>
+            options.FallbackPolicy = new AuthorizationPolicyBuilder().AddRequirements(new AuthenticatedEndpointRequirement()).Build());
+        services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
+        services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 
         // CORS is intentionally not registered: browsers never call the API directly (BFF), so no origin is ever allowed.
         return services;

@@ -12,4 +12,5 @@ public enum NotificationType
     ToolAttention = 6,
     EmailDeliveryFailed = 7,
     OutboxMessageFailed = 8,
+    SecurityAlert = 9,
 }

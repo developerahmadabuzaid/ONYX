@@ -206,6 +206,8 @@ OnyxWebsite/
 ## 12. Authentication, authorization, notifications
 
 - Identity in the API (hashing, lockout, email confirmation, TOTP 2FA mandatory for privileged roles). No public registration.
+  - **Privileged (2FA mandatory):** SuperAdmin, or anyone holding `Users.Manage`, `Roles.Manage`, `ProviderConnections.Manage`, `Privacy.Manage` or `Leads.Export`; or everyone if `IdentitySecurity:RequireTwoFactorForAllUsers` is set.
+  - **Secure default:** every API endpoint requires authentication unless it explicitly declares `[AllowAnonymous]`. Admins can never grant or act on permissions they don't hold.
 - Short-lived JWT access tokens + rotating, hashed, revocable refresh tokens with reuse detection.
 - **BFF (option a, approved).** Access and refresh tokens live **inside Onyx.Web's encrypted, signed authentication cookie** (Data Protection), named `__Host-onyx.admin`, with `HttpOnly`, `Secure`, `SameSite=Strict`, browser-session lifetime.
   - **Never** expose tokens to browser JavaScript, render them into HTML, store them in localStorage/sessionStorage, or log them.

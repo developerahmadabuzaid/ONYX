@@ -4,6 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Options;
 using Onyx.Application.Abstractions.Persistence;
+using Onyx.Application.Auditing;
+using Onyx.Application.Identity;
+using Onyx.Infrastructure.Auditing;
+using Onyx.Infrastructure.Identity;
 using Onyx.Application.Email;
 using Onyx.Application.Notifications;
 using Onyx.Application.Providers;
@@ -59,6 +63,12 @@ public static class DependencyInjection
 
         services.AddScoped<INotificationRepository, NotificationRepository>();
         services.AddScoped<IProviderConnectionRepository, ProviderConnectionRepository>();
+
+        services.AddMemoryCache();
+        services.AddScoped<IPermissionService, PermissionService>();
+        services.AddScoped<IUserDirectory, UserDirectory>();
+        services.AddScoped<IAuditTrail, AuditTrail>();
+        services.AddScoped<IAuditLogQueries, AuditLogQueries>();
 
         services.AddSingleton<IEmailTemplate, ProviderTestEmailTemplate>();
         services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();

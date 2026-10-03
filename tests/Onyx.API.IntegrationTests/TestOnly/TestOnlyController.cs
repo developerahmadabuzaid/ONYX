@@ -9,6 +9,7 @@ namespace Onyx.API.IntegrationTests.TestOnly;
 [ApiController]
 [ApiVersion(1.0)]
 [Route("api/v{version:apiVersion}/test-only")]
+[Microsoft.AspNetCore.Authorization.AllowAnonymous]
 public sealed class TestOnlyController : ControllerBase
 {
     public const string SecretExceptionMessage = "Sensitive internal detail: db-secret-host password=hunter2";

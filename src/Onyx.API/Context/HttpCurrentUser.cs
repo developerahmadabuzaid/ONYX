@@ -17,5 +17,6 @@ public sealed class HttpCurrentUser(IHttpContextAccessor httpContextAccessor) : 
             ? id
             : null;
 
-    public string? UserName => AuthenticatedPrincipal?.Identity?.Name;
+    /// <summary>Access tokens carry no name (minimal claims); audit records identify users by id.</summary>
+    public string? UserName => AuthenticatedPrincipal?.FindFirstValue("name");
 }

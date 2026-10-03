@@ -593,6 +593,16 @@ Allowlisted NewsSource (RSS/Atom/API) → fetch via SafeOutboundHttp → normali
 | **Data Protection keys (Web)** | Fixed application name `Onyx.Web`. Keys persisted to a configurable shared directory (portable; Web has no DB access), protected at rest where the host supports it, rotated on the default schedule (90 days), and **included in backups** (§26). Losing the keys signs everyone out; it does not expose data. |
 | **CSRF** | Cookie auth in Web → global antiforgery on all state-changing requests. `SameSite=Strict` is defence in depth. The API never accepts cookies (bearer only). |
 
+**API-side implementation (Stage 3)**
+- **Grace window:** the successor refresh token is stored encrypted (AES-256-GCM) under a key derived (HKDF) from the *predecessor's raw value*, which only the client holds. A concurrent refresh within 30 s receives the same successor; the database alone never yields a usable token.
+- **Two-step sign-in:** the password step returns a hashed, single-use, 5-minute challenge (invalidated after 5 wrong codes). If an authenticator is mandatory but not yet enrolled, it returns an enrolment challenge instead, and no token is issued before enrolment.
+- **TOTP:** in-house RFC 6238 verifier with replay protection (a code is accepted only for a later time step than the last one used).
+- **Encryption at rest:** authenticator keys and recovery codes are encrypted with Data Protection, through a custom user store.
+- **Mandatory 2FA:** SuperAdmin, anyone holding `Users.Manage`, `Roles.Manage`, `ProviderConnections.Manage`, `Privacy.Manage` or `Leads.Export`, or everyone when `IdentitySecurity:RequireTwoFactorForAllUsers` is true.
+- **API Data Protection key ring:** stored in PostgreSQL (`data_protection_keys`) by an in-house `IXmlRepository`, shared by all API instances and covered by database backups.
+- **Secure default:** every matched endpoint requires authentication unless it declares `[AllowAnonymous]`; a test fails if any endpoint lacks explicit authorization metadata.
+- **Escalation guard:** admins can only grant, remove or act on permissions they hold; only a SuperAdmin can act on SuperAdmin; the last active SuperAdmin cannot be disabled or demoted.
+
 ## 26. Backup and recovery
 
 Host-agnostic requirements; the concrete implementation is finalized for the selected production environment.

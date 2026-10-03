@@ -35,15 +35,19 @@ public static class ApiApplicationBuilderExtensions
         }
 
         app.UseRouting();
+
+        // Rate limiting runs before authentication so brute-force traffic is rejected as cheaply as possible.
         app.UseRateLimiter();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.MapControllers();
-        app.MapHealthChecks(LivenessPath, new HealthCheckOptions { Predicate = _ => false }).DisableRateLimiting();
-        app.MapHealthChecks(ReadinessPath, new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") }).DisableRateLimiting();
+        app.MapHealthChecks(LivenessPath, new HealthCheckOptions { Predicate = _ => false }).DisableRateLimiting().AllowAnonymous();
+        app.MapHealthChecks(ReadinessPath, new HealthCheckOptions { Predicate = check => check.Tags.Contains("ready") }).DisableRateLimiting().AllowAnonymous();
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi().WithDocumentPerVersion();
+            app.MapOpenApi().WithDocumentPerVersion().AllowAnonymous();
         }
 
         return app;

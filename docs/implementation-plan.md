@@ -22,7 +22,8 @@
 |---|---|
 | 0 Repository and solution skeleton | **done**, commit `85f6016` |
 | 1 Backend foundation and test infrastructure | **done**, commits `bca0181`, `c9d0e2a` (Asp.Versioning.OpenApi follow-up) |
-| 2 Worker, outbox, email, notifications | **done**: 188/188 tests against local PostgreSQL 18; build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 3. |
+| 2 Worker, outbox, email, notifications | **done**, commit `5529048` |
+| 3 Identity, permissions, audit | **done**: 272/272 tests against local PostgreSQL 18; build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 4. |
 | 3, 4, 6–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
@@ -91,6 +92,16 @@
   - permission and role seeders; one-time SuperAdmin bootstrap command from environment variables (no default password);
   - users, roles and audit-log admin APIs.
 - **Verify:** 401/403 matrix; refresh reuse revokes the family; lockout/2FA; security events audited with no secrets.
+
+**Stage 3 delivered notes:**
+- **Identity and authentication:** admin login, the second factor, mandatory authenticator enrolment, refresh/rotation/reuse detection, logout, forgot/reset password, invitation acceptance, change password, `/me`.
+- **Admin APIs:** users, roles, permissions catalogue, audit logs, plus the Stage 2 deferrals: notifications and provider connections (list, enable, disable, email test).
+- **Operator commands:** `seed-identity` and `bootstrap-superadmin`, with the password from an environment variable.
+- **Migration** `IdentityAndSessions` is additive only (12 tables, 12 indexes).
+- **Deferred:**
+  - Turnstile on admin sign-in moves to Stage 8 (when Turnstile is introduced).
+  - Self-service authenticator enrolment for non-privileged users, an admin "active sessions" list, and email-address change are not built.
+  - Data-subject export/delete of identity data moves to Stage 9.
 
 ### Stage 4 — Onyx.Web foundation
 - **Build:**
