@@ -1,7 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Worker">
+  <PropertyGroup>
+    <UserSecretsId>onyx-worker-3e8d6a41-92c7-4f1b-b5d0-7a4c2e9f1d63</UserSecretsId>
+  </PropertyGroup>
   <ItemGroup>
-    <!-- Hosting comes from the shared framework; no extra package needed. -->
+    <!-- Hosting and the internal health endpoint come from the shared framework. -->
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Serilog.AspNetCore" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Onyx.Application\Onyx.Application.csproj" />

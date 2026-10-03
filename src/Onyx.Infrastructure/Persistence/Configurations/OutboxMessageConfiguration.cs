@@ -14,11 +14,12 @@ internal sealed class OutboxMessageConfiguration : IEntityTypeConfiguration<Outb
 
         builder.Property(message => message.Type).HasMaxLength(OutboxMessage.TypeMaxLength).IsRequired();
         builder.Property(message => message.Payload).HasColumnType("jsonb").IsRequired();
-        builder.Property(message => message.LastError).HasMaxLength(4000);
+        builder.Property(message => message.LastError).HasMaxLength(OutboxMessage.LastErrorMaxLength);
+        builder.Property(message => message.LockedBy).HasMaxLength(OutboxMessage.LockedByMaxLength);
 
-        // Partial index: the dispatcher only ever scans unprocessed messages, oldest first.
+        // Partial index: the dispatcher only scans deliverable messages, oldest first.
         builder.HasIndex(message => message.OccurredAtUtc)
             .HasDatabaseName("ix_outbox_messages_unprocessed")
-            .HasFilter("processed_at_utc IS NULL");
+            .HasFilter("processed_at_utc IS NULL AND dead_lettered_at_utc IS NULL");
     }
 }

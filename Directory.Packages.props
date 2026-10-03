@@ -11,6 +11,10 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
   </ItemGroup>
 
+  <ItemGroup Label="Infrastructure">
+    <PackageVersion Include="MailKit" Version="4.18.1" />
+  </ItemGroup>
+
   <ItemGroup Label="Application">
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />

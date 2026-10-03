@@ -4,7 +4,8 @@ Permanent engineering, architecture, business and content rules for this reposit
 If a request conflicts with these rules, stop and raise the conflict instead of quietly breaking a rule.
 
 > **Project status:** Architecture revision 4 (owner decisions of 2026-10-03). Implementation follows `docs/implementation-plan.md` **stage by stage**.
-> **Review checkpoints:** stop after Stage 1 for review; then continue to Stage 5 and **stop for design approval** before building the remaining public pages; after Stage 5, stop after every stage unless the owner explicitly authorizes several. Never start a stage the owner has not approved.
+> **Review checkpoints:** stop after **every** stage for owner review unless the owner explicitly authorizes several. Never start a stage the owner has not approved.
+> **Backend first:** backend, infrastructure, admin capabilities, integrations and core functionality come before any public UI/visual design. Stage 5 (design system + design approval) is deferred until after Stage 12. Until then, public pages are functional, unstyled semantic templates only. **Never implement public visual design before the owner approves it** (`docs/implementation-plan.md`).
 > Full design: `docs/architecture.md`. Items marked **[OPEN]** there (§29) are content, credential or legal inputs. Ask about them; never guess them.
 >
 > **Phase 1 (launch) scope** includes the bilingual CMS site, Work, industries, insights, booking, leads + email, consent, retention, search, notifications, audit, the Worker, **the News Hub, and the Admin Analytics & Marketing dashboard (GA4 + Search Console)**. Phase 2: tools + AI Content Engine. Phase 3: AI Advisor, ad platforms, market pages (`docs/architecture.md` §28).
@@ -66,6 +67,7 @@ clients, logos, testimonials, reviews, case studies, statistics, outcomes, metri
 - Central Package Management, `Directory.Build.props`, `global.json`.
 - **Approved packages:**
   - Data and identity: Npgsql.EntityFrameworkCore.PostgreSQL, Microsoft.EntityFrameworkCore(.Design/.Relational), dotnet-ef (local tool), Microsoft.AspNetCore.Identity.EntityFrameworkCore, Microsoft.AspNetCore.Authentication.JwtBearer.
+  - Email: MailKit (SMTP transport; includes MimeKit).
   - API and libraries: Asp.Versioning.Mvc(.ApiExplorer), Asp.Versioning.OpenApi, Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI (Development only), FluentValidation (+DependencyInjectionExtensions), Microsoft.Extensions.Http.Resilience, HtmlSanitizer, Serilog.AspNetCore.
   - Tests: xunit.v3, xunit.runner.visualstudio, Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, NetArchTest.Rules.
   - Exact versions live in `Directory.Packages.props`.

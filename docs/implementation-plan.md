@@ -7,14 +7,23 @@
 - Each stage ends with a report: what was built, test results, data model and migrations added, packages added (exact versions), deviations, and decisions needed.
 - Migrations are created only in the stage that introduces the entities, on the approved conceptual model.
 - New packages beyond the approved list are requested at the stage that needs them.
-- **Checkpoints:** **STOP after Stage 1.** After approval, continue through Stage 5 and **STOP for design approval**. After Stage 5, stop after every stage unless the owner authorizes several.
+- **Checkpoints:** **STOP after every stage** for owner review unless the owner explicitly authorizes several stages together.
+- **Backend first, visual design last (owner decision, 2026-10-03).** All backend, infrastructure, admin/back-office capabilities, integrations and core functionality are built **before** any public UI/visual design work.
+  - Stage 5 (design system) is **deferred** until Stages 6–12 are complete; its design-approval checkpoint moves with it.
+  - Until then, public pages built in Stages 6–12 are **functional, semantic, unstyled templates**: correct HTML, RTL/LTR, SEO markup, accessibility. No visual design, no design tokens, no brand styling.
+  - Admin screens use minimal neutral styling so they are usable.
+  - **No public visual design is implemented before the owner approves the design direction in Stage 5.**
+
+### Execution order
+`0 → 1 → 2 → 3 → 4 → 6 → 7 → 8 → 9 → 10 → 11 → 12 → 5 (design system + approval) → 13`
 
 ## Status
 | Stage | Status |
 |---|---|
 | 0 Repository and solution skeleton | **done**, commit `85f6016` |
-| 1 Backend foundation and test infrastructure | **done**: 104/104 tests passed against local PostgreSQL 18 (0 skipped); build 0 warnings; no vulnerable packages. **Awaiting owner review before Stage 2.** |
-| 2–13 | awaiting approval |
+| 1 Backend foundation and test infrastructure | **done**, commits `bca0181`, `c9d0e2a` (Asp.Versioning.OpenApi follow-up) |
+| 2 Worker, outbox, email, notifications | **done**: 188/188 tests against local PostgreSQL 18; build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 3. |
+| 3, 4, 6–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -65,6 +74,15 @@
   - `AdminNotification` + read state; generic `ProviderConnection` status model.
 - **Verify:** no double processing with two Worker instances; retry/dead-letter; queued email survives transport failure; notification visibility per permission.
 
+**Stage 2 delivered notes:**
+- Domain: `AdminNotification`, `NotificationReadState`, `ProviderConnection` (xmin concurrency, failure event on transition only).
+- Worker: `BackgroundService` loops, `JobDefinition`/`JobRun`, in-house schedules (`every:Ns|m|h`, `daily@HH:mm` UTC), `SKIP LOCKED` lease claiming with owner fencing, retries + dead letters for outbox and email. Internal health endpoint on loopback.
+- Email: MailKit SMTP, Development pickup directory, unconfigured mode (queued, provider NotConfigured), code-owned AR/EN templates with HTML encoding.
+- **Deferred:**
+  - Notification Center and provider-connection **admin API endpoints** move to Stage 3, since they need authentication and permissions.
+  - **Admin-editable email copy** (`EmailTemplate` entity) moves to Stage 6 (CMS). Stage 2 templates are code-owned.
+  - The only production template is `system.provider-test`. Feature templates arrive with their stages.
+
 ### Stage 3 — Identity, permissions, audit
 - **Build:**
   - Identity (uuid users), lockout, email confirmation, password reset, TOTP 2FA (required for SuperAdmin);
@@ -83,7 +101,7 @@
   - Admin shell (login, 2FA, permission-aware navigation, notifications badge); minimal neutral styles.
 - **Verify:** Arabic URL resolution and encoding; redirects; hreflang/canonical; CSRF; cookie flags and size budget; end-to-end login/refresh/logout with no token reaching the browser; analytics scripts absent without consent.
 
-### Stage 5 — Design system → **STOP for design approval**
+### Stage 5 — Design system → **STOP for design approval** *(deferred: runs after Stage 12, before Stage 13)*
 - **Build:** white-first tokens; Arabic + English type pairing; grid; core components (nav, mega menu, footer, buttons, forms, sections); Onyx stone signature (SVG first) based on the **real logo** (no replacement logo); reduced motion; performance budget; **preview page**.
 - **Verify:** RTL/LTR side by side, keyboard and contrast checks, page-weight budget.
 

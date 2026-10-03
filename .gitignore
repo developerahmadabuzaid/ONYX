@@ -496,3 +496,6 @@ appsettings.Local.json
 keys/
 dataprotection-keys/
 TestResults/
+
+# Local development artefacts (e.g. Worker mail pickup directory)
+.local/
