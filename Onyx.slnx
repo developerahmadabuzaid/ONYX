@@ -1,0 +1,18 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Onyx.API/Onyx.API.csproj" />
+    <Project Path="src/Onyx.Application/Onyx.Application.csproj" />
+    <Project Path="src/Onyx.Contracts/Onyx.Contracts.csproj" />
+    <Project Path="src/Onyx.Domain/Onyx.Domain.csproj" />
+    <Project Path="src/Onyx.Infrastructure/Onyx.Infrastructure.csproj" />
+    <Project Path="src/Onyx.Web/Onyx.Web.csproj" />
+    <Project Path="src/Onyx.Worker/Onyx.Worker.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Onyx.API.IntegrationTests/Onyx.API.IntegrationTests.csproj" />
+    <Project Path="tests/Onyx.Application.Tests/Onyx.Application.Tests.csproj" />
+    <Project Path="tests/Onyx.ArchitectureTests/Onyx.ArchitectureTests.csproj" />
+    <Project Path="tests/Onyx.Domain.Tests/Onyx.Domain.Tests.csproj" />
+    <Project Path="tests/Onyx.Web.Tests/Onyx.Web.Tests.csproj" />
+  </Folder>
+</Solution>

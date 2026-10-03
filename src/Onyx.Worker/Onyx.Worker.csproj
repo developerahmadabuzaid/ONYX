@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk.Worker">
+  <ItemGroup>
+    <!-- Hosting comes from the shared framework; no extra package needed. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Onyx.Application\Onyx.Application.csproj" />
+    <!-- Composition root only: Infrastructure types may be used solely for DI registration. -->
+    <ProjectReference Include="..\Onyx.Infrastructure\Onyx.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

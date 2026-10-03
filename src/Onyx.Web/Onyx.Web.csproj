@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!-- Talks to Onyx.API over HTTPS only. Must never reference Domain, Application, Infrastructure, API, Worker, EF Core or a DB driver. -->
+  <ItemGroup>
+    <ProjectReference Include="..\Onyx.Contracts\Onyx.Contracts.csproj" />
+  </ItemGroup>
+</Project>

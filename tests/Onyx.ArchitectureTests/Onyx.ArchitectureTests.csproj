@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <PackageReference Include="NetArchTest.Rules" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Onyx.Domain\Onyx.Domain.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.Contracts\Onyx.Contracts.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.Application\Onyx.Application.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.Infrastructure\Onyx.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.API\Onyx.API.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.Web\Onyx.Web.csproj" />
+    <ProjectReference Include="..\..\src\Onyx.Worker\Onyx.Worker.csproj" />
+  </ItemGroup>
+</Project>

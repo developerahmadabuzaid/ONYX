@@ -1,0 +1,136 @@
+# Onyx — Implementation Plan (Scaffolding + Phase 1)
+
+**Approved:** 2026-10-03. Rules: `CLAUDE.md`. Design: `docs/architecture.md` (Rev 4).
+
+## Working rules for every stage
+- **Done means:** solution builds with **0 warnings** (warnings are errors) → all required tests pass (architecture tests included) → `dotnet list package --vulnerable --include-transitive` is clean → **one descriptive Git commit**. Never commit secrets.
+- Each stage ends with a report: what was built, test results, data model and migrations added, packages added (exact versions), deviations, and decisions needed.
+- Migrations are created only in the stage that introduces the entities, on the approved conceptual model.
+- New packages beyond the approved list are requested at the stage that needs them.
+- **Checkpoints:** **STOP after Stage 1.** After approval, continue through Stage 5 and **STOP for design approval**. After Stage 5, stop after every stage unless the owner authorizes several.
+
+## Status
+| Stage | Status |
+|---|---|
+| 0 Repository and solution skeleton | approved, in progress |
+| 1 Backend foundation and test infrastructure | approved, in progress |
+| 2–13 | awaiting approval |
+
+---
+
+### Stage 0 — Repository and solution skeleton
+**Build:**
+- `git init`, `.gitignore` (incl. user-secrets, `.env`, local settings), `.gitattributes`, `.editorconfig`.
+- `global.json` (SDK 10.0.x), `Directory.Build.props` (net10.0, nullable, warnings as errors, analyzers), `Directory.Packages.props` (central versions).
+- `Onyx.slnx` with `src/` (Domain, Contracts, Application, Infrastructure, API, Web, Worker) and `tests/` (Domain, Application, API.Integration, Web, Architecture). Project references exactly per CLAUDE.md §5. `dotnet-ef` local tool manifest.
+- Architecture tests: project-reference rules (from the `.csproj` files) + type-dependency rules (NetArchTest).
+
+**Verify:** clean build; architecture tests pass; a deliberately forbidden reference makes them fail (then reverted); vulnerable-package scan clean. **Commit.**
+
+### Stage 1 — Backend foundation and test infrastructure
+**Build:**
+- **Domain:** `Entity`, `AuditableEntity`, `ISoftDeletable`, `IAuditable`, `[SensitiveData]`/`[NotAudited]`, domain events, `Result`/`Error`, and the `AuditLog` entity.
+- **Contracts:** `PagedResult<T>`, the error/problem contract, and the full **permission catalogue**.
+- **Application:** DI entry point, `ICurrentUser`, `IRequestContext`.
+- **Infrastructure:**
+  - `ApplicationDbContext` (Npgsql), with the in-house snake_case convention and the soft-delete query filter;
+  - interceptors: audit-field stamping, soft delete, domain events → outbox, entity audit log with redaction;
+  - outbox and audit-log tables, plus the design-time factory and **first migration**;
+  - validated options and a DB health check.
+- **API:**
+  - Serilog with correlation id; a global `IExceptionHandler` → ProblemDetails with no stack traces outside Development;
+  - security headers and server-header removal; HTTPS/HSTS; request size limits; deny-by-default CORS; forwarded-headers settings;
+  - API versioning; OpenAPI + Swagger UI in Development only;
+  - built-in rate-limiting policies; health endpoints (live/ready); `ICurrentUser`/`IRequestContext` implementations.
+- **Tests:**
+  - `ITestDatabase` + `LocalPostgresTestDatabase` with all safety guards, and the API `WebApplicationFactory`;
+  - test-only controllers to exercise error handling and rate limiting;
+  - a test-only DbContext for interceptor verification.
+
+**Verify:**
+- guards reject unsafe connection strings, superuser roles, foreign names, and databases this run didn't create;
+- the test DB is created, migrated and dropped;
+- ProblemDetails has no stack trace in Production; security headers are present; 429 on rate limit; 413 on oversized body; no CORS headers;
+- live/ready health checks work; correlation id round-trips;
+- interceptors stamp audit fields, soft-delete, write outbox and audit rows, and redact sensitive data;
+- unit tests for `Result`, domain events and the permission catalogue.
+
+**Commit. → STOP for owner review.**
+
+### Stage 2 — Worker, outbox, email, notifications
+- **Build:**
+  - Worker host with `JobDefinition`/`JobRun` (and migration) and an in-house schedule parser;
+  - lease-based claiming with `FOR UPDATE SKIP LOCKED`; outbox dispatcher with retries and a dead-letter state;
+  - `IEmailSender` + SMTP adapter (**MailKit — approval requested then**) + a Development pickup-directory sender, `EmailMessage` outbox, and Arabic/English templates;
+  - `AdminNotification` + read state; generic `ProviderConnection` status model.
+- **Verify:** no double processing with two Worker instances; retry/dead-letter; queued email survives transport failure; notification visibility per permission.
+
+### Stage 3 — Identity, permissions, audit
+- **Build:**
+  - Identity (uuid users), lockout, email confirmation, password reset, TOTP 2FA (required for SuperAdmin);
+  - JWT access + rotating hashed refresh tokens (grace window, family revocation), security-stamp checks;
+  - `[HasPermission]` policy provider with server-side permission cache;
+  - permission and role seeders; one-time SuperAdmin bootstrap command from environment variables (no default password);
+  - users, roles and audit-log admin APIs.
+- **Verify:** 401/403 matrix; refresh reuse revokes the family; lockout/2FA; security events audited with no secrets.
+
+### Stage 4 — Onyx.Web foundation
+- **Build:**
+  - per-language route tables (Arabic segments/slugs, English segments/slugs), root → `/ar/`, language switcher, canonical/hreflang helpers, RTL/LTR layouts;
+  - typed API clients + handlers + resilience;
+  - BFF cookie per §25.1 (encrypted ticket, refresh, revocation, Data Protection key persistence);
+  - antiforgery, CSP nonces, cookie consent (receipts via API);
+  - Admin shell (login, 2FA, permission-aware navigation, notifications badge); minimal neutral styles.
+- **Verify:** Arabic URL resolution and encoding; redirects; hreflang/canonical; CSRF; cookie flags and size budget; end-to-end login/refresh/logout with no token reaching the browser; analytics scripts absent without consent.
+
+### Stage 5 — Design system → **STOP for design approval**
+- **Build:** white-first tokens; Arabic + English type pairing; grid; core components (nav, mega menu, footer, buttons, forms, sections); Onyx stone signature (SVG first) based on the **real logo** (no replacement logo); reduced motion; performance budget; **preview page**.
+- **Verify:** RTL/LTR side by side, keyboard and contrast checks, page-weight budget.
+
+### Stage 6 — CMS core and public structure
+- **Build:** translations, media (**image library approval requested then**), pillars, services (+ use cases, FAQs), industries (taxonomy/published with the content minimum), typed page sections, CTAs, settings, offices, markets, redirects, SEO metadata; Admin screens; public home, pillars, services, industries, about, offices, legal page shells (unpublished); sitemaps, robots, Organization JSON-LD; seeders (languages, markets, pillars with proposed Arabic names for confirmation, Riyadh – Granada District, Amman).
+- **Verify:** publish requires both languages; slug change → 301; unpublished hidden; sitemap/hreflang validity; permission matrix; cache invalidation.
+
+### Stage 7 — Work, proof, insights, glossary, integrations
+- **Build:** projects, case studies, capabilities, testimonials, metrics, with the proof guard and the 3-featured limit; insights with scheduled publishing and the AI-approval guard; topics, glossary, integrations showcase.
+- **Verify:** guards can't be bypassed through the API; scheduled publishing runs via the Worker.
+
+### Stage 8 — Leads, booking, Turnstile, attribution
+- **Build:** Inquiry → Lead with attribution (consent-aware); wizard + contact/consultation/service/similar-project forms; server-side Turnstile, honeypot, rate limits; booking (availability rules, slots, `.ics`, signed links, uniqueness); internal + visitor emails in the submission language; Admin leads (pipeline, origin panel, notes, assignment, audited export).
+- **Verify:** inquiry persists when email fails; Turnstile rejection; concurrent double booking blocked; attribution with/without consent.
+
+### Stage 9 — Privacy operations
+- **Build:** retention policies (configurable, no hard-coded periods), enforcement job, data-subject export/delete, audit.
+- **Verify:** exact delete/anonymize per policy; complete export; deletion completeness.
+
+### Stage 10 — Site search (PostgreSQL)
+- **Build:**
+  - `SearchDocument` with event-driven indexing;
+  - shared `ArabicTextNormalizer`; normalized columns;
+  - weighted generated `tsvector` (`arabic` / `english` + `simple` for names) with GIN indexes;
+  - `pg_trgm` extension (migration) + trigram GIN index on titles;
+  - `websearch_to_tsquery` querying with bound parameters; ranking (`ts_rank_cd` × type boost × freshness + trigram);
+  - grouped results page (`noindex`), rate limits, length caps.
+- **Verify:** the `arabic` configuration and ICU locale on the server (fallback `simple` documented if absent); Arabic queries robust to diacritics/alef/ta marbuta/alef maqsura/hamza variants and Arabic-Indic digits; English stemming; exact brand names; typo tolerance; unpublished never returned; SQL-injection attempts treated as text.
+
+### Stage 11 — News Hub
+- **Build:** SafeOutboundHttp; sources/items; feed reading (**RSS library approval requested then**); normalize, dedupe, classify; `ITextGenerationService` (inactive → items Held); Admin news/sources; public news (items `noindex` by default); homepage section.
+- **Verify:** SSRF suite; dedupe; no auto-publish without a summary; no full text stored; attribution on every item.
+
+### Stage 12 — Admin Analytics & Marketing
+- **Build:** GA4 + Search Console adapters (**Google API package approval requested then**; inactive until credentials), sync jobs, local aggregates, dashboards, funnel view; consent-gated GA4 tag + conversion events.
+- **Verify:** fake adapters end to end in tests; "Not connected" with no credentials and never sample data.
+
+### Stage 13 — Hardening and launch readiness
+- Security review (permission matrix, CSP, rate limits, uploads), Core Web Vitals and caching, WCAG 2.2 AA audit, SEO audit, production configuration checklist, backup/recovery runbook (PostgreSQL PITR), README, host-neutral deployment notes.
+
+## Owner inputs by stage
+| Needed for | Input |
+|---|---|
+| Running integration tests (from Stage 1) | PostgreSQL test role + `ONYX_TEST_POSTGRES` (`docs/development-setup.md`) |
+| Running the API locally | `onyx_dev` database + roles + user-secrets connection string |
+| Stage 5 | Final logo vector (SVG); Arabic lockup if any |
+| Stage 8 | Booking hours/format; info email address(es); Turnstile keys |
+| Stage 11 | LLM provider; news source allowlist |
+| Stage 12 | GA4 / Search Console access |
+| Before launch | Content, legal texts, retention periods, office details |

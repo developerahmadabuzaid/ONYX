@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <ItemGroup>
+    <ProjectReference Include="..\Onyx.Domain\Onyx.Domain.csproj" />
+    <ProjectReference Include="..\Onyx.Contracts\Onyx.Contracts.csproj" />
+  </ItemGroup>
+</Project>

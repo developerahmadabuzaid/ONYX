@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!-- API wire contracts shared with Onyx.Web: BCL only (CLAUDE.md §5). -->
+</Project>
