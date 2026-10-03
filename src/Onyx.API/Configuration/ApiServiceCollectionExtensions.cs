@@ -49,9 +49,8 @@ public static class ApiServiceCollectionExtensions
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
-            });
-
-        services.AddOpenApi("v1");
+            })
+            .AddOpenApi();
         services.AddHsts(_ => { });
         services.AddOptions<HstsOptions>().Configure<IOptions<ApiSecurityOptions>>((hsts, security) =>
         {

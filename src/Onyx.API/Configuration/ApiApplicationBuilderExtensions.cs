@@ -43,7 +43,7 @@ public static class ApiApplicationBuilderExtensions
 
         if (app.Environment.IsDevelopment())
         {
-            app.MapOpenApi();
+            app.MapOpenApi().WithDocumentPerVersion();
         }
 
         return app;

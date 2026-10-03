@@ -66,7 +66,7 @@ clients, logos, testimonials, reviews, case studies, statistics, outcomes, metri
 - Central Package Management, `Directory.Build.props`, `global.json`.
 - **Approved packages:**
   - Data and identity: Npgsql.EntityFrameworkCore.PostgreSQL, Microsoft.EntityFrameworkCore(.Design/.Relational), dotnet-ef (local tool), Microsoft.AspNetCore.Identity.EntityFrameworkCore, Microsoft.AspNetCore.Authentication.JwtBearer.
-  - API and libraries: Asp.Versioning.Mvc(.ApiExplorer), Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI (Development only), FluentValidation (+DependencyInjectionExtensions), Microsoft.Extensions.Http.Resilience, HtmlSanitizer, Serilog.AspNetCore.
+  - API and libraries: Asp.Versioning.Mvc(.ApiExplorer), Asp.Versioning.OpenApi, Microsoft.AspNetCore.OpenApi, Swashbuckle.AspNetCore.SwaggerUI (Development only), FluentValidation (+DependencyInjectionExtensions), Microsoft.Extensions.Http.Resilience, HtmlSanitizer, Serilog.AspNetCore.
   - Tests: xunit.v3, xunit.runner.visualstudio, Microsoft.NET.Test.Sdk, Microsoft.AspNetCore.Mvc.Testing, NetArchTest.Rules.
   - Exact versions live in `Directory.Packages.props`.
   - Packages for later stages (SMTP, image processing, RSS, Google APIs, …) need approval when their stage is reached. Avoid packages with unnecessary commercial licensing (e.g. FluentAssertions v8+).
