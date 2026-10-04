@@ -2,6 +2,7 @@
   <!-- Talks to Onyx.API over HTTPS only. Must never reference Domain, Application, Infrastructure, API, Worker, EF Core or a DB driver. -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
+    <PackageReference Include="Net.Codecrete.QrCodeGenerator" />
   </ItemGroup>
   <ItemGroup>
     <InternalsVisibleTo Include="Onyx.Web.Tests" />

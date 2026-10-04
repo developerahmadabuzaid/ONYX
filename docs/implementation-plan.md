@@ -130,11 +130,21 @@
 - **Web↔API:** typed clients with resilience (POSTs never retried). Visitor IP sent as `X-Forwarded-For` (Web resolves it via its own trusted-proxy list), plus correlation id and language. API outages become a service message or a 503 page and never sign the admin out.
 - **Migration** `CookieConsentReceipts` is additive only (1 table, 2 indexes).
 - **Deferred:**
-  - QR code for authenticator enrolment (needs a package; the key and setup link are shown as text).
+  - QR code for authenticator enrolment: delivered as a Stage 4 follow-up (`Net.Codecrete.QrCodeGenerator` 3.2.1, approved), with the text key kept as a fallback.
   - Visual design (Stage 5).
   - Turnstile on sign-in and forms (Stage 8).
   - Analytics script loading (Stage 12).
   - An admin "active sessions" view.
+
+**Stage 4 approved decisions (owner, 2026-10-04):**
+- **Indexing:** the site stays `noindex` throughout development (`Site:AllowIndexing=false`). Indexing is enabled only at launch.
+- **Cookie consent lifetime:** 180 days, configurable (`Consent:CookieLifetimeDays`).
+- **Admin sign-in language:** anonymous Admin authentication pages (sign-in, 2FA, forgot/reset password, invitation) default to Arabic, with English switching available.
+- **Client IP and privacy:**
+  - The real IP is **not** stored permanently for ordinary page visits.
+  - Consent receipts store only a keyed hash (HMAC-SHA256) of the IP, and only when `Privacy:IpHashKey` is configured; otherwise no IP is stored.
+  - The architecture may capture and use the real client IP where legitimately needed: for security (rate limiting, abuse prevention, audit of security events) and for important conversion events (leads, bookings, tool conversions). This is subject to consent, the privacy policy, retention rules and provider requirements, decided in the stages that build those features.
+- **Authenticator enrolment:** QR-code enrolment is approved. It encodes the existing `otpauth://` URI of the current enrolment attempt only (no second secret, no separate flow), with the textual setup key kept as a fallback.
 
 ### Stage 5 — Design system → **STOP for design approval** *(deferred: runs after Stage 12, before Stage 13)*
 - **Build:** white-first tokens; Arabic + English type pairing; grid; core components (nav, mega menu, footer, buttons, forms, sections); Onyx stone signature (SVG first) based on the **real logo** (no replacement logo); reduced motion; performance budget; **preview page**.

@@ -2,6 +2,11 @@
 @{ ViewData["TitleKey"] = "Enroll.Title"; }
 <h1>@T["Enroll.Title"]</h1>
 <p>@T["Enroll.Intro"]</p>
+@if (Model.QrCodeDataUri is not null)
+{
+    <p><img src="@Model.QrCodeDataUri" alt="@T["Enroll.Qr"]" width="220" height="220"></p>
+}
+<p>@T["Enroll.Fallback"]</p>
 <dl>
     <dt>@T["Enroll.Key"]</dt>
     <dd><code dir="ltr">@Model.SharedKey</code></dd>

@@ -50,7 +50,9 @@
   <data name="TwoFactor.Invalid" xml:space="preserve"><value>الرمز غير صحيح.</value></data>
   <data name="TwoFactor.Expired" xml:space="preserve"><value>انتهت صلاحية خطوة الدخول. سجّل الدخول من جديد.</value></data>
   <data name="Enroll.Title" xml:space="preserve"><value>إعداد تطبيق المصادقة</value></data>
-  <data name="Enroll.Intro" xml:space="preserve"><value>يتطلب حسابك التحقق بخطوتين. أضف الحساب إلى تطبيق مصادقة باستخدام مفتاح الإعداد التالي، ثم أدخل الرمز الذي يظهر في التطبيق.</value></data>
+  <data name="Enroll.Intro" xml:space="preserve"><value>يتطلب حسابك التحقق بخطوتين. امسح رمز QR التالي باستخدام تطبيق مصادقة، ثم أدخل الرمز المكوّن من 6 أرقام الذي يظهر في التطبيق.</value></data>
+  <data name="Enroll.Qr" xml:space="preserve"><value>رمز QR لإضافة الحساب إلى تطبيق المصادقة</value></data>
+  <data name="Enroll.Fallback" xml:space="preserve"><value>إذا تعذّر مسح الرمز، أضف الحساب يدوياً باستخدام مفتاح الإعداد (نوع المفتاح: قائم على الوقت).</value></data>
   <data name="Enroll.Key" xml:space="preserve"><value>مفتاح الإعداد</value></data>
   <data name="Enroll.Uri" xml:space="preserve"><value>رابط الإعداد (للتطبيقات التي تدعمه)</value></data>
   <data name="Enroll.Submit" xml:space="preserve"><value>تفعيل</value></data>

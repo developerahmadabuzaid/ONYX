@@ -150,7 +150,7 @@ public sealed partial class AccountController(
             return ExpiredStep(EnrollmentKey);
         }
 
-        return View(new EnrollModel { SharedKey = started.Value.SharedKey, AuthenticatorUri = started.Value.AuthenticatorUri });
+        return EnrollView(new EnrollModel { SharedKey = started.Value.SharedKey, AuthenticatorUri = started.Value.AuthenticatorUri });
     }
 
     [HttpPost("two-factor/setup")]
@@ -166,7 +166,7 @@ public sealed partial class AccountController(
 
         if (!ModelState.IsValid)
         {
-            return View(model);
+            return EnrollView(model);
         }
 
         var completed = await authApi.CompleteEnrollmentAsync(new TwoFactorEnrollmentCompleteRequest(token, model.Code), cancellationToken);
@@ -188,7 +188,7 @@ public sealed partial class AccountController(
         }
 
         ModelState.AddModelError(nameof(EnrollModel.Code), localizer[completed.IsUnavailable ? "Login.Unavailable" : "TwoFactor.Invalid"]);
-        return View(model);
+        return EnrollView(model);
     }
 
     [HttpPost("logout")]
@@ -356,6 +356,13 @@ public sealed partial class AccountController(
 
         var returnUrl = TempData[ReturnKey] as string;
         return returnUrl is not null ? LocalRedirect(returnUrl) : RedirectToDashboard();
+    }
+
+    // The QR is derived from the URI of the current attempt for this response only; it is never bound, stored or logged.
+    private ViewResult EnrollView(EnrollModel model)
+    {
+        model.QrCodeDataUri = AuthenticatorQrCode.ToDataUri(model.AuthenticatorUri);
+        return View(nameof(Enroll), model);
     }
 
     private RedirectToActionResult ExpiredStep(string tempDataKey)

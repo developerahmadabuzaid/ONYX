@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace Onyx.Web.Tests.Infrastructure;
 
@@ -16,6 +17,9 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
     private readonly string _keysDirectory = Path.Combine(Path.GetTempPath(), "onyx-web-tests", Guid.NewGuid().ToString("N"));
 
     public FakeOnyxApi Api { get; } = new();
+
+    /// <summary>Every log message the app writes, at all levels (used to prove secrets never reach logs).</summary>
+    public CapturingLoggerProvider Logs { get; } = new();
 
     public ManualTimeProvider Time { get; } = new(DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
 
@@ -36,6 +40,9 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
             ["Site:PublicBaseUrl"] = PublicBaseUrl,
             ["DataProtection:KeysDirectory"] = _keysDirectory,
         }));
+
+        // Provider-specific rule: capture every category at every level, regardless of appsettings filters.
+        builder.ConfigureLogging(logging => logging.AddProvider(Logs).AddFilter<CapturingLoggerProvider>(null, LogLevel.Trace));
 
         builder.ConfigureTestServices(services =>
         {
