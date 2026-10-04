@@ -1,0 +1,20 @@
+@model Onyx.Contracts.Content.ContentDetailResponse
+@{
+    var title = Model.Translations.FirstOrDefault(t => t.LanguageCode == System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName)?.Title
+        ?? Model.Translations.FirstOrDefault()?.Title ?? Model.Key ?? Model.Id.ToString();
+}
+<p><a asp-action="Index">@T["Cms.Content.Back"]</a></p>
+<h1>@title</h1>
+<p class="hint" dir="ltr">@Model.Type · @Model.Status · @Model.Id</p>
+<nav class="tabs" aria-label="@T["Cms.Content.Sections"]">
+    <a asp-action="Overview" asp-route-id="@Model.Id">@T["Cms.Content.Overview"]</a>
+    @foreach (var language in Onyx.Web.Areas.Admin.Cms.CmsOptions.Languages)
+    {
+        <a asp-action="Translation" asp-route-id="@Model.Id" asp-route-languageCode="@language">@T["Cms.Content.Text"] (@language)</a>
+        <a asp-action="Seo" asp-route-id="@Model.Id" asp-route-languageCode="@language">@T["Cms.Content.Seo"] (@language)</a>
+        <a asp-action="Intelligence" asp-route-id="@Model.Id" asp-route-languageCode="@language">@T["Cms.Content.Intelligence"] (@language)</a>
+    }
+    <a asp-action="Revisions" asp-route-id="@Model.Id">@T["Cms.Content.Revisions"]</a>
+    <a asp-action="Relations" asp-route-id="@Model.Id">@T["Cms.Content.Relations"]</a>
+</nav>
+<partial name="_CmsMessages" />

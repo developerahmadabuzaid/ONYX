@@ -1,0 +1,85 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model ContentListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<h1>@T["Nav.Content"]</h1>
+<partial name="_CmsMessages" />
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Type"]
+        <select name="type">
+            <option value="">—</option>
+            @foreach (var type in CmsOptions.ContentTypes)
+            {
+                <option value="@type" selected="@(Model.Type == type)">@type</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Status"]
+        <select name="status">
+            <option value="">—</option>
+            @foreach (var status in CmsOptions.Statuses)
+            {
+                <option value="@status" selected="@(Model.Status == status)">@status</option>
+            }
+        </select>
+    </label>
+    <label><input type="checkbox" name="needsUrlDecision" value="true" checked="@Model.NeedsUrlDecision"> @T["Cms.Content.NeedsUrlDecision"]</label>
+    <label>@T["Cms.Search"] <input type="search" name="search" value="@Model.Search" maxlength="200"></label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+<table>
+    <thead><tr><th>@T["Cms.Title"]</th><th>@T["Cms.Type"]</th><th>@T["Cms.Status"]</th><th>@T["Cms.Content.Live"]</th><th>@T["Cms.Updated"]</th></tr></thead>
+    <tbody>
+        @foreach (var item in Model.Items.Items)
+        {
+            var title = item.Titles.TryGetValue(lang, out var own) ? own : item.Titles.Values.FirstOrDefault() ?? item.Key ?? item.Id.ToString();
+            <tr>
+                <td><a asp-action="Overview" asp-route-id="@item.Id">@title</a>@if (item.HasUnpublishedChanges) { <span class="badge">@T["Cms.Content.Changed"]</span> }</td>
+                <td dir="ltr">@item.Type</td>
+                <td dir="ltr">@item.Status@(item.OfflineResolution == "PendingDecision" ? " · " + T["Cms.Content.NeedsUrlDecision"].Value : string.Empty)</td>
+                <td>@(item.IsLive ? T["Cms.Yes"] : T["Cms.No"])</td>
+                <td><partial name="_Utc" model="item.UpdatedAtUtc" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.Items.TotalPages > 1)
+{
+    <nav class="pager" dir="ltr">
+        @if (Model.Items.Page > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Items.Page - 1)" asp-route-type="@Model.Type" asp-route-status="@Model.Status" asp-route-search="@Model.Search">@(Model.Items.Page - 1)</a>
+        }
+        <span>@Model.Items.Page / @Model.Items.TotalPages</span>
+        @if (Model.Items.Page < Model.Items.TotalPages)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Items.Page + 1)" asp-route-type="@Model.Type" asp-route-status="@Model.Status" asp-route-search="@Model.Search">@(Model.Items.Page + 1)</a>
+        }
+    </nav>
+}
+<h2>@T["Cms.Content.Create"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Cms.Type"]
+        <select name="type" required>
+            @foreach (var type in CmsOptions.ContentTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Content.Parent"] <input name="parentId" dir="ltr"></label>
+    <label>@T["Cms.Key"] <input name="key" dir="ltr" maxlength="100"></label>
+    <label>@T["Cms.Content.Presentation"]
+        <select name="presentation">
+            @foreach (var presentation in CmsOptions.Presentations)
+            {
+                <option value="@presentation">@presentation</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.SortOrder"] <input type="number" name="sortOrder" value="0"></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

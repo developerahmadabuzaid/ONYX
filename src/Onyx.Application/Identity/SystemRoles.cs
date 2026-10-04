@@ -17,8 +17,9 @@ public static class SystemRoles
     {
         [ContentManager] = Group(
             "Pillars", "Services", "Industries", "Projects", "CaseStudies", "Testimonials", "Integrations", "Insights",
-            "ContentEngine", "News", "NewsSources", "Glossary", "Pages", "Ctas", "Media", "Seo", "Redirects", "Offices", "EmailTemplates")
-            .Append(Permissions.Markets.View)
+            "ContentEngine", "News", "NewsSources", "Glossary", "Pages", "Ctas", "Media", "Seo", "Redirects", "Offices", "EmailTemplates", "Content", "Competitors")
+            .Where(permission => permission != Permissions.Content.DeletePermanent)
+            .Concat([Permissions.Markets.View, Permissions.BrandKit.View, Permissions.Knowledge.View, Permissions.Knowledge.Edit])
             .ToList(),
         [Marketing] =
         [
@@ -38,6 +39,11 @@ public static class SystemRoles
             Permissions.Industries.View,
             Permissions.Projects.View,
             Permissions.News.View,
+            Permissions.Content.View,
+            Permissions.Content.SubmitForReview,
+            Permissions.BrandKit.View,
+            Permissions.Knowledge.View,
+            Permissions.Competitors.View,
         ],
         [Sales] =
         [

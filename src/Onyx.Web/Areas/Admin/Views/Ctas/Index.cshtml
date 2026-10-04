@@ -1,0 +1,59 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model CtaListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Ctas";
+}
+<h1>@T["Nav.Ctas"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Cta.Hint"]</p>
+
+@foreach (var cta in Model.Ctas)
+{
+    var ar = cta.Texts.FirstOrDefault(t => t.LanguageCode == "ar");
+    var en = cta.Texts.FirstOrDefault(t => t.LanguageCode == "en");
+    <details>
+        <summary dir="ltr">@cta.Key · @cta.ActionType · @cta.Id @(cta.IsActive ? "" : "(inactive)")</summary>
+        <form method="post" asp-action="Update" asp-route-id="@cta.Id">
+            <input type="hidden" name="version" value="@cta.Version">
+            <partial name="_CtaFields" model="new CtaForm { Key = cta.Key, ActionType = cta.ActionType, TargetUrl = cta.TargetUrl, LabelAr = ar?.Text, SecondaryAr = ar?.Secondary, LabelEn = en?.Text, SecondaryEn = en?.Secondary, IsActive = cta.IsActive }" />
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+    </details>
+}
+
+<h2>@T["Cms.Cta.Create"]</h2>
+<form method="post" asp-action="Create">
+    <partial name="_CtaFields" model="new CtaForm()" />
+    <button type="submit">@T["Cms.Create"]</button>
+</form>
+
+<h2>@T["Cms.Cta.Defaults"]</h2>
+<p dir="ltr">Global: @(Model.Defaults.GlobalCtaId?.ToString() ?? "—")</p>
+<ul dir="ltr">
+    @foreach (var pair in Model.Defaults.ByContentType)
+    {
+        <li>@pair.Key: @pair.Value</li>
+    }
+</ul>
+<form method="post" asp-action="SetDefault">
+    <label>@T["Cms.Type"]
+        <select name="contentType">
+            <option value="">Global</option>
+            @foreach (var type in CmsOptions.ContentTypes)
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+    </label>
+    <label>@T["Nav.Ctas"]
+        <select name="callToActionId">
+            <option value="">—</option>
+            @foreach (var cta in Model.Ctas.Where(c => c.IsActive))
+            {
+                <option value="@cta.Id">@cta.Key</option>
+            }
+        </select>
+    </label>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>

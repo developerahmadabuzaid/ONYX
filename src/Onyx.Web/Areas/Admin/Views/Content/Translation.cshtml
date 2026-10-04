@@ -1,0 +1,37 @@
+@model ContentEditorViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var form = Model.Translation!;
+    var dir = Model.LanguageCode == "ar" ? "rtl" : "ltr";
+}
+<partial name="_ContentNav" model="Model.Content" />
+<h2>@T["Cms.Content.Text"] (@Model.LanguageCode)</h2>
+<p class="hint">@T["Cms.Content.IndependentLanguages"]</p>
+<form method="post" asp-action="Translation" asp-route-id="@Model.Content.Id" asp-route-languageCode="@Model.LanguageCode" lang="@Model.LanguageCode" dir="@dir">
+    <input type="hidden" name="Version" value="@form.Version">
+    <label>@T["Cms.Title"] <input name="Title" value="@form.Title" required maxlength="200"></label>
+    <label>@T["Cms.Content.Summary"] <textarea name="Summary" rows="3" maxlength="1000">@form.Summary</textarea></label>
+    <label>@T["Cms.Content.Slug"] <input name="Slug" value="@form.Slug" required maxlength="80"></label>
+    <label>@T["Cms.Content.Body"] <textarea name="BodyText" rows="24">@form.BodyText</textarea></label>
+    <details dir="ltr">
+        <summary>@T["Cms.Content.BodyHelp"]</summary>
+        <pre>## Heading
+### Sub-heading
+
+A paragraph with **strong**, *emphasis* and [a link](content:GUID) or [a page](/en/services) or [a site](https://example.org).
+
+- bullet item
+- bullet item
+
+1. numbered item
+2. numbered item
+
+![alt text](media:GUID "optional caption")
+
+[[cta:GUID]]</pre>
+    </details>
+    <label>@T["Cms.Content.Faqs"] <textarea name="FaqText" rows="10">@form.FaqText</textarea></label>
+    <p class="hint" dir="ltr">Q: question<br>A: answer</p>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>

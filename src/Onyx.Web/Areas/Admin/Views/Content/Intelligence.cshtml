@@ -1,0 +1,38 @@
+@model ContentIntelligenceViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var data = Model.Intelligence;
+}
+<partial name="_ContentNav" model="Model.Content" />
+<h2>@T["Cms.Content.Intelligence"] (@data.LanguageCode)</h2>
+<p><strong>@T["Cms.Intelligence.Health"]:</strong> <span dir="ltr">@data.Health</span></p>
+<ul>
+    @foreach (var reason in data.HealthReasons)
+    {
+        <li>@reason</li>
+    }
+</ul>
+<h3>@T["Cms.Intelligence.Snapshots"]</h3>
+@if (data.Snapshots.Count == 0)
+{
+    <p>@T["Cms.Intelligence.NoData"]</p>
+}
+else
+{
+    <table>
+        <thead><tr><th>@T["Cms.Intelligence.Source"]</th><th>@T["Cms.Intelligence.Period"]</th><th>@T["Cms.Intelligence.Metrics"]</th></tr></thead>
+        <tbody>
+            @foreach (var snapshot in data.Snapshots)
+            {
+                <tr>
+                    <td dir="ltr">@snapshot.Source</td>
+                    <td><partial name="_Utc" model="(DateTimeOffset?)snapshot.PeriodStartUtc" /> – <partial name="_Utc" model="(DateTimeOffset?)snapshot.PeriodEndUtc" /></td>
+                    <td dir="ltr">@string.Join(", ", snapshot.Metrics.Select(metric => $"{metric.Key}: {metric.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)}"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<h3>@T["Cms.Intelligence.Sources"]</h3>
+<partial name="_DataSources" model="data.Sources" />

@@ -26,7 +26,6 @@ public static class ApiApplicationBuilderExtensions
         }
 
         app.UseHttpsRedirection();
-        app.UseMiddleware<RequestBodySizeLimitMiddleware>();
         app.UseSerilogRequestLogging();
 
         if (app.Environment.IsDevelopment())
@@ -35,6 +34,9 @@ public static class ApiApplicationBuilderExtensions
         }
 
         app.UseRouting();
+
+        // After routing, so an endpoint's [RequestSizeLimit] metadata can raise the cap for that endpoint only.
+        app.UseMiddleware<RequestBodySizeLimitMiddleware>();
 
         // Rate limiting runs before authentication so brute-force traffic is rejected as cheaply as possible.
         app.UseRateLimiter();

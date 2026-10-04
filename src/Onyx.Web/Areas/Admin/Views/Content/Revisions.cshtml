@@ -1,0 +1,56 @@
+@model ContentRevisionsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+}
+<partial name="_ContentNav" model="Model.Content" />
+<h2>@T["Cms.Content.Revisions"]</h2>
+<form method="get" asp-action="Revisions" asp-route-id="@Model.Content.Id">
+    <label>@T["Cms.Revision.From"] <input type="number" name="from" min="1" required></label>
+    <label>@T["Cms.Revision.To"] <input type="number" name="to" min="1" required></label>
+    <button type="submit">@T["Cms.Revision.Compare"]</button>
+</form>
+@if (Model.Comparison is { } comparison)
+{
+    <h3>@comparison.FromNumber → @comparison.ToNumber</h3>
+    @if (comparison.Differences.Count == 0)
+    {
+        <p>@T["Cms.Revision.NoDifferences"]</p>
+    }
+    <table>
+        <thead><tr><th>@T["Cms.Revision.Field"]</th><th>@T["Cms.Revision.Before"]</th><th>@T["Cms.Revision.After"]</th></tr></thead>
+        <tbody>
+            @foreach (var difference in comparison.Differences)
+            {
+                <tr>
+                    <td dir="ltr">@difference.LanguageCode @difference.Field</td>
+                    <td dir="auto" class="wrap">@difference.Before</td>
+                    <td dir="auto" class="wrap">@difference.After</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<table>
+    <thead><tr><th>#</th><th>@T["Cms.Revision.Kind"]</th><th>@T["Cms.Note"]</th><th>@T["Cms.Created"]</th><th>@T["Cms.Content.Live"]</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var revision in Model.Revisions)
+        {
+            <tr>
+                <td>@revision.Number</td>
+                <td dir="ltr">@revision.Kind</td>
+                <td>@revision.Note</td>
+                <td><partial name="_Utc" model="(DateTimeOffset?)revision.CreatedAtUtc" /></td>
+                <td>@(revision.IsLive ? T["Cms.Yes"] : T["Cms.No"])</td>
+                <td>
+                    <form method="post" asp-action="RestoreRevision" asp-route-id="@Model.Content.Id" asp-route-number="@revision.Number" class="inline">
+                        <input type="hidden" name="version" value="@Model.Content.Version">
+                        <input name="note" maxlength="500" placeholder="@T["Cms.Note"]">
+                        <button type="submit">@T["Cms.Revision.Restore"]</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p class="hint">@T["Cms.Revision.RestoreHint"]</p>

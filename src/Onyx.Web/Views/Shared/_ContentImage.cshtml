@@ -1,0 +1,8 @@
+@model (Onyx.Web.Content.PageViewModel Page, Onyx.Contracts.Content.PublicMediaResponse Image)
+<figure>
+    <img src="@Model.Page.MediaUrl(Model.Image.Id)" alt="@(Model.Image.Alt ?? string.Empty)" width="@Model.Image.Width" height="@Model.Image.Height" loading="lazy" decoding="async">
+    @if (!string.IsNullOrEmpty(Model.Image.Caption))
+    {
+        <figcaption>@Model.Image.Caption</figcaption>
+    }
+</figure>

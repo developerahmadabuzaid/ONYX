@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Onyx.Application.Abstractions.Persistence;
 
 namespace Onyx.API.ErrorHandling;
 
@@ -17,6 +18,7 @@ public sealed partial class GlobalExceptionHandler(IProblemDetailsService proble
         var (status, title) = exception switch
         {
             BadHttpRequestException badRequest => (badRequest.StatusCode, "The request could not be processed."),
+            ConcurrencyConflictException => (StatusCodes.Status409Conflict, "The record was changed by someone else. Reload and try again."),
             OperationCanceledException when httpContext.RequestAborted.IsCancellationRequested => (499, "Request cancelled."),
             _ => (StatusCodes.Status500InternalServerError, "An unexpected error occurred."),
         };
@@ -30,7 +32,9 @@ public sealed partial class GlobalExceptionHandler(IProblemDetailsService proble
         return await problemDetails.TryWriteAsync(new ProblemDetailsContext
         {
             HttpContext = httpContext,
-            ProblemDetails = new ProblemDetails { Status = status, Title = title },
+            ProblemDetails = exception is ConcurrencyConflictException
+                ? new ProblemDetails { Status = status, Title = title, Extensions = { ["code"] = "Concurrency.Conflict" } }
+                : new ProblemDetails { Status = status, Title = title },
         }).ConfigureAwait(false);
     }
 

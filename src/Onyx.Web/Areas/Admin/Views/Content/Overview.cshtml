@@ -1,0 +1,160 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model ContentOverviewViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var c = Model.Content;
+}
+<partial name="_ContentNav" model="c" />
+
+<section>
+    <h2>@T["Cms.Content.State"]</h2>
+    <dl>
+        <dt>@T["Cms.Status"]</dt><dd dir="ltr">@c.Status</dd>
+        <dt>@T["Cms.Content.Live"]</dt>
+        <dd>
+            @(c.IsLive ? T["Cms.Yes"] : T["Cms.No"])
+            @if (c.HasUnpublishedChanges)
+            {
+                <span class="badge">@T["Cms.Content.Changed"]</span>
+            }
+        </dd>
+        <dt>@T["Cms.Content.Revision"]</dt><dd>@c.CurrentRevisionNumber</dd>
+        <dt>@T["Cms.Content.ScheduledPublish"]</dt><dd><partial name="_Utc" model="c.ScheduledPublishAtUtc" /></dd>
+        <dt>@T["Cms.Content.ScheduledUnpublish"]</dt><dd><partial name="_Utc" model="c.ScheduledUnpublishAtUtc" /></dd>
+        <dt>@T["Cms.Content.LastPublished"]</dt><dd><partial name="_Utc" model="c.LastPublishedAtUtc" /></dd>
+        <dt>@T["Cms.Content.UrlResolution"]</dt><dd dir="ltr">@c.OfflineResolution @c.OfflineRedirectToId</dd>
+        @if (!string.IsNullOrEmpty(c.ReviewNote))
+        {
+            <dt>@T["Cms.Content.ReviewNote"]</dt><dd>@c.ReviewNote</dd>
+        }
+    </dl>
+    <h3>@T["Cms.Content.Translations"]</h3>
+    <ul>
+        @foreach (var translation in c.Translations)
+        {
+            <li dir="auto"><span dir="ltr">[@translation.LanguageCode]</span> @translation.Title — @(translation.IsComplete ? T["Cms.Content.Complete"] : T["Cms.Content.Incomplete"])</li>
+        }
+    </ul>
+    <h3>@T["Cms.Content.Paths"]</h3>
+    <ul>
+        @foreach (var path in c.Paths)
+        {
+            <li dir="ltr">/@path.LanguageCode/@path.Path @(path.IsCurrent ? T["Cms.Content.CurrentPath"] : T["Cms.Content.FormerPath"])</li>
+        }
+    </ul>
+</section>
+
+<section>
+    <h2>@T["Cms.Content.Quality"]</h2>
+    @if (Model.Quality is { } quality)
+    {
+        <p>@(quality.CanPublish ? T["Cms.Content.CanPublish"] : T["Cms.Content.CannotPublish"])</p>
+        <ul>
+            @foreach (var finding in quality.Findings)
+            {
+                <li><span dir="ltr">[@finding.Severity] @finding.Code @finding.LanguageCode</span> @finding.Message</li>
+            }
+        </ul>
+    }
+    <h3>@T["Cms.Content.PublishingTime"]</h3>
+    @if (Model.PublishingTime is { } timing)
+    {
+        <p><span dir="ltr">@timing.Basis</span> — @timing.Explanation</p>
+    }
+</section>
+
+<section>
+    <h2>@T["Cms.Content.Workflow"]</h2>
+    @foreach (var operation in new[] { "submit", "approve", "publish", "schedule/cancel", "unpublish-schedule/cancel", "restore" })
+    {
+        <form method="post" asp-action="Lifecycle" asp-route-id="@c.Id" class="inline">
+            <input type="hidden" name="version" value="@c.Version">
+            <input type="hidden" name="operation" value="@operation">
+            <button type="submit">@T["Cms.Action." + operation]</button>
+        </form>
+    }
+    <form method="post" asp-action="Lifecycle" asp-route-id="@c.Id">
+        <input type="hidden" name="version" value="@c.Version">
+        <input type="hidden" name="operation" value="reject">
+        <label>@T["Cms.Note"] <input name="note" maxlength="1000" required></label>
+        <button type="submit">@T["Cms.Action.reject"]</button>
+    </form>
+    <form method="post" asp-action="Lifecycle" asp-route-id="@c.Id">
+        <input type="hidden" name="version" value="@c.Version">
+        <input type="hidden" name="operation" value="schedule">
+        <label>@T["Cms.Content.PublishAtUtc"] <input type="datetime-local" name="at" required dir="ltr"></label>
+        <label>@T["Cms.Content.TimeZone"] <input name="timeZone" value="Asia/Riyadh" dir="ltr" maxlength="64"></label>
+        <button type="submit">@T["Cms.Action.schedule"]</button>
+    </form>
+    <form method="post" asp-action="Lifecycle" asp-route-id="@c.Id">
+        <input type="hidden" name="version" value="@c.Version">
+        <input type="hidden" name="operation" value="unpublish-schedule">
+        <label>@T["Cms.Content.UnpublishAtUtc"] <input type="datetime-local" name="at" required dir="ltr"></label>
+        <button type="submit">@T["Cms.Action.unpublish-schedule"]</button>
+    </form>
+    @foreach (var operation in new[] { "unpublish", "archive", "url-resolution" })
+    {
+        <form method="post" asp-action="Lifecycle" asp-route-id="@c.Id">
+            <input type="hidden" name="version" value="@c.Version">
+            <input type="hidden" name="operation" value="@operation">
+            <label>@T["Cms.Content.UrlResolution"]
+                <select name="resolution">
+                    @foreach (var resolution in CmsOptions.OfflineResolutions)
+                    {
+                        <option value="@resolution">@resolution</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Cms.Content.RedirectTo"] <input name="redirectTo" dir="ltr"></label>
+            <button type="submit">@T["Cms.Action." + operation]</button>
+        </form>
+    }
+</section>
+
+<section>
+    <h2>@T["Cms.Content.Preview"]</h2>
+    @if (Model.PreviewLink is { } link)
+    {
+        var url = $"/{link.LanguageCode}/preview?token={Uri.EscapeDataString(link.Token)}";
+        <p><a href="@url" target="_blank" rel="noopener noreferrer" dir="ltr" class="wrap">@url</a></p>
+        <p class="hint">@T["Cms.Content.PreviewExpires"] <partial name="_Utc" model="(DateTimeOffset?)link.ExpiresAtUtc" /></p>
+    }
+    @foreach (var language in CmsOptions.Languages)
+    {
+        <form method="post" asp-action="Preview" asp-route-id="@c.Id" asp-route-languageCode="@language" class="inline">
+            <button type="submit">@T["Cms.Content.CreatePreview"] (@language)</button>
+        </form>
+    }
+</section>
+
+<section>
+    <h2>@T["Cms.Content.Settings"]</h2>
+    <form method="post" asp-action="Settings" asp-route-id="@c.Id">
+        <input type="hidden" name="version" value="@c.Version">
+        <label>@T["Cms.Content.Parent"] <input name="parentId" value="@c.ParentId" dir="ltr"></label>
+        <label>@T["Cms.Key"] <input name="key" value="@c.Key" dir="ltr" maxlength="100"></label>
+        <label>@T["Cms.Content.Presentation"]
+            <select name="presentation">
+                @foreach (var presentation in CmsOptions.Presentations)
+                {
+                    <option value="@presentation" selected="@(c.Presentation == presentation)">@presentation</option>
+                }
+            </select>
+        </label>
+        <label>@T["Cms.SortOrder"] <input type="number" name="sortOrder" value="@c.SortOrder"></label>
+        <label>@T["Cms.Content.PrimaryCta"] <input name="primaryCtaId" value="@c.PrimaryCtaId" dir="ltr"></label>
+        <label>@T["Cms.Content.FeaturedImage"] <input name="featuredImageId" value="@c.FeaturedImageId" dir="ltr"></label>
+        <button type="submit">@T["Cms.Save"]</button>
+    </form>
+</section>
+
+<section>
+    <h2>@T["Cms.Content.DeletePermanent"]</h2>
+    <p class="hint">@T["Cms.Content.DeleteHint"]</p>
+    <form method="post" asp-action="Delete" asp-route-id="@c.Id">
+        <input type="hidden" name="version" value="@c.Version">
+        <label>@T["Cms.Content.DeleteConfirm"] <input name="confirmation" required dir="ltr" autocomplete="off"></label>
+        <button type="submit">@T["Cms.Delete"]</button>
+    </form>
+</section>

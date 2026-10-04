@@ -1,0 +1,16 @@
+using Onyx.Contracts.Common;
+using Onyx.Contracts.Content;
+using Onyx.Contracts.Intelligence;
+
+namespace Onyx.Contracts.Knowledge;
+
+public sealed record InformationRequestResponse(
+    Guid Id,
+    string Question,
+    string? Context,
+    Guid? ContentItemId,
+    string Status,
+    Guid? KnowledgeEntryId,
+    string? ResolutionNote,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? ResolvedAtUtc);

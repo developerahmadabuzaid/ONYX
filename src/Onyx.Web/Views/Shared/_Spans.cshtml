@@ -1,0 +1,41 @@
+@model IReadOnlyList<Onyx.Contracts.Content.PublicSpanResponse>
+@* Plain-text spans: every value is HTML-encoded; there is no raw HTML in CMS content. *@
+@foreach (var span in Model)
+{
+    if (span.Href is not null)
+    {
+        var href = span.IsExternal ? span.Href : SitePaths.Encode(span.Href);
+        if (span.IsExternal)
+        {
+            <a href="@href" rel="noopener noreferrer external">@Emphasized(span)</a>
+        }
+        else
+        {
+            <a href="@href">@Emphasized(span)</a>
+        }
+    }
+    else
+    {
+        @Emphasized(span)
+    }
+}
+@functions {
+    private Microsoft.AspNetCore.Html.IHtmlContent Emphasized(Onyx.Contracts.Content.PublicSpanResponse span)
+    {
+        var builder = new Microsoft.AspNetCore.Html.HtmlContentBuilder();
+        switch (span.Emphasis)
+        {
+            case "Strong":
+                builder.AppendHtml("<strong>").Append(span.Text).AppendHtml("</strong>");
+                break;
+            case "Emphasis":
+                builder.AppendHtml("<em>").Append(span.Text).AppendHtml("</em>");
+                break;
+            default:
+                builder.Append(span.Text);
+                break;
+        }
+
+        return builder;
+    }
+}

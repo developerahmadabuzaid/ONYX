@@ -10,14 +10,15 @@ namespace Onyx.Infrastructure.Email;
 /// Wraps template content in the shared, neutral email layout (visual email design is deferred with the design stage).
 /// Every dynamic value is HTML-encoded; direction and alignment follow the language (RTL for Arabic).
 /// </summary>
-public sealed class EmailTemplateRenderer(IEnumerable<IEmailTemplate> templates) : IEmailTemplateRenderer
+public sealed class EmailTemplateRenderer(IEnumerable<IEmailTemplate> templates, IEmailTemplateCopyRepository copies) : IEmailTemplateRenderer
 {
     private const string BrandName = "Onyx Vanguard Solutions";
     private static readonly HashSet<string> RightToLeftLanguages = new(StringComparer.Ordinal) { "ar" };
 
     private readonly Dictionary<string, IEmailTemplate> _templates = templates.ToDictionary(template => template.Key, StringComparer.Ordinal);
 
-    public Result<RenderedEmail> Render(string templateKey, string languageCode, IReadOnlyDictionary<string, string> model)
+    public async Task<Result<RenderedEmail>> RenderAsync(
+        string templateKey, string languageCode, IReadOnlyDictionary<string, string> model, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(model);
 
@@ -37,7 +38,11 @@ public sealed class EmailTemplateRenderer(IEnumerable<IEmailTemplate> templates)
             return Error.Validation("Email.MissingValues", $"Missing template values: {string.Join(", ", missing)}.");
         }
 
-        var content = template.Compose(languageCode, model);
+        // Admin-edited wording replaces only the text; the action URL still comes from the template's code.
+        var content = template is IEditableEmailTemplate editable
+            && await copies.FindAsync(templateKey, languageCode, cancellationToken).ConfigureAwait(false) is { } custom
+            ? EditableEmail.Compose(editable, new EmailCopy(custom.Subject, custom.Heading, custom.Paragraphs, custom.ActionLabel, custom.Footer), model)
+            : template.Compose(languageCode, model);
         if (content.Action is { } action && !IsAllowedLink(action.Url))
         {
             return Error.Validation("Email.UnsafeLink", "Email links must be absolute https URLs.");

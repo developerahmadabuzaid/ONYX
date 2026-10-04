@@ -1,0 +1,95 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model KnowledgeListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Knowledge";
+}
+<h1>@T["Nav.Knowledge"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Knowledge.Hint"]</p>
+<details>
+    <summary>@T["Cms.Intelligence.Rules"]</summary>
+    <ol>
+        @foreach (var rule in Model.Rules.Rules)
+        {
+            <li>@rule</li>
+        }
+    </ol>
+</details>
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Status"]
+        <select name="status">
+            <option value="">—</option>
+            @foreach (var option in CmsOptions.KnowledgeStatuses)
+            {
+                <option value="@option" selected="@(Model.Status == option)">@option</option>
+            }
+        </select>
+    </label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+@foreach (var entry in Model.Entries)
+{
+    var ar = entry.Statements.FirstOrDefault(s => s.LanguageCode == "ar")?.Text;
+    var en = entry.Statements.FirstOrDefault(s => s.LanguageCode == "en")?.Text;
+    <details>
+        <summary>@entry.Title <span dir="ltr">(@entry.Category · @entry.Status)</span></summary>
+        <form method="post" asp-action="Update" asp-route-id="@entry.Id">
+            <input type="hidden" name="version" value="@entry.Version">
+            <partial name="_KnowledgeFields" model="(entry.Category, entry.Title, ar, en, entry.SourceNote)" />
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+        <p class="hint">@T["Cms.Knowledge.Verified"]: <partial name="_Utc" model="entry.VerifiedAtUtc" /></p>
+        <form method="post" asp-action="Decide" asp-route-id="@entry.Id" class="inline">
+            <input type="hidden" name="version" value="@entry.Version">
+            <button type="submit" name="operation" value="approve">@T["Cms.Action.approve"]</button>
+            <button type="submit" name="operation" value="retire">@T["Cms.Knowledge.Retire"]</button>
+        </form>
+    </details>
+}
+<h2>@T["Cms.Knowledge.Create"]</h2>
+<form method="post" asp-action="Create">
+    <partial name="_KnowledgeFields" model="((string?)null, (string?)null, (string?)null, (string?)null, (string?)null)" />
+    <button type="submit">@T["Cms.Create"]</button>
+</form>
+
+<h2>@T["Cms.Knowledge.Requests"]</h2>
+<p class="hint">@T["Cms.Knowledge.RequestsHint"]</p>
+<ul>
+    @foreach (var request in Model.InformationRequests)
+    {
+        <li>
+            <strong dir="auto">@request.Question</strong> <span dir="ltr">(@request.Status)</span>
+            @if (!string.IsNullOrEmpty(request.Context))
+            {
+                <p>@request.Context</p>
+            }
+            @if (!string.IsNullOrEmpty(request.ResolutionNote))
+            {
+                <p>@request.ResolutionNote</p>
+            }
+            @if (request.Status == "Open")
+            {
+                <form method="post" asp-action="Resolve" asp-route-id="@request.Id">
+                    <label>@T["Cms.Knowledge.Outcome"]
+                        <select name="outcome">
+                            @foreach (var outcome in CmsOptions.InformationOutcomes)
+                            {
+                                <option value="@outcome">@outcome</option>
+                            }
+                        </select>
+                    </label>
+                    <label>@T["Cms.Knowledge.Entry"] <input name="knowledgeEntryId" dir="ltr"></label>
+                    <label>@T["Cms.Note"] <input name="note" maxlength="1000"></label>
+                    <button type="submit">@T["Cms.Save"]</button>
+                </form>
+            }
+        </li>
+    }
+</ul>
+<form method="post" asp-action="Raise">
+    <label>@T["Cms.Knowledge.Question"] <input name="question" required maxlength="500"></label>
+    <label>@T["Cms.Knowledge.Context"] <textarea name="context" rows="2" maxlength="2000"></textarea></label>
+    <label>@T["Cms.Recommendation.Content"] <input name="contentItemId" dir="ltr"></label>
+    <button type="submit">@T["Cms.Knowledge.Raise"]</button>
+</form>

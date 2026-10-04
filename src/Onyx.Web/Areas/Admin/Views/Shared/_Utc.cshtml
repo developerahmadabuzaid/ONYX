@@ -1,0 +1,9 @@
+@model DateTimeOffset?
+@if (Model is { } value)
+{
+    <time datetime="@value.ToString("O", System.Globalization.CultureInfo.InvariantCulture)" dir="ltr">@value.UtcDateTime.ToString("yyyy-MM-dd HH:mm", System.Globalization.CultureInfo.InvariantCulture) UTC</time>
+}
+else
+{
+    <span>—</span>
+}

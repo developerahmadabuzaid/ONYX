@@ -1,0 +1,52 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model ContentEditorViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var form = Model.Seo!;
+    var dir = Model.LanguageCode == "ar" ? "rtl" : "ltr";
+}
+<partial name="_ContentNav" model="Model.Content" />
+<h2>@T["Cms.Content.Seo"] (@Model.LanguageCode)</h2>
+<p class="hint">@T["Cms.Seo.Honesty"]</p>
+<form method="post" asp-action="Seo" asp-route-id="@Model.Content.Id" asp-route-languageCode="@Model.LanguageCode" lang="@Model.LanguageCode" dir="@dir">
+    <input type="hidden" name="Version" value="@form.Version">
+    <label>@T["Cms.Seo.PrimaryKeyword"] <input name="PrimaryKeyword" value="@form.PrimaryKeyword" maxlength="100"></label>
+    <label>@T["Cms.Seo.SecondaryKeywords"] <textarea name="SecondaryKeywords" rows="3">@form.SecondaryKeywords</textarea></label>
+    <label>@T["Cms.Seo.SearchIntent"]
+        <select name="SearchIntent">
+            @foreach (var intent in CmsOptions.SearchIntents)
+            {
+                <option value="@intent" selected="@(form.SearchIntent == intent)">@intent</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Seo.MetaTitle"] <input name="MetaTitle" value="@form.MetaTitle" maxlength="120"></label>
+    <label>@T["Cms.Seo.MetaDescription"] <textarea name="MetaDescription" rows="3" maxlength="320">@form.MetaDescription</textarea></label>
+    <label>@T["Cms.Seo.CanonicalPath"] <input name="CanonicalPath" value="@form.CanonicalPath" dir="ltr" maxlength="400"></label>
+    <label><input type="checkbox" name="Index" value="true" checked="@form.Index"> index</label>
+    <label><input type="checkbox" name="Follow" value="true" checked="@form.Follow"> follow</label>
+    <input type="hidden" name="Index" value="false">
+    <input type="hidden" name="Follow" value="false">
+    <fieldset>
+        <legend>@T["Cms.Seo.StructuredData"]</legend>
+        @foreach (var type in CmsOptions.StructuredDataTypes)
+        {
+            <label dir="ltr"><input type="checkbox" name="StructuredData" value="@type" checked="@form.StructuredData.Contains(type)"> @type</label>
+        }
+    </fieldset>
+    <label>@T["Cms.Seo.OpenGraphTitle"] <input name="OpenGraphTitle" value="@form.OpenGraphTitle" maxlength="120"></label>
+    <label>@T["Cms.Seo.OpenGraphDescription"] <textarea name="OpenGraphDescription" rows="2" maxlength="320">@form.OpenGraphDescription</textarea></label>
+    <label>@T["Cms.Seo.OpenGraphImage"] <input name="OpenGraphImageId" value="@form.OpenGraphImageId" dir="ltr"></label>
+    <label>@T["Cms.Seo.TargetMarket"] <input name="TargetMarket" value="@form.TargetMarket" dir="ltr" maxlength="10"></label>
+    <label>@T["Cms.Status"]
+        <select name="Status">
+            @foreach (var status in CmsOptions.SeoStatuses)
+            {
+                <option value="@status" selected="@(form.Status == status)">@status</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Notes"] <textarea name="Notes" rows="3" maxlength="2000">@form.Notes</textarea></label>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>

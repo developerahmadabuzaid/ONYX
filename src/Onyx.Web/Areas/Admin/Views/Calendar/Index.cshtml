@@ -1,0 +1,81 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Intelligence
+@using Onyx.Web.Areas.Admin.Cms
+@model PagedResult<CalendarEntryResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Calendar";
+    var status = ViewData["Status"] as string;
+}
+<h1>@T["Nav.Calendar"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Calendar.Hint"]</p>
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Status"]
+        <select name="status">
+            <option value="">—</option>
+            @foreach (var option in CmsOptions.CalendarStatuses)
+            {
+                <option value="@option" selected="@(status == option)">@option</option>
+            }
+        </select>
+    </label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+@foreach (var entry in Model.Items)
+{
+    <section>
+        <h2 dir="auto">@entry.Topic</h2>
+        <p class="hint" dir="ltr">@entry.LanguageCode @entry.TargetMarket · @entry.Status · @entry.Origin · @entry.SearchIntent · @entry.Keyword</p>
+        <p>@T["Cms.Calendar.ProposedAt"]: <partial name="_Utc" model="entry.ProposedPublishAtUtc" /> <span dir="ltr">(@entry.TimingBasis)</span></p>
+        @if (!string.IsNullOrEmpty(entry.Reason))
+        {
+            <p>@entry.Reason</p>
+        }
+        <partial name="_Evidence" model="entry.Evidence" />
+        @if (entry.LinkedContentItemId is { } linked)
+        {
+            <p><a asp-controller="Content" asp-action="Overview" asp-route-id="@linked">@T["Cms.Recommendation.Content"]</a></p>
+        }
+        <form method="post" asp-action="Decide" asp-route-id="@entry.Id">
+            <input type="hidden" name="version" value="@entry.Version">
+            <label>@T["Cms.Note"] <input name="note" maxlength="1000"></label>
+            @foreach (var operation in new[] { "accept", "reject", "complete" })
+            {
+                <button type="submit" name="operation" value="@operation">@T["Cms.Calendar." + operation]</button>
+            }
+        </form>
+        <form method="post" asp-action="Link" asp-route-id="@entry.Id">
+            <input type="hidden" name="version" value="@entry.Version">
+            <label>@T["Cms.Calendar.LinkContent"] <input name="contentItemId" required dir="ltr"></label>
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+    </section>
+}
+<h2>@T["Cms.Calendar.Propose"]</h2>
+<form method="post" asp-action="Propose">
+    <label>@T["Cms.Calendar.Topic"] <input name="topic" required maxlength="300"></label>
+    <label>@T["Cms.Language"]
+        <select name="languageCode">
+            @foreach (var language in CmsOptions.Languages)
+            {
+                <option value="@language">@language</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Seo.TargetMarket"] <input name="targetMarket" dir="ltr" maxlength="10"></label>
+    <label>@T["Cms.Calendar.TargetService"] <input name="targetServiceId" dir="ltr"></label>
+    <label>@T["Nav.Clusters"] <input name="clusterId" dir="ltr"></label>
+    <label>@T["Cms.Keyword"] <input name="keyword" maxlength="100"></label>
+    <label>@T["Cms.Seo.SearchIntent"]
+        <select name="searchIntent">
+            @foreach (var intent in CmsOptions.SearchIntents)
+            {
+                <option value="@intent">@intent</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Recommendation.Reasoning"] <textarea name="reason" rows="3" maxlength="2000"></textarea></label>
+    <label>@T["Cms.Calendar.ProposedAt"] (UTC) <input type="datetime-local" name="proposedPublishAt" dir="ltr"></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

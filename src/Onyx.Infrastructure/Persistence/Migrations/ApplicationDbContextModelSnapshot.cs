@@ -223,6 +223,1781 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                     b.ToTable("audit_logs", (string)null);
                 });
 
+            modelBuilder.Entity("Onyx.Domain.Brand.BrandKit", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AllowBrandingOnFeaturedImages")
+                        .HasColumnType("boolean")
+                        .HasColumnName("allow_branding_on_featured_images");
+
+                    b.Property<bool>("AllowBrandingOnSocialImages")
+                        .HasColumnType("boolean")
+                        .HasColumnName("allow_branding_on_social_images");
+
+                    b.Property<string>("Colors")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("colors");
+
+                    b.Property<string>("CompanyEmail")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("company_email");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("ImageGenerationNotes")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("image_generation_notes");
+
+                    b.Property<Guid?>("OfficialLogoMediaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("official_logo_media_id");
+
+                    b.Property<string>("Typefaces")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("typefaces");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<string>("WebsiteUrl")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("website_url");
+
+                    b.HasKey("Id")
+                        .HasName("pk_brand_kits");
+
+                    b.HasIndex("OfficialLogoMediaId")
+                        .HasDatabaseName("ix_brand_kits_official_logo_media_id");
+
+                    b.ToTable("brand_kits", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.CallToAction", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActionType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("action_type");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("key");
+
+                    b.Property<string>("TargetUrl")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("target_url");
+
+                    b.Property<string>("Texts")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("texts");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_call_to_actions");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasDatabaseName("ix_call_to_actions_key");
+
+                    b.ToTable("call_to_actions", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentCluster", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("description");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_clusters");
+
+                    b.ToTable("content_clusters", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentClusterMember", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ClusterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cluster_id");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("role");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_cluster_members");
+
+                    b.HasIndex("ContentItemId")
+                        .HasDatabaseName("ix_content_cluster_members_content_item_id");
+
+                    b.HasIndex("ClusterId", "ContentItemId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_cluster_members_cluster_id_content_item_id");
+
+                    b.ToTable("content_cluster_members", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("ApprovedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("approved_at_utc");
+
+                    b.Property<Guid?>("ApprovedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("approved_by_id");
+
+                    b.Property<Guid?>("ApprovedRevisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("approved_revision_id");
+
+                    b.Property<DateTimeOffset?>("ArchivedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("archived_at_utc");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<int>("CurrentRevisionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("current_revision_number");
+
+                    b.Property<Guid?>("FeaturedImageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("featured_image_id");
+
+                    b.Property<DateTimeOffset?>("FirstPublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_published_at_utc");
+
+                    b.Property<string>("Key")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("key");
+
+                    b.Property<DateTimeOffset?>("LastPublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_published_at_utc");
+
+                    b.Property<Guid?>("LiveRevisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("live_revision_id");
+
+                    b.Property<Guid?>("OfflineRedirectToId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("offline_redirect_to_id");
+
+                    b.Property<string>("OfflineResolution")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("offline_resolution");
+
+                    b.Property<Guid?>("ParentId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("parent_id");
+
+                    b.Property<string>("Presentation")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("presentation");
+
+                    b.Property<Guid?>("PrimaryCtaId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("primary_cta_id");
+
+                    b.Property<string>("ReviewNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("review_note");
+
+                    b.Property<string>("ScheduleTimeZone")
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("schedule_time_zone");
+
+                    b.Property<DateTimeOffset?>("ScheduledPublishAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("scheduled_publish_at_utc");
+
+                    b.Property<DateTimeOffset?>("ScheduledUnpublishAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("scheduled_unpublish_at_utc");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("SubmittedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("submitted_at_utc");
+
+                    b.Property<Guid?>("SubmittedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("submitted_by_id");
+
+                    b.Property<Guid?>("SubmittedRevisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("submitted_revision_id");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_items");
+
+                    b.HasIndex("FeaturedImageId")
+                        .HasDatabaseName("ix_content_items_featured_image_id");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_items_key")
+                        .HasFilter("key IS NOT NULL");
+
+                    b.HasIndex("LiveRevisionId")
+                        .HasDatabaseName("ix_content_items_live_revision_id")
+                        .HasFilter("live_revision_id IS NOT NULL");
+
+                    b.HasIndex("OfflineRedirectToId")
+                        .HasDatabaseName("ix_content_items_offline_redirect_to_id");
+
+                    b.HasIndex("OfflineResolution")
+                        .HasDatabaseName("ix_content_items_offline_resolution")
+                        .HasFilter("offline_resolution = 'PendingDecision'");
+
+                    b.HasIndex("ParentId")
+                        .HasDatabaseName("ix_content_items_parent_id");
+
+                    b.HasIndex("PrimaryCtaId")
+                        .HasDatabaseName("ix_content_items_primary_cta_id");
+
+                    b.HasIndex("ScheduledUnpublishAtUtc")
+                        .HasDatabaseName("ix_content_items_scheduled_unpublish_at_utc")
+                        .HasFilter("scheduled_unpublish_at_utc IS NOT NULL");
+
+                    b.HasIndex("Status", "ScheduledPublishAtUtc")
+                        .HasDatabaseName("ix_content_items_status_scheduled_publish_at_utc")
+                        .HasFilter("scheduled_publish_at_utc IS NOT NULL");
+
+                    b.HasIndex("Type", "Status")
+                        .HasDatabaseName("ix_content_items_type_status");
+
+                    b.ToTable("content_items", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentPath", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<bool>("IsCurrent")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_current");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("path");
+
+                    b.Property<DateTimeOffset?>("RetiredAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("retired_at_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_paths");
+
+                    b.HasIndex("ContentItemId", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_paths_content_item_id_language_code")
+                        .HasFilter("is_current");
+
+                    b.HasIndex("LanguageCode", "Path")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_paths_language_code_path");
+
+                    b.ToTable("content_paths", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentPreviewToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTimeOffset>("ExpiresAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("expires_at_utc");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<DateTimeOffset?>("RevokedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("revoked_at_utc");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .HasColumnName("token_hash")
+                        .IsFixedLength();
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_preview_tokens");
+
+                    b.HasIndex("ContentItemId")
+                        .HasDatabaseName("ix_content_preview_tokens_content_item_id");
+
+                    b.HasIndex("ExpiresAtUtc")
+                        .HasDatabaseName("ix_content_preview_tokens_expires_at_utc");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_preview_tokens_token_hash");
+
+                    b.ToTable("content_preview_tokens", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentRelation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid>("FromContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("from_content_item_id");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("note");
+
+                    b.Property<int>("Position")
+                        .HasColumnType("integer")
+                        .HasColumnName("position");
+
+                    b.Property<Guid>("ToContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("to_content_item_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_relations");
+
+                    b.HasIndex("ToContentItemId")
+                        .HasDatabaseName("ix_content_relations_to_content_item_id");
+
+                    b.HasIndex("FromContentItemId", "ToContentItemId", "Kind")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_relations_from_content_item_id_to_content_item_id_k~");
+
+                    b.ToTable("content_relations", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentRevision", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .HasColumnName("content_hash")
+                        .IsFixedLength();
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
+                    b.Property<int>("Number")
+                        .HasColumnType("integer")
+                        .HasColumnName("number");
+
+                    b.Property<Guid?>("RestoredFromRevisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("restored_from_revision_id");
+
+                    b.Property<string>("Snapshot")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("snapshot");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_revisions");
+
+                    b.HasIndex("ContentItemId", "Number")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_revisions_content_item_id_number");
+
+                    b.ToTable("content_revisions", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Body")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("body");
+
+                    b.Property<string>("CanonicalPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("canonical_path");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Faqs")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("faqs");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("MetaDescription")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasColumnName("meta_description");
+
+                    b.Property<string>("MetaTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("meta_title");
+
+                    b.Property<string>("OpenGraphDescription")
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasColumnName("open_graph_description");
+
+                    b.Property<Guid?>("OpenGraphImageId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("open_graph_image_id");
+
+                    b.Property<string>("OpenGraphTitle")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("open_graph_title");
+
+                    b.Property<string>("PrimaryKeyword")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("primary_keyword");
+
+                    b.Property<string>("PrimaryKeywordNormalized")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("primary_keyword_normalized");
+
+                    b.Property<bool>("RobotsFollow")
+                        .HasColumnType("boolean")
+                        .HasColumnName("robots_follow");
+
+                    b.Property<bool>("RobotsIndex")
+                        .HasColumnType("boolean")
+                        .HasColumnName("robots_index");
+
+                    b.Property<string>("SearchIntent")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("search_intent");
+
+                    b.Property<string>("SecondaryKeywords")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("secondary_keywords");
+
+                    b.Property<string>("SeoNotes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("seo_notes");
+
+                    b.Property<string>("SeoStatus")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("seo_status");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("SlugScope")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character varying(64)")
+                        .HasColumnName("slug_scope");
+
+                    b.Property<string>("StructuredData")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("structured_data");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("summary");
+
+                    b.Property<string>("TargetMarket")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("target_market");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_translations");
+
+                    b.HasIndex("OpenGraphImageId")
+                        .HasDatabaseName("ix_content_translations_open_graph_image_id");
+
+                    b.HasIndex("ContentItemId", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_translations_content_item_id_language_code");
+
+                    b.HasIndex("LanguageCode", "MetaTitle")
+                        .HasDatabaseName("ix_content_translations_language_code_meta_title")
+                        .HasFilter("meta_title IS NOT NULL");
+
+                    b.HasIndex("LanguageCode", "PrimaryKeywordNormalized")
+                        .HasDatabaseName("ix_content_translations_language_code_primary_keyword_normaliz~")
+                        .HasFilter("primary_keyword_normalized IS NOT NULL");
+
+                    b.HasIndex("LanguageCode", "SlugScope", "Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_content_translations_language_code_slug_scope_slug");
+
+                    b.ToTable("content_translations", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.CtaDefault", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("CallToActionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("call_to_action_id");
+
+                    b.Property<string>("ContentType")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("content_type");
+
+                    b.HasKey("Id")
+                        .HasName("pk_cta_defaults");
+
+                    b.HasIndex("CallToActionId")
+                        .HasDatabaseName("ix_cta_defaults_call_to_action_id");
+
+                    b.HasIndex("ContentType")
+                        .IsUnique()
+                        .HasDatabaseName("ix_cta_defaults_content_type");
+
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("ContentType"), false);
+
+                    b.ToTable("cta_defaults", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.Redirect", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("FromPath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("from_path");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("note");
+
+                    b.Property<Guid?>("TargetContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_content_item_id");
+
+                    b.Property<string>("TargetPath")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("target_path");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_redirects");
+
+                    b.HasIndex("TargetContentItemId")
+                        .HasDatabaseName("ix_redirects_target_content_item_id")
+                        .HasFilter("target_content_item_id IS NOT NULL");
+
+                    b.HasIndex("LanguageCode", "FromPath")
+                        .IsUnique()
+                        .HasDatabaseName("ix_redirects_language_code_from_path");
+
+                    b.ToTable("redirects", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.CompetitorReference", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Domain")
+                        .IsRequired()
+                        .HasMaxLength(253)
+                        .HasColumnType("character varying(253)")
+                        .HasColumnName("domain");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_active");
+
+                    b.Property<string>("Languages")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("languages");
+
+                    b.Property<string>("Markets")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("markets");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("name");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("Topics")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("topics");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_competitor_references");
+
+                    b.HasIndex("Domain")
+                        .IsUnique()
+                        .HasDatabaseName("ix_competitor_references_domain");
+
+                    b.ToTable("competitor_references", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.ContentCalendarEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ClusterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cluster_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTimeOffset?>("DecidedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("decided_at_utc");
+
+                    b.Property<Guid?>("DecidedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("decided_by_id");
+
+                    b.Property<string>("DecisionNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("decision_note");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("evidence");
+
+                    b.Property<string>("Keyword")
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("keyword");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<Guid?>("LinkedContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("linked_content_item_id");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("origin");
+
+                    b.Property<DateTimeOffset?>("ProposedPublishAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("proposed_publish_at_utc");
+
+                    b.Property<string>("Reason")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("reason");
+
+                    b.Property<string>("SearchIntent")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("search_intent");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("SupportingContentIds")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("supporting_content_ids");
+
+                    b.Property<string>("TargetMarket")
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("target_market");
+
+                    b.Property<Guid?>("TargetServiceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_service_id");
+
+                    b.Property<string>("TimingBasis")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("timing_basis");
+
+                    b.Property<string>("Topic")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("topic");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_calendar_entries");
+
+                    b.HasIndex("ClusterId")
+                        .HasDatabaseName("ix_content_calendar_entries_cluster_id");
+
+                    b.HasIndex("LinkedContentItemId")
+                        .HasDatabaseName("ix_content_calendar_entries_linked_content_item_id");
+
+                    b.HasIndex("TargetServiceId")
+                        .HasDatabaseName("ix_content_calendar_entries_target_service_id");
+
+                    b.HasIndex("Status", "ProposedPublishAtUtc")
+                        .HasDatabaseName("ix_content_calendar_entries_status_proposed_publish_at_utc");
+
+                    b.ToTable("content_calendar_entries", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.ContentPerformanceSnapshot", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CollectedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("collected_at_utc");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Metrics")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("metrics");
+
+                    b.Property<DateTimeOffset>("PeriodEndUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("period_end_utc");
+
+                    b.Property<DateTimeOffset>("PeriodStartUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("period_start_utc");
+
+                    b.Property<string>("Source")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("source");
+
+                    b.HasKey("Id")
+                        .HasName("pk_content_performance_snapshots");
+
+                    b.HasIndex("ContentItemId", "LanguageCode", "PeriodEndUtc")
+                        .HasDatabaseName("ix_content_performance_snapshots_content_item_id_language_code~");
+
+                    b.ToTable("content_performance_snapshots", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.KeywordTarget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ClusterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cluster_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Keyword")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("keyword");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("NormalizedKeyword")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("normalized_keyword");
+
+                    b.Property<string>("Notes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("notes");
+
+                    b.Property<string>("SearchIntent")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("search_intent");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<Guid?>("TargetContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("target_content_item_id");
+
+                    b.Property<string>("TargetMarket")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("character varying(2)")
+                        .HasColumnName("target_market");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_keyword_targets");
+
+                    b.HasIndex("ClusterId")
+                        .HasDatabaseName("ix_keyword_targets_cluster_id");
+
+                    b.HasIndex("TargetContentItemId")
+                        .HasDatabaseName("ix_keyword_targets_target_content_item_id");
+
+                    b.HasIndex("LanguageCode", "NormalizedKeyword", "TargetMarket")
+                        .IsUnique()
+                        .HasDatabaseName("ix_keyword_targets_language_code_normalized_keyword_target_mar~");
+
+                    b.ToTable("keyword_targets", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.SeoChangeObservation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Assessment")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("assessment");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("evidence");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("Note")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("note");
+
+                    b.Property<Guid>("RecommendationId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("recommendation_id");
+
+                    b.Property<DateTimeOffset>("RecordedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("recorded_at_utc");
+
+                    b.HasKey("Id")
+                        .HasName("pk_seo_change_observations");
+
+                    b.HasIndex("RecommendationId", "RecordedAtUtc")
+                        .HasDatabaseName("ix_seo_change_observations_recommendation_id_recorded_at_utc");
+
+                    b.ToTable("seo_change_observations", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.SeoRecommendation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("AppliedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("applied_at_utc");
+
+                    b.Property<int?>("AppliedRevisionNumber")
+                        .HasColumnType("integer")
+                        .HasColumnName("applied_revision_number");
+
+                    b.Property<string>("Basis")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("basis");
+
+                    b.Property<Guid?>("ClusterId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("cluster_id");
+
+                    b.Property<Guid?>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTimeOffset?>("DecidedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("decided_at_utc");
+
+                    b.Property<Guid?>("DecidedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("decided_by_id");
+
+                    b.Property<string>("DecisionNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("decision_note");
+
+                    b.Property<string>("DetectedIssue")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("detected_issue");
+
+                    b.Property<string>("Evidence")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("evidence");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("LanguageCode")
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Origin")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("origin");
+
+                    b.Property<string>("ProposedChanges")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("proposed_changes");
+
+                    b.Property<string>("Reasoning")
+                        .HasMaxLength(4000)
+                        .HasColumnType("character varying(4000)")
+                        .HasColumnName("reasoning");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_seo_recommendations");
+
+                    b.HasIndex("ClusterId")
+                        .HasDatabaseName("ix_seo_recommendations_cluster_id");
+
+                    b.HasIndex("Status", "CreatedAtUtc")
+                        .HasDatabaseName("ix_seo_recommendations_status_created_at_utc");
+
+                    b.HasIndex("ContentItemId", "Kind", "LanguageCode")
+                        .HasDatabaseName("ix_seo_recommendations_content_item_id_kind_language_code");
+
+                    b.ToTable("seo_recommendations", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Knowledge.InformationRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid?>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<string>("Context")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("context");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<Guid?>("KnowledgeEntryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("knowledge_entry_id");
+
+                    b.Property<string>("Question")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("question");
+
+                    b.Property<string>("ResolutionNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("resolution_note");
+
+                    b.Property<DateTimeOffset?>("ResolvedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("resolved_at_utc");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_information_requests");
+
+                    b.HasIndex("ContentItemId")
+                        .HasDatabaseName("ix_information_requests_content_item_id");
+
+                    b.HasIndex("KnowledgeEntryId")
+                        .HasDatabaseName("ix_information_requests_knowledge_entry_id");
+
+                    b.HasIndex("Status")
+                        .HasDatabaseName("ix_information_requests_status");
+
+                    b.ToTable("information_requests", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Knowledge.KnowledgeEntry", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("SourceNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("source_note");
+
+                    b.Property<string>("Statements")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("statements");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<DateTimeOffset?>("VerifiedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("verified_at_utc");
+
+                    b.Property<Guid?>("VerifiedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("verified_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_knowledge_entries");
+
+                    b.HasIndex("Status", "Category")
+                        .HasDatabaseName("ix_knowledge_entries_status_category");
+
+                    b.ToTable("knowledge_entries", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Media.MediaAsset", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("content_type");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Extension")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("extension");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("integer")
+                        .HasColumnName("height");
+
+                    b.Property<string>("Kind")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("kind");
+
+                    b.Property<string>("OriginalFileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("original_file_name");
+
+                    b.Property<string>("Sha256")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .HasColumnName("sha256")
+                        .IsFixedLength();
+
+                    b.Property<long>("SizeBytes")
+                        .HasColumnType("bigint")
+                        .HasColumnName("size_bytes");
+
+                    b.Property<string>("StorageKey")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasColumnName("storage_key");
+
+                    b.Property<string>("Texts")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("texts");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("integer")
+                        .HasColumnName("width");
+
+                    b.HasKey("Id")
+                        .HasName("pk_media_assets");
+
+                    b.HasIndex("CreatedAtUtc")
+                        .HasDatabaseName("ix_media_assets_created_at_utc");
+
+                    b.HasIndex("Sha256")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_assets_sha256");
+
+                    b.HasIndex("StorageKey")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_assets_storage_key");
+
+                    b.ToTable("media_assets", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Media.MediaUsage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<string>("Context")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("context");
+
+                    b.Property<bool>("IsLive")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_live");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<Guid>("MediaAssetId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("media_asset_id");
+
+                    b.HasKey("Id")
+                        .HasName("pk_media_usages");
+
+                    b.HasIndex("ContentItemId")
+                        .HasDatabaseName("ix_media_usages_content_item_id");
+
+                    b.HasIndex("MediaAssetId", "ContentItemId", "LanguageCode", "Context", "IsLive")
+                        .IsUnique()
+                        .HasDatabaseName("ix_media_usages_media_asset_id_content_item_id_language_code_c~");
+
+                    b.ToTable("media_usages", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Messaging.EmailTemplateCopy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("ActionLabel")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("action_label");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Footer")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("footer");
+
+                    b.Property<string>("Heading")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("heading");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Paragraphs")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("paragraphs");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("subject");
+
+                    b.Property<string>("TemplateKey")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("template_key");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_email_template_copies");
+
+                    b.HasIndex("TemplateKey", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_email_template_copies_template_key_language_code");
+
+                    b.ToTable("email_template_copies", (string)null);
+                });
+
             modelBuilder.Entity("Onyx.Domain.Notifications.AdminNotification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1074,6 +2849,244 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_user_tokens_users_user_id");
                 });
 
+            modelBuilder.Entity("Onyx.Domain.Brand.BrandKit", b =>
+                {
+                    b.HasOne("Onyx.Domain.Media.MediaAsset", null)
+                        .WithMany()
+                        .HasForeignKey("OfficialLogoMediaId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_brand_kits_media_assets_official_logo_media_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentClusterMember", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentCluster", null)
+                        .WithMany("Members")
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_cluster_members_content_clusters_cluster_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_cluster_members_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentItem", b =>
+                {
+                    b.HasOne("Onyx.Domain.Media.MediaAsset", null)
+                        .WithMany()
+                        .HasForeignKey("FeaturedImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_content_items_media_assets_featured_image_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("OfflineRedirectToId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_content_items_content_items_offline_redirect_to_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ParentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_content_items_content_items_parent_id");
+
+                    b.HasOne("Onyx.Domain.Content.CallToAction", null)
+                        .WithMany()
+                        .HasForeignKey("PrimaryCtaId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_content_items_call_to_actions_primary_cta_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentPath", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_paths_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentPreviewToken", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_preview_tokens_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentRelation", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("FromContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_relations_content_items_from_content_item_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ToContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_relations_content_items_to_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentRevision", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_revisions_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentTranslation", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_translations_content_items_content_item_id");
+
+                    b.HasOne("Onyx.Domain.Media.MediaAsset", null)
+                        .WithMany()
+                        .HasForeignKey("OpenGraphImageId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_content_translations_media_assets_open_graph_image_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.CtaDefault", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.CallToAction", null)
+                        .WithMany()
+                        .HasForeignKey("CallToActionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_cta_defaults_call_to_actions_call_to_action_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.Redirect", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("TargetContentItemId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("fk_redirects_content_items_target_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.ContentCalendarEntry", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentCluster", null)
+                        .WithMany()
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_content_calendar_entries_content_clusters_cluster_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("LinkedContentItemId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_content_calendar_entries_content_items_linked_content_item_~");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("TargetServiceId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_content_calendar_entries_content_items_target_service_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.ContentPerformanceSnapshot", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_content_performance_snapshots_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.KeywordTarget", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentCluster", null)
+                        .WithMany()
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_keyword_targets_content_clusters_cluster_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("TargetContentItemId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_keyword_targets_content_items_target_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.SeoChangeObservation", b =>
+                {
+                    b.HasOne("Onyx.Domain.Intelligence.SeoRecommendation", null)
+                        .WithMany()
+                        .HasForeignKey("RecommendationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_seo_change_observations_seo_recommendations_recommendation_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Intelligence.SeoRecommendation", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentCluster", null)
+                        .WithMany()
+                        .HasForeignKey("ClusterId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_seo_recommendations_content_clusters_cluster_id");
+
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_seo_recommendations_content_items_content_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Knowledge.InformationRequest", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_information_requests_content_items_content_item_id");
+
+                    b.HasOne("Onyx.Domain.Knowledge.KnowledgeEntry", null)
+                        .WithMany()
+                        .HasForeignKey("KnowledgeEntryId")
+                        .OnDelete(DeleteBehavior.SetNull)
+                        .HasConstraintName("fk_information_requests_knowledge_entries_knowledge_entry_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Media.MediaUsage", b =>
+                {
+                    b.HasOne("Onyx.Domain.Content.ContentItem", null)
+                        .WithMany()
+                        .HasForeignKey("ContentItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_media_usages_content_items_content_item_id");
+
+                    b.HasOne("Onyx.Domain.Media.MediaAsset", null)
+                        .WithMany()
+                        .HasForeignKey("MediaAssetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_media_usages_media_assets_media_asset_id");
+                });
+
             modelBuilder.Entity("Onyx.Domain.Notifications.NotificationReadState", b =>
                 {
                     b.HasOne("Onyx.Domain.Notifications.AdminNotification", null)
@@ -1124,6 +3137,16 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_user_sessions_users_user_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentCluster", b =>
+                {
+                    b.Navigation("Members");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Content.ContentItem", b =>
+                {
+                    b.Navigation("Translations");
                 });
 
             modelBuilder.Entity("Onyx.Infrastructure.Identity.UserSession", b =>

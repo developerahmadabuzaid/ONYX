@@ -1,0 +1,57 @@
+@using Onyx.Contracts.Content
+@using Onyx.Web.Areas.Admin.Cms
+@model IReadOnlyList<ClusterResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Clusters";
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<h1>@T["Nav.Clusters"]</h1>
+<partial name="_CmsMessages" />
+@foreach (var cluster in Model)
+{
+    <section>
+        <h2>@cluster.Name</h2>
+        <p>@cluster.Description</p>
+        <ul>
+            @foreach (var member in cluster.Members)
+            {
+                var title = member.Titles.TryGetValue(lang, out var own) ? own : member.Titles.Values.FirstOrDefault() ?? member.ContentItemId.ToString();
+                <li>
+                    <a asp-controller="Content" asp-action="Overview" asp-route-id="@member.ContentItemId">@title</a>
+                    <span dir="ltr">(@member.Role@(member.IsLive ? ", live" : ""))</span>
+                    <form method="post" asp-action="RemoveMember" asp-route-id="@cluster.Id" asp-route-contentItemId="@member.ContentItemId" class="inline"><button type="submit">@T["Cms.Delete"]</button></form>
+                </li>
+            }
+        </ul>
+        @if (cluster.Observations.Count > 0)
+        {
+            <h3>@T["Cms.Cluster.Observations"]</h3>
+            <ul>
+                @foreach (var observation in cluster.Observations)
+                {
+                    <li>@observation</li>
+                }
+            </ul>
+        }
+        <form method="post" asp-action="SetMember" asp-route-id="@cluster.Id">
+            <label>@T["Cms.Relation.Target"] <input name="contentItemId" required dir="ltr"></label>
+            <label>@T["Cms.Cluster.Role"]
+                <select name="role">
+                    @foreach (var role in CmsOptions.ClusterRoles)
+                    {
+                        <option value="@role">@role</option>
+                    }
+                </select>
+            </label>
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+        <form method="post" asp-action="Delete" asp-route-id="@cluster.Id"><button type="submit">@T["Cms.Delete"]</button></form>
+    </section>
+}
+<h2>@T["Cms.Cluster.Create"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Cms.Name"] <input name="name" required maxlength="200"></label>
+    <label>@T["Cms.Description"] <textarea name="description" rows="3" maxlength="2000"></textarea></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

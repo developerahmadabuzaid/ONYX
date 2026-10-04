@@ -1,0 +1,41 @@
+@using Onyx.Contracts.Brand
+@model BrandKitResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.BrandKit";
+    var colors = string.Join("\n", Model.Colors.Select(c => $"{c.Name} | {c.Hex} | {c.Usage}"));
+    var typefaces = string.Join("\n", Model.Typefaces.Select(t => $"{t.Role} | {t.Family} | {t.Notes}"));
+}
+<h1>@T["Nav.BrandKit"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Brand.Hint"]</p>
+@if (Model.MissingItems.Count > 0)
+{
+    <h2>@T["Cms.Brand.Missing"]</h2>
+    <ul dir="ltr">
+        @foreach (var item in Model.MissingItems)
+        {
+            <li>@item</li>
+        }
+    </ul>
+}
+@if (Model.OfficialLogoMediaId is { } logo)
+{
+    <p><img src="@Url.Action("Raw", "MediaLibrary", new { id = logo })" alt="" class="media-preview"></p>
+}
+<form method="post" asp-action="Update">
+    <input type="hidden" name="version" value="@Model.Version">
+    <label>@T["Cms.Brand.Logo"] <input name="officialLogoMediaId" value="@Model.OfficialLogoMediaId" dir="ltr"></label>
+    <label>@T["Cms.Brand.Website"] <input type="url" name="websiteUrl" value="@Model.WebsiteUrl" dir="ltr" maxlength="300"></label>
+    <label>@T["Cms.Brand.Email"] <input type="email" name="companyEmail" value="@Model.CompanyEmail" dir="ltr" maxlength="254"></label>
+    <label>@T["Cms.Brand.Colors"] <textarea name="colors" rows="5" dir="ltr">@colors</textarea></label>
+    <p class="hint" dir="ltr">Name | #RRGGBB | usage</p>
+    <label>@T["Cms.Brand.Typefaces"] <textarea name="typefaces" rows="4" dir="ltr">@typefaces</textarea></label>
+    <p class="hint" dir="ltr">Role | Family | notes</p>
+    <label><input type="checkbox" name="allowBrandingOnFeaturedImages" value="true" checked="@Model.AllowBrandingOnFeaturedImages"> @T["Cms.Brand.AllowFeatured"]</label>
+    <input type="hidden" name="allowBrandingOnFeaturedImages" value="false">
+    <label><input type="checkbox" name="allowBrandingOnSocialImages" value="true" checked="@Model.AllowBrandingOnSocialImages"> @T["Cms.Brand.AllowSocial"]</label>
+    <input type="hidden" name="allowBrandingOnSocialImages" value="false">
+    <label>@T["Cms.Brand.ImageNotes"] <textarea name="imageGenerationNotes" rows="4" maxlength="4000">@Model.ImageGenerationNotes</textarea></label>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>

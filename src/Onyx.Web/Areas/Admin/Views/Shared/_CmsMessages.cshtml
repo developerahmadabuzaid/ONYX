@@ -1,0 +1,21 @@
+@* One-time notice / error from the previous command, plus errors of the form being re-displayed. API messages are shown as text. *@
+@if (TempData[Onyx.Web.Areas.Admin.Cms.CmsControllerBase.NoticeKey] is string notice)
+{
+    <p class="notice" role="status">@T[notice]</p>
+}
+@if (TempData[Onyx.Web.Areas.Admin.Cms.CmsControllerBase.ErrorKey] is string error)
+{
+    var localized = T[error];
+    <p class="errors" role="alert">@(localized.ResourceNotFound ? error : localized.Value)</p>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="errors" role="alert">
+        <ul>
+            @foreach (var message in ViewData.ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).Distinct())
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </div>
+}

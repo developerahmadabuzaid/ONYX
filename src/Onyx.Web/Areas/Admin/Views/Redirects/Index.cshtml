@@ -1,0 +1,68 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Content
+@using Onyx.Web.Areas.Admin.Cms
+@model PagedResult<RedirectResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Redirects";
+}
+<h1>@T["Nav.Redirects"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Redirect.Hint"]</p>
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Search"] <input type="search" name="search" value="@ViewData["Search"]" maxlength="200"></label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+<table>
+    <thead><tr><th>@T["Cms.Redirect.From"]</th><th>@T["Cms.Type"]</th><th>@T["Cms.Redirect.Target"]</th><th>@T["Cms.Note"]</th><th>@T["Cms.Active"]</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var rule in Model.Items)
+        {
+            <tr>
+                <td dir="ltr">/@rule.LanguageCode/@rule.FromPath</td>
+                <td dir="ltr">@rule.Kind</td>
+                <td dir="ltr">@(rule.TargetContentItemId?.ToString() ?? rule.TargetPath ?? "—")</td>
+                <td>@rule.Note</td>
+                <td>
+                    <form method="post" asp-action="SetActive" asp-route-id="@rule.Id" class="inline">
+                        <input type="hidden" name="languageCode" value="@rule.LanguageCode">
+                        <input type="hidden" name="fromPath" value="@rule.FromPath">
+                        <input type="hidden" name="kind" value="@rule.Kind">
+                        <input type="hidden" name="targetContentItemId" value="@rule.TargetContentItemId">
+                        <input type="hidden" name="targetPath" value="@rule.TargetPath">
+                        <input type="hidden" name="note" value="@rule.Note">
+                        <input type="hidden" name="isActive" value="@(rule.IsActive ? "false" : "true")">
+                        <button type="submit">@(rule.IsActive ? T["Cms.Deactivate"] : T["Cms.Activate"])</button>
+                    </form>
+                </td>
+                <td>
+                    <form method="post" asp-action="Delete" asp-route-id="@rule.Id" class="inline"><button type="submit">@T["Cms.Delete"]</button></form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h2>@T["Cms.Redirect.Create"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Cms.Language"]
+        <select name="languageCode">
+            @foreach (var language in CmsOptions.Languages)
+            {
+                <option value="@language">@language</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Redirect.FromPath"] <input name="fromPath" required dir="ltr" maxlength="400"></label>
+    <label>@T["Cms.Type"]
+        <select name="kind">
+            @foreach (var kind in CmsOptions.RedirectKinds)
+            {
+                <option value="@kind">@kind</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Redirect.TargetContent"] <input name="targetContentItemId" dir="ltr"></label>
+    <label>@T["Cms.Redirect.TargetPath"] <input name="targetPath" dir="ltr" maxlength="400"></label>
+    <label>@T["Cms.Note"] <input name="note" maxlength="500"></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

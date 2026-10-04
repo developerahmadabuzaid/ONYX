@@ -1,0 +1,47 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Media
+@model PagedResult<MediaAssetResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Media";
+}
+<h1>@T["Nav.Media"]</h1>
+<partial name="_CmsMessages" />
+<form method="post" asp-action="Upload" enctype="multipart/form-data">
+    <label>@T["Cms.Media.File"] <input type="file" name="file" accept="image/jpeg,image/png,image/webp,image/gif" required></label>
+    <p class="hint">@T["Cms.Media.Rules"]</p>
+    <button type="submit">@T["Cms.Media.Upload"]</button>
+</form>
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Search"] <input type="search" name="search" value="@ViewData["Search"]" maxlength="200"></label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+<table>
+    <thead><tr><th></th><th>@T["Cms.Title"]</th><th>@T["Cms.Media.Size"]</th><th>@T["Cms.Media.Usages"]</th><th>@T["Cms.Created"]</th></tr></thead>
+    <tbody>
+        @foreach (var asset in Model.Items)
+        {
+            <tr>
+                <td><img src="@Url.Action("Raw", new { id = asset.Id })" alt="" width="64" loading="lazy"></td>
+                <td><a asp-action="Details" asp-route-id="@asset.Id">@(asset.Title ?? asset.FileName)</a></td>
+                <td dir="ltr">@asset.Width × @asset.Height · @(asset.SizeBytes / 1024) KB</td>
+                <td>@asset.UsageCount</td>
+                <td><partial name="_Utc" model="(DateTimeOffset?)asset.CreatedAtUtc" /></td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.TotalPages > 1)
+{
+    <nav class="pager" dir="ltr">
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Page - 1)" asp-route-search="@ViewData["Search"]">@(Model.Page - 1)</a>
+        }
+        <span>@Model.Page / @Model.TotalPages</span>
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-action="Index" asp-route-page="@(Model.Page + 1)" asp-route-search="@ViewData["Search"]">@(Model.Page + 1)</a>
+        }
+    </nav>
+}

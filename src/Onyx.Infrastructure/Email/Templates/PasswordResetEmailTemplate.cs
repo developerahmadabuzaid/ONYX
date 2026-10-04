@@ -1,7 +1,9 @@
+using Onyx.Application.Email;
+
 namespace Onyx.Infrastructure.Email.Templates;
 
-/// <summary>Admin password reset. Model: <c>name</c>, <c>link</c>, <c>minutes</c>. Copy pending owner review.</summary>
-public sealed class PasswordResetEmailTemplate : IEmailTemplate
+/// <summary>Admin password reset. Model: <c>name</c>, <c>link</c>, <c>minutes</c>. Default copy pending owner review; wording is admin-editable.</summary>
+public sealed class PasswordResetEmailTemplate : IEditableEmailTemplate
 {
     public const string TemplateKey = "identity.password-reset";
 
@@ -11,34 +13,41 @@ public sealed class PasswordResetEmailTemplate : IEmailTemplate
 
     public IReadOnlyCollection<string> RequiredValues { get; } = ["name", "link", "minutes"];
 
-    public EmailContent Compose(string languageCode, IReadOnlyDictionary<string, string> model)
+    public IReadOnlyCollection<string> Placeholders { get; } = ["name", "minutes"];
+
+    public IReadOnlyCollection<string> RequiredPlaceholders { get; } = ["minutes"];
+
+    public bool HasAction => true;
+
+    public EmailCopy DefaultCopy(string languageCode) => languageCode switch
+    {
+        "ar" => new EmailCopy(
+            "إعادة تعيين كلمة المرور",
+            "مرحباً {name}",
+            [
+                "تلقّينا طلباً لإعادة تعيين كلمة المرور لحسابك في لوحة إدارة Onyx.",
+                "اضغط على الزر أدناه لاختيار كلمة مرور جديدة. تنتهي صلاحية هذا الرابط خلال {minutes} دقيقة.",
+            ],
+            "إعادة تعيين كلمة المرور",
+            "إذا لم تطلب ذلك، تجاهل هذه الرسالة وستبقى كلمة المرور الحالية كما هي."),
+        "en" => new EmailCopy(
+            "Reset your password",
+            "Hello {name}",
+            [
+                "We received a request to reset the password of your Onyx admin account.",
+                "Use the button below to choose a new password. This link expires in {minutes} minutes.",
+            ],
+            "Reset password",
+            "If you didn't request this, ignore this email and your current password will stay the same."),
+        _ => throw new ArgumentOutOfRangeException(nameof(languageCode), languageCode, "Unsupported language."),
+    };
+
+    public Uri? ActionUrl(IReadOnlyDictionary<string, string> model)
     {
         ArgumentNullException.ThrowIfNull(model);
-        var link = new Uri(model["link"], UriKind.Absolute);
-
-        return languageCode switch
-        {
-            "ar" => new EmailContent(
-                Subject: "إعادة تعيين كلمة المرور",
-                Heading: $"مرحباً {model["name"]}",
-                Paragraphs:
-                [
-                    "تلقّينا طلباً لإعادة تعيين كلمة المرور لحسابك في لوحة إدارة Onyx.",
-                    $"اضغط على الزر أدناه لاختيار كلمة مرور جديدة. تنتهي صلاحية هذا الرابط خلال {model["minutes"]} دقيقة.",
-                ],
-                Action: new EmailAction("إعادة تعيين كلمة المرور", link),
-                Footer: "إذا لم تطلب ذلك، تجاهل هذه الرسالة وستبقى كلمة المرور الحالية كما هي."),
-            "en" => new EmailContent(
-                Subject: "Reset your password",
-                Heading: $"Hello {model["name"]}",
-                Paragraphs:
-                [
-                    "We received a request to reset the password of your Onyx admin account.",
-                    $"Use the button below to choose a new password. This link expires in {model["minutes"]} minutes.",
-                ],
-                Action: new EmailAction("Reset password", link),
-                Footer: "If you didn't request this, ignore this email and your current password will stay the same."),
-            _ => throw new ArgumentOutOfRangeException(nameof(languageCode), languageCode, "Unsupported language."),
-        };
+        return new Uri(model["link"], UriKind.Absolute);
     }
+
+    public EmailContent Compose(string languageCode, IReadOnlyDictionary<string, string> model) =>
+        EditableEmail.Compose(this, DefaultCopy(languageCode), model);
 }

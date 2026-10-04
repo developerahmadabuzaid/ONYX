@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Onyx.API.IntegrationTests.Infrastructure;
+using Onyx.Application.Abstractions.Persistence;
 using Onyx.Domain.Providers;
 
 namespace Onyx.API.IntegrationTests.Worker;
@@ -40,6 +41,7 @@ public sealed class ProviderConnectionConcurrencyTests(PostgresFixture fixture) 
         await first.SaveChangesAsync(Token);
 
         secondCopy.Disable();
-        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => second.SaveChangesAsync(Token));
+        var conflict = await Assert.ThrowsAsync<ConcurrencyConflictException>(() => second.SaveChangesAsync(Token));
+        Assert.IsType<DbUpdateConcurrencyException>(conflict.InnerException);
     }
 }

@@ -14,6 +14,7 @@
     var title = string.IsNullOrEmpty(Seo.Title) ? siteName : $"{Seo.Title} | {siteName}";
     var returnPath = Context.Request.Path.Value ?? $"/{lang}/";
     string PathIn(string code) => Seo.Alternates.TryGetValue(code, out var path) ? path : $"/{code}/";
+    var xDefault = Seo.XDefaultPath ?? (Seo.Alternates.TryGetValue(Languages.DefaultLanguage, out var defaultPath) ? defaultPath : null);
 }
 <!DOCTYPE html>
 <html lang="@lang" dir="@Languages.Direction(lang)">
@@ -25,9 +26,13 @@
     {
         <meta name="description" content="@Seo.Description">
     }
-    @if (!Site.Value.AllowIndexing || Seo.NoIndex)
+    @if (!Site.Value.AllowIndexing)
     {
         <meta name="robots" content="noindex, nofollow">
+    }
+    else if (Seo.NoIndex || Seo.NoFollow)
+    {
+        <meta name="robots" content="@(Seo.NoIndex ? "noindex" : "index"), @(Seo.NoFollow ? "nofollow" : "follow")">
     }
     @if (Seo.CanonicalPath is not null)
     {
@@ -37,9 +42,36 @@
     {
         <link rel="alternate" hreflang="@alternate.Key" href="@(baseUrl + alternate.Value)">
     }
-    @if (Seo.Alternates.TryGetValue(Languages.DefaultLanguage, out var defaultPath))
+    @if (xDefault is not null)
     {
-        <link rel="alternate" hreflang="x-default" href="@(baseUrl + defaultPath)">
+        <link rel="alternate" hreflang="x-default" href="@(baseUrl + xDefault)">
+    }
+    @if (Seo.OpenGraphTitle is not null)
+    {
+        <meta property="og:type" content="website">
+        <meta property="og:site_name" content="@siteName">
+        <meta property="og:title" content="@Seo.OpenGraphTitle">
+        if (Seo.OpenGraphDescription is not null)
+        {
+            <meta property="og:description" content="@Seo.OpenGraphDescription">
+        }
+        if (Seo.CanonicalPath is not null)
+        {
+            <meta property="og:url" content="@(baseUrl + Seo.CanonicalPath)">
+        }
+        if (Seo.OpenGraphImagePath is not null)
+        {
+            <meta property="og:image" content="@(baseUrl + Seo.OpenGraphImagePath)">
+            if (Seo.OpenGraphImageAlt is not null)
+            {
+                <meta property="og:image:alt" content="@Seo.OpenGraphImageAlt">
+            }
+        }
+    }
+    @if (Seo.StructuredDataJson is not null)
+    {
+        @* Serialized with an HTML-safe JSON encoder (StructuredDataBuilder): <, > and & are escaped, so the data cannot end the element. *@
+        <!script type="application/ld+json">@Html.Raw(Seo.StructuredDataJson)</!script>
     }
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
 </head>

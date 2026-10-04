@@ -1,0 +1,41 @@
+@using Onyx.Contracts.Messaging
+@model IReadOnlyList<EmailTemplateResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.EmailTemplates";
+}
+<h1>@T["Nav.EmailTemplates"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Email.Hint"]</p>
+@foreach (var template in Model)
+{
+    <section>
+        <h2 dir="ltr">@template.Key</h2>
+        <p class="hint" dir="ltr">@T["Cms.Email.Placeholders"]: @string.Join(", ", template.Placeholders.Select(p => "{" + p + "}")) · @T["Cms.Email.Required"]: @string.Join(", ", template.RequiredPlaceholders.Select(p => "{" + p + "}"))</p>
+        @foreach (var copy in template.Copies)
+        {
+            var dir = copy.LanguageCode == "ar" ? "rtl" : "ltr";
+            <details>
+                <summary>@copy.LanguageCode @(copy.IsCustomized ? T["Cms.Email.Customized"] : T["Cms.Email.Default"])</summary>
+                <form method="post" asp-action="Save" asp-route-key="@template.Key" asp-route-languageCode="@copy.LanguageCode" lang="@copy.LanguageCode" dir="@dir">
+                    <input type="hidden" name="version" value="@copy.Version">
+                    <label>@T["Cms.Email.Subject"] <input name="subject" value="@copy.Subject" required maxlength="200"></label>
+                    <label>@T["Cms.Email.Heading"] <input name="heading" value="@copy.Heading" required maxlength="200"></label>
+                    <label>@T["Cms.Email.Paragraphs"] <textarea name="paragraphs" rows="8">@string.Join("\n\n", copy.Paragraphs)</textarea></label>
+                    @if (template.HasAction)
+                    {
+                        <label>@T["Cms.Email.ActionLabel"] <input name="actionLabel" value="@copy.ActionLabel" maxlength="60"></label>
+                    }
+                    <label>@T["Cms.Email.Footer"] <textarea name="footer" rows="2" maxlength="500">@copy.Footer</textarea></label>
+                    <button type="submit">@T["Cms.Save"]</button>
+                </form>
+                @if (copy.IsCustomized)
+                {
+                    <form method="post" asp-action="Reset" asp-route-key="@template.Key" asp-route-languageCode="@copy.LanguageCode">
+                        <button type="submit">@T["Cms.Email.ResetAction"]</button>
+                    </form>
+                }
+            </details>
+        }
+    </section>
+}

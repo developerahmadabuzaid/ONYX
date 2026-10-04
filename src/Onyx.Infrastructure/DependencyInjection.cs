@@ -78,8 +78,12 @@ public static class DependencyInjection
         services.AddScoped<Application.Privacy.ICookieConsentRepository, Privacy.CookieConsentRepository>();
 
         services.AddSingleton<IEmailTemplate, ProviderTestEmailTemplate>();
-        services.AddSingleton<IEmailTemplateRenderer, EmailTemplateRenderer>();
+        services.AddScoped<IEmailTemplateRenderer, EmailTemplateRenderer>();
+        services.AddSingleton<IEmailTemplateCatalog, EmailTemplateCatalog>();
+        services.AddScoped<IEmailTemplateCopyRepository, EmailTemplateCopyRepository>();
         services.AddScoped<IEmailOutbox, EmailOutbox>();
+
+        AddContent(services, configuration);
 
         services.Configure<DomainEventRegistryOptions>(options => options.Assemblies.Add(typeof(IDomainEvent).Assembly));
         services.AddSingleton<DomainEventTypeRegistry>();
@@ -88,5 +92,44 @@ public static class DependencyInjection
             .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
 
         return services;
+    }
+
+    /// <summary>Stage 6: CMS repositories, media storage and inspection, content settings.</summary>
+    private static void AddContent(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Content.ContentOptions>().Bind(configuration.GetSection(Content.ContentOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<Content.ContentOptions>>().Value;
+            return new Application.Content.ContentSettings(TimeSpan.FromMinutes(options.PreviewTokenMinutes), options.SchedulerBatchSize);
+        });
+
+        // Storage root is validated on first use: only hosts that serve media (the API) need it configured.
+        services.AddOptions<Media.MediaOptions>().Bind(configuration.GetSection(Media.MediaOptions.SectionName)).ValidateDataAnnotations();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<Media.MediaOptions>>().Value;
+            return new Application.Media.MediaLimits(options.MaxUploadBytes, options.MaxWidth, options.MaxHeight, options.MaxPixels);
+        });
+        services.AddSingleton<Application.Media.IImageInspector, Media.ImageInspector>();
+        services.AddSingleton<Application.Media.IMediaStorage, Media.LocalFileMediaStorage>();
+
+        services.AddScoped<Application.Content.IContentRepository, ContentRepository>();
+        services.AddScoped<Application.Content.IContentRevisionRepository, ContentRevisionRepository>();
+        services.AddScoped<Application.Content.IContentPathRepository, ContentPathRepository>();
+        services.AddScoped<Application.Content.IRedirectRepository, RedirectRepository>();
+        services.AddScoped<Application.Content.IContentPreviewTokenRepository, ContentPreviewTokenRepository>();
+        services.AddScoped<Application.Content.ICallToActionRepository, CallToActionRepository>();
+        services.AddScoped<Application.Content.IContentRelationRepository, ContentRelationRepository>();
+        services.AddScoped<Application.Content.IContentClusterRepository, ContentClusterRepository>();
+        services.AddScoped<Application.Media.IMediaRepository, MediaRepository>();
+        services.AddScoped<Application.Brand.IBrandKitRepository, BrandKitRepository>();
+        services.AddScoped<Application.Knowledge.IKnowledgeRepository, KnowledgeRepository>();
+        services.AddScoped<Application.Knowledge.IInformationRequestRepository, InformationRequestRepository>();
+        services.AddScoped<Application.Intelligence.IKeywordTargetRepository, KeywordTargetRepository>();
+        services.AddScoped<Application.Intelligence.ICompetitorRepository, CompetitorRepository>();
+        services.AddScoped<Application.Intelligence.ISeoRecommendationRepository, SeoRecommendationRepository>();
+        services.AddScoped<Application.Intelligence.IContentCalendarRepository, ContentCalendarRepository>();
+        services.AddScoped<Application.Intelligence.IContentPerformanceRepository, ContentPerformanceRepository>();
     }
 }

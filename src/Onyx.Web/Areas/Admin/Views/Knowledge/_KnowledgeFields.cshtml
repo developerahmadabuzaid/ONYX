@@ -1,0 +1,14 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model (string? Category, string? Title, string? Arabic, string? English, string? SourceNote)
+<label>@T["Cms.Knowledge.Category"]
+    <select name="category">
+        @foreach (var category in CmsOptions.KnowledgeCategories)
+        {
+            <option value="@category" selected="@(Model.Category == category)">@category</option>
+        }
+    </select>
+</label>
+<label>@T["Cms.Title"] <input name="title" value="@Model.Title" required maxlength="200"></label>
+<label lang="ar" dir="rtl">العربية <textarea name="statementAr" rows="3" maxlength="4000">@Model.Arabic</textarea></label>
+<label lang="en" dir="ltr">English <textarea name="statementEn" rows="3" maxlength="4000">@Model.English</textarea></label>
+<label>@T["Cms.Knowledge.Source"] <textarea name="sourceNote" rows="2" maxlength="2000">@Model.SourceNote</textarea></label>

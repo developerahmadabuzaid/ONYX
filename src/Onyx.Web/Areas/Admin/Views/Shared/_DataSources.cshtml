@@ -1,0 +1,15 @@
+@model IReadOnlyList<Onyx.Contracts.Intelligence.DataSourceStatusResponse>
+@* Connection status only: no metric is shown unless a connected provider supplied it. *@
+<table>
+    <thead><tr><th>@T["Cms.Intelligence.Source"]</th><th>@T["Cms.Status"]</th><th>@T["Cms.Intelligence.Purpose"]</th></tr></thead>
+    <tbody>
+        @foreach (var source in Model)
+        {
+            <tr>
+                <td dir="ltr">@source.Source (@source.ProviderKey)</td>
+                <td dir="ltr">@source.Status</td>
+                <td>@source.Purpose</td>
+            </tr>
+        }
+    </tbody>
+</table>

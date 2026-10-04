@@ -1,0 +1,45 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model ContentRelationsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    string TitleOf(IReadOnlyDictionary<string, string> titles, Guid id) => titles.TryGetValue(lang, out var own) ? own : titles.Values.FirstOrDefault() ?? id.ToString();
+}
+<partial name="_ContentNav" model="Model.Content" />
+<h2>@T["Cms.Content.Relations"]</h2>
+<ul>
+    @foreach (var relation in Model.Relations)
+    {
+        <li>
+            <a asp-action="Overview" asp-route-id="@relation.ToContentItemId">@TitleOf(relation.Titles, relation.ToContentItemId)</a>
+            <span dir="ltr">(@relation.Kind, @relation.Position)</span> @relation.Note
+            <form method="post" asp-action="RemoveRelation" asp-route-id="@Model.Content.Id" asp-route-relationId="@relation.Id" class="inline">
+                <button type="submit">@T["Cms.Delete"]</button>
+            </form>
+        </li>
+    }
+</ul>
+<h3>@T["Cms.Relation.Add"]</h3>
+<form method="post" asp-action="AddRelation" asp-route-id="@Model.Content.Id">
+    <label>@T["Cms.Relation.Target"] <input name="toContentItemId" required dir="ltr"></label>
+    <label>@T["Cms.Type"]
+        <select name="kind">
+            @foreach (var kind in CmsOptions.RelationKinds)
+            {
+                <option value="@kind">@kind</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.SortOrder"] <input type="number" name="position" value="0"></label>
+    <label>@T["Cms.Note"] <input name="note" maxlength="500"></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>
+<h3>@T["Cms.Relation.Suggestions"]</h3>
+<p class="hint">@T["Cms.Relation.SuggestionsHint"]</p>
+<ul>
+    @foreach (var suggestion in Model.Suggestions)
+    {
+        <li><a asp-action="Overview" asp-route-id="@suggestion.ContentItemId">@TitleOf(suggestion.Titles, suggestion.ContentItemId)</a> — @suggestion.Reason <span dir="ltr" class="hint">@suggestion.ContentItemId</span></li>
+    }
+</ul>

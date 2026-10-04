@@ -51,7 +51,7 @@ public sealed class LocalizationAndHandlerUnitTests
     }
 
     [Fact]
-    public async Task The_transformer_maps_localized_segments_and_rejects_unknown_ones()
+    public async Task The_transformer_maps_localized_segments_and_sends_other_paths_to_cms_content()
     {
         var table = new LocalizedRouteTable();
         table.Register(Services());
@@ -62,7 +62,9 @@ public sealed class LocalizationAndHandlerUnitTests
 
         Assert.Equal("Services", matched["controller"]);
         Assert.Equal("حلول-الذكاء-الاصطناعي", matched["slug"]);
-        Assert.Null(unknown);
+        Assert.Equal("Page", unknown["controller"]);
+        Assert.Equal("Show", unknown["action"]);
+        Assert.Equal("nope", unknown["path"]);
     }
 
     [Fact]

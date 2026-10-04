@@ -1,0 +1,49 @@
+@model MediaDetailsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Media";
+    var asset = Model.Asset;
+    var ar = asset.Texts.FirstOrDefault(t => t.LanguageCode == "ar");
+    var en = asset.Texts.FirstOrDefault(t => t.LanguageCode == "en");
+    var lang = System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+<p><a asp-action="Index">@T["Nav.Media"]</a></p>
+<h1>@(asset.Title ?? asset.FileName)</h1>
+<partial name="_CmsMessages" />
+<p><img src="@Url.Action("Raw", new { id = asset.Id })" alt="@(lang == "ar" ? ar?.Text : en?.Text)" class="media-preview" width="@asset.Width" height="@asset.Height"></p>
+<dl dir="ltr">
+    <dt>ID</dt><dd>@asset.Id</dd>
+    <dt>@T["Cms.Media.File"]</dt><dd>@asset.FileName (@asset.ContentType)</dd>
+    <dt>@T["Cms.Media.Size"]</dt><dd>@asset.Width × @asset.Height · @asset.SizeBytes B</dd>
+</dl>
+<form method="post" asp-action="Texts" asp-route-id="@asset.Id">
+    <input type="hidden" name="version" value="@asset.Version">
+    <label>@T["Cms.Title"] <input name="title" value="@asset.Title" maxlength="200"></label>
+    <fieldset lang="ar" dir="rtl">
+        <legend>العربية</legend>
+        <label>@T["Cms.Media.Alt"] <input name="altAr" value="@ar?.Text" maxlength="300"></label>
+        <label>@T["Cms.Media.Caption"] <input name="captionAr" value="@ar?.Secondary" maxlength="500"></label>
+    </fieldset>
+    <fieldset lang="en" dir="ltr">
+        <legend>English</legend>
+        <label>@T["Cms.Media.Alt"] <input name="altEn" value="@en?.Text" maxlength="300"></label>
+        <label>@T["Cms.Media.Caption"] <input name="captionEn" value="@en?.Secondary" maxlength="500"></label>
+    </fieldset>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>
+<h2>@T["Cms.Media.Usages"]</h2>
+@if (Model.Usages.Count == 0)
+{
+    <p>@T["Cms.Media.Unused"]</p>
+}
+<ul>
+    @foreach (var usage in Model.Usages)
+    {
+        var title = usage.Titles.TryGetValue(lang, out var own) ? own : usage.Titles.Values.FirstOrDefault() ?? usage.ContentItemId.ToString();
+        <li><a asp-controller="Content" asp-action="Overview" asp-route-id="@usage.ContentItemId">@title</a> <span dir="ltr">(@usage.LanguageCode, @usage.Context@(usage.IsLive ? ", live" : ""))</span></li>
+    }
+</ul>
+<form method="post" asp-action="Delete" asp-route-id="@asset.Id">
+    <p class="hint">@T["Cms.Media.DeleteHint"]</p>
+    <button type="submit">@T["Cms.Delete"]</button>
+</form>

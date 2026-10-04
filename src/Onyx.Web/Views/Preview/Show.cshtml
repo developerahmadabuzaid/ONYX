@@ -1,0 +1,42 @@
+@model Onyx.Web.Content.PreviewViewModel
+@{
+    var seo = Model.SeoPreview;
+}
+<aside role="note">
+    <p><strong>@T["Preview.Banner"]</strong></p>
+    <p>@T["Preview.Expires"] <time datetime="@Model.ExpiresAtUtc.ToString("O")">@Model.ExpiresAtUtc.UtcDateTime.ToString("yyyy-MM-dd HH:mm") UTC</time></p>
+    <details>
+        <summary>@T["Preview.Seo"]</summary>
+        <dl>
+            <dt>@T["Preview.Path"]</dt><dd dir="ltr">@seo.Path</dd>
+            <dt>@T["Preview.TitleTag"]</dt><dd>@seo.TitleTag</dd>
+            <dt>@T["Preview.MetaDescription"]</dt><dd>@(seo.MetaDescription ?? "—")</dd>
+            <dt>@T["Preview.Robots"]</dt><dd dir="ltr">@seo.Robots</dd>
+            <dt>@T["Preview.Canonical"]</dt><dd dir="ltr">@(seo.CanonicalPath ?? "—")</dd>
+            <dt>@T["Preview.Faqs"]</dt><dd>@seo.FaqCount</dd>
+            <dt>@T["Preview.StructuredData"]</dt><dd dir="ltr">@(seo.StructuredData.Count == 0 ? "—" : string.Join(", ", seo.StructuredData))</dd>
+        </dl>
+        <h2>@T["Preview.Headings"]</h2>
+        <ul>
+            @foreach (var heading in seo.Headings)
+            {
+                <li>H@(heading.Level): @heading.Text</li>
+            }
+        </ul>
+        <h2>@T["Preview.Images"]</h2>
+        <ul>
+            @foreach (var image in seo.Images)
+            {
+                <li dir="auto">@image.Context — @(image.Exists ? (image.HasAlt ? image.Alt : T["Preview.MissingAlt"].Value) : T["Preview.MissingImage"].Value)</li>
+            }
+        </ul>
+        <h2>@T["Preview.Quality"]</h2>
+        <ul>
+            @foreach (var finding in seo.Quality.Findings)
+            {
+                <li><span dir="ltr">[@finding.Severity] @finding.Code</span> @finding.Message</li>
+            }
+        </ul>
+    </details>
+</aside>
+<partial name="_ContentPage" model="Model.Page" />

@@ -1,0 +1,89 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model KeywordListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Keywords";
+}
+<h1>@T["Nav.Keywords"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Keyword.Hint"]</p>
+
+<h2>@T["Cms.Keyword.Check"]</h2>
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Language"]
+        <select name="checkLanguage">
+            @foreach (var language in CmsOptions.Languages)
+            {
+                <option value="@language">@language</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Keyword"] <input name="checkKeyword" value="@Model.CheckedKeyword" required maxlength="100"></label>
+    <button type="submit">@T["Cms.Keyword.Check"]</button>
+</form>
+@if (Model.Conflicts is { } conflicts)
+{
+    <p>@(conflicts.HasConflict ? T["Cms.Keyword.Conflict"] : T["Cms.Keyword.NoConflict"])</p>
+    <ul>
+        @foreach (var conflict in conflicts.Conflicts)
+        {
+            <li dir="ltr">@conflict.Source · @conflict.Keyword · @conflict.LanguageCode · @conflict.SearchIntent · @conflict.TargetMarket · @conflict.ContentItemId</li>
+        }
+    </ul>
+}
+
+<form method="get" asp-action="Index">
+    <label>@T["Cms.Search"] <input type="search" name="search" value="@Model.Search" maxlength="200"></label>
+    <button type="submit">@T["Cms.Filter"]</button>
+</form>
+<table>
+    <thead><tr><th>@T["Cms.Keyword"]</th><th>@T["Cms.Language"]</th><th>@T["Cms.Seo.SearchIntent"]</th><th>@T["Cms.Keyword.Target"]</th><th>@T["Cms.Status"]</th><th>@T["Cms.Keyword.Performance"]</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var keyword in Model.Items.Items)
+        {
+            <tr>
+                <td dir="auto">@keyword.Keyword</td>
+                <td>@keyword.LanguageCode @keyword.TargetMarket</td>
+                <td dir="ltr">@keyword.SearchIntent</td>
+                <td dir="ltr">@keyword.TargetContentItemId</td>
+                <td dir="ltr">@keyword.Status</td>
+                <td dir="ltr">@keyword.PerformanceDataStatus</td>
+                <td><form method="post" asp-action="Delete" asp-route-id="@keyword.Id" class="inline"><button type="submit">@T["Cms.Delete"]</button></form></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<h2>@T["Cms.Keyword.Create"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Cms.Keyword"] <input name="keyword" required maxlength="100"></label>
+    <label>@T["Cms.Language"]
+        <select name="languageCode">
+            @foreach (var language in CmsOptions.Languages)
+            {
+                <option value="@language">@language</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Seo.TargetMarket"] <input name="targetMarket" dir="ltr" maxlength="10"></label>
+    <label>@T["Cms.Seo.SearchIntent"]
+        <select name="searchIntent">
+            @foreach (var intent in CmsOptions.SearchIntents)
+            {
+                <option value="@intent">@intent</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Keyword.Target"] <input name="targetContentItemId" dir="ltr"></label>
+    <label>@T["Nav.Clusters"] <input name="clusterId" dir="ltr"></label>
+    <label>@T["Cms.Status"]
+        <select name="status">
+            @foreach (var status in CmsOptions.KeywordStatuses)
+            {
+                <option value="@status">@status</option>
+            }
+        </select>
+    </label>
+    <label>@T["Cms.Notes"] <textarea name="notes" rows="2" maxlength="2000"></textarea></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

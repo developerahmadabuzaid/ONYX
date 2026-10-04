@@ -1,0 +1,13 @@
+@model Onyx.Contracts.Content.PublicCtaResponse
+@* Only URL calls to action link anywhere yet: conversion actions (start a project, booking, tools…) get their routes in later
+   stages, and a call to action is never rendered as a dead link. *@
+@if (Model.Url is not null)
+{
+    <p>
+        <a href="@Model.Url" rel="noopener">@Model.Label</a>
+        @if (!string.IsNullOrEmpty(Model.Secondary))
+        {
+            <span>@Model.Secondary</span>
+        }
+    </p>
+}

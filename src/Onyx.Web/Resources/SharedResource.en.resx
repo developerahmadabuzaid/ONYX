@@ -90,4 +90,270 @@
   <data name="Notification.Type.EmailDeliveryFailed" xml:space="preserve"><value>Email delivery failed</value></data>
   <data name="Notification.Type.OutboxMessageFailed" xml:space="preserve"><value>Internal event processing failed</value></data>
   <data name="Notification.Type.SecurityAlert" xml:space="preserve"><value>Security alert</value></data>
+  <data name="Cms.Action.approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="Cms.Action.archive" xml:space="preserve"><value>Archive</value></data>
+  <data name="Cms.Action.publish" xml:space="preserve"><value>Publish now</value></data>
+  <data name="Cms.Action.reject" xml:space="preserve"><value>Return to draft</value></data>
+  <data name="Cms.Action.restore" xml:space="preserve"><value>Restore from archive</value></data>
+  <data name="Cms.Action.schedule" xml:space="preserve"><value>Schedule publishing</value></data>
+  <data name="Cms.Action.schedule/cancel" xml:space="preserve"><value>Cancel scheduled publishing</value></data>
+  <data name="Cms.Action.submit" xml:space="preserve"><value>Submit for review</value></data>
+  <data name="Cms.Action.unpublish" xml:space="preserve"><value>Unpublish</value></data>
+  <data name="Cms.Action.unpublish-schedule" xml:space="preserve"><value>Schedule unpublishing</value></data>
+  <data name="Cms.Action.unpublish-schedule/cancel" xml:space="preserve"><value>Cancel scheduled unpublishing</value></data>
+  <data name="Cms.Action.url-resolution" xml:space="preserve"><value>Save URL decision</value></data>
+  <data name="Cms.Activate" xml:space="preserve"><value>Activate</value></data>
+  <data name="Cms.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Cms.Body.HeadingOneLine" xml:space="preserve"><value>A heading must be a single line (line {0}).</value></data>
+  <data name="Cms.Body.InvalidCta" xml:space="preserve"><value>Invalid call-to-action block (line {0}).</value></data>
+  <data name="Cms.Body.InvalidImage" xml:space="preserve"><value>Invalid image block (line {0}).</value></data>
+  <data name="Cms.Body.InvalidLink" xml:space="preserve"><value>Invalid link target (line {0}). Use content:ID, a /path or an https:// address.</value></data>
+  <data name="Cms.Brand.AllowFeatured" xml:space="preserve"><value>Allow branding on featured images</value></data>
+  <data name="Cms.Brand.AllowSocial" xml:space="preserve"><value>Allow branding on social images</value></data>
+  <data name="Cms.Brand.Colors" xml:space="preserve"><value>Colors</value></data>
+  <data name="Cms.Brand.Email" xml:space="preserve"><value>Company email</value></data>
+  <data name="Cms.Brand.Hint" xml:space="preserve"><value>Enter only real, approved brand values. Empty items stay empty; nothing is guessed or replaced.</value></data>
+  <data name="Cms.Brand.ImageNotes" xml:space="preserve"><value>Image guidance</value></data>
+  <data name="Cms.Brand.Logo" xml:space="preserve"><value>Official logo (media ID)</value></data>
+  <data name="Cms.Brand.Missing" xml:space="preserve"><value>Not provided yet</value></data>
+  <data name="Cms.Brand.Typefaces" xml:space="preserve"><value>Typefaces</value></data>
+  <data name="Cms.Brand.Website" xml:space="preserve"><value>Website</value></data>
+  <data name="Cms.Calendar.Hint" xml:space="preserve"><value>Proposed topics are decided by a person. Nothing is drafted or published automatically.</value></data>
+  <data name="Cms.Calendar.LinkContent" xml:space="preserve"><value>Link content (ID)</value></data>
+  <data name="Cms.Calendar.Propose" xml:space="preserve"><value>Propose a topic</value></data>
+  <data name="Cms.Calendar.ProposedAt" xml:space="preserve"><value>Proposed publishing time</value></data>
+  <data name="Cms.Calendar.TargetService" xml:space="preserve"><value>Target service (ID)</value></data>
+  <data name="Cms.Calendar.Topic" xml:space="preserve"><value>Topic</value></data>
+  <data name="Cms.Calendar.accept" xml:space="preserve"><value>Accept</value></data>
+  <data name="Cms.Calendar.complete" xml:space="preserve"><value>Mark completed</value></data>
+  <data name="Cms.Calendar.reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Cms.Cluster.Create" xml:space="preserve"><value>New cluster</value></data>
+  <data name="Cms.Cluster.Observations" xml:space="preserve"><value>Structure observations</value></data>
+  <data name="Cms.Cluster.Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Cms.Competitor.Create" xml:space="preserve"><value>Add a reference</value></data>
+  <data name="Cms.Competitor.Domain" xml:space="preserve"><value>Domain</value></data>
+  <data name="Cms.Competitor.Hint" xml:space="preserve"><value>Internal research only. Never shown or named on the public site, and never scraped.</value></data>
+  <data name="Cms.Competitor.Markets" xml:space="preserve"><value>Markets</value></data>
+  <data name="Cms.Competitor.Topics" xml:space="preserve"><value>Topics</value></data>
+  <data name="Cms.Content.Back" xml:space="preserve"><value>All content</value></data>
+  <data name="Cms.Content.Body" xml:space="preserve"><value>Body</value></data>
+  <data name="Cms.Content.BodyHelp" xml:space="preserve"><value>Formatting help</value></data>
+  <data name="Cms.Content.CanPublish" xml:space="preserve"><value>No blocking issues.</value></data>
+  <data name="Cms.Content.CannotPublish" xml:space="preserve"><value>Blocking issues must be fixed before publishing.</value></data>
+  <data name="Cms.Content.Changed" xml:space="preserve"><value>Unpublished changes</value></data>
+  <data name="Cms.Content.Complete" xml:space="preserve"><value>complete</value></data>
+  <data name="Cms.Content.Create" xml:space="preserve"><value>New content</value></data>
+  <data name="Cms.Content.CreatePreview" xml:space="preserve"><value>Create preview link</value></data>
+  <data name="Cms.Content.CurrentPath" xml:space="preserve"><value>(current)</value></data>
+  <data name="Cms.Content.DeleteConfirm" xml:space="preserve"><value>Type the content ID to confirm</value></data>
+  <data name="Cms.Content.DeleteHint" xml:space="preserve"><value>Permanent deletion cannot be undone. Live content must be taken offline first; former URLs keep redirecting or answer 410.</value></data>
+  <data name="Cms.Content.DeletePermanent" xml:space="preserve"><value>Delete permanently</value></data>
+  <data name="Cms.Content.Faqs" xml:space="preserve"><value>Frequently asked questions</value></data>
+  <data name="Cms.Content.FeaturedImage" xml:space="preserve"><value>Featured image (media ID)</value></data>
+  <data name="Cms.Content.FormerPath" xml:space="preserve"><value>(former, redirects)</value></data>
+  <data name="Cms.Content.Incomplete" xml:space="preserve"><value>incomplete</value></data>
+  <data name="Cms.Content.IndependentLanguages" xml:space="preserve"><value>Each language is written natively and saved on its own; it is not a translation of the other.</value></data>
+  <data name="Cms.Content.Intelligence" xml:space="preserve"><value>Intelligence</value></data>
+  <data name="Cms.Content.LastPublished" xml:space="preserve"><value>Last published</value></data>
+  <data name="Cms.Content.Live" xml:space="preserve"><value>Live</value></data>
+  <data name="Cms.Content.NeedsUrlDecision" xml:space="preserve"><value>Needs a URL decision</value></data>
+  <data name="Cms.Content.Overview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Cms.Content.Parent" xml:space="preserve"><value>Parent (ID)</value></data>
+  <data name="Cms.Content.Paths" xml:space="preserve"><value>URLs</value></data>
+  <data name="Cms.Content.Presentation" xml:space="preserve"><value>Presentation</value></data>
+  <data name="Cms.Content.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Cms.Content.PreviewExpires" xml:space="preserve"><value>Expires</value></data>
+  <data name="Cms.Content.PrimaryCta" xml:space="preserve"><value>Primary call to action (ID)</value></data>
+  <data name="Cms.Content.PublishAtUtc" xml:space="preserve"><value>Publish at (UTC)</value></data>
+  <data name="Cms.Content.PublishingTime" xml:space="preserve"><value>Publishing time</value></data>
+  <data name="Cms.Content.Quality" xml:space="preserve"><value>Quality checks</value></data>
+  <data name="Cms.Content.RedirectTo" xml:space="preserve"><value>Redirect to content (ID)</value></data>
+  <data name="Cms.Content.Relations" xml:space="preserve"><value>Related content</value></data>
+  <data name="Cms.Content.ReviewNote" xml:space="preserve"><value>Review note</value></data>
+  <data name="Cms.Content.Revision" xml:space="preserve"><value>Revision</value></data>
+  <data name="Cms.Content.Revisions" xml:space="preserve"><value>Revisions</value></data>
+  <data name="Cms.Content.ScheduledPublish" xml:space="preserve"><value>Scheduled publishing</value></data>
+  <data name="Cms.Content.ScheduledUnpublish" xml:space="preserve"><value>Scheduled unpublishing</value></data>
+  <data name="Cms.Content.Sections" xml:space="preserve"><value>Content sections</value></data>
+  <data name="Cms.Content.Seo" xml:space="preserve"><value>SEO</value></data>
+  <data name="Cms.Content.Settings" xml:space="preserve"><value>Settings</value></data>
+  <data name="Cms.Content.Slug" xml:space="preserve"><value>Slug</value></data>
+  <data name="Cms.Content.State" xml:space="preserve"><value>State</value></data>
+  <data name="Cms.Content.Summary" xml:space="preserve"><value>Summary</value></data>
+  <data name="Cms.Content.Text" xml:space="preserve"><value>Text</value></data>
+  <data name="Cms.Content.TimeZone" xml:space="preserve"><value>Business time zone</value></data>
+  <data name="Cms.Content.Translations" xml:space="preserve"><value>Languages</value></data>
+  <data name="Cms.Content.UnpublishAtUtc" xml:space="preserve"><value>Unpublish at (UTC)</value></data>
+  <data name="Cms.Content.UrlResolution" xml:space="preserve"><value>URL decision</value></data>
+  <data name="Cms.Content.Workflow" xml:space="preserve"><value>Workflow</value></data>
+  <data name="Cms.Create" xml:space="preserve"><value>Create</value></data>
+  <data name="Cms.Created" xml:space="preserve"><value>Created</value></data>
+  <data name="Cms.Cta.Create" xml:space="preserve"><value>New call to action</value></data>
+  <data name="Cms.Cta.Defaults" xml:space="preserve"><value>Defaults</value></data>
+  <data name="Cms.Cta.Hint" xml:space="preserve"><value>Calls to action resolve item → content type → global default. WhatsApp is not offered at launch.</value></data>
+  <data name="Cms.Cta.Label" xml:space="preserve"><value>Label</value></data>
+  <data name="Cms.Cta.Secondary" xml:space="preserve"><value>Secondary text</value></data>
+  <data name="Cms.Cta.TargetUrl" xml:space="preserve"><value>Target URL (URL type only)</value></data>
+  <data name="Cms.Deactivate" xml:space="preserve"><value>Deactivate</value></data>
+  <data name="Cms.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="Cms.Deleted" xml:space="preserve"><value>Deleted.</value></data>
+  <data name="Cms.Description" xml:space="preserve"><value>Description</value></data>
+  <data name="Cms.Done" xml:space="preserve"><value>Done.</value></data>
+  <data name="Cms.Email.ActionLabel" xml:space="preserve"><value>Button label</value></data>
+  <data name="Cms.Email.Customized" xml:space="preserve"><value>(customized)</value></data>
+  <data name="Cms.Email.Default" xml:space="preserve"><value>(default)</value></data>
+  <data name="Cms.Email.Footer" xml:space="preserve"><value>Footer</value></data>
+  <data name="Cms.Email.Heading" xml:space="preserve"><value>Heading</value></data>
+  <data name="Cms.Email.Hint" xml:space="preserve"><value>Only the wording is editable. Layout, links and security tokens stay code-owned; required placeholders must stay.</value></data>
+  <data name="Cms.Email.Paragraphs" xml:space="preserve"><value>Paragraphs (separate with a blank line)</value></data>
+  <data name="Cms.Email.Placeholders" xml:space="preserve"><value>Placeholders</value></data>
+  <data name="Cms.Email.Required" xml:space="preserve"><value>Required</value></data>
+  <data name="Cms.Email.Reset" xml:space="preserve"><value>Default copy restored.</value></data>
+  <data name="Cms.Email.ResetAction" xml:space="preserve"><value>Restore default copy</value></data>
+  <data name="Cms.Email.Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Cms.Faq.Invalid" xml:space="preserve"><value>Each question must start with "Q:" and be followed by its answer (line {0}).</value></data>
+  <data name="Cms.Filter" xml:space="preserve"><value>Filter</value></data>
+  <data name="Cms.Intelligence.BrokenLinks" xml:space="preserve"><value>Broken links</value></data>
+  <data name="Cms.Intelligence.ExcessiveLinks" xml:space="preserve"><value>Pages with too many links</value></data>
+  <data name="Cms.Intelligence.Generate" xml:space="preserve"><value>Create recommendations from this report</value></data>
+  <data name="Cms.Intelligence.Generated" xml:space="preserve"><value>Recommendations created for review.</value></data>
+  <data name="Cms.Intelligence.Health" xml:space="preserve"><value>Health</value></data>
+  <data name="Cms.Intelligence.LinkReport" xml:space="preserve"><value>Internal link report</value></data>
+  <data name="Cms.Intelligence.Metrics" xml:space="preserve"><value>Metrics</value></data>
+  <data name="Cms.Intelligence.NoData" xml:space="preserve"><value>No performance data: no analytics or search provider is connected.</value></data>
+  <data name="Cms.Intelligence.Orphans" xml:space="preserve"><value>Pages without internal links</value></data>
+  <data name="Cms.Intelligence.Period" xml:space="preserve"><value>Period</value></data>
+  <data name="Cms.Intelligence.Purpose" xml:space="preserve"><value>Purpose</value></data>
+  <data name="Cms.Intelligence.RepeatedAnchors" xml:space="preserve"><value>Same anchor text for different pages</value></data>
+  <data name="Cms.Intelligence.Rules" xml:space="preserve"><value>Content governance rules</value></data>
+  <data name="Cms.Intelligence.Snapshots" xml:space="preserve"><value>Performance data</value></data>
+  <data name="Cms.Intelligence.Source" xml:space="preserve"><value>Source</value></data>
+  <data name="Cms.Intelligence.Sources" xml:space="preserve"><value>Data sources</value></data>
+  <data name="Cms.Intelligence.SourcesHint" xml:space="preserve"><value>Metrics appear only from connected providers, with source and period. Not connected means no data, never estimates.</value></data>
+  <data name="Cms.Intelligence.Suggestions" xml:space="preserve"><value>Link suggestions</value></data>
+  <data name="Cms.InvalidAction" xml:space="preserve"><value>Unknown action.</value></data>
+  <data name="Cms.Key" xml:space="preserve"><value>Key</value></data>
+  <data name="Cms.Keyword" xml:space="preserve"><value>Keyword</value></data>
+  <data name="Cms.Keyword.Check" xml:space="preserve"><value>Check for conflicts</value></data>
+  <data name="Cms.Keyword.Conflict" xml:space="preserve"><value>This keyword is already targeted elsewhere.</value></data>
+  <data name="Cms.Keyword.Create" xml:space="preserve"><value>Add a keyword target</value></data>
+  <data name="Cms.Keyword.Hint" xml:space="preserve"><value>Keyword planning only. Search volume and difficulty are not shown because no keyword data provider is connected.</value></data>
+  <data name="Cms.Keyword.NoConflict" xml:space="preserve"><value>No conflict found.</value></data>
+  <data name="Cms.Keyword.Performance" xml:space="preserve"><value>Performance data</value></data>
+  <data name="Cms.Keyword.Target" xml:space="preserve"><value>Target content (ID)</value></data>
+  <data name="Cms.Knowledge.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="Cms.Knowledge.Context" xml:space="preserve"><value>Context</value></data>
+  <data name="Cms.Knowledge.Create" xml:space="preserve"><value>New knowledge entry</value></data>
+  <data name="Cms.Knowledge.Entry" xml:space="preserve"><value>Knowledge entry (ID)</value></data>
+  <data name="Cms.Knowledge.Hint" xml:space="preserve"><value>Approved facts are the only company facts that content assistance may use. Approval requires a recorded source.</value></data>
+  <data name="Cms.Knowledge.Outcome" xml:space="preserve"><value>Outcome</value></data>
+  <data name="Cms.Knowledge.Question" xml:space="preserve"><value>Question</value></data>
+  <data name="Cms.Knowledge.Raise" xml:space="preserve"><value>Request information</value></data>
+  <data name="Cms.Knowledge.Requests" xml:space="preserve"><value>Needs information</value></data>
+  <data name="Cms.Knowledge.RequestsHint" xml:space="preserve"><value>Missing facts are asked for here instead of being guessed.</value></data>
+  <data name="Cms.Knowledge.Retire" xml:space="preserve"><value>Retire</value></data>
+  <data name="Cms.Knowledge.Source" xml:space="preserve"><value>Source (who confirmed it, when, where)</value></data>
+  <data name="Cms.Knowledge.Verified" xml:space="preserve"><value>Verified</value></data>
+  <data name="Cms.Language" xml:space="preserve"><value>Language</value></data>
+  <data name="Cms.Media.Alt" xml:space="preserve"><value>Alternative text</value></data>
+  <data name="Cms.Media.Caption" xml:space="preserve"><value>Caption</value></data>
+  <data name="Cms.Media.DeleteHint" xml:space="preserve"><value>Files used by content cannot be deleted.</value></data>
+  <data name="Cms.Media.File" xml:space="preserve"><value>File</value></data>
+  <data name="Cms.Media.NoFile" xml:space="preserve"><value>Choose a file to upload.</value></data>
+  <data name="Cms.Media.Rules" xml:space="preserve"><value>JPEG, PNG, WebP or GIF up to 10 MB. SVG is not accepted. Metadata is removed.</value></data>
+  <data name="Cms.Media.Size" xml:space="preserve"><value>Size</value></data>
+  <data name="Cms.Media.Unused" xml:space="preserve"><value>Not used by any content.</value></data>
+  <data name="Cms.Media.Upload" xml:space="preserve"><value>Upload</value></data>
+  <data name="Cms.Media.Uploaded" xml:space="preserve"><value>File uploaded.</value></data>
+  <data name="Cms.Media.Usages" xml:space="preserve"><value>Used in</value></data>
+  <data name="Cms.Name" xml:space="preserve"><value>Name</value></data>
+  <data name="Cms.No" xml:space="preserve"><value>No</value></data>
+  <data name="Cms.Note" xml:space="preserve"><value>Note</value></data>
+  <data name="Cms.Notes" xml:space="preserve"><value>Notes</value></data>
+  <data name="Cms.Recommendation.Change" xml:space="preserve"><value>Proposed change</value></data>
+  <data name="Cms.Recommendation.Content" xml:space="preserve"><value>Content</value></data>
+  <data name="Cms.Recommendation.Hint" xml:space="preserve"><value>Recommendations are reviewed by a person. Applying one creates a draft revision; nothing is published automatically.</value></data>
+  <data name="Cms.Recommendation.Issue" xml:space="preserve"><value>Detected issue</value></data>
+  <data name="Cms.Recommendation.Propose" xml:space="preserve"><value>Propose a recommendation</value></data>
+  <data name="Cms.Recommendation.Reasoning" xml:space="preserve"><value>Reasoning</value></data>
+  <data name="Cms.Recommendation.apply" xml:space="preserve"><value>Apply as draft</value></data>
+  <data name="Cms.Recommendation.approve" xml:space="preserve"><value>Approve</value></data>
+  <data name="Cms.Recommendation.mark-applied" xml:space="preserve"><value>Mark applied manually</value></data>
+  <data name="Cms.Recommendation.reject" xml:space="preserve"><value>Reject</value></data>
+  <data name="Cms.Redirect.Create" xml:space="preserve"><value>New redirect</value></data>
+  <data name="Cms.Redirect.From" xml:space="preserve"><value>From</value></data>
+  <data name="Cms.Redirect.FromPath" xml:space="preserve"><value>From path (without language)</value></data>
+  <data name="Cms.Redirect.Hint" xml:space="preserve"><value>Internal targets only. Loops, chains and redirects of live pages are rejected. Gone answers 410.</value></data>
+  <data name="Cms.Redirect.Target" xml:space="preserve"><value>Target</value></data>
+  <data name="Cms.Redirect.TargetContent" xml:space="preserve"><value>Target content (ID)</value></data>
+  <data name="Cms.Redirect.TargetPath" xml:space="preserve"><value>Target path</value></data>
+  <data name="Cms.Relation.Add" xml:space="preserve"><value>Add related content</value></data>
+  <data name="Cms.Relation.Suggestions" xml:space="preserve"><value>Suggestions</value></data>
+  <data name="Cms.Relation.SuggestionsHint" xml:space="preserve"><value>Suggestions are based on Onyx's own content structure and must be confirmed by a person.</value></data>
+  <data name="Cms.Relation.Target" xml:space="preserve"><value>Content (ID)</value></data>
+  <data name="Cms.Restored" xml:space="preserve"><value>Restored as a new revision.</value></data>
+  <data name="Cms.Revision.After" xml:space="preserve"><value>After</value></data>
+  <data name="Cms.Revision.Before" xml:space="preserve"><value>Before</value></data>
+  <data name="Cms.Revision.Compare" xml:space="preserve"><value>Compare</value></data>
+  <data name="Cms.Revision.Field" xml:space="preserve"><value>Field</value></data>
+  <data name="Cms.Revision.From" xml:space="preserve"><value>From revision</value></data>
+  <data name="Cms.Revision.Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Cms.Revision.NoDifferences" xml:space="preserve"><value>No differences.</value></data>
+  <data name="Cms.Revision.Restore" xml:space="preserve"><value>Restore</value></data>
+  <data name="Cms.Revision.RestoreHint" xml:space="preserve"><value>Restoring copies an old revision into the working copy as a new revision. History is never rewritten.</value></data>
+  <data name="Cms.Revision.To" xml:space="preserve"><value>To revision</value></data>
+  <data name="Cms.Save" xml:space="preserve"><value>Save</value></data>
+  <data name="Cms.Saved" xml:space="preserve"><value>Saved.</value></data>
+  <data name="Cms.Search" xml:space="preserve"><value>Search</value></data>
+  <data name="Cms.Seo.CanonicalPath" xml:space="preserve"><value>Canonical override (path)</value></data>
+  <data name="Cms.Seo.Honesty" xml:space="preserve"><value>No search volume, difficulty, ranking or traffic figures are shown unless a connected provider supplies them.</value></data>
+  <data name="Cms.Seo.MetaDescription" xml:space="preserve"><value>Meta description</value></data>
+  <data name="Cms.Seo.MetaTitle" xml:space="preserve"><value>Meta title</value></data>
+  <data name="Cms.Seo.OpenGraphDescription" xml:space="preserve"><value>Social description</value></data>
+  <data name="Cms.Seo.OpenGraphImage" xml:space="preserve"><value>Social image (media ID)</value></data>
+  <data name="Cms.Seo.OpenGraphTitle" xml:space="preserve"><value>Social title</value></data>
+  <data name="Cms.Seo.PrimaryKeyword" xml:space="preserve"><value>Primary keyword</value></data>
+  <data name="Cms.Seo.SearchIntent" xml:space="preserve"><value>Search intent</value></data>
+  <data name="Cms.Seo.SecondaryKeywords" xml:space="preserve"><value>Secondary keywords (comma or line separated)</value></data>
+  <data name="Cms.Seo.StructuredData" xml:space="preserve"><value>Structured data</value></data>
+  <data name="Cms.Seo.TargetMarket" xml:space="preserve"><value>Target market</value></data>
+  <data name="Cms.SortOrder" xml:space="preserve"><value>Order</value></data>
+  <data name="Cms.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Cms.Title" xml:space="preserve"><value>Title</value></data>
+  <data name="Cms.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Cms.Updated" xml:space="preserve"><value>Updated</value></data>
+  <data name="Cms.Yes" xml:space="preserve"><value>Yes</value></data>
+  <data name="Content.Breadcrumbs" xml:space="preserve"><value>Breadcrumb</value></data>
+  <data name="Content.Faq" xml:space="preserve"><value>Frequently asked questions</value></data>
+  <data name="Content.Related" xml:space="preserve"><value>Related</value></data>
+  <data name="Error.Gone" xml:space="preserve"><value>This page has been removed.</value></data>
+  <data name="Nav.BrandKit" xml:space="preserve"><value>Brand kit</value></data>
+  <data name="Nav.Calendar" xml:space="preserve"><value>Content calendar</value></data>
+  <data name="Nav.Clusters" xml:space="preserve"><value>Topic clusters</value></data>
+  <data name="Nav.Competitors" xml:space="preserve"><value>Competitor research</value></data>
+  <data name="Nav.Content" xml:space="preserve"><value>Content</value></data>
+  <data name="Nav.Ctas" xml:space="preserve"><value>Calls to action</value></data>
+  <data name="Nav.EmailTemplates" xml:space="preserve"><value>Email templates</value></data>
+  <data name="Nav.Intelligence" xml:space="preserve"><value>Content intelligence</value></data>
+  <data name="Nav.Keywords" xml:space="preserve"><value>Keyword map</value></data>
+  <data name="Nav.Knowledge" xml:space="preserve"><value>Company knowledge</value></data>
+  <data name="Nav.Media" xml:space="preserve"><value>Media library</value></data>
+  <data name="Nav.Recommendations" xml:space="preserve"><value>SEO recommendations</value></data>
+  <data name="Nav.Redirects" xml:space="preserve"><value>Redirects</value></data>
+  <data name="Notification.Type.ContentPublishingFailed" xml:space="preserve"><value>Scheduled publishing failed</value></data>
+  <data name="Preview.Banner" xml:space="preserve"><value>Preview — not published</value></data>
+  <data name="Preview.Canonical" xml:space="preserve"><value>Canonical</value></data>
+  <data name="Preview.Expires" xml:space="preserve"><value>This link expires at</value></data>
+  <data name="Preview.Faqs" xml:space="preserve"><value>FAQs</value></data>
+  <data name="Preview.Headings" xml:space="preserve"><value>Headings</value></data>
+  <data name="Preview.Images" xml:space="preserve"><value>Images</value></data>
+  <data name="Preview.MetaDescription" xml:space="preserve"><value>Meta description</value></data>
+  <data name="Preview.MissingAlt" xml:space="preserve"><value>missing alternative text</value></data>
+  <data name="Preview.MissingImage" xml:space="preserve"><value>image missing</value></data>
+  <data name="Preview.Path" xml:space="preserve"><value>URL</value></data>
+  <data name="Preview.Quality" xml:space="preserve"><value>Quality checks</value></data>
+  <data name="Preview.Robots" xml:space="preserve"><value>Robots</value></data>
+  <data name="Preview.Seo" xml:space="preserve"><value>How search engines will see this page</value></data>
+  <data name="Preview.StructuredData" xml:space="preserve"><value>Structured data</value></data>
+  <data name="Preview.TitleTag" xml:space="preserve"><value>Title tag</value></data>
 </root>

@@ -13,4 +13,5 @@ public enum NotificationType
     EmailDeliveryFailed = 7,
     OutboxMessageFailed = 8,
     SecurityAlert = 9,
+    ContentPublishingFailed = 10,
 }

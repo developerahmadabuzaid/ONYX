@@ -168,6 +168,8 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<IAuthApiClient, AuthApiClient>());
         Configure(services.AddHttpClient<IConsentApiClient, ConsentApiClient>());
         Configure(services.AddHttpClient<IAdminApiClient, AdminApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminCmsApiClient, AdminCmsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
 
         static void Configure(IHttpClientBuilder builder)
         {

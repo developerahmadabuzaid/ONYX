@@ -114,6 +114,8 @@ dotnet run --project src/Onyx.Web --launch-profile https   # https://localhost:7
   - `Site:PublicBaseUrl = https://localhost:7200`;
   - `DataProtection:KeysDirectory = ../../.local/web-keys`, resolved from the project directory to `<repo>/.local/web-keys` (git-ignored).
 - Onyx.Web needs no secrets in development. Its Data Protection keys encrypt the admin cookie. Deleting them only signs admins out.
+- **Media (API):** `Media:StorageRoot = ../../.local/media` in `src/Onyx.API/appsettings.Development.json`, resolved from the API project directory to `<repo>/.local/media` (git-ignored). Uploaded images are stored there under random names; they are served only through the API (live content or a valid preview token).
+- **CMS routes:** every `/{lang}/...` path that is not a code route is resolved as CMS content by the API (200, 301 to the current URL, 410 or 404). `/sitemap.xml`, `/sitemaps/{lang}.xml` and `/robots.txt` are generated; until `Site:AllowIndexing` is `true`, robots.txt disallows everything and every page carries `noindex, nofollow`.
 - **Client address:** Onyx.Web sends the visitor IP to the API as `X-Forwarded-For`. In development both run on loopback, which ASP.NET Core trusts by default, so the API's rate limits and audit records see the real visitor address.
 
 **Production settings (no defaults; set per environment):**
@@ -129,6 +131,8 @@ dotnet run --project src/Onyx.Web --launch-profile https   # https://localhost:7
 | Onyx.API | `ForwardedHeaders:KnownProxies` / `KnownNetworks` | **Onyx.Web's address(es)**, so only Web can supply the visitor IP |
 | Onyx.API | `IdentitySecurity:AdminPortalBaseUrl` | the public Web origin (for emailed admin links) |
 | Onyx.API | `Privacy:IpHashKey` (optional secret) | enables keyed hashing of IP addresses on consent receipts; without it, no IP is stored |
+| Onyx.API | `Media:StorageRoot` | a directory **outside any web root**, shared by all API instances and **included in media backups** (uploads fail until it is set) |
+| Onyx.API | `Content:PreviewTokenMinutes` | draft preview link lifetime (default 30) |
 
 ## 7. Recovery: SuperAdmin lost their authenticator (`reset-two-factor`)
 

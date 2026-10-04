@@ -20,8 +20,48 @@ public static class DependencyInjection
         services.AddScoped<Identity.ICurrentAdmin, Identity.CurrentAdmin>();
         services.AddScoped<Privacy.ICookieConsentService, Privacy.CookieConsentService>();
 
+        AddContent(services);
+        services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
+
         AddDomainEventHandlers(services, assembly);
         return services;
+    }
+
+    /// <summary>CMS, media, brand kit, approved knowledge and content intelligence (Stage 6). Settings are registered by the host.</summary>
+    private static void AddContent(IServiceCollection services)
+    {
+        services.AddScoped<Content.ContentAuthorizer>();
+        services.AddScoped<Content.ContentAccess>();
+        services.AddScoped<Content.ContentRevisionRecorder>();
+        services.AddScoped<Content.ContentPathService>();
+        services.AddScoped<Content.ContentQualityGate>();
+        services.AddScoped<Content.ContentPublisher>();
+        services.AddScoped<Content.CtaResolver>();
+        services.AddScoped<Content.PublicContentBuilder>();
+        services.AddScoped<Media.MediaUsageIndexer>();
+
+        services.AddScoped<Content.IContentAdministrationService, Content.ContentAdministrationService>();
+        services.AddScoped<Content.IContentWorkflowService, Content.ContentWorkflowService>();
+        services.AddScoped<Content.IContentRevisionService, Content.ContentRevisionService>();
+        services.AddScoped<Content.IContentPreviewService, Content.ContentPreviewService>();
+        services.AddScoped<Content.IPublicContentService, Content.PublicContentService>();
+        services.AddScoped<Content.IContentSchedulingService, Content.ContentSchedulingService>();
+        services.AddScoped<Content.IRedirectAdministrationService, Content.RedirectAdministrationService>();
+        services.AddScoped<Content.ICallToActionService, Content.CallToActionService>();
+        services.AddScoped<Content.IContentClusterService, Content.ContentClusterService>();
+
+        services.AddScoped<Media.IMediaService, Media.MediaService>();
+        services.AddScoped<Brand.IBrandKitService, Brand.BrandKitService>();
+        services.AddScoped<Knowledge.IKnowledgeService, Knowledge.KnowledgeService>();
+        services.AddScoped<Knowledge.CompanyKnowledgeSource>();
+
+        services.AddScoped<Intelligence.IPublishingTimeAdvisor, Intelligence.PublishingTimeAdvisor>();
+        services.AddScoped<Intelligence.IIntelligenceStatusService, Intelligence.IntelligenceStatusService>();
+        services.AddScoped<Intelligence.IKeywordMapService, Intelligence.KeywordMapService>();
+        services.AddScoped<Intelligence.ICompetitorService, Intelligence.CompetitorService>();
+        services.AddScoped<Intelligence.ISeoRecommendationService, Intelligence.SeoRecommendationService>();
+        services.AddScoped<Intelligence.IInternalLinkAnalyzer, Intelligence.InternalLinkAnalyzer>();
+        services.AddScoped<Intelligence.IContentCalendarService, Intelligence.ContentCalendarService>();
     }
 
     private static void AddDomainEventHandlers(IServiceCollection services, System.Reflection.Assembly assembly)

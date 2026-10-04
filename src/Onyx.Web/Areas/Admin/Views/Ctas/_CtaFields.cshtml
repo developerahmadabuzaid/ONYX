@@ -1,0 +1,24 @@
+@using Onyx.Web.Areas.Admin.Cms
+@model CtaForm
+<label>@T["Cms.Key"] <input name="Key" value="@Model.Key" required dir="ltr" maxlength="100"></label>
+<label>@T["Cms.Type"]
+    <select name="ActionType">
+        @foreach (var action in CmsOptions.CtaActionTypes)
+        {
+            <option value="@action" selected="@(Model.ActionType == action)">@action</option>
+        }
+    </select>
+</label>
+<label>@T["Cms.Cta.TargetUrl"] <input name="TargetUrl" value="@Model.TargetUrl" dir="ltr" maxlength="500"></label>
+<fieldset lang="ar" dir="rtl">
+    <legend>العربية</legend>
+    <label>@T["Cms.Cta.Label"] <input name="LabelAr" value="@Model.LabelAr" maxlength="100"></label>
+    <label>@T["Cms.Cta.Secondary"] <input name="SecondaryAr" value="@Model.SecondaryAr" maxlength="200"></label>
+</fieldset>
+<fieldset lang="en" dir="ltr">
+    <legend>English</legend>
+    <label>@T["Cms.Cta.Label"] <input name="LabelEn" value="@Model.LabelEn" maxlength="100"></label>
+    <label>@T["Cms.Cta.Secondary"] <input name="SecondaryEn" value="@Model.SecondaryEn" maxlength="200"></label>
+</fieldset>
+<label><input type="checkbox" name="IsActive" value="true" checked="@Model.IsActive"> @T["Cms.Active"]</label>
+<input type="hidden" name="IsActive" value="false">

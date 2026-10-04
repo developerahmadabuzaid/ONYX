@@ -1,0 +1,35 @@
+@using Onyx.Contracts.Intelligence
+@model IReadOnlyList<CompetitorResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Competitors";
+}
+<h1>@T["Nav.Competitors"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Competitor.Hint"]</p>
+<table>
+    <thead><tr><th>@T["Cms.Name"]</th><th>@T["Cms.Competitor.Domain"]</th><th>@T["Cms.Competitor.Markets"]</th><th>@T["Cms.Competitor.Topics"]</th><th>@T["Cms.Notes"]</th><th></th></tr></thead>
+    <tbody>
+        @foreach (var competitor in Model)
+        {
+            <tr>
+                <td>@competitor.Name</td>
+                <td dir="ltr">@competitor.Domain</td>
+                <td dir="ltr">@string.Join(", ", competitor.Markets) / @string.Join(", ", competitor.Languages)</td>
+                <td>@string.Join(", ", competitor.Topics)</td>
+                <td>@competitor.Notes</td>
+                <td><form method="post" asp-action="Delete" asp-route-id="@competitor.Id" class="inline"><button type="submit">@T["Cms.Delete"]</button></form></td>
+            </tr>
+        }
+    </tbody>
+</table>
+<h2>@T["Cms.Competitor.Create"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Cms.Name"] <input name="name" required maxlength="200"></label>
+    <label>@T["Cms.Competitor.Domain"] <input name="domain" required dir="ltr" maxlength="253"></label>
+    <label>@T["Cms.Competitor.Markets"] <input name="markets" dir="ltr" placeholder="SA, JO"></label>
+    <label>@T["Cms.Language"] <input name="languages" dir="ltr" placeholder="ar, en"></label>
+    <label>@T["Cms.Competitor.Topics"] <input name="topics"></label>
+    <label>@T["Cms.Notes"] <textarea name="notes" rows="3" maxlength="4000"></textarea></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

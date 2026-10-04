@@ -1,0 +1,55 @@
+@model IntelligenceOverviewViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Intelligence";
+    var report = Model.LinkReport;
+}
+<h1>@T["Nav.Intelligence"]</h1>
+<partial name="_CmsMessages" />
+<h2>@T["Cms.Intelligence.Sources"]</h2>
+<p class="hint">@T["Cms.Intelligence.SourcesHint"]</p>
+<partial name="_DataSources" model="Model.Capabilities.Sources" />
+<h2>@T["Cms.Intelligence.Rules"]</h2>
+<ol>
+    @foreach (var rule in Model.Capabilities.GovernanceRules)
+    {
+        <li>@rule</li>
+    }
+</ol>
+<h2>@T["Cms.Intelligence.LinkReport"]</h2>
+<form method="post" asp-action="Generate"><button type="submit">@T["Cms.Intelligence.Generate"]</button></form>
+<h3>@T["Cms.Intelligence.BrokenLinks"] (@report.BrokenLinks.Count)</h3>
+<ul>
+    @foreach (var issue in report.BrokenLinks)
+    {
+        <li><a asp-controller="Content" asp-action="Overview" asp-route-id="@issue.ContentItemId">@issue.AnchorText</a> <span dir="ltr">(@issue.LanguageCode) → @issue.Target · @issue.Problem</span></li>
+    }
+</ul>
+<h3>@T["Cms.Intelligence.Orphans"] (@report.Orphans.Count)</h3>
+<ul>
+    @foreach (var orphan in report.Orphans)
+    {
+        <li><a asp-controller="Content" asp-action="Overview" asp-route-id="@orphan.ContentItemId">@orphan.Title</a> <span dir="ltr">/@orphan.LanguageCode/@orphan.Path</span></li>
+    }
+</ul>
+<h3>@T["Cms.Intelligence.Suggestions"] (@report.Suggestions.Count)</h3>
+<ul>
+    @foreach (var suggestion in report.Suggestions)
+    {
+        <li><a asp-controller="Content" asp-action="Overview" asp-route-id="@suggestion.FromContentItemId">@suggestion.AnchorText</a> <span dir="ltr">(@suggestion.LanguageCode) → @suggestion.ToContentItemId</span> — @suggestion.Reason</li>
+    }
+</ul>
+<h3>@T["Cms.Intelligence.RepeatedAnchors"] (@report.RepeatedAnchors.Count)</h3>
+<ul>
+    @foreach (var anchor in report.RepeatedAnchors)
+    {
+        <li dir="auto">@anchor.AnchorText <span dir="ltr">(@anchor.LanguageCode): @anchor.DistinctTargets / @anchor.Occurrences</span></li>
+    }
+</ul>
+<h3>@T["Cms.Intelligence.ExcessiveLinks"] (@report.ExcessiveLinks.Count)</h3>
+<ul>
+    @foreach (var issue in report.ExcessiveLinks)
+    {
+        <li><a asp-controller="Content" asp-action="Overview" asp-route-id="@issue.ContentItemId">@issue.ContentItemId</a> <span dir="ltr">(@issue.LanguageCode) @issue.Problem</span></li>
+    }
+</ul>

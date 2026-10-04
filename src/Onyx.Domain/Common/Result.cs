@@ -25,4 +25,8 @@ public class Result
     public static Result<T> Success<T>(T value) => Result<T>.Success(value);
 
     public static Result<T> Failure<T>(Error error) => Result<T>.Failure(error);
+
+#pragma warning disable CA2225 // Matches Result<T>: keeps call sites readable; the named factory exists above.
+    public static implicit operator Result(Error error) => Failure(error);
+#pragma warning restore CA2225
 }

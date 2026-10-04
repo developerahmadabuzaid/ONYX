@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Onyx.API.Configuration;
@@ -11,14 +12,19 @@ namespace Onyx.API.Middleware;
 /// </summary>
 public sealed class RequestBodySizeLimitMiddleware(RequestDelegate next, IOptions<ApiSecurityOptions> options)
 {
+    public const long AbsoluteMaxRequestBodySizeBytes = 52_428_800;
+
     public async Task InvokeAsync(HttpContext context, IProblemDetailsService problemDetails)
     {
         ArgumentNullException.ThrowIfNull(context);
         ArgumentNullException.ThrowIfNull(problemDetails);
 
-        var limit = options.Value.MaxRequestBodySizeBytes;
+        // Endpoints may opt in to a larger cap with [RequestSizeLimit] (e.g. media upload); never above the absolute maximum.
+        var limit = context.GetEndpoint()?.Metadata.GetMetadata<IRequestSizeLimitMetadata>()?.MaxRequestBodySize is { } endpointLimit
+            ? Math.Min(endpointLimit, AbsoluteMaxRequestBodySizeBytes)
+            : options.Value.MaxRequestBodySizeBytes;
         var sizeFeature = context.Features.Get<IHttpMaxRequestBodySizeFeature>();
-        if (sizeFeature is { IsReadOnly: false } && (sizeFeature.MaxRequestBodySize is null || sizeFeature.MaxRequestBodySize > limit))
+        if (sizeFeature is { IsReadOnly: false })
         {
             sizeFeature.MaxRequestBodySize = limit;
         }

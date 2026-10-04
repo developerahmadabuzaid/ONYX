@@ -25,7 +25,8 @@
 | 2 Worker, outbox, email, notifications | **done**, commit `5529048` |
 | 3 Identity, permissions, audit | **done**, commit `6301cc3` |
 | 4 Onyx.Web foundation | **done**: 334/334 tests (local PostgreSQL 18); build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 6. |
-| 6–12, 5, 13 | awaiting approval (in execution order) |
+| 6 CMS, content governance and SEO intelligence foundation | **done**: 534/534 tests (local PostgreSQL); build 0 warnings; no vulnerable packages; no new packages. Awaiting owner review before Stage 7. |
+| 7–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -153,6 +154,18 @@
 ### Stage 6 — CMS core and public structure
 - **Build:** translations, media (**image library approval requested then**), pillars, services (+ use cases, FAQs), industries (taxonomy/published with the content minimum), typed page sections, CTAs, settings, offices, markets, redirects, SEO metadata; Admin screens; public home, pillars, services, industries, about, offices, legal page shells (unpublished); sitemaps, robots, Organization JSON-LD; seeders (languages, markets, pillars with proposed Arabic names for confirmation, Riyadh – Granada District, Amman).
 - **Verify:** publish requires both languages; slug change → 301; unpublished hidden; sitemap/hreflang validity; permission matrix; cache invalidation.
+
+**Stage 6 delivered notes (CMS, content governance and SEO intelligence foundation):**
+- **Content model:** one `ContentItem` (ServicePillar / Service / Industry / Page) with independent Arabic and English working copies, structured body blocks (headings, paragraphs, lists, images, CTAs; no HTML anywhere), FAQs and a per-language SEO profile. The public site serves an immutable `ContentRevision` snapshot (`LiveRevisionId`), so edits never leak before review.
+- **Lifecycle:** Draft → PendingReview → Approved → Scheduled/Published → Archived with separate permissions (`Content.Create/Edit/SubmitForReview/Approve/Publish/Archive/DeletePermanent`) plus type scope (`{Pillars|Services|Industries|Pages}.View` to read, `.Edit` to change or move through the lifecycle). Scheduled publish/unpublish runs in the Worker (`content-scheduling`, every minute). Publishing-time advice always reports insufficient data until analytics providers are connected.
+- **URLs:** per-language `ContentPath` history; former paths 301 straight to the current one (no chains), offline content answers 410 or redirects to a chosen content item (never the homepage) and is flagged when a decision is needed; manual redirects are internal-only with loop/chain/dot-segment/scheme checks. Permanent deletion keeps former URLs answering.
+- **Revisions, preview, quality:** revision list/compare/restore (restore = new revision, audited); temporary hashed preview tokens (30 min, `noindex`, `no-store`, `no-referrer`, no admin session); quality gate with errors/warnings/recommendations (no scores).
+- **Media:** `IMediaStorage` (local file system, random keys outside any web root), magic-byte validation for JPEG/PNG/WebP/GIF, SVG rejected, metadata stripped without an image package, usage tracking and in-use deletion protection; public serving only for live usage or a valid preview token.
+- **Governance and intelligence foundations:** Brand Kit (empty until the owner fills it, no replacement logo), Approved Company Knowledge + "Needs information" requests + code-owned governance rules, AI article/image/text ports with no provider, keyword map with conflict checks, internal competitor references (never public, never scraped), content clusters, internal link report, SEO recommendations (proposed → approved → applied as a draft revision), change observations (correlation wording only), content calendar. Metrics are accepted only from connected providers with their period; every provider is `NotConfigured`, so no metric is shown anywhere.
+- **Email copy:** admin-editable wording per template and language; placeholders validated, required ones (e.g. expiry) enforced; layout, links and tokens stay code-owned.
+- **Onyx.Web:** CMS content routing for every non-code `/{lang}/...` path (200 / 301 / 410 / 404), encoded canonical + hreflang + x-default, Open Graph, truthful JSON-LD (WebPage, BreadcrumbList, Service, FAQPage only when shown), `/sitemap.xml` + `/sitemaps/{lang}.xml`, `/robots.txt` (disallow all until `Site:AllowIndexing`), media proxy, preview page with SEO preview; functional unstyled Admin screens for content, media, redirects, CTAs, clusters, keywords, recommendations, intelligence, calendar, competitors, knowledge, brand kit and email templates (plain-text body format parsed into structured blocks).
+- **Not included (needs owner input or a later stage):** seeding pillars/offices/markets content and Organization JSON-LD (real names, addresses and Arabic wording are [OPEN] inputs; nothing is invented), conversion routes for non-URL CTAs (Stage 8; such CTAs are not rendered as links yet), output caching/invalidation (not needed while every page is resolved live through the API), visual design (Stage 5).
+- **Migration:** `20261004114859_CmsContentFoundation` (23 additive tables, 54 indexes; no drops or alters).
 
 ### Stage 7 — Work, proof, insights, glossary, integrations
 - **Build:** projects, case studies, capabilities, testimonials, metrics, with the proof guard and the 3-featured limit; insights with scheduled publishing and the AI-approval guard; topics, glossary, integrations showcase.

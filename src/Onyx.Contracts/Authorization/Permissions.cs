@@ -148,6 +148,46 @@ public static class Permissions
     public static class Seo
     {
         public const string Edit = "Seo.Edit";
+
+        /// <summary>Approve or reject SEO recommendations (applying them still sends content back through review).</summary>
+        public const string Approve = "Seo.Approve";
+    }
+
+    /// <summary>
+    /// CMS lifecycle actions for every content type. Acting on an item also requires its type scope:
+    /// <c>{Type}.View</c> to read (e.g. <see cref="Services.View"/>) and <c>{Type}.Edit</c> for any change.
+    /// </summary>
+    public static class Content
+    {
+        public const string View = "Content.View";
+        public const string Create = "Content.Create";
+        public const string Edit = "Content.Edit";
+        public const string SubmitForReview = "Content.SubmitForReview";
+        public const string Approve = "Content.Approve";
+        public const string Publish = "Content.Publish";
+        public const string Archive = "Content.Archive";
+        public const string DeletePermanent = "Content.DeletePermanent";
+    }
+
+    public static class BrandKit
+    {
+        public const string View = "BrandKit.View";
+        public const string Manage = "BrandKit.Manage";
+    }
+
+    /// <summary>Approved Company Knowledge: the only facts future AI writing may rely on.</summary>
+    public static class Knowledge
+    {
+        public const string View = "Knowledge.View";
+        public const string Edit = "Knowledge.Edit";
+        public const string Approve = "Knowledge.Approve";
+    }
+
+    /// <summary>Internal-only competitor research references.</summary>
+    public static class Competitors
+    {
+        public const string View = "Competitors.View";
+        public const string Manage = "Competitors.Manage";
     }
 
     public static class Redirects

@@ -27,7 +27,7 @@ internal sealed class EmailOutbox(
             return Error.Validation("Email.Invalid", "The email request is invalid.", errors);
         }
 
-        var rendered = renderer.Render(request.TemplateKey, request.LanguageCode, request.Model);
+        var rendered = await renderer.RenderAsync(request.TemplateKey, request.LanguageCode, request.Model, cancellationToken).ConfigureAwait(false);
         if (rendered.IsFailure)
         {
             return rendered.Error!;
