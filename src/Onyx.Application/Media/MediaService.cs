@@ -156,11 +156,13 @@ public sealed class MediaService(
             return Error.Conflict("Media.BrandLogo", "This file is the official logo in the Brand Kit.");
         }
 
+        // The file is removed by the Worker from the outbox event committed together with this deletion: no distributed
+        // transaction, and a failed file removal is retried instead of leaving an untracked file behind.
+        asset.MarkDeleted();
         media.Remove(asset);
         auditTrail.Record(AuditAction.MediaDeleted, AuditCategory.Content, nameof(MediaAsset), asset.Id.ToString(),
             new { asset.OriginalFileName, asset.ContentType, asset.SizeBytes, asset.Sha256 });
         await unitOfWork.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
-        await storage.DeleteAsync(asset.StorageKey, cancellationToken).ConfigureAwait(false);
         return Result.Success();
     }
 

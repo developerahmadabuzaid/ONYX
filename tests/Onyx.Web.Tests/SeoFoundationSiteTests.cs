@@ -83,6 +83,23 @@ public sealed partial class SeoFoundationSiteTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Structured_data_renders_as_a_real_json_ld_script_element()
+    {
+        _factory.Api.On(HttpMethod.Get, "api/v1/content/resolve", _ => FakeOnyxApi.Json(new ContentResolveResponse("Content", null, Page())));
+
+        foreach (var html in new[] { await _browser.GetHtmlAsync("/ar/"), await _browser.GetHtmlAsync("/en/about") })
+        {
+            // The Razor tag-helper opt-out (<!script>) must emit a plain element with the type written literally.
+            Assert.Contains("<script type=\"application/ld+json\">", html, StringComparison.Ordinal);
+            Assert.DoesNotContain("<!script", html, StringComparison.Ordinal);
+            Assert.DoesNotContain("ld&#x2B;json", html, StringComparison.Ordinal);
+            Assert.Equal(1, Regex.Count(html, "<script type=\"application/ld\\+json\">"));
+            Assert.Equal(1, Regex.Count(html, "</script>"));
+            Assert.Equal(JsonValueKind.Object, JsonLd(html).RootElement.ValueKind);
+        }
+    }
+
+    [Fact]
     public async Task The_featured_image_loads_eagerly_with_high_priority_and_body_images_lazily()
     {
         _factory.Api.On(HttpMethod.Get, "api/v1/content/resolve", _ => FakeOnyxApi.Json(new ContentResolveResponse("Content", null, Page())));

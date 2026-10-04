@@ -17,6 +17,13 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
     /// <summary>Minimum number of H2 sections in every language of a published industry page (context, problems, approach).</summary>
     public const int IndustryMinimumSections = 3;
 
+    /// <summary>
+    /// The one supported nesting depth, counting the top-level item (pillar → service → sub-service is 3 levels). Enforced when an
+    /// item is created or moved (including the depth of the subtree being moved) and relied on by descendant URL refresh, which
+    /// fails rather than leaving deeper pages with stale URLs.
+    /// </summary>
+    public const int MaxHierarchyDepth = 6;
+
     private readonly List<ContentTranslation> _translations = [];
 
     private ContentItem()

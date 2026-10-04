@@ -54,6 +54,9 @@ public sealed partial class MediaAsset : AuditableEntity, IAuditable
 
     public uint Version { get; private set; }
 
+    /// <summary>Call before removing the record: schedules removal of the stored file through the outbox.</summary>
+    public void MarkDeleted() => RaiseDomainEvent(new MediaAssetDeleted(Id, StorageKey));
+
     public static MediaAsset Create(
         string storageKey, string originalFileName, MediaKind kind, string contentType, string extension, long sizeBytes, int? width, int? height, string sha256)
     {

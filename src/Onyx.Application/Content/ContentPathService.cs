@@ -20,8 +20,6 @@ public sealed class ContentPathService(
     IAuditTrail auditTrail,
     TimeProvider timeProvider)
 {
-    private const int MaxDepth = 10;
-
     public static readonly Error ParentNotLive =
         Error.Conflict("Content.ParentNotLive", "Publish the parent first: a child page's URL is built from its parent's live URL.");
 
@@ -149,15 +147,18 @@ public sealed class ContentPathService(
 
     private async Task<Result> RefreshAsync(Guid parentId, int depth, ISet<string>? changedUrls, CancellationToken cancellationToken)
     {
-        if (depth >= MaxDepth)
-        {
-            return Result.Success();
-        }
-
         var children = (await content.ListChildrenAsync(parentId, cancellationToken).ConfigureAwait(false)).Where(child => child.IsLive).ToList();
         if (children.Count == 0)
         {
             return Result.Success();
+        }
+
+        // At recursion depth d the parent is at least at level d + 1, so its children are at level d + 2 or deeper. Live children
+        // beyond the supported depth cannot exist through the editor; if they do, fail the publication (rolled back as a whole)
+        // rather than leave their URLs stale.
+        if (depth + 2 > ContentItem.MaxHierarchyDepth)
+        {
+            return ContentErrors.HierarchyTooDeep;
         }
 
         var liveRevisions = await revisions.GetManyAsync(children.Select(child => child.LiveRevisionId!.Value).ToList(), cancellationToken).ConfigureAwait(false);

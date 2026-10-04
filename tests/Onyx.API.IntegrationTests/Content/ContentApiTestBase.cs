@@ -13,6 +13,9 @@ public abstract class ContentApiTestBase(PostgresFixture fixture) : IdentityApiT
 
     private readonly string _mediaRoot = Path.Combine(Path.GetTempPath(), "onyx-media-tests", Guid.NewGuid().ToString("N"));
 
+    /// <summary>This test class's own media storage directory (deleted afterwards).</summary>
+    protected string MediaRoot => _mediaRoot;
+
     protected override IReadOnlyDictionary<string, string?> Settings => new Dictionary<string, string?>
     {
         ["RateLimiting:Strict:PermitLimit"] = "10000",

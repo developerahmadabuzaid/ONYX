@@ -13,6 +13,9 @@ public static class ContentErrors
 
     public static readonly Error NotLive = Error.Conflict("Content.NotLive", "The content is not live.");
 
+    public static readonly Error HierarchyTooDeep = Error.Validation(
+        "Content.HierarchyTooDeep", $"Content can be nested at most {ContentItem.MaxHierarchyDepth} levels deep (counting the top-level item).");
+
     public static readonly Error IncompleteTranslations =
         Error.Validation("Content.IncompleteTranslations", "Every configured language needs a title, a slug and content before approval or publishing.");
 

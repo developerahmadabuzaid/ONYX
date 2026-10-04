@@ -71,6 +71,58 @@ public sealed class ImageSanitizationTests
     }
 
     [Fact]
+    public void A_valid_baseline_jpeg_is_kept_byte_for_byte_apart_from_metadata()
+    {
+        var baseline = BaselineJpeg();
+
+        var cleaned = Inspector.InspectAndClean(baseline, MediaLimits.Default).Value;
+
+        Assert.Equal("image/jpeg", cleaned.ContentType);
+        Assert.Equal((1, 1), (cleaned.Width, cleaned.Height));
+        Assert.Equal(baseline, cleaned.Content);
+    }
+
+    [Fact]
+    public void A_valid_progressive_jpeg_keeps_every_scan()
+    {
+        var cleaned = Inspector.InspectAndClean(Jpeg(trailing: []), MediaLimits.Default).Value;
+
+        Assert.Equal(2, CountSequence(cleaned.Content, [0xFF, 0xDA]));
+        Assert.True(Contains(cleaned.Content, [0x78, 0x9A, 0xFF, 0xD9]));
+    }
+
+    [Fact]
+    public void A_jpeg_without_an_end_of_image_marker_is_rejected()
+    {
+        var withoutEnd = BaselineJpeg()[..^2];
+        var withoutEndButPayload = withoutEnd.Concat(Payload).ToArray();
+
+        Assert.Equal("Media.Corrupt", Inspector.InspectAndClean(withoutEnd, MediaLimits.Default).Error!.Code);
+        Assert.Equal("Media.Corrupt", Inspector.InspectAndClean(withoutEndButPayload, MediaLimits.Default).Error!.Code);
+    }
+
+    [Theory]
+    [InlineData("truncated-segment")]
+    [InlineData("end-before-scan")]
+    [InlineData("scan-before-frame")]
+    [InlineData("stray-start-marker")]
+    public void Malformed_or_truncated_jpegs_are_rejected(string defect)
+    {
+        var jpeg = BaselineJpeg();
+        byte[] broken = defect switch
+        {
+            // The frame header claims more bytes than the file has.
+            "truncated-segment" => jpeg[..24],
+            "end-before-scan" => [0xFF, 0xD8, .. Sof0, 0xFF, 0xD9],
+            "scan-before-frame" => [0xFF, 0xD8, .. Sos, 0x12, 0x34, .. Sof0, 0xFF, 0xD9],
+            "stray-start-marker" => [0xFF, 0xD8, .. Sof0, 0xFF, 0xD8, .. Sos, 0x12, 0xFF, 0xD9],
+            _ => throw new ArgumentOutOfRangeException(nameof(defect)),
+        };
+
+        Assert.Equal("Media.Corrupt", Inspector.InspectAndClean(broken, MediaLimits.Default).Error!.Code);
+    }
+
+    [Fact]
     public void Png_keeps_only_rendering_chunks_and_nothing_after_iend()
     {
         var iend = Png1x1.Length - 12;
@@ -149,6 +201,20 @@ public sealed class ImageSanitizationTests
         bytes.AddRange(trailing);
         return [.. bytes];
     }
+
+    private static readonly byte[] Sof0 = [0xFF, 0xC0, 0x00, 0x11, 0x08, 0x00, 0x01, 0x00, 0x01, 0x03, 0x01, 0x11, 0x00, 0x02, 0x11, 0x01, 0x03, 0x11, 0x01];
+    private static readonly byte[] Sos = [0xFF, 0xDA, 0x00, 0x0C, 0x03, 0x01, 0x00, 0x02, 0x11, 0x03, 0x11, 0x00, 0x3F, 0x00];
+
+    /// <summary>SOI, JFIF, baseline frame header, one scan (with a stuffed byte and a restart marker) and EOI.</summary>
+    private static byte[] BaselineJpeg() =>
+    [
+        0xFF, 0xD8,
+        0xFF, 0xE0, 0x00, 0x10, .. Encoding.ASCII.GetBytes("JFIF"), 0x00, 0x01, 0x01, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00, 0x00,
+        .. Sof0,
+        .. Sos,
+        0x12, 0xFF, 0x00, 0x34, 0xFF, 0xD0, 0x56,
+        0xFF, 0xD9,
+    ];
 
     private static byte[] Chunk(string type, string data)
     {

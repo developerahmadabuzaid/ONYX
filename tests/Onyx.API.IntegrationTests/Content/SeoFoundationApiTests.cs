@@ -36,6 +36,28 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
     }
 
     [Fact]
+    public async Task Internal_seo_planning_does_not_move_lastmod_but_served_metadata_does()
+    {
+        Fixture.RequireDatabase();
+        var (_, owner) = await SignInSuperAdminAsync();
+        var published = await PublishAsync(owner, await CreatePageAsync(owner));
+        var firstPublish = Time.GetUtcNow();
+
+        Time.Advance(TimeSpan.FromMinutes(3));
+        var planning = new SeoProfileDto("cloud migration", ["cloud"], "Commercial", null, null, null, true, true, ["WebPage", "BreadcrumbList"], null, null, null, "SA", "Ready", "Internal note");
+        var planned = await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync($"{Admin}/{published.Id}/translations/en/seo", new UpdateContentSeoRequest(planning, published.Version), Token));
+        var republished = await PublishAsync(owner, planned);
+        Assert.Equal(firstPublish, await LastModifiedAsync("en", "/en/about-us"));
+
+        Time.Advance(TimeSpan.FromMinutes(3));
+        var served = planning with { MetaDescription = "Who Onyx is and how the team works with clients." };
+        var described = await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync($"{Admin}/{published.Id}/translations/en/seo", new UpdateContentSeoRequest(served, republished.Version), Token));
+        await PublishAsync(owner, described);
+        Assert.Equal(Time.GetUtcNow(), await LastModifiedAsync("en", "/en/about-us"));
+        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/من-نحن"));
+    }
+
+    [Fact]
     public async Task Canonicalized_pages_take_no_part_in_hreflang_in_html_or_sitemap()
     {
         Fixture.RequireDatabase();

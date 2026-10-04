@@ -459,23 +459,50 @@ public sealed class ContentAdministrationService(
             return Error.Validation("Content.InvalidParent", $"A {type} cannot be placed under a {parentItem.Type}.");
         }
 
-        // Walk up to refuse cycles (an item under its own descendant).
+        // Walk up from the new parent: refuse cycles (an item under its own descendant) and count the parent's level.
+        // The walk is bounded by the supported depth; a longer chain is itself too deep.
+        var parentLevel = 0;
         var current = parentItem;
-        for (var depth = 0; depth < 20 && current is not null; depth++)
+        while (current is not null)
         {
             if (current.Id == itemId)
             {
                 return Error.Validation("Content.InvalidParent", "Content cannot be moved under one of its own descendants.");
             }
 
-            if (current.ParentId is not { } next)
+            if (++parentLevel >= ContentItem.MaxHierarchyDepth)
+            {
+                return ContentErrors.HierarchyTooDeep;
+            }
+
+            current = current.ParentId is { } next
+                ? (await content.GetLookupAsync([next], cancellationToken).ConfigureAwait(false)).GetValueOrDefault(next)
+                : null;
+        }
+
+        // The item and everything below it move together, so the whole subtree must still fit.
+        var subtreeHeight = itemId is { } id ? await SubtreeHeightAsync(id, ContentItem.MaxHierarchyDepth - parentLevel, cancellationToken).ConfigureAwait(false) : 1;
+        return parentLevel + subtreeHeight > ContentItem.MaxHierarchyDepth ? ContentErrors.HierarchyTooDeep : null;
+    }
+
+    /// <summary>Levels in the subtree rooted at <paramref name="itemId"/> (1 = no children); stops counting once past <paramref name="limit"/>.</summary>
+    private async Task<int> SubtreeHeightAsync(Guid itemId, int limit, CancellationToken cancellationToken)
+    {
+        if (limit <= 0)
+        {
+            return 1;
+        }
+
+        var height = 1;
+        foreach (var child in await content.ListChildrenAsync(itemId, cancellationToken).ConfigureAwait(false))
+        {
+            height = Math.Max(height, 1 + await SubtreeHeightAsync(child.Id, limit - 1, cancellationToken).ConfigureAwait(false));
+            if (height > limit)
             {
                 break;
             }
-
-            current = (await content.GetLookupAsync([next], cancellationToken).ConfigureAwait(false)).GetValueOrDefault(next);
         }
 
-        return null;
+        return height;
     }
 }

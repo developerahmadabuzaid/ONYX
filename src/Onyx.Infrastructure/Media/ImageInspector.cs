@@ -9,8 +9,9 @@ namespace Onyx.Infrastructure.Media;
 /// In-house image identification and metadata removal (no imaging package): the type comes from the file signature, never the
 /// name or the client's claim. Every format is parsed structurally and rewritten with an allow-list of parts, so metadata
 /// (EXIF, XMP, IPTC, comments, text, private chunks — these can carry GPS location and device details) and any bytes after the
-/// end of the image (polyglot payloads) are dropped. Colour profiles and animation data are kept. SVG and every other format
-/// are rejected. Re-encoding and responsive variants need an approved imaging library and are deferred.
+/// end of the image (polyglot payloads) are dropped. Colour profiles and animation data are kept. JPEG is strict: SOI, a frame
+/// header, at least one scan and EOI are required, otherwise the file is rejected (never repaired or copied through). SVG and
+/// every other format are rejected. Re-encoding and responsive variants need an approved imaging library and are deferred.
 /// </summary>
 internal sealed class ImageInspector : IImageInspector
 {
@@ -117,6 +118,8 @@ internal sealed class ImageInspector : IImageInspector
         int? height = null;
         var offset = 2;
         var inScan = false;
+        var sawScan = false;
+        var sawEnd = false;
 
         while (offset < content.Length)
         {
@@ -132,9 +135,9 @@ internal sealed class ImageInspector : IImageInspector
 
                 if (offset + 1 >= content.Length)
                 {
-                    // No end marker: keep the remaining scan data as it is (some encoders omit EOI).
-                    output.Write(content, start, content.Length - start);
-                    break;
+                    // Strict: scan data that runs to the end of the file has no end-of-image marker, so where the image ends
+                    // (and any appended payload begins) cannot be told apart. Such files are rejected, not copied.
+                    throw new InvalidDataException("JPEG scan data without an end-of-image marker.");
                 }
 
                 output.Write(content, start, offset - start);
@@ -155,9 +158,22 @@ internal sealed class ImageInspector : IImageInspector
 
             if (marker == 0xD9)
             {
-                // End of image: anything after it is not part of the image and is dropped.
+                // End of image: valid only after a frame header and at least one scan. Anything after it is dropped.
+                if (width is null || !sawScan)
+                {
+                    throw new InvalidDataException("JPEG ends before any image data.");
+                }
+
                 output.Write(content, offset, 2);
+                sawEnd = true;
                 break;
+            }
+
+            // Only segment markers may appear here: a second start-of-image, a stray restart marker or a reserved code means
+            // the stream is not a well-formed JPEG.
+            if (marker is 0xD8 or (>= 0xD0 and <= 0xD7) or 0x01 or 0x00)
+            {
+                throw new InvalidDataException("Unexpected JPEG marker.");
             }
 
             if (offset + 4 > content.Length)
@@ -185,11 +201,20 @@ internal sealed class ImageInspector : IImageInspector
                 output.Write(content, offset, 2 + length);
             }
 
+            if (marker == 0xDA && width is null)
+            {
+                throw new InvalidDataException("JPEG scan before the frame header.");
+            }
+
             offset += 2 + length;
             inScan = marker == 0xDA;
+            sawScan |= inScan;
         }
 
-        return width is null ? throw new InvalidDataException("No JPEG frame header.") : new InspectedImage(output.ToArray(), "image/jpeg", "jpg", width.Value, height!.Value);
+        // Strict structure: SOI, a frame header, at least one scan and EOI. Anything else is rejected rather than repaired.
+        return width is null || !sawEnd
+            ? throw new InvalidDataException("Incomplete JPEG.")
+            : new InspectedImage(output.ToArray(), "image/jpeg", "jpg", width.Value, height!.Value);
     }
 
     private static bool IsWebP(byte[] content) =>
