@@ -97,6 +97,7 @@ public sealed class RedirectAdministrationService(
             return Error.NotFound("Redirect.NotFound", "Redirect not found.");
         }
 
+        redirect.AnnounceRemoval();
         redirects.Remove(redirect);
         auditTrail.Record(AuditAction.RedirectDeleted, AuditCategory.Publishing, nameof(Redirect), redirect.Id.ToString(),
             new { language = redirect.LanguageCode, from = redirect.FromPath, kind = redirect.Kind.ToString() });

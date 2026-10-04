@@ -39,6 +39,7 @@ public static class DependencyInjection
         services.AddScoped<Content.CtaResolver>();
         services.AddScoped<Content.PublicContentBuilder>();
         services.AddScoped<Media.MediaUsageIndexer>();
+        services.AddScoped<Seo.IOrganizationProfileService, Seo.OrganizationProfileService>();
 
         services.AddScoped<Content.IContentAdministrationService, Content.ContentAdministrationService>();
         services.AddScoped<Content.IContentWorkflowService, Content.ContentWorkflowService>();

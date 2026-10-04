@@ -19,6 +19,12 @@ public sealed class PageController(IPublicContentApiClient api, SeoContext seo, 
     [HttpGet]
     public async Task<IActionResult> Show(string lang, string path, CancellationToken cancellationToken)
     {
+        // One URL per page: "/en/x/" answers 301 to "/en/x" instead of serving a duplicate.
+        if (Request.Path.Value is { Length: > 1 } requested && requested.EndsWith('/'))
+        {
+            return LocalRedirectPermanent(SitePaths.Encode(requested.TrimEnd('/')) + Request.QueryString);
+        }
+
         var result = await api.ResolveAsync(lang, path, cancellationToken);
         if (result.IsUnavailable)
         {

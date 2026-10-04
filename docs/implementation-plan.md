@@ -167,6 +167,8 @@
 - **Not included (needs owner input or a later stage):** seeding pillars/offices/markets content and Organization JSON-LD (real names, addresses and Arabic wording are [OPEN] inputs; nothing is invented), conversion routes for non-URL CTAs (Stage 8; such CTAs are not rendered as links yet), output caching/invalidation (not needed while every page is resolved live through the API), visual design (Stage 5).
 - **Migration:** `20261004114859_CmsContentFoundation` (23 additive tables, 54 indexes; no drops or alters).
 
+**Post-Stage 6 SEO foundation and hardening (owner-approved Phase B, 2026-10-05):** hreflang/canonical/sitemap consistency, per-language `lastmod`, one-URL-per-page redirects, non-cacheable language redirects, `nofollow` switch links, LCP-friendly featured image, corrected FAQ guidance, IndexNow foundation (inactive until configured and launched), WebSite JSON-LD and a gated Organization profile, audience-timing wording for publishing time, the Stage 12 search-data model decision (architecture.md §24.1), allow-list image sanitization for GIF/JPEG/PNG/WebP, a keyword-map conflict fix, and broader tests. Migration `SeoFoundationHardening` adds one nullable column. AI-agent contracts were deferred by owner decision.
+
 ### Stage 7 — Work, proof, insights, glossary, integrations
 - **Build:** projects, case studies, capabilities, testimonials, metrics, with the proof guard and the 3-featured limit; insights with scheduled publishing and the AI-approval guard; topics, glossary, integrations showcase.
 - **Verify:** guards can't be bypassed through the API; scheduled publishing runs via the Worker.

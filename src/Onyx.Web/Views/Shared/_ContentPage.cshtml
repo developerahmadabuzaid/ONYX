@@ -31,7 +31,7 @@
         }
         @if (content.FeaturedImage is { } featured)
         {
-            <partial name="_ContentImage" model="(Model, featured)" />
+            <partial name="_ContentImage" model="(Model, featured, true)" />
         }
     </header>
     @foreach (var block in content.Body)
@@ -73,7 +73,7 @@
                 </ul>
                 break;
             case "Image" when block.Image is not null:
-                <partial name="_ContentImage" model="(Model, block.Image)" />
+                <partial name="_ContentImage" model="(Model, block.Image, false)" />
                 break;
             case "CallToAction" when block.Cta is not null:
                 <partial name="_ContentCta" model="block.Cta" />

@@ -165,7 +165,7 @@
   <data name="Cms.Content.PreviewExpires" xml:space="preserve"><value>Expires</value></data>
   <data name="Cms.Content.PrimaryCta" xml:space="preserve"><value>Primary call to action (ID)</value></data>
   <data name="Cms.Content.PublishAtUtc" xml:space="preserve"><value>Publish at (UTC)</value></data>
-  <data name="Cms.Content.PublishingTime" xml:space="preserve"><value>Publishing time</value></data>
+  <data name="Cms.Content.PublishingTime" xml:space="preserve"><value>Publishing time (audience timing, not a ranking factor)</value></data>
   <data name="Cms.Content.Quality" xml:space="preserve"><value>Quality checks</value></data>
   <data name="Cms.Content.RedirectTo" xml:space="preserve"><value>Redirect to content (ID)</value></data>
   <data name="Cms.Content.Relations" xml:space="preserve"><value>Related content</value></data>

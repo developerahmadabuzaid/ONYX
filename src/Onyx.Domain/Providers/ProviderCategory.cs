@@ -9,4 +9,5 @@ public enum ProviderCategory
     Calendar = 4,
     AdPlatform = 5,
     Captcha = 6,
+    SearchEngineNotification = 7,
 }

@@ -16,6 +16,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <!-- Unit tests for internal adapters (image sanitization, IndexNow) live in the integration test project. -->
+    <InternalsVisibleTo Include="Onyx.API.IntegrationTests" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Onyx.Application\Onyx.Application.csproj" />
     <ProjectReference Include="..\Onyx.Domain\Onyx.Domain.csproj" />
   </ItemGroup>

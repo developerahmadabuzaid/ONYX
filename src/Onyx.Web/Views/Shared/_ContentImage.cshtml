@@ -1,6 +1,14 @@
-@model (Onyx.Web.Content.PageViewModel Page, Onyx.Contracts.Content.PublicMediaResponse Image)
+@model (Onyx.Web.Content.PageViewModel Page, Onyx.Contracts.Content.PublicMediaResponse Image, bool Priority)
+@* The featured image is usually the largest element in view (LCP): load it eagerly and early. Body images load lazily. *@
 <figure>
-    <img src="@Model.Page.MediaUrl(Model.Image.Id)" alt="@(Model.Image.Alt ?? string.Empty)" width="@Model.Image.Width" height="@Model.Image.Height" loading="lazy" decoding="async">
+    @if (Model.Priority)
+    {
+        <img src="@Model.Page.MediaUrl(Model.Image.Id)" alt="@(Model.Image.Alt ?? string.Empty)" width="@Model.Image.Width" height="@Model.Image.Height" fetchpriority="high" decoding="async">
+    }
+    else
+    {
+        <img src="@Model.Page.MediaUrl(Model.Image.Id)" alt="@(Model.Image.Alt ?? string.Empty)" width="@Model.Image.Width" height="@Model.Image.Height" loading="lazy" decoding="async">
+    }
     @if (!string.IsNullOrEmpty(Model.Image.Caption))
     {
         <figcaption>@Model.Image.Caption</figcaption>

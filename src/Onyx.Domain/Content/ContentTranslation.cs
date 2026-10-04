@@ -81,6 +81,12 @@ public sealed partial class ContentTranslation : AuditableEntity, IAuditable
 
     public string? SeoNotes { get; private set; }
 
+    /// <summary>
+    /// When the live page in this language last changed in a way visitors and search engines can see (drives sitemap
+    /// <c>lastmod</c>). Set only when publishing changes the page; republishing identical content leaves it untouched.
+    /// </summary>
+    public DateTimeOffset? LiveContentModifiedAtUtc { get; private set; }
+
     /// <summary>Title, slug and some content (summary or body) exist. Required in every language before approval.</summary>
     public bool IsComplete =>
         !string.IsNullOrWhiteSpace(Title) && !string.IsNullOrWhiteSpace(Slug) && (!string.IsNullOrWhiteSpace(Summary) || Body.Count > 0);
@@ -93,6 +99,8 @@ public sealed partial class ContentTranslation : AuditableEntity, IAuditable
         new() { ContentItemId = contentItemId, LanguageCode = languageCode, SlugScope = slugScope };
 
     internal void SetSlugScope(string slugScope) => SlugScope = slugScope;
+
+    internal void MarkLiveContentModified(DateTimeOffset now) => LiveContentModifiedAtUtc = now;
 
     internal Result Update(string title, string? summary, string slug, IReadOnlyList<ContentBlock> body, IReadOnlyList<FaqEntry> faqs)
     {

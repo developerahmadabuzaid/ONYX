@@ -53,6 +53,31 @@ public sealed class TypeDependencyRulesTests
         Assert.True(result.IsSuccessful, Describe(host, "Onyx.Infrastructure", result));
     }
 
+    [Fact]
+    public void Public_api_controllers_never_reach_competitor_or_intelligence_data()
+    {
+        // Competitor research and content intelligence are internal: only Admin controllers may use them.
+        var result = Types.InAssembly(Load("Onyx.API"))
+            .That().ResideInNamespace("Onyx.API.Controllers")
+            .And().DoNotResideInNamespace("Onyx.API.Controllers.Admin")
+            .ShouldNot().HaveDependencyOnAny("Onyx.Application.Intelligence", "Onyx.Contracts.Intelligence", "Onyx.Domain.Intelligence")
+            .GetResult();
+
+        Assert.True(result.IsSuccessful, Describe("Onyx.API (public controllers)", "intelligence", result));
+    }
+
+    [Fact]
+    public void The_public_site_never_reaches_competitor_or_intelligence_data()
+    {
+        var result = Types.InAssembly(Load("Onyx.Web"))
+            .That().ResideInNamespace("Onyx.Web.Controllers")
+            .Or().ResideInNamespace("Onyx.Web.Content")
+            .ShouldNot().HaveDependencyOnAny("Onyx.Contracts.Intelligence", "Onyx.Web.ApiClients.IAdminCmsApiClient")
+            .GetResult();
+
+        Assert.True(result.IsSuccessful, Describe("Onyx.Web (public site)", "intelligence / admin CMS client", result));
+    }
+
     private static void AssertNoDependency(string assemblyName, string[] forbidden)
     {
         var result = Types.InAssembly(Load(assemblyName))

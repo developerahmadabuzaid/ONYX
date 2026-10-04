@@ -133,6 +133,10 @@ dotnet run --project src/Onyx.Web --launch-profile https   # https://localhost:7
 | Onyx.API | `Privacy:IpHashKey` (optional secret) | enables keyed hashing of IP addresses on consent receipts; without it, no IP is stored |
 | Onyx.API | `Media:StorageRoot` | a directory **outside any web root**, shared by all API instances and **included in media backups** (uploads fail until it is set) |
 | Onyx.API | `Content:PreviewTokenMinutes` | draft preview link lifetime (default 30) |
+| Onyx.API + Onyx.Worker | `Site:PublicBaseUrl` / `Site:AllowIndexing` | **the same values as Onyx.Web** (public https origin; `true` only at launch) |
+| Onyx.API + Onyx.Worker | `IndexNow:Key` | 8–128 letters/digits/hyphens; leave empty until launch (IndexNow stays inactive while empty or while indexing is off) |
+| Onyx.API | `Seo:OrganizationStructuredDataEnabled` | `true` only after verifying the Brand Kit logo and website |
+| Onyx.API | `Media:MaxFrames` | most frames per animated GIF (default 1000) |
 
 ## 7. Recovery: SuperAdmin lost their authenticator (`reset-two-factor`)
 

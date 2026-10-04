@@ -89,7 +89,9 @@ public sealed class ContentPathService(
     }
 
     /// <summary>Makes <paramref name="newPaths"/> current for the item; previous paths become permanent redirects.</summary>
-    public async Task<Result> ApplyAsync(Guid contentItemId, IReadOnlyDictionary<string, string> newPaths, CancellationToken cancellationToken)
+    /// <param name="changedUrls">Receives every site path (with language prefix) whose answer changed: the old URL and the new one.</param>
+    public async Task<Result> ApplyAsync(
+        Guid contentItemId, IReadOnlyDictionary<string, string> newPaths, ISet<string>? changedUrls, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(newPaths);
         var existing = await paths.ListForItemAsync(contentItemId, cancellationToken).ConfigureAwait(false);
@@ -114,6 +116,12 @@ public sealed class ContentPathService(
                 return Error.Conflict("Content.PathHasRedirect", $"A redirect rule exists for '/{language}/{newPath}'. Remove it before using this URL.");
             }
 
+            if (current is not null)
+            {
+                changedUrls?.Add($"/{language}/{current.Path}");
+            }
+
+            changedUrls?.Add($"/{language}/{newPath}");
             current?.Retire(now);
             var reused = existing.FirstOrDefault(path => path.LanguageCode == language && path.Path == newPath);
             if (reused is not null)
@@ -136,9 +144,10 @@ public sealed class ContentPathService(
     }
 
     /// <summary>After a parent's URL changed, moves its live descendants under the new URL (their old URLs keep redirecting).</summary>
-    public Task<Result> RefreshDescendantsAsync(Guid parentId, CancellationToken cancellationToken) => RefreshAsync(parentId, 0, cancellationToken);
+    public Task<Result> RefreshDescendantsAsync(Guid parentId, ISet<string>? changedUrls, CancellationToken cancellationToken) =>
+        RefreshAsync(parentId, 0, changedUrls, cancellationToken);
 
-    private async Task<Result> RefreshAsync(Guid parentId, int depth, CancellationToken cancellationToken)
+    private async Task<Result> RefreshAsync(Guid parentId, int depth, ISet<string>? changedUrls, CancellationToken cancellationToken)
     {
         if (depth >= MaxDepth)
         {
@@ -165,13 +174,13 @@ public sealed class ContentPathService(
                 return computed.Error!;
             }
 
-            var applied = await ApplyAsync(child.Id, computed.Value, cancellationToken).ConfigureAwait(false);
+            var applied = await ApplyAsync(child.Id, computed.Value, changedUrls, cancellationToken).ConfigureAwait(false);
             if (applied.IsFailure)
             {
                 return applied;
             }
 
-            var nested = await RefreshAsync(child.Id, depth + 1, cancellationToken).ConfigureAwait(false);
+            var nested = await RefreshAsync(child.Id, depth + 1, changedUrls, cancellationToken).ConfigureAwait(false);
             if (nested.IsFailure)
             {
                 return nested;

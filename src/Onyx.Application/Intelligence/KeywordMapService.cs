@@ -142,7 +142,8 @@ public sealed class KeywordMapService(
         var conflicts = new List<KeywordConflictItem>();
         foreach (var target in await keywords.FindAsync(languageCode, normalized, cancellationToken).ConfigureAwait(false))
         {
-            if (target.Status != KeywordStatus.Retired && target.TargetContentItemId != excludeContentItemId)
+            // A map entry conflicts unless it is the excluded page's own entry (entries without a target page always count).
+            if (target.Status != KeywordStatus.Retired && (excludeContentItemId is null || target.TargetContentItemId != excludeContentItemId))
             {
                 conflicts.Add(new KeywordConflictItem("KeywordMap", target.TargetContentItemId, target.Keyword, target.LanguageCode, target.SearchIntent.ToString(),
                     target.TargetMarket.Length == 0 ? null : target.TargetMarket));

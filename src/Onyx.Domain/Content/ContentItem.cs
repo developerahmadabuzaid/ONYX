@@ -205,6 +205,19 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
         return Result.Success();
     }
 
+    /// <summary>Records that the live page in <paramref name="languageCode"/> visibly changed (see <see cref="ContentTranslation.LiveContentModifiedAtUtc"/>).</summary>
+    public void RecordLiveContentModified(string languageCode, DateTimeOffset now) => GetTranslation(languageCode)?.MarkLiveContentModified(now);
+
+    /// <summary>Announces public URLs whose answer changed (live, moved, redirected or gone) for search-engine notification.</summary>
+    public void AnnouncePublicUrls(IEnumerable<string> paths)
+    {
+        ArgumentNullException.ThrowIfNull(paths);
+        foreach (var chunk in paths.Distinct(StringComparer.Ordinal).Chunk(PublicUrlsChanged.MaxPaths))
+        {
+            RaiseDomainEvent(new PublicUrlsChanged(Id, chunk));
+        }
+    }
+
     /// <summary>Records that a new revision of the working copy was stored (and moves the concurrency token).</summary>
     public int RecordRevision() => ++CurrentRevisionNumber;
 

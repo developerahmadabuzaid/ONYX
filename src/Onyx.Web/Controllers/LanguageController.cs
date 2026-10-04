@@ -9,6 +9,8 @@ public sealed class LanguageController : Controller
     [HttpGet("/{lang:onyxlang}/language")]
     public IActionResult Switch(string lang, [FromQuery(Name = "return")] string? returnPath)
     {
+        // A per-visitor redirect that sets a cookie: never cached, and not a page for crawlers (robots.txt disallows it after launch).
+        Response.Headers.CacheControl = "private, no-store";
         Response.Cookies.Append(LanguageCatalog.ChoiceCookieName, lang, new CookieOptions
         {
             Secure = true,

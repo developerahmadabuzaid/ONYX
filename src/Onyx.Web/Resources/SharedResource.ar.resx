@@ -165,7 +165,7 @@
   <data name="Cms.Content.PreviewExpires" xml:space="preserve"><value>تنتهي صلاحيته</value></data>
   <data name="Cms.Content.PrimaryCta" xml:space="preserve"><value>الدعوة الأساسية إلى الإجراء (المعرّف)</value></data>
   <data name="Cms.Content.PublishAtUtc" xml:space="preserve"><value>النشر في (UTC)</value></data>
-  <data name="Cms.Content.PublishingTime" xml:space="preserve"><value>وقت النشر</value></data>
+  <data name="Cms.Content.PublishingTime" xml:space="preserve"><value>وقت النشر (توقيت الجمهور، وليس عاملًا في ترتيب نتائج البحث)</value></data>
   <data name="Cms.Content.Quality" xml:space="preserve"><value>فحوص الجودة</value></data>
   <data name="Cms.Content.RedirectTo" xml:space="preserve"><value>التحويل إلى محتوى (المعرّف)</value></data>
   <data name="Cms.Content.Relations" xml:space="preserve"><value>المحتوى ذو الصلة</value></data>

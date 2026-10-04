@@ -94,6 +94,31 @@ public static class DependencyInjection
         return services;
     }
 
+    /// <summary>Public site settings, IndexNow change notification (inactive until configured and launched) and the Organization gate.</summary>
+    private static void AddSeo(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Seo.PublicSiteOptions>().Bind(configuration.GetSection(Seo.PublicSiteOptions.SectionName))
+            .Validate(options => !options.AllowIndexing || options.Origin is not null, "Site:PublicBaseUrl must be an absolute https origin when Site:AllowIndexing is true.")
+            .ValidateOnStart();
+        services.AddOptions<Seo.IndexNowOptions>().Bind(configuration.GetSection(Seo.IndexNowOptions.SectionName)).ValidateDataAnnotations()
+            .Validate(options => string.IsNullOrEmpty(options.Key) || Seo.IndexNowNotifier.IsValidKey(options.Key), "IndexNow:Key must be 8-128 letters, digits or hyphens.")
+            .ValidateOnStart();
+        services.AddOptions<Seo.SeoOptions>().Bind(configuration.GetSection(Seo.SeoOptions.SectionName));
+
+        services.AddHttpClient<Application.Seo.ISearchEngineNotifier, Seo.IndexNowNotifier>((provider, client) =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(provider.GetRequiredService<IOptions<Seo.IndexNowOptions>>().Value.TimeoutSeconds);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("OnyxVanguard-IndexNow/1.0");
+        });
+
+        services.AddSingleton(provider =>
+        {
+            var seo = provider.GetRequiredService<IOptions<Seo.SeoOptions>>().Value;
+            var site = provider.GetRequiredService<IOptions<Seo.PublicSiteOptions>>().Value;
+            return new Application.Seo.OrganizationProfileSettings(seo.OrganizationStructuredDataEnabled, site.Origin?.ToString());
+        });
+    }
+
     /// <summary>Stage 6: CMS repositories, media storage and inspection, content settings.</summary>
     private static void AddContent(IServiceCollection services, IConfiguration configuration)
     {
@@ -109,7 +134,7 @@ public static class DependencyInjection
         services.AddSingleton(provider =>
         {
             var options = provider.GetRequiredService<IOptions<Media.MediaOptions>>().Value;
-            return new Application.Media.MediaLimits(options.MaxUploadBytes, options.MaxWidth, options.MaxHeight, options.MaxPixels);
+            return new Application.Media.MediaLimits(options.MaxUploadBytes, options.MaxWidth, options.MaxHeight, options.MaxPixels, options.MaxFrames);
         });
         services.AddSingleton<Application.Media.IImageInspector, Media.ImageInspector>();
         services.AddSingleton<Application.Media.IMediaStorage, Media.LocalFileMediaStorage>();
@@ -131,5 +156,7 @@ public static class DependencyInjection
         services.AddScoped<Application.Intelligence.ISeoRecommendationRepository, SeoRecommendationRepository>();
         services.AddScoped<Application.Intelligence.IContentCalendarRepository, ContentCalendarRepository>();
         services.AddScoped<Application.Intelligence.IContentPerformanceRepository, ContentPerformanceRepository>();
+
+        AddSeo(services, configuration);
     }
 }

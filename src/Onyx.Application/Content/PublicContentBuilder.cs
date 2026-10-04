@@ -75,15 +75,14 @@ public sealed class PublicContentBuilder(
         var pillarCta = ancestors.FirstOrDefault(ancestor => ancestor.Snapshot.Type == ContentType.ServicePillar)?.Snapshot.PrimaryCtaId;
         var cta = await ctaResolver.ResolveAsync(snapshot.PrimaryCtaId, pillarCta, snapshot.Type, languageCode, cancellationToken).ConfigureAwait(false);
 
-        var alternates = item.IsLive
+        // hreflang links only canonical, indexable pages: a noindex or canonicalized page declares no alternates and is never
+        // listed as one (the same rule the sitemap uses, so HTML and sitemap annotations always agree).
+        var alternates = item.IsLive && IsHreflangEligible(snapshot, languageCode)
             ? SupportedLanguages.All
                 .Select(language => (language, path: PathOf(item.Id, language)))
-                .Where(entry => entry.path is not null && snapshotHasIndexable(entry.language))
+                .Where(entry => entry.path is not null && IsHreflangEligible(snapshot, entry.language))
                 .ToDictionary(entry => entry.language, entry => entry.path!, StringComparer.Ordinal)
             : new Dictionary<string, string>(StringComparer.Ordinal);
-
-        // hreflang lists only languages whose page is indexable.
-        bool snapshotHasIndexable(string language) => snapshot.Translation(language) is { Seo.Index: true };
 
         var seo = translation.Seo;
         var structured = SupportedStructuredData(snapshot.Type, seo.StructuredData, translation.Faqs.Count, breadcrumbs.Count);
@@ -114,7 +113,14 @@ public sealed class PublicContentBuilder(
             cta is null ? null : ToCta(cta, languageCode),
             snapshot.FeaturedImageId is { } featured && assets.TryGetValue(featured, out var featuredAsset) ? ToMedia(featuredAsset, null, null, languageCode) : null,
             item.FirstPublishedAtUtc,
-            item.LastPublishedAtUtc);
+            item.GetTranslation(languageCode)?.LiveContentModifiedAtUtc ?? item.LastPublishedAtUtc);
+    }
+
+    /// <summary>Indexable and self-canonical in <paramref name="languageCode"/>: the only pages hreflang and the sitemap may list.</summary>
+    public static bool IsHreflangEligible(ContentSnapshot snapshot, string languageCode)
+    {
+        ArgumentNullException.ThrowIfNull(snapshot);
+        return snapshot.Translation(languageCode) is { Seo: { Index: true, CanonicalPath: null } };
     }
 
     public static IReadOnlyList<string> SupportedStructuredData(ContentType type, StructuredDataTypes selected, int faqCount, int breadcrumbCount)

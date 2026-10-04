@@ -120,6 +120,11 @@ public sealed class ContentWorkflowService(
             }
 
             var result = item.ResolveOffline(resolution, request.RedirectToContentItemId);
+            if (result.IsSuccess)
+            {
+                await publisher.AnnounceCurrentUrlsAsync(item, cancellationToken).ConfigureAwait(false);
+            }
+
             return Audited(result, AuditAction.ContentUrlResolutionDecided, item, new { resolution = resolution.ToString(), redirectTo = request.RedirectToContentItemId });
         }, cancellationToken).ConfigureAwait(false);
     }

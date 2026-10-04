@@ -15,4 +15,7 @@ public static class ProviderKeys
     public const string KeywordProvider = "seo.keywords";
     public const string SerpProvider = "seo.serp";
     public const string BehaviorAnalytics = "analytics.behavior";
+
+    // Search-engine change notification (IndexNow: Bing and other participants; not Google). Inactive until configured.
+    public const string IndexNow = "seo.indexnow";
 }

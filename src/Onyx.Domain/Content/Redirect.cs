@@ -83,8 +83,15 @@ public sealed class Redirect : AuditableEntity, IAuditable
         TargetPath = hasPath ? targetPath : null;
         Note = trimmedNote;
         IsActive = isActive;
+        RaiseDomainEvent(new PublicUrlsChanged(Id, [PublicPath]));
         return Result.Success();
     }
+
+    /// <summary>The rule's source URL as a site path with its language prefix.</summary>
+    public string PublicPath => $"/{LanguageCode}/{FromPath}";
+
+    /// <summary>Called before the rule is deleted: its URL now answers differently (usually 404).</summary>
+    public void AnnounceRemoval() => RaiseDomainEvent(new PublicUrlsChanged(Id, [PublicPath]));
 
     /// <summary>
     /// A stored path (no language prefix, no leading slash): no scheme or host (no colon), no query or fragment, no backslashes or

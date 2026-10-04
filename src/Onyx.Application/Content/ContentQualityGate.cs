@@ -183,8 +183,8 @@ public sealed class ContentQualityGate(
             {
                 findings.Add(translation.Faqs.Count == 0
                     ? new(QualitySeverity.Error, "Schema.FaqWithoutVisibleFaqs", "FAQ structured data requires visible FAQs on the page.", language, "structuredData")
-                    : new(QualitySeverity.Recommendation, "Schema.FaqRichResultsLimited",
-                        "FAQ markup is valid here, but search engines currently show FAQ rich results only for a limited set of sites.", language, "structuredData"));
+                    : new(QualitySeverity.Recommendation, "Schema.FaqNoRichResult",
+                        "FAQ markup matches the visible FAQs and is valid, but Google no longer shows FAQ rich results (since May 2026). Keep FAQs only where they genuinely help visitors.", language, "structuredData"));
             }
 
             if (seo.StructuredData.HasFlag(StructuredDataTypes.Service) && item.Type is not (ContentType.Service or ContentType.ServicePillar))

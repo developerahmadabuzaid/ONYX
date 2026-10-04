@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Text.Unicode;
 using Onyx.Contracts.Content;
+using Onyx.Contracts.Organization;
 using Onyx.Web.Localization;
 
 namespace Onyx.Web.Content;
@@ -15,6 +16,55 @@ public static class StructuredDataBuilder
 {
     // Every encoder except UnsafeRelaxedJsonEscaping escapes <, >, & and quotes, so the output cannot close the script element.
     private static readonly JsonSerializerOptions Options = new() { Encoder = JavaScriptEncoder.Create(UnicodeRanges.All) };
+
+    /// <summary>
+    /// Home page JSON-LD: a WebSite node (site name; must be on the home page) and, only when the API returned owner-verified
+    /// facts, an Organization node with exactly those facts. No address, phone or profile is added without a verified source.
+    /// </summary>
+    public static string BuildHome(string languageCode, string baseUrl, string siteName, PublicOrganizationResponse? organization)
+    {
+        var origin = (baseUrl ?? string.Empty).TrimEnd('/');
+        var website = new JsonObject
+        {
+            ["@type"] = "WebSite",
+            ["@id"] = origin + "/#website",
+            ["url"] = origin + "/",
+            ["name"] = siteName,
+            ["inLanguage"] = languageCode,
+        };
+        var graph = new JsonArray { website };
+
+        if (organization is not null)
+        {
+            var node = new JsonObject
+            {
+                ["@type"] = "Organization",
+                ["@id"] = origin + "/#organization",
+                ["name"] = organization.Name,
+                ["url"] = organization.Url,
+                ["logo"] = new JsonObject
+                {
+                    ["@type"] = "ImageObject",
+                    ["url"] = origin + $"/media/{organization.LogoMediaId:D}",
+                },
+            };
+            if (organization.LogoWidth is { } width && organization.LogoHeight is { } height)
+            {
+                node["logo"]!["width"] = width;
+                node["logo"]!["height"] = height;
+            }
+
+            if (!string.IsNullOrWhiteSpace(organization.Email))
+            {
+                node["email"] = organization.Email;
+            }
+
+            website["publisher"] = new JsonObject { ["@id"] = origin + "/#organization" };
+            graph.Add(node);
+        }
+
+        return new JsonObject { ["@context"] = "https://schema.org", ["@graph"] = graph }.ToJsonString(Options);
+    }
 
     public static string? Build(PublicContentResponse content, string baseUrl, string organizationName)
     {

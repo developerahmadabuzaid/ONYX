@@ -79,7 +79,7 @@
     @if (suggested is not null)
     {
         <aside class="notice" lang="@suggested" dir="@Languages.Direction(suggested)">
-            <a href="/@suggested/language?return=@Uri.EscapeDataString(PathIn(suggested))">@Languages.NativeName(suggested)</a>
+            <a href="/@suggested/language?return=@Uri.EscapeDataString(PathIn(suggested))" rel="nofollow">@Languages.NativeName(suggested)</a>
         </aside>
     }
     <header class="site-header">
@@ -87,7 +87,7 @@
         <nav aria-label="@T["Language.Label"]">
             @foreach (var language in Languages.Languages.Where(l => l.Code != lang))
             {
-                <a href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code">@language.NativeName</a>
+                <a href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code" rel="nofollow">@language.NativeName</a>
             }
         </nav>
     </header>

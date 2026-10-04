@@ -24,6 +24,7 @@ public sealed class MediaService(
     IContentRepository content,
     IBrandKitRepository brandKits,
     IContentPreviewService previews,
+    Seo.IOrganizationProfileService organization,
     MediaLimits limits,
     IAuditTrail auditTrail,
     IUnitOfWork unitOfWork,
@@ -172,7 +173,9 @@ public sealed class MediaService(
         }
 
         var allowed = await media.HasLiveUsageAsync(id, cancellationToken).ConfigureAwait(false)
-            || (previewToken is not null && await previews.CanViewMediaAsync(previewToken, id, cancellationToken).ConfigureAwait(false));
+            || (previewToken is not null && await previews.CanViewMediaAsync(previewToken, id, cancellationToken).ConfigureAwait(false))
+            // The official logo is public only while verified Organization data references it.
+            || (await organization.GetVerifiedAsync(cancellationToken).ConfigureAwait(false))?.LogoMediaId == id;
         return allowed ? await OpenAsync(asset, cancellationToken).ConfigureAwait(false) : NotFound;
     }
 

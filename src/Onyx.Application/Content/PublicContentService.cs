@@ -122,8 +122,7 @@ public sealed class PublicContentService(
             }
 
             var snapshot = ContentSnapshotSerializer.Deserialize(revision.Snapshot);
-            bool Listed(string language) =>
-                snapshot.Translation(language) is { Seo: { Index: true, CanonicalPath: null } } && currentPaths.ContainsKey((item.Id, language));
+            bool Listed(string language) => PublicContentBuilder.IsHreflangEligible(snapshot, language) && currentPaths.ContainsKey((item.Id, language));
 
             if (!Listed(languageCode))
             {
@@ -132,7 +131,8 @@ public sealed class PublicContentService(
 
             var alternates = SupportedLanguages.All.Where(Listed)
                 .ToDictionary(language => language, language => $"/{language}/{currentPaths[(item.Id, language)]}", StringComparer.Ordinal);
-            entries.Add(new SitemapEntryResponse(alternates[languageCode], item.LastPublishedAtUtc, alternates));
+            entries.Add(new SitemapEntryResponse(
+                alternates[languageCode], item.GetTranslation(languageCode)?.LiveContentModifiedAtUtc ?? item.LastPublishedAtUtc, alternates));
         }
 
         return entries.OrderBy(entry => entry.Path, StringComparer.Ordinal).ToList();

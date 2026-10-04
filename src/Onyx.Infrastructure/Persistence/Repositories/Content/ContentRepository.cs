@@ -129,7 +129,7 @@ internal sealed class ContentRepository(ApplicationDbContext dbContext) : IConte
             .ConfigureAwait(false);
 
     public async Task<IReadOnlyList<ContentItem>> ListLiveAsync(CancellationToken cancellationToken) =>
-        await dbContext.ContentItems.AsNoTracking()
+        await dbContext.ContentItems.AsNoTracking().Include(item => item.Translations)
             .Where(item => item.LiveRevisionId != null && item.Status != ContentStatus.Archived)
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);

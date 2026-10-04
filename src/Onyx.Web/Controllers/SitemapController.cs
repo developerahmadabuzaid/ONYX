@@ -32,6 +32,7 @@ public sealed class SitemapController(IPublicContentApiClient api, LanguageCatal
             foreach (var language in languages.Languages)
             {
                 builder.Append("Disallow: /").Append(language.Code).Append("/preview\n");
+                builder.Append("Disallow: /").Append(language.Code).Append("/language\n");
             }
 
             builder.Append("Disallow: /media/*?preview=\n");

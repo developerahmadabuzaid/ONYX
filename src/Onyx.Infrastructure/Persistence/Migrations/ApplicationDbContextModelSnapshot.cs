@@ -872,6 +872,10 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(10)")
                         .HasColumnName("language_code");
 
+                    b.Property<DateTimeOffset?>("LiveContentModifiedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("live_content_modified_at_utc");
+
                     b.Property<string>("MetaDescription")
                         .HasMaxLength(400)
                         .HasColumnType("character varying(400)")

@@ -21,4 +21,8 @@ public sealed class MediaOptions
 
     [Range(256, 200_000_000)]
     public long MaxPixels { get; set; } = 40_000_000;
+
+    /// <summary>Most frames an animated GIF may contain.</summary>
+    [Range(1, 10_000)]
+    public int MaxFrames { get; set; } = 1_000;
 }

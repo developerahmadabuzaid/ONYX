@@ -5,8 +5,9 @@ using Onyx.Domain.Intelligence;
 namespace Onyx.Application.Intelligence;
 
 /// <summary>
-/// Evidence-first publishing-time advice. A recommendation needs historical performance and visitor-activity data from a
-/// connected analytics provider; until such data exists the honest answer is "insufficient data", with no time suggested.
+/// Audience-timing advice, not a ranking factor: no authoritative source says the hour of publication affects search ranking.
+/// A suggestion may only ever come from Onyx's own visitor-activity data from a connected analytics provider; until such data
+/// and a validated method exist, the honest answer is "insufficient data", with no time suggested.
 /// </summary>
 public sealed class PublishingTimeAdvisor(IContentPerformanceRepository performance) : IPublishingTimeAdvisor
 {
@@ -20,7 +21,7 @@ public sealed class PublishingTimeAdvisor(IContentPerformanceRepository performa
             RecommendationBasis.InsufficientData.ToString(),
             null,
             hasData
-                ? "Performance data exists but is not yet sufficient for a reliable timing recommendation. Choose the time manually."
-                : "No analytics provider is connected, so there is no visitor-activity data to base a recommendation on. Choose the time manually.");
+                ? "Audience timing only (publication time is not a search ranking factor). Visitor data exists but is not yet sufficient for a reliable suggestion. Choose the time manually."
+                : "Audience timing only (publication time is not a search ranking factor). No analytics provider is connected, so there is no visitor-activity data to base a suggestion on. Choose the time manually.");
     }
 }

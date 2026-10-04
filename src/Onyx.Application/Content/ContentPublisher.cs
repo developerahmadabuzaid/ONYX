@@ -16,6 +16,7 @@ public sealed class ContentPublisher(
     ContentPathService pathService,
     IContentRepository content,
     IContentRevisionRepository revisions,
+    IContentPathRepository paths,
     MediaUsageIndexer mediaUsage,
     IAuditTrail auditTrail,
     TimeProvider timeProvider)
@@ -44,6 +45,14 @@ public sealed class ContentPublisher(
             return newPaths.Error!;
         }
 
+        // The page that was live before (if any), to tell real changes from identical re-publishing.
+        var previousLiveId = item.LiveRevisionId;
+        ContentSnapshot? previousLive = null;
+        if (previousLiveId is { } liveId && liveId != approvedId && await revisions.GetAsync(liveId, cancellationToken).ConfigureAwait(false) is { } liveRevision)
+        {
+            previousLive = ContentSnapshotSerializer.Deserialize(liveRevision.Snapshot);
+        }
+
         var now = timeProvider.GetUtcNow();
         var transition = scheduled ? item.PublishScheduled(now, SupportedLanguages.All) : item.Publish(now, SupportedLanguages.All);
         if (transition.IsFailure)
@@ -51,18 +60,31 @@ public sealed class ContentPublisher(
             return transition;
         }
 
-        var applied = await pathService.ApplyAsync(item.Id, newPaths.Value, cancellationToken).ConfigureAwait(false);
+        var changedUrls = new HashSet<string>(StringComparer.Ordinal);
+        var applied = await pathService.ApplyAsync(item.Id, newPaths.Value, changedUrls, cancellationToken).ConfigureAwait(false);
         if (applied.IsFailure)
         {
             return applied;
         }
 
-        var descendants = await pathService.RefreshDescendantsAsync(item.Id, cancellationToken).ConfigureAwait(false);
+        var descendants = await pathService.RefreshDescendantsAsync(item.Id, changedUrls, cancellationToken).ConfigureAwait(false);
         if (descendants.IsFailure)
         {
             return descendants;
         }
 
+        foreach (var (language, path) in newPaths.Value)
+        {
+            var sameRevision = previousLiveId == approvedId;
+            var visiblyChanged = !sameRevision && (previousLive is null || PublicPageFingerprint.For(previousLive, language) != PublicPageFingerprint.For(snapshot, language));
+            if (visiblyChanged)
+            {
+                item.RecordLiveContentModified(language, now);
+                changedUrls.Add($"/{language}/{path}");
+            }
+        }
+
+        item.AnnouncePublicUrls(changedUrls);
         await mediaUsage.RebuildAsync(item.Id, ContentSnapshot.From(item), snapshot, cancellationToken).ConfigureAwait(false);
         auditTrail.Record(AuditAction.ContentPublished, AuditCategory.Publishing, nameof(ContentItem), item.Id.ToString(),
             new { revision = approved.Number, scheduled, paths = newPaths.Value });
@@ -95,9 +117,18 @@ public sealed class ContentPublisher(
         }
 
         await mediaUsage.RebuildAsync(item.Id, ContentSnapshot.From(item), null, cancellationToken).ConfigureAwait(false);
+        await AnnounceCurrentUrlsAsync(item, cancellationToken).ConfigureAwait(false);
         auditTrail.Record(archive ? AuditAction.ContentArchived : AuditAction.ContentUnpublished, AuditCategory.Publishing, nameof(ContentItem), item.Id.ToString(),
             new { wasLive, resolution = item.OfflineResolution.ToString(), redirectTo = item.OfflineRedirectToId, scheduled });
         return Result.Success();
+    }
+
+    /// <summary>The item's current URLs now answer differently (gone or redirected); announce them for search-engine notification.</summary>
+    public async Task AnnounceCurrentUrlsAsync(ContentItem item, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+        var current = (await paths.ListForItemAsync(item.Id, cancellationToken).ConfigureAwait(false)).Where(path => path.IsCurrent);
+        item.AnnouncePublicUrls(current.Select(path => $"/{path.LanguageCode}/{path.Path}"));
     }
 
     public async Task<Error?> ValidateTargetAsync(Guid itemId, Guid? targetId, CancellationToken cancellationToken)
