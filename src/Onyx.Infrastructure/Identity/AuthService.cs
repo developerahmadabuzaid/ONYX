@@ -157,10 +157,13 @@ public sealed class AuthService(
             return InvalidChallenge;
         }
 
-        // A fresh key on every start: an abandoned enrolment never leaves a usable key behind.
+        // A fresh key on every start, bound to this challenge. The old binding goes first, so an interruption leaves the
+        // new key unbound (unusable) rather than bound to a previous attempt.
+        await users.RemoveAuthenticationTokenAsync(user, AuthenticatorEnrollmentBinding.LoginProvider, AuthenticatorEnrollmentBinding.TokenName).ConfigureAwait(false);
         await users.ResetAuthenticatorKeyAsync(user).ConfigureAwait(false);
         var key = await users.GetAuthenticatorKeyAsync(user).ConfigureAwait(false)
             ?? throw new InvalidOperationException("Authenticator key was not created.");
+        await users.SetAuthenticationTokenAsync(user, AuthenticatorEnrollmentBinding.LoginProvider, AuthenticatorEnrollmentBinding.TokenName, BindingValue(challenge)).ConfigureAwait(false);
 
         var uri = string.Create(CultureInfo.InvariantCulture,
             $"otpauth://totp/{Uri.EscapeDataString(AuthenticatorIssuer)}:{Uri.EscapeDataString(user.Email!)}?secret={key}&issuer={Uri.EscapeDataString(AuthenticatorIssuer)}&digits=6");
@@ -181,12 +184,20 @@ public sealed class AuthService(
             return InvalidChallenge;
         }
 
+        // Only the key issued by this challenge's own start step counts (not a stale or concurrent attempt's key).
+        var binding = await users.GetAuthenticationTokenAsync(user, AuthenticatorEnrollmentBinding.LoginProvider, AuthenticatorEnrollmentBinding.TokenName).ConfigureAwait(false);
+        if (!string.Equals(binding, BindingValue(challenge), StringComparison.Ordinal))
+        {
+            return InvalidChallenge;
+        }
+
         if (!await VerifyAuthenticatorCodeAsync(user, request.Code).ConfigureAwait(false))
         {
             await RegisterFailedCodeAsync(challenge, user, cancellationToken).ConfigureAwait(false);
             return InvalidCode;
         }
 
+        await users.RemoveAuthenticationTokenAsync(user, AuthenticatorEnrollmentBinding.LoginProvider, AuthenticatorEnrollmentBinding.TokenName).ConfigureAwait(false);
         await users.SetTwoFactorEnabledAsync(user, true).ConfigureAwait(false);
         var recoveryCodes = (await users.GenerateNewTwoFactorRecoveryCodesAsync(user, RecoveryCodeCount).ConfigureAwait(false))?.ToList() ?? [];
         challenge.ConsumedAtUtc = timeProvider.GetUtcNow();
@@ -443,6 +454,8 @@ public sealed class AuthService(
         auditTrail.Record(action, AuditCategory.Security, "User", userId?.ToString(), details, userId);
         await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
+
+    private static string BindingValue(LoginChallenge challenge) => challenge.Id.ToString("N", CultureInfo.InvariantCulture);
 
     private static string FormatKey(string key) =>
         string.Join(' ', Enumerable.Range(0, (key.Length + 3) / 4).Select(index => key.Substring(index * 4, Math.Min(4, key.Length - (index * 4))))).ToLowerInvariant();

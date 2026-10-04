@@ -276,6 +276,7 @@ public sealed class UserAdministrationService(
 
         await users.SetTwoFactorEnabledAsync(user!, false).ConfigureAwait(false);
         await users.ResetAuthenticatorKeyAsync(user!).ConfigureAwait(false);
+        await users.RemoveAuthenticationTokenAsync(user!, AuthenticatorEnrollmentBinding.LoginProvider, AuthenticatorEnrollmentBinding.TokenName).ConfigureAwait(false);
         await users.GenerateNewTwoFactorRecoveryCodesAsync(user!, 0).ConfigureAwait(false);
         user!.LastTotpTimeStep = null;
         await users.UpdateSecurityStampAsync(user).ConfigureAwait(false);

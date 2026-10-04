@@ -596,6 +596,7 @@ Allowlisted NewsSource (RSS/Atom/API) → fetch via SafeOutboundHttp → normali
 **API-side implementation (Stage 3)**
 - **Grace window:** the successor refresh token is stored encrypted (AES-256-GCM) under a key derived (HKDF) from the *predecessor's raw value*, which only the client holds. A concurrent refresh within 30 s receives the same successor; the database alone never yields a usable token.
 - **Two-step sign-in:** the password step returns a hashed, single-use, 5-minute challenge (invalidated after 5 wrong codes). If an authenticator is mandatory but not yet enrolled, it returns an enrolment challenge instead, and no token is issued before enrolment.
+- **Enrolment binding:** each enrolment start generates a fresh key bound to that enrolment challenge (stored as a user token). Completion requires the same challenge, so a key from an abandoned, stale, concurrent or reset attempt can't complete enrolment. The binding is removed on completion and on an admin 2FA reset.
 - **TOTP:** in-house RFC 6238 verifier with replay protection (a code is accepted only for a later time step than the last one used).
 - **Encryption at rest:** authenticator keys and recovery codes are encrypted with Data Protection, through a custom user store.
 - **Mandatory 2FA:** SuperAdmin, anyone holding `Users.Manage`, `Roles.Manage`, `ProviderConnections.Manage`, `Privacy.Manage` or `Leads.Export`, or everyone when `IdentitySecurity:RequireTwoFactorForAllUsers` is true.
