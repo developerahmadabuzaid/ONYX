@@ -69,7 +69,7 @@ dotnet user-secrets set "ConnectionStrings:Onyx" "Host=localhost;Port=5432;Datab
 Apply migrations with the owner role (never the app role):
 
 ```powershell
-dotnet ef database update --project src/Onyx.Infrastructure --startup-project src/Onyx.API --connection "Host=localhost;Port=5432;Database=onyx_dev;Username=onyx_owner;Password=<owner-password>"
+dotnet ef database update --project src/Onyx.Infrastructure --startup-project src/Onyx.Infrastructure --connection "Host=localhost;Port=5432;Database=onyx_dev;Username=onyx_owner;Password=<owner-password>"
 ```
 
 The API never migrates the database on startup.
