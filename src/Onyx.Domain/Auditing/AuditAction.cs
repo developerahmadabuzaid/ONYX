@@ -33,4 +33,5 @@ public enum AuditAction
     ProviderConnectionDisabled = 25,
     ProviderConnectionEnabled = 26,
     ProviderTestRequested = 27,
+    TwoFactorRecoveredByOperator = 28,
 }

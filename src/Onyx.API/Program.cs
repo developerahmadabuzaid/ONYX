@@ -27,7 +27,7 @@ builder.Services
 
 var app = builder.Build();
 
-// Operator commands (seed-identity, bootstrap-superadmin) run instead of the web host.
+// Operator commands (seed-identity, bootstrap-superadmin, reset-two-factor) run instead of the web host.
 if (await AdminCommandRunner.TryRunAsync(app, args))
 {
     return;

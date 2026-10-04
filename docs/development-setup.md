@@ -129,3 +129,29 @@ dotnet run --project src/Onyx.Web --launch-profile https   # https://localhost:7
 | Onyx.API | `ForwardedHeaders:KnownProxies` / `KnownNetworks` | **Onyx.Web's address(es)**, so only Web can supply the visitor IP |
 | Onyx.API | `IdentitySecurity:AdminPortalBaseUrl` | the public Web origin (for emailed admin links) |
 | Onyx.API | `Privacy:IpHashKey` (optional secret) | enables keyed hashing of IP addresses on consent receipts; without it, no IP is stored |
+
+## 7. Recovery: SuperAdmin lost their authenticator (`reset-two-factor`)
+
+Break-glass operator command for when a SuperAdmin can no longer complete the second factor (lost device, exposed setup secret) **and no other SuperAdmin can reset them** through the admin portal. Like `bootstrap-superadmin`, it runs on the operator's machine or server against the configured database. It has **no HTTP endpoint**.
+
+```powershell
+dotnet run --project src/Onyx.API -- reset-two-factor --email <superadmin email> --confirm <same email> --reason "<why; stored in the audit log>"
+```
+
+In production, run the published API with the same arguments (`dotnet Onyx.API.dll reset-two-factor …`), using that environment's normal configuration and secrets.
+
+**Safeguards. The command refuses to run when:**
+- `--confirm` doesn't repeat `--email`, an option is unknown or repeated, or `--reason` isn't 10–500 characters. These checks happen before anything touches the database.
+- The account doesn't exist, isn't a SuperAdmin, or is disabled. Other users are reset in the admin portal (`POST /api/v1/admin/users/{id}/two-factor/reset`).
+- Another **active SuperAdmin with 2FA enabled** exists. That person should reset the account through the audited admin portal instead.
+
+**Effect (one transaction):**
+- 2FA disabled; authenticator key, recovery codes and any pending enrolment binding removed;
+- open sign-in steps closed; all sessions revoked;
+- lockout and failed-attempt counter cleared;
+- security stamp rotated;
+- a `TwoFactorRecoveredByOperator` security audit record written (reason, operator account `user@host`, counts).
+
+The password is **not** changed. The account owner signs in with their password and must enrol a new authenticator straight away. The command prints only the user id and counts, never keys, codes, tokens or passwords.
+
+**Before running it:** verify the account owner's identity out of band, and record who authorized the recovery in `--reason`.
