@@ -73,9 +73,20 @@ public static class DependencyInjection
         services.AddOptions<Privacy.PrivacyOptions>()
             .Bind(configuration.GetSection(Privacy.PrivacyOptions.SectionName))
             .Validate(options => Privacy.PrivacyOptions.IsValidKey(options.IpHashKey), "Privacy:IpHashKey, when set, must be base64 of at least 32 bytes.")
+            .Validate(
+                options => options.RetentionBatchSize is >= 1 and <= 10_000 && options.RetentionMaxBatchesPerRun is >= 1 and <= 10_000,
+                "Privacy:RetentionBatchSize and Privacy:RetentionMaxBatchesPerRun must be between 1 and 10000.")
             .ValidateOnStart();
         services.AddSingleton<Application.Privacy.IIpAddressHasher, Privacy.HmacIpAddressHasher>();
         services.AddScoped<Application.Privacy.ICookieConsentRepository, Privacy.CookieConsentRepository>();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<Privacy.PrivacyOptions>>().Value;
+            return new Application.Privacy.RetentionSettings(options.RetentionBatchSize, options.RetentionMaxBatchesPerRun);
+        });
+        services.AddScoped<Application.Privacy.IDataSubjectRequestRepository, DataSubjectRequestRepository>();
+        services.AddScoped<Application.Privacy.IRetentionPolicyRepository, RetentionPolicyRepository>();
+        services.AddScoped<Application.Privacy.IPersonalDataStore, Privacy.PersonalDataStore>();
 
         services.AddSingleton<IEmailTemplate, ProviderTestEmailTemplate>();
         services.AddScoped<IEmailTemplateRenderer, EmailTemplateRenderer>();
@@ -92,6 +103,21 @@ public static class DependencyInjection
         services.AddHealthChecks()
             .AddCheck<DatabaseHealthCheck>("database", tags: ["ready"]);
 
+        return services;
+    }
+
+    /// <summary>
+    /// Production requires Turnstile (owner decision after Stage 8): the host refuses to start without a secret and a hostname.
+    /// Called only by Onyx.API, the host that verifies tokens; the Worker never does.
+    /// </summary>
+    public static IServiceCollection RequireTurnstileInProduction(this IServiceCollection services)
+    {
+        services.AddOptions<Security.TurnstileOptions>()
+            .Validate<Microsoft.Extensions.Hosting.IHostEnvironment, IOptions<Seo.PublicSiteOptions>, IOptions<IdentitySecurityOptions>>(
+                (turnstile, environment, site, identity) =>
+                    turnstile.IsValidFor(Microsoft.Extensions.Hosting.HostEnvironmentEnvExtensions.IsProduction(environment), site.Value.PublicBaseUrl, identity.Value.AdminPortalBaseUrl),
+                "Production requires Turnstile: set Turnstile:SecretKey (secret store) and a hostname (Turnstile:AllowedHostnames, Site:PublicBaseUrl or IdentitySecurity:AdminPortalBaseUrl).")
+            .ValidateOnStart();
         return services;
     }
 

@@ -63,6 +63,40 @@ public sealed class Inquiry : Entity
     /// <summary>When the anti-abuse (Turnstile) check passed for this submission.</summary>
     public DateTimeOffset VerifiedAtUtc { get; private set; }
 
+    /// <summary>Set when the personal fields were erased (data-subject erasure or retention).</summary>
+    public DateTimeOffset? ErasedAtUtc { get; private set; }
+
+    public bool IsErased => ErasedAtUtc is not null;
+
+    /// <summary>
+    /// Removes the personal fields and keeps only what is not personal: type, language, dates, the referenced content and the
+    /// campaign tags and device class of the attribution (the analytics client id, landing details and free-text tags go).
+    /// Idempotent.
+    /// </summary>
+    public void Erase(DateTimeOffset now)
+    {
+        if (IsErased)
+        {
+            return;
+        }
+
+        Name = Privacy.ErasedValues.Name;
+        Email = Privacy.ErasedValues.Email(Id);
+        NormalizedEmail = Email;
+        Phone = null;
+        Company = null;
+        Country = null;
+        Message = null;
+        Answers = InquiryAnswers.Empty;
+        Attribution = new Attribution(
+            Campaign(Attribution.FirstTouch), Campaign(Attribution.LastTouch), null, Attribution.LanguageCode, Attribution.Market,
+            Attribution.DeviceClass, Attribution.ToolSource, null, null, Attribution.AnalyticsConsent);
+        ErasedAtUtc = now;
+    }
+
+    private static TouchPoint? Campaign(TouchPoint? touch) =>
+        touch is null ? null : TouchPoint.Clean(new TouchPoint(null, null, touch.UtmSource, touch.UtmMedium, touch.UtmCampaign, null, null, touch.AtUtc));
+
     /// <summary>
     /// Per-type requirements: free-text requests need a message; service and similar-project inquiries need what they refer to.
     /// Exposed so intake can refuse before spending the single-use anti-abuse token.

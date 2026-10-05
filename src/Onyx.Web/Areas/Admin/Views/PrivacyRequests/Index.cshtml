@@ -1,0 +1,56 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Privacy
+@model PagedResult<DataSubjectRequestResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.PrivacyRequests";
+    var status = ViewData["Status"] as string;
+}
+<h1>@T["Nav.PrivacyRequests"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Privacy.Hint"]</p>
+<form method="get" asp-action="Index">
+    <label>@T["Privacy.Status"]
+        <select name="status">
+            <option value="">@T["Privacy.AnyStatus"]</option>
+            @foreach (var option in new[] { "Received", "Verified", "Completed", "Rejected" })
+            {
+                <option value="@option" selected="@(status == option)">@T["PrivacyStatus." + option]</option>
+            }
+        </select>
+    </label>
+    <button type="submit">@T["Leads.Filter"]</button>
+</form>
+@if (Model.Items.Count == 0)
+{
+    <p>@T["Privacy.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead><tr><th>@T["Privacy.Received"]</th><th>@T["Privacy.Type"]</th><th>@T["Privacy.Subject"]</th><th>@T["Privacy.Status"]</th></tr></thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><partial name="_Utc" model="(DateTimeOffset?)item.ReceivedAtUtc" /></td>
+                    <td>@T["PrivacyType." + item.Type]</td>
+                    <td dir="ltr"><a asp-action="Details" asp-route-id="@item.Id">@(item.SubjectEmail ?? "#" + item.SubjectReference)</a></td>
+                    <td>@T["PrivacyStatus." + item.Status]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<h2>@T["Privacy.New"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["Privacy.Type"]
+        <select name="type">
+            <option value="Export">@T["PrivacyType.Export"]</option>
+            <option value="Erasure">@T["PrivacyType.Erasure"]</option>
+        </select>
+    </label>
+    <label>@T["Privacy.SubjectEmail"] <input type="email" name="subjectEmail" dir="ltr" required maxlength="254" autocomplete="off"></label>
+    <label>@T["Privacy.RequestNote"] (@T["Form.Optional"]) <textarea name="note" rows="2" maxlength="1000"></textarea></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

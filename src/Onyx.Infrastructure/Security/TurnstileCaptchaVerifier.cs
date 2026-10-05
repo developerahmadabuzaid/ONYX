@@ -86,23 +86,8 @@ internal sealed partial class TurnstileCaptchaVerifier(
         return Result.Success();
     }
 
-    private HashSet<string> AllowedHostnames(TurnstileOptions settings)
-    {
-        var configured = settings.AllowedHostnames.Where(host => !string.IsNullOrWhiteSpace(host)).Select(host => host.Trim().ToLowerInvariant()).ToHashSet(StringComparer.Ordinal);
-        if (configured.Count == 0)
-        {
-            // The public site (forms) and the admin portal (sign-in, password reset).
-            foreach (var url in new[] { site.Value.PublicBaseUrl, identity.Value.AdminPortalBaseUrl })
-            {
-                if (Uri.TryCreate(url, UriKind.Absolute, out var origin))
-                {
-                    configured.Add(origin.IdnHost.ToLowerInvariant());
-                }
-            }
-        }
-
-        return configured;
-    }
+    private HashSet<string> AllowedHostnames(TurnstileOptions settings) =>
+        settings.ResolveHostnames(site.Value.PublicBaseUrl, identity.Value.AdminPortalBaseUrl);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Turnstile is not configured; protected submissions are refused")]
     private static partial void LogNotConfigured(ILogger logger);

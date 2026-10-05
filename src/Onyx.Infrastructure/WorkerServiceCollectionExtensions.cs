@@ -44,6 +44,7 @@ public static class WorkerServiceCollectionExtensions
 
         services.AddScoped<IScheduledJob, OperationalCleanupJob>();
         services.AddScoped<IScheduledJob, ContentSchedulingJob>();
+        services.AddScoped<IScheduledJob, RetentionEnforcementJob>();
 
         services.AddHostedService<OutboxDispatcherService>();
         services.AddHostedService<EmailDispatcherService>();

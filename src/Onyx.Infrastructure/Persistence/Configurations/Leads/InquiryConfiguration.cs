@@ -22,9 +22,11 @@ internal sealed class InquiryConfiguration : IEntityTypeConfiguration<Inquiry>
         builder.Property(inquiry => inquiry.Message).HasMaxLength(Inquiry.MessageMaxLength);
         builder.Property(inquiry => inquiry.Answers).HasJsonColumn().IsRequired();
         builder.Property(inquiry => inquiry.Attribution).HasJsonColumn().IsRequired();
+        builder.Ignore(inquiry => inquiry.IsErased);
 
         builder.HasOne<Lead>().WithMany().HasForeignKey(inquiry => inquiry.LeadId).OnDelete(DeleteBehavior.Restrict);
         builder.HasIndex(inquiry => new { inquiry.LeadId, inquiry.SubmittedAtUtc });
         builder.HasIndex(inquiry => inquiry.SubmittedAtUtc);
+        builder.HasIndex(inquiry => inquiry.NormalizedEmail);
     }
 }

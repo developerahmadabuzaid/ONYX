@@ -35,6 +35,8 @@ public sealed class ConsultationBooking : AuditableEntity, IAuditable
 
     public string LanguageCode { get; private set; }
 
+    /// <summary>SHA-256 of the visitor manage token. Never written to the audit log.</summary>
+    [NotAudited]
     public string? ManageTokenHash { get; private set; }
 
     public DateTimeOffset ManageTokenExpiresAtUtc { get; private set; }
@@ -100,6 +102,20 @@ public sealed class ConsultationBooking : AuditableEntity, IAuditable
         ManageTokenHash = null;
         RaiseDomainEvent(new BookingCancelled(Id, LeadId, byVisitor));
         return Result.Success();
+    }
+
+    /// <summary>
+    /// Erasure of the visitor: an upcoming confirmed booking is cancelled (staff are told the slot is free, the erased visitor is
+    /// not emailed) and the manage link stops working. Bookings hold no other personal fields. Idempotent.
+    /// </summary>
+    public void EraseVisitorAccess(DateTimeOffset now)
+    {
+        if (IsActive && now < StartUtc)
+        {
+            Cancel(byVisitor: false, now);
+        }
+
+        ManageTokenHash = null;
     }
 
     /// <summary>Marks this booking replaced by <paramref name="replacementId"/>; the manage token moves to the replacement.</summary>

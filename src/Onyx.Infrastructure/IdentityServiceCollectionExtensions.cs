@@ -76,6 +76,10 @@ public static class IdentityServiceCollectionExtensions
         services.AddScoped<ISessionValidator, SessionValidator>();
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IUserAdministrationService, UserAdministrationService>();
+
+        // Data-subject requests also export and erase admin accounts, so they live with the identity services (API host only).
+        services.AddScoped<Application.Privacy.IAccountPrivacyStore, AccountPrivacyStore>();
+        services.AddScoped<Application.Privacy.IDataSubjectRequestService, Application.Privacy.DataSubjectRequestService>();
         services.AddScoped<IRoleAdministrationService, RoleAdministrationService>();
         services.AddScoped<IIdentityBootstrapService, IdentityBootstrapService>();
 

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Onyx.Application.Abstractions.Persistence;
 using Onyx.Domain.Auditing;
 using Onyx.Domain.Brand;
+using Onyx.Domain.Common;
 using Onyx.Domain.Content;
 using Onyx.Domain.Intelligence;
 using Onyx.Domain.Knowledge;
@@ -120,6 +121,10 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<ProcessedEvent> ProcessedEvents => Set<ProcessedEvent>();
 
+    public DbSet<Domain.Privacy.DataSubjectRequest> DataSubjectRequests => Set<Domain.Privacy.DataSubjectRequest>();
+
+    public DbSet<Domain.Privacy.RetentionPolicy> RetentionPolicies => Set<Domain.Privacy.RetentionPolicy>();
+
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
@@ -142,6 +147,30 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
             // A concurrent request confirmed the same slot first; the booking service reports it as "slot unavailable".
             throw new ConcurrencyConflictException("That time was just booked. Choose another slot.", Application.Booking.BookingService.SlotTakenCode, exception);
         }
+    }
+
+    public async Task<Result<T>> ExecuteInTransactionAsync<T>(Func<CancellationToken, Task<Result<T>>> work, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(work);
+        if (Database.CurrentTransaction is not null)
+        {
+            // Already inside a transaction: join it; the outer owner commits.
+            return await work(cancellationToken).ConfigureAwait(false);
+        }
+
+        await using var transaction = await Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        var result = await work(cancellationToken).ConfigureAwait(false);
+        if (result.IsSuccess)
+        {
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        else
+        {
+            await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
+            ChangeTracker.Clear();
+        }
+
+        return result;
     }
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder) =>

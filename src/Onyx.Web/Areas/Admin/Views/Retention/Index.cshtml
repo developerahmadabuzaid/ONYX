@@ -1,0 +1,54 @@
+@using System.Globalization
+@using Onyx.Contracts.Privacy
+@model IReadOnlyList<RetentionPolicyResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Retention";
+    var preview = ViewData["Preview"] as RetentionPreviewResponse;
+}
+<h1>@T["Nav.Retention"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Retention.Hint"]</p>
+@if (preview is not null)
+{
+    <p role="status">@string.Format(CultureInfo.InvariantCulture, T["Retention.PreviewResult"].Value, T["RetentionCategory." + preview.Category].Value, preview.EligibleCount, preview.PeriodDays)</p>
+}
+@foreach (var policy in Model)
+{
+    <section>
+        <h2>@T["RetentionCategory." + policy.Category]</h2>
+        <p>@T["RetentionCategoryHint." + policy.Category]</p>
+        <p role="status">@(policy.IsActive ? T["Retention.Active"] : policy.IsSaved ? T["Retention.Inactive"] : T["Retention.NotConfigured"])</p>
+        <form method="post" asp-action="Save" asp-route-category="@policy.Category">
+            @if (policy.Version is { } version)
+            {
+                <input type="hidden" name="version" value="@version">
+            }
+            <label>@T["Retention.Action"]
+                <select name="action">
+                    @foreach (var action in policy.AllowedActions)
+                    {
+                        <option value="@action" selected="@(policy.Action == action)">@T["RetentionAction." + action]</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Retention.PeriodDays"] <input type="number" name="periodDays" min="1" max="36500" value="@policy.PeriodDays"></label>
+            <label><input type="checkbox" name="isEnabled" value="true" checked="@policy.IsEnabled"> @T["Retention.Enabled"]</label>
+            <input type="hidden" name="isEnabled" value="false">
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+        <form method="get" asp-action="Index">
+            <input type="hidden" name="previewCategory" value="@policy.Category">
+            <label>@T["Retention.Action"]
+                <select name="previewAction">
+                    @foreach (var action in policy.AllowedActions)
+                    {
+                        <option value="@action">@T["RetentionAction." + action]</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Retention.PeriodDays"] <input type="number" name="previewDays" min="1" max="36500" required></label>
+            <button type="submit">@T["Retention.Preview"]</button>
+        </form>
+    </section>
+}

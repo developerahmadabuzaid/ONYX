@@ -23,7 +23,7 @@ public sealed class InquirySubmittedHandler(
     {
         ArgumentNullException.ThrowIfNull(domainEvent);
         var inquiry = await inquiries.GetAsync(domainEvent.InquiryId, cancellationToken).ConfigureAwait(false);
-        if (inquiry is null || inquiry.Type == InquiryType.Consultation
+        if (inquiry is null || inquiry.IsErased || inquiry.Type == InquiryType.Consultation
             || !await processed.TryBeginAsync($"inquiry-submitted:{inquiry.Id:N}", cancellationToken).ConfigureAwait(false))
         {
             return;

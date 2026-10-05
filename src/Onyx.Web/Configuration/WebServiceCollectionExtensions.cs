@@ -126,7 +126,11 @@ public static class WebServiceCollectionExtensions
         services.AddOptions<OnyxApiOptions>().Bind(configuration.GetSection(OnyxApiOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<SiteOptions>().Bind(configuration.GetSection(SiteOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<ConsentOptions>().Bind(configuration.GetSection(ConsentOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
-        services.AddOptions<TurnstileOptions>().Bind(configuration.GetSection(TurnstileOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddOptions<TurnstileOptions>().Bind(configuration.GetSection(TurnstileOptions.SectionName)).ValidateDataAnnotations()
+            .Validate<IHostEnvironment>(
+                (turnstile, environment) => !environment.IsProduction() || turnstile.IsConfigured,
+                "Production requires Turnstile:SiteKey (the public site key of the Cloudflare Turnstile widget).")
+            .ValidateOnStart();
         services.AddOptions<DataProtectionSettings>().Bind(configuration.GetSection(DataProtectionSettings.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<WebLocalizationOptions>().Bind(configuration.GetSection(WebLocalizationOptions.SectionName)).ValidateOnStart();
         services.AddOptions<ForwardedHeadersSettings>()
@@ -182,6 +186,7 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
         Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
         Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminPrivacyApiClient, AdminPrivacyApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
 
         static void Configure(IHttpClientBuilder builder)
         {

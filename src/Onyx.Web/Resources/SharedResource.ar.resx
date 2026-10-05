@@ -616,4 +616,59 @@
   <data name="Day.Friday" xml:space="preserve"><value>الجمعة</value></data>
   <data name="Day.Saturday" xml:space="preserve"><value>السبت</value></data>
   <data name="Notification.Type.BookingCancelled" xml:space="preserve"><value>أُلغيت استشارة</value></data>
+  <data name="Nav.PrivacyRequests" xml:space="preserve"><value>طلبات أصحاب البيانات</value></data>
+  <data name="Nav.Retention" xml:space="preserve"><value>سياسات الاحتفاظ</value></data>
+  <data name="Privacy.Hint" xml:space="preserve"><value>لا يُنفَّذ الطلب إلا بعد تسجيل طريقة التحقق من هوية مقدّمه. صاحب البيانات هو البريد الإلكتروني المُدخل عند استلام الطلب.</value></data>
+  <data name="Privacy.Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Privacy.AnyStatus" xml:space="preserve"><value>كل الحالات</value></data>
+  <data name="Privacy.Empty" xml:space="preserve"><value>لا توجد طلبات.</value></data>
+  <data name="Privacy.Received" xml:space="preserve"><value>تاريخ الاستلام</value></data>
+  <data name="Privacy.Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Privacy.Subject" xml:space="preserve"><value>صاحب البيانات</value></data>
+  <data name="Privacy.New" xml:space="preserve"><value>تسجيل طلب جديد</value></data>
+  <data name="Privacy.SubjectEmail" xml:space="preserve"><value>البريد الإلكتروني لصاحب البيانات</value></data>
+  <data name="Privacy.RequestNote" xml:space="preserve"><value>كيف وصل الطلب</value></data>
+  <data name="Privacy.Verified" xml:space="preserve"><value>تاريخ التحقق</value></data>
+  <data name="Privacy.Completed" xml:space="preserve"><value>تاريخ الإنجاز</value></data>
+  <data name="Privacy.Result" xml:space="preserve"><value>النتيجة</value></data>
+  <data name="Privacy.RejectionReason" xml:space="preserve"><value>سبب الرفض</value></data>
+  <data name="Privacy.Verify" xml:space="preserve"><value>تسجيل التحقق</value></data>
+  <data name="Privacy.VerificationNote" xml:space="preserve"><value>كيف تم التحقق من هوية مقدّم الطلب</value></data>
+  <data name="Privacy.Export" xml:space="preserve"><value>التصدير</value></data>
+  <data name="Privacy.Download" xml:space="preserve"><value>تنزيل التصدير (JSON)</value></data>
+  <data name="Privacy.Erase" xml:space="preserve"><value>محو البيانات الشخصية</value></data>
+  <data name="Privacy.EraseWarning" xml:space="preserve"><value>يزيل هذا الإجراء البيانات الشخصية لصاحب الطلب من العملاء المحتملين والطلبات والحجوزات والملاحظات والرسائل وأي حساب إداري بهذا البريد، ولا يمكن التراجع عنه.</value></data>
+  <data name="Privacy.ConfirmEmail" xml:space="preserve"><value>اكتب البريد الإلكتروني لصاحب البيانات للتأكيد</value></data>
+  <data name="Privacy.Reject" xml:space="preserve"><value>رفض الطلب</value></data>
+  <data name="Privacy.Erased" xml:space="preserve"><value>تم محو البيانات الشخصية لصاحب الطلب.</value></data>
+  <data name="PrivacyType.Export" xml:space="preserve"><value>تصدير</value></data>
+  <data name="PrivacyType.Erasure" xml:space="preserve"><value>محو</value></data>
+  <data name="PrivacyStatus.Received" xml:space="preserve"><value>مستلم</value></data>
+  <data name="PrivacyStatus.Verified" xml:space="preserve"><value>تم التحقق</value></data>
+  <data name="PrivacyStatus.Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="PrivacyStatus.Rejected" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="Retention.Hint" xml:space="preserve"><value>تُحدَّد المدد من سياسة الخصوصية المعتمدة. لا شيء مضبوط مسبقاً: لا تُعالَج أي فئة إلا بعد حفظها مفعّلة مع مدة محددة. استخدم المعاينة لمعرفة عدد السجلات التي سيعالجها الإعداد.</value></data>
+  <data name="Retention.Active" xml:space="preserve"><value>مفعّلة: تُعالَج يومياً.</value></data>
+  <data name="Retention.Inactive" xml:space="preserve"><value>محفوظة لكنها غير مفعّلة.</value></data>
+  <data name="Retention.NotConfigured" xml:space="preserve"><value>غير مضبوطة: لا تُعالَج أي سجلات.</value></data>
+  <data name="Retention.Action" xml:space="preserve"><value>الإجراء</value></data>
+  <data name="Retention.PeriodDays" xml:space="preserve"><value>مدة الاحتفاظ (بالأيام)</value></data>
+  <data name="Retention.Enabled" xml:space="preserve"><value>مفعّلة</value></data>
+  <data name="Retention.Preview" xml:space="preserve"><value>معاينة</value></data>
+  <data name="Retention.PreviewResult" xml:space="preserve"><value>{0}: عدد السجلات الأقدم من {2} يوماً والتي ستُعالَج الآن هو {1}.</value></data>
+  <data name="RetentionAction.Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="RetentionAction.Anonymize" xml:space="preserve"><value>إخفاء الهوية</value></data>
+  <data name="RetentionCategory.LeadsAndInquiries" xml:space="preserve"><value>العملاء المحتملون والطلبات</value></data>
+  <data name="RetentionCategory.EmailMessages" xml:space="preserve"><value>الرسائل المرسلة</value></data>
+  <data name="RetentionCategory.CookieConsentReceipts" xml:space="preserve"><value>سجلات موافقة ملفات تعريف الارتباط</value></data>
+  <data name="RetentionCategory.Notifications" xml:space="preserve"><value>إشعارات الإدارة</value></data>
+  <data name="RetentionCategory.AuditLogs" xml:space="preserve"><value>سجل التدقيق</value></data>
+  <data name="RetentionCategory.DataSubjectRequests" xml:space="preserve"><value>طلبات أصحاب البيانات المغلقة</value></data>
+  <data name="RetentionCategoryHint.LeadsAndInquiries" xml:space="preserve"><value>العملاء المحتملون (مع طلباتهم وسجلات الموافقة والملاحظات والأنشطة والحجوزات) بحسب تاريخ آخر طلب. يُستثنى من لديه حجز قادم.</value></data>
+  <data name="RetentionCategoryHint.EmailMessages" xml:space="preserve"><value>الرسائل المرسلة أو المتعثرة بحسب تاريخ إدراجها. لا تُمس الرسائل التي لم تُرسل بعد.</value></data>
+  <data name="RetentionCategoryHint.CookieConsentReceipts" xml:space="preserve"><value>السجلات المحفوظة لاختيارات الزوار بشأن ملفات تعريف الارتباط.</value></data>
+  <data name="RetentionCategoryHint.Notifications" xml:space="preserve"><value>عناصر مركز الإشعارات وحالات قراءتها.</value></data>
+  <data name="RetentionCategoryHint.AuditLogs" xml:space="preserve"><value>إخفاء الهوية يزيل أسماء المستخدمين وعناوين IP؛ والحذف يزيل الإدخالات.</value></data>
+  <data name="RetentionCategoryHint.DataSubjectRequests" xml:space="preserve"><value>الطلبات المكتملة أو المرفوضة بحسب تاريخ إغلاقها.</value></data>
+  <data name="LeadActivity.Erased" xml:space="preserve"><value>تم محو البيانات الشخصية</value></data>
 </root>

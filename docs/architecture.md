@@ -652,7 +652,66 @@ Allowlisted NewsSource (RSS/Atom/API) → fetch via SafeOutboundHttp → normali
 - **Turnstile on admin sign-in and password reset** (deferred here from Stage 3): enforced whenever Turnstile is configured (actions `admin-login`, `password-reset`, admin hostname). Without keys, sign-in keeps its existing protections rather than locking administrators out. The Web CSP allows `https://challenges.cloudflare.com` only on the pages that render the challenge.
 - **Conversion routes:** `ابدأ-مشروعك|start-a-project` (3-step wizard), `احجز-استشارة|book-a-consultation`, `تواصل-معنا|contact` (becomes a service, similar-project or CTA inquiry from context), and `إدارة-الحجز|manage-booking` (no-referrer, no-store, noindex). These segments are reserved from CMS slugs.
   - Conversion CTAs now link to these pages with the page context. Tool CTAs stay unlinked until Phase 2.
-- **Not included:** retention and data-subject requests (Stage 9), an external calendar or meeting-link provider, WhatsApp, tools (Phase 2), visual design (Stage 5), and any preset business hours, recipients or consultation format (owner inputs).
+- **Not included:** retention and data-subject requests (Stage 9, see §24.4), an external calendar or meeting-link provider, WhatsApp, tools (Phase 2), visual design (Stage 5), and any preset business hours, recipients or consultation format (owner inputs).
+
+## 24.4 Privacy operations (Stage 9, as built)
+
+Privacy operations are run by staff (admin-operated). There is no public, anonymous request form. Every operation needs `Privacy.Manage`, which is 2FA-privileged. The API is the only enforcement point.
+
+**Personal-data inventory and handling**
+
+| Data (stage) | Export | Erasure (data-subject request) | Retention category |
+|---|---|---|---|
+| Inquiry: name, email, phone, company, country, message, answers (8) | yes | **anonymized**: personal fields cleared or replaced by a non-matching placeholder. Kept: type, language, dates, referenced content, campaign tags (`utm_source`/`medium`/`campaign`), device class, market | `LeadsAndInquiries` (anonymize or delete) |
+| Attribution: first and last touch, submission path, GA client id (8) | yes | client id, landing paths, referrers, `utm_content`/`utm_term` and submission path removed | with the inquiry |
+| Lead: name, email, company (8) | yes | **anonymized** (placeholder email, so new inquiries open a new lead). Stage history kept; `Erased` activity added | `LeadsAndInquiries` |
+| Lead notes, written by staff (8) | yes (body and time; author not exported) | **deleted** | with the lead |
+| Lead activities (8) | yes (kind, detail, time) | kept (no personal fields) | with the lead |
+| Consent records (8) | yes (with each inquiry) | kept as consent evidence (no personal fields); marketing consent withdrawn | with the lead |
+| Consultation bookings (8) | yes (time, zone, status) | kept; an upcoming booking is cancelled (staff are notified, the visitor is not emailed); the manage link is disabled | with the lead |
+| Emails to the subject: bodies, attachments (2, 8) | yes (subject, text, status, times; one-time link tokens replaced by `token=[removed]`) | **deleted**, including pending ones, so nothing queued can still send | `EmailMessages` (sent or failed only) |
+| Admin account: email, name, language, roles, sessions (3) | yes. Never the password hash, security stamp, authenticator key, recovery codes, tokens or IPs | **anonymized and disabled**: placeholder email/username, "Erased user", password, roles, authenticator, recovery codes, logins and claims removed; sessions revoked with IPs cleared; refresh tokens and sign-in challenges deleted. Refused for the operator's own account and for the last active SuperAdmin | n/a |
+| Audit log (0–8) | the account's own actions (what, when, entity type), without IPs or change details | **minimized, not deleted**: entries about the subject's records lose the visitor IP and any pre-redaction `Company` / `ManageTokenHash` values; the account's entries lose the user name | `AuditLogs` (anonymize = remove user names and IPs; or delete) |
+| Data-subject requests (9) | request metadata | the plain address and free-text notes are removed from every request for the subject; only the SHA-256 address hash remains, so the requests still prove what was done | `DataSubjectRequests` (closed only) |
+| Cookie consent receipts (4) | not linkable to a person (random id, optional keyed IP hash) | not affected | `CookieConsentReceipts` |
+| Admin notifications (2) | no personal fields | not affected | `Notifications` |
+| Media, authors, testimonial attributions (6–7) | not linkable to an email address | handled manually by editors (documented open item) | n/a |
+| Outbox events, processed-event markers, jobs | ids only | queued `InquirySubmitted` events for erased inquiries are skipped by the Worker | operational cleanup |
+
+**Data-subject requests**
+- **Workflow:** Received → Verified (the operator records how the requester's identity was verified) → Completed, or Rejected. Only a verified request can run. The subject is the address stored when the request was received; every later step takes only the request id.
+- **Export:**
+  - **Format:** `POST …/data-subject-requests/{id}/export` returns `onyx.data-subject-export` v1, UTF-8 JSON with Arabic and English as characters, sections in a fixed order and items sorted by time and id (deterministic).
+  - **Delivery:** generated on demand and never stored, served `no-store`, and streamed by Onyx.Web as an attachment. No file on disk, no URL.
+  - **Audit and completion:** audited with counts only. The first export completes the request; it can be downloaded again until the subject is erased.
+- **Erasure:**
+  - **Confirmation:** `POST …/{id}/erase` requires the operator to type the subject's address again.
+  - **One transaction:** the request row is locked (`SELECT … FOR UPDATE`), so concurrent runs execute one after the other. The account, the lead records, the emails and the request addresses change together, or nothing changes.
+  - **Repeat runs:** a repeated erasure returns the completed request and changes nothing.
+  - **Audit:** with counts only.
+
+**Retention**
+- **Policies:** one `RetentionPolicy` per category (unique), with an action from that category's allowed set, a period in days (1–36500) and an on/off switch.
+- **No preset periods:** a category is processed only when an administrator has saved it enabled **with a period**. Unsaved categories show "Not configured", and a new installation processes nothing (D20: periods come from the approved privacy policy).
+- **Preview:** `GET …/retention-policies/{category}/preview?action&periodDays` counts what a setting would process now, changing nothing.
+- **Job:** the Worker job `retention-enforcement` runs daily at 02:30 under the existing job lease (no overlapping runs).
+  - **Batches:** `Privacy:RetentionBatchSize` records per transaction, at most `Privacy:RetentionMaxBatchesPerRun` batches per category per run; the remainder waits for the next run.
+  - **Idempotent:** processed records no longer match.
+  - **Audit:** each category run is audited as `RetentionRunCompleted` (action, period, cutoff, count). The job is skipped when no policy is active.
+- **Leads:** due when the last inquiry is older than the period; leads with an upcoming confirmed booking are skipped. Anonymize uses the same rules as erasure. Delete removes the lead with its inquiries, consent records, notes, activities and bookings, keeping their audit entries without IPs.
+- **Emails:** pending emails are never touched.
+
+**Production Turnstile (owner decision after Stage 8):** Onyx.API refuses to start in Production without `Turnstile:SecretKey` and a hostname; Onyx.Web refuses without `Turnstile:SiteKey`. Development and Testing still run without keys: public forms fail closed, and admin sign-in keeps its rate limit, lockout and 2FA.
+
+**Duplicate first inquiries (Stage 8 edge case), left as is:** two simultaneous first inquiries from one address can still open two leads. A database rule allowing one open lead per normalized email would also block reopening a closed lead while a newer open lead exists, and would require deciding whether such leads merge, which lead keeps the history, and whether the rule is per market or language. **Owner decision required:** should one person ever have more than one open lead, and what happens when a closed lead is reopened while another is open?
+
+**Open owner/legal inputs:**
+- retention periods and actions per category (privacy policy, KSA PDPL / Jordan PDPL review);
+- whether exports include IP addresses and audit change details (currently excluded as internal security metadata);
+- whether security audit IPs for erased admin accounts may be kept (currently kept, with the user name removed);
+- the manual procedure for media, author and testimonial data about a person;
+- the identity-verification standard operators must apply;
+- backup retention versus erasure (§26).
 
 ## 25. Security addendum (Rev 3)
 

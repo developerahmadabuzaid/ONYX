@@ -80,4 +80,11 @@ public enum AuditAction
     BookingStatusChanged = 72,
     BookingSettingsChanged = 73,
     AvailabilityChanged = 74,
+    DataSubjectRequestReceived = 75,
+    DataSubjectRequestVerified = 76,
+    DataSubjectRequestRejected = 77,
+    DataSubjectDataExported = 78,
+    DataSubjectErased = 79,
+    RetentionPolicyChanged = 80,
+    RetentionRunCompleted = 81,
 }

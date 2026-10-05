@@ -75,6 +75,7 @@ public static class ApiServiceCollectionExtensions
 
     private static void AddValidatedOptions(IServiceCollection services)
     {
+
         services.AddOptions<ApiSecurityOptions>()
             .BindConfiguration(ApiSecurityOptions.SectionName)
             .ValidateDataAnnotations()

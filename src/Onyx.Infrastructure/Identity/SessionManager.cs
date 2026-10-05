@@ -26,6 +26,7 @@ public sealed class SessionManager(
     public const string ReasonSecurityChange = "SecurityChange";
     public const string ReasonAdministrator = "RevokedByAdministrator";
     public const string ReasonIdleExpired = "IdleExpired";
+    public const string ReasonDataSubjectErasure = "DataSubjectErasure";
 
     public TokenPairResponse Start(ApplicationUser user)
     {

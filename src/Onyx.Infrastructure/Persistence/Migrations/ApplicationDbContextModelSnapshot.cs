@@ -2202,6 +2202,10 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasColumnType("character varying(254)")
                         .HasColumnName("email");
 
+                    b.Property<DateTimeOffset?>("ErasedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("erased_at_utc");
+
                     b.Property<string>("LanguageCode")
                         .IsRequired()
                         .HasMaxLength(10)
@@ -2259,6 +2263,9 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                     b.HasKey("Id")
                         .HasName("pk_inquiries");
 
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("ix_inquiries_normalized_email");
+
                     b.HasIndex("SubmittedAtUtc")
                         .HasDatabaseName("ix_inquiries_submitted_at_utc");
 
@@ -2296,6 +2303,10 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)")
                         .HasColumnName("display_name");
+
+                    b.Property<DateTimeOffset?>("ErasedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("erased_at_utc");
 
                     b.Property<DateTimeOffset>("FirstInquiryAtUtc")
                         .HasColumnType("timestamp with time zone")
@@ -2808,6 +2819,171 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_cookie_consent_receipts_recorded_at_utc");
 
                     b.ToTable("cookie_consent_receipts", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Privacy.DataSubjectRequest", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset?>("CompletedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("completed_at_utc");
+
+                    b.Property<Guid?>("CompletedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("completed_by_id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTimeOffset>("ReceivedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("received_at_utc");
+
+                    b.Property<string>("RejectionReason")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("rejection_reason");
+
+                    b.Property<string>("RequestNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("request_note");
+
+                    b.Property<string>("ResultSummary")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("result_summary");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("SubjectEmail")
+                        .HasMaxLength(254)
+                        .HasColumnType("character varying(254)")
+                        .HasColumnName("subject_email");
+
+                    b.Property<string>("SubjectEmailHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .HasColumnName("subject_email_hash")
+                        .IsFixedLength();
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("type");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<string>("VerificationNote")
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("verification_note");
+
+                    b.Property<DateTimeOffset?>("VerifiedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("verified_at_utc");
+
+                    b.Property<Guid?>("VerifiedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("verified_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_data_subject_requests");
+
+                    b.HasIndex("SubjectEmailHash")
+                        .HasDatabaseName("ix_data_subject_requests_subject_email_hash");
+
+                    b.HasIndex("Status", "ReceivedAtUtc")
+                        .HasDatabaseName("ix_data_subject_requests_status_received_at_utc");
+
+                    b.ToTable("data_subject_requests", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.Privacy.RetentionPolicy", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasColumnName("action");
+
+                    b.Property<string>("Category")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("category");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<bool>("IsEnabled")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_enabled");
+
+                    b.Property<int?>("PeriodDays")
+                        .HasColumnType("integer")
+                        .HasColumnName("period_days");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_retention_policies");
+
+                    b.HasIndex("Category")
+                        .IsUnique()
+                        .HasDatabaseName("ix_retention_policies_category");
+
+                    b.ToTable("retention_policies", null, t =>
+                        {
+                            t.HasCheckConstraint("ck_retention_policies_period", "period_days IS NULL OR (period_days BETWEEN 1 AND 36500)");
+                        });
                 });
 
             modelBuilder.Entity("Onyx.Domain.Proof.FeaturedProject", b =>

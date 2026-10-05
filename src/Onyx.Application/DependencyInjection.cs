@@ -22,6 +22,7 @@ public static class DependencyInjection
 
         AddContent(services);
         AddLeads(services);
+        AddPrivacy(services);
         services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
 
         AddDomainEventHandlers(services, assembly);
@@ -84,6 +85,16 @@ public static class DependencyInjection
         services.AddScoped<Booking.IBookingService, Booking.BookingService>();
         services.AddScoped<Booking.IBookingAdministrationService, Booking.BookingAdministrationService>();
         services.AddScoped<Booking.IAvailabilityAdministrationService, Booking.AvailabilityAdministrationService>();
+    }
+
+    /// <summary>
+    /// Stage 9: retention (and the shared eraser). <see cref="Privacy.RetentionSettings"/> is registered by the host; the data-subject
+    /// request service is registered with identity (API host only), because it also erases admin accounts.
+    /// </summary>
+    private static void AddPrivacy(IServiceCollection services)
+    {
+        services.AddScoped<Privacy.SubjectEraser>();
+        services.AddScoped<Privacy.IRetentionService, Privacy.RetentionService>();
     }
 
     private static void AddDomainEventHandlers(IServiceCollection services, System.Reflection.Assembly assembly)

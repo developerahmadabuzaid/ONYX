@@ -10,6 +10,12 @@ public sealed class PrivacyOptions
     /// </summary>
     public string? IpHashKey { get; set; }
 
+    /// <summary>Retention job: records per transaction (technical sizing; retention periods come from saved policies).</summary>
+    public int RetentionBatchSize { get; set; } = 200;
+
+    /// <summary>Retention job: batches per category per run; the remainder waits for the next run.</summary>
+    public int RetentionMaxBatchesPerRun { get; set; } = 50;
+
     public static bool IsValidKey(string? key)
     {
         if (string.IsNullOrWhiteSpace(key))

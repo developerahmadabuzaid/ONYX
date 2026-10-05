@@ -25,7 +25,13 @@ public sealed class Lead : AuditableEntity, IAuditable
     [SensitiveData]
     public string NormalizedEmail { get; private set; }
 
+    [SensitiveData]
     public string? Company { get; private set; }
+
+    /// <summary>Set when the lead's personal fields were erased; the pipeline history (stages, activities) remains.</summary>
+    public DateTimeOffset? ErasedAtUtc { get; private set; }
+
+    public bool IsErased => ErasedAtUtc is not null;
 
     public LeadStage Stage { get; private set; }
 
@@ -143,6 +149,24 @@ public sealed class Lead : AuditableEntity, IAuditable
         Record(kind, detail, relatedId, actorId, now);
 
     public void ClearPendingActivities() => _pendingActivities.Clear();
+
+    /// <summary>
+    /// Removes the name, email and company. The address becomes a placeholder that can never match, so a later inquiry from the
+    /// same person opens a new lead. Idempotent.
+    /// </summary>
+    public void Erase(Guid? actorId, DateTimeOffset now)
+    {
+        if (IsErased)
+        {
+            return;
+        }
+
+        DisplayName = Privacy.ErasedValues.Name;
+        NormalizedEmail = Privacy.ErasedValues.Email(Id);
+        Company = null;
+        ErasedAtUtc = now;
+        Record(LeadActivityKind.Erased, null, null, actorId, now);
+    }
 
     private void Record(LeadActivityKind kind, string? detail, Guid? relatedId, Guid? actorId, DateTimeOffset now) =>
         _pendingActivities.Add(LeadActivity.Record(Id, kind, detail, relatedId, actorId, now));

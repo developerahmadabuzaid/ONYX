@@ -50,6 +50,9 @@ public sealed class NotificationServiceTests
             SaveCount++;
             return Task.FromResult(1);
         }
+
+        public Task<Onyx.Domain.Common.Result<T>> ExecuteInTransactionAsync<T>(
+            Func<CancellationToken, Task<Onyx.Domain.Common.Result<T>>> work, CancellationToken cancellationToken) => work(cancellationToken);
     }
 
     private sealed class RecordingRepository : INotificationRepository

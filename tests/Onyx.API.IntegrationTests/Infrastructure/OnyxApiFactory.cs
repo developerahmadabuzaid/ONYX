@@ -37,6 +37,13 @@ public sealed class OnyxApiFactory(
                 ["Jwt:SigningKey"] = SigningKey,
                 ["IdentitySecurity:AdminPortalBaseUrl"] = AdminPortalBaseUrl,
             };
+
+            // Production requires Turnstile at startup; hosts under test get a placeholder secret (never a real key) unless a test overrides it.
+            if (environment == "Production")
+            {
+                values["Turnstile:SecretKey"] = "test-placeholder-secret";
+            }
+
             foreach (var (key, value) in settings ?? new Dictionary<string, string?>())
             {
                 values[key] = value;

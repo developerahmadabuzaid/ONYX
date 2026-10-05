@@ -616,4 +616,59 @@
   <data name="Day.Friday" xml:space="preserve"><value>Friday</value></data>
   <data name="Day.Saturday" xml:space="preserve"><value>Saturday</value></data>
   <data name="Notification.Type.BookingCancelled" xml:space="preserve"><value>Consultation cancelled</value></data>
+  <data name="Nav.PrivacyRequests" xml:space="preserve"><value>Data-subject requests</value></data>
+  <data name="Nav.Retention" xml:space="preserve"><value>Retention policies</value></data>
+  <data name="Privacy.Hint" xml:space="preserve"><value>Requests are carried out only after you record how the requester's identity was verified. The subject is the email address entered when the request is received.</value></data>
+  <data name="Privacy.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="Privacy.AnyStatus" xml:space="preserve"><value>Any status</value></data>
+  <data name="Privacy.Empty" xml:space="preserve"><value>No requests.</value></data>
+  <data name="Privacy.Received" xml:space="preserve"><value>Received</value></data>
+  <data name="Privacy.Type" xml:space="preserve"><value>Type</value></data>
+  <data name="Privacy.Subject" xml:space="preserve"><value>Subject</value></data>
+  <data name="Privacy.New" xml:space="preserve"><value>Record a new request</value></data>
+  <data name="Privacy.SubjectEmail" xml:space="preserve"><value>Subject's email address</value></data>
+  <data name="Privacy.RequestNote" xml:space="preserve"><value>How the request arrived</value></data>
+  <data name="Privacy.Verified" xml:space="preserve"><value>Verified</value></data>
+  <data name="Privacy.Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="Privacy.Result" xml:space="preserve"><value>Result</value></data>
+  <data name="Privacy.RejectionReason" xml:space="preserve"><value>Reason for rejection</value></data>
+  <data name="Privacy.Verify" xml:space="preserve"><value>Record verification</value></data>
+  <data name="Privacy.VerificationNote" xml:space="preserve"><value>How the requester's identity was verified</value></data>
+  <data name="Privacy.Export" xml:space="preserve"><value>Export</value></data>
+  <data name="Privacy.Download" xml:space="preserve"><value>Download the export (JSON)</value></data>
+  <data name="Privacy.Erase" xml:space="preserve"><value>Erase personal data</value></data>
+  <data name="Privacy.EraseWarning" xml:space="preserve"><value>This removes the subject's personal data from leads, inquiries, bookings, notes, emails and any admin account with this address. It cannot be undone.</value></data>
+  <data name="Privacy.ConfirmEmail" xml:space="preserve"><value>Type the subject's email address to confirm</value></data>
+  <data name="Privacy.Reject" xml:space="preserve"><value>Reject the request</value></data>
+  <data name="Privacy.Erased" xml:space="preserve"><value>The subject's personal data was erased.</value></data>
+  <data name="PrivacyType.Export" xml:space="preserve"><value>Export</value></data>
+  <data name="PrivacyType.Erasure" xml:space="preserve"><value>Erasure</value></data>
+  <data name="PrivacyStatus.Received" xml:space="preserve"><value>Received</value></data>
+  <data name="PrivacyStatus.Verified" xml:space="preserve"><value>Verified</value></data>
+  <data name="PrivacyStatus.Completed" xml:space="preserve"><value>Completed</value></data>
+  <data name="PrivacyStatus.Rejected" xml:space="preserve"><value>Rejected</value></data>
+  <data name="Retention.Hint" xml:space="preserve"><value>Periods come from the approved privacy policy. Nothing is preset: a category is processed only after it is saved enabled with a period. Use the preview to see how many records a setting would process.</value></data>
+  <data name="Retention.Active" xml:space="preserve"><value>Active: processed daily.</value></data>
+  <data name="Retention.Inactive" xml:space="preserve"><value>Saved but not active.</value></data>
+  <data name="Retention.NotConfigured" xml:space="preserve"><value>Not configured: nothing is processed.</value></data>
+  <data name="Retention.Action" xml:space="preserve"><value>Action</value></data>
+  <data name="Retention.PeriodDays" xml:space="preserve"><value>Keep for (days)</value></data>
+  <data name="Retention.Enabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="Retention.Preview" xml:space="preserve"><value>Preview</value></data>
+  <data name="Retention.PreviewResult" xml:space="preserve"><value>{0}: {1} record(s) are older than {2} days and would be processed now.</value></data>
+  <data name="RetentionAction.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="RetentionAction.Anonymize" xml:space="preserve"><value>Anonymize</value></data>
+  <data name="RetentionCategory.LeadsAndInquiries" xml:space="preserve"><value>Leads and inquiries</value></data>
+  <data name="RetentionCategory.EmailMessages" xml:space="preserve"><value>Sent emails</value></data>
+  <data name="RetentionCategory.CookieConsentReceipts" xml:space="preserve"><value>Cookie consent receipts</value></data>
+  <data name="RetentionCategory.Notifications" xml:space="preserve"><value>Admin notifications</value></data>
+  <data name="RetentionCategory.AuditLogs" xml:space="preserve"><value>Audit log</value></data>
+  <data name="RetentionCategory.DataSubjectRequests" xml:space="preserve"><value>Closed data-subject requests</value></data>
+  <data name="RetentionCategoryHint.LeadsAndInquiries" xml:space="preserve"><value>Leads (with their inquiries, consent records, notes, activities and bookings) measured from the last inquiry. Leads with an upcoming booking are skipped.</value></data>
+  <data name="RetentionCategoryHint.EmailMessages" xml:space="preserve"><value>Sent or failed emails measured from when they were queued. Emails still waiting to be sent are never touched.</value></data>
+  <data name="RetentionCategoryHint.CookieConsentReceipts" xml:space="preserve"><value>Server-side records of visitors' cookie choices.</value></data>
+  <data name="RetentionCategoryHint.Notifications" xml:space="preserve"><value>Notification Center items and their read states.</value></data>
+  <data name="RetentionCategoryHint.AuditLogs" xml:space="preserve"><value>Anonymize removes user names and IP addresses; delete removes the entries.</value></data>
+  <data name="RetentionCategoryHint.DataSubjectRequests" xml:space="preserve"><value>Completed or rejected requests, measured from when they were closed.</value></data>
+  <data name="LeadActivity.Erased" xml:space="preserve"><value>Personal data erased</value></data>
 </root>

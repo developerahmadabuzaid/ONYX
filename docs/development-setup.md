@@ -167,6 +167,7 @@ The password is **not** changed. The account owner signs in with their password 
 ## 8. Leads, booking and Turnstile (Stage 8)
 
 **Turnstile (Cloudflare) is the only external service the conversion forms use, and nothing enables it automatically.**
+- **Production requires Turnstile (Stage 9):** Onyx.API does not start in Production without `Turnstile:SecretKey` (and a hostname from `Turnstile:AllowedHostnames`, `Site:PublicBaseUrl` or `IdentitySecurity:AdminPortalBaseUrl`); Onyx.Web does not start without `Turnstile:SiteKey`. Development and Testing still run without keys.
 - **Public forms fail closed.** Without keys, the contact, project and consultation forms say that online submission is unavailable, and the API refuses submissions with 503 `Captcha.Unavailable`.
 - **Admin sign-in and password reset** require a Turnstile token whenever Turnstile is configured. Without keys they keep their existing protections (rate limit, lockout, mandatory 2FA).
 - **Keys:** create a Turnstile widget in the Cloudflare dashboard that allows the site hostnames (add `localhost` for development), then store the keys:
@@ -199,3 +200,23 @@ dotnet user-secrets set "Turnstile:SiteKey" "<site key>" --project src/Onyx.Web
   - weekly hours and blocked dates are added there too.
   - Nothing is preset. Online booking stays closed, and visitors get the consultation request form instead, until the hours are entered and booking is enabled.
 - **Emails** are queued by the Worker (visitor confirmations in the submission language; internal emails carry a link to the lead, never the visitor's contact details or message). The visitor booking confirmation, with its `.ics` file and signed manage link, is queued together with the booking. Wording is editable in Admin → Email templates.
+
+## 9. Privacy operations (Stage 9)
+
+Privacy work is done in Admin by staff holding `Privacy.Manage`. That permission is 2FA-privileged. There is no public request form.
+
+**Data-subject request procedure** (Admin → Data-subject requests):
+1. **Record the request.** Enter the type (Export or Erasure), the subject's email address and how the request arrived. The address entered here defines whose data is affected; it cannot be changed later.
+2. **Verify the requester's identity** by the standard set in the approved privacy procedure (an owner/legal input), then record how it was verified. Nothing runs before this step.
+3. **Carry out the request:**
+   - **Export:** download the JSON file. It is generated on the spot and never stored by Onyx; hand it to the subject through a secure channel and do not keep copies.
+   - **Erasure:** type the address again and confirm. Personal data is removed in one transaction: lead records (notes deleted; inquiries, leads and bookings anonymized), every email to the address, and any admin account with that address (disabled and anonymized). Erasure is refused for your own account and for the last active SuperAdmin.
+4. **Or reject** with a reason. Every step is audited without the address or exported content.
+
+Erasure cannot be undone. Data in backups ages out with the backup retention (architecture.md §26).
+
+**Retention** (Admin → Retention policies):
+- **Nothing is preset.** Enter each category's period and action from the approved privacy policy, and use **Preview** to see how many records would be processed.
+- **Enabling:** the daily Worker job (`retention-enforcement`, 02:30) acts only on categories saved **enabled with a period**.
+- **Job sizing:** `Privacy:RetentionBatchSize` (default 200) and `Privacy:RetentionMaxBatchesPerRun` (default 50) bound each run. Both are technical limits, not retention periods.
+- **Results:** each run is recorded as a job run and audited per category (counts only).

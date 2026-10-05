@@ -23,6 +23,7 @@ internal sealed class LeadConfiguration : IEntityTypeConfiguration<Lead>
         builder.Property(lead => lead.Version).IsRowVersion().HasColumnName("xmin").HasColumnType("xid");
         builder.Ignore(lead => lead.PendingActivities);
         builder.Ignore(lead => lead.IsOpen);
+        builder.Ignore(lead => lead.IsErased);
 
         builder.HasOne<ApplicationUser>().WithMany().HasForeignKey(lead => lead.OwnerId).OnDelete(DeleteBehavior.SetNull);
         builder.HasIndex(lead => new { lead.NormalizedEmail, lead.Stage });

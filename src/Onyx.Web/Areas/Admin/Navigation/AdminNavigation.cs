@@ -13,6 +13,8 @@ public static class AdminNavigation
         new("Nav.Inquiries", "Inquiries", "Index", Permissions.Inquiries.View),
         new("Nav.Bookings", "Bookings", "Index", Permissions.Bookings.View),
         new("Nav.Availability", "Availability", "Index", Permissions.Availability.Manage),
+        new("Nav.PrivacyRequests", "PrivacyRequests", "Index", Permissions.Privacy.Manage),
+        new("Nav.Retention", "Retention", "Index", Permissions.Privacy.Manage),
         new("Nav.Content", "Content", "Index", Permissions.Content.View),
         new("Nav.Authors", "Authors", "Index", Permissions.Insights.View),
         new("Nav.Media", "MediaLibrary", "Index", Permissions.Media.View),

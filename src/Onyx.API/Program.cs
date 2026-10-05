@@ -23,6 +23,7 @@ builder.Services
     .AddApplication()
     .AddInfrastructure(builder.Configuration)
     .AddOnyxIdentity(builder.Configuration)
+    .RequireTurnstileInProduction()
     .AddOnyxApi();
 
 var app = builder.Build();

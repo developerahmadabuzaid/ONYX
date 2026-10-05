@@ -24,6 +24,9 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
     public ManualTimeProvider Time { get; } = new(DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
 
     /// <summary>Extra configuration, applied when the host is first built. Turnstile has a public test site key by default.</summary>
+    /// <summary>Host environment; set before the host is first built.</summary>
+    public string Environment { get; set; } = "Testing";
+
     public IDictionary<string, string?> Settings { get; } = new Dictionary<string, string?> { ["Turnstile:SiteKey"] = "test-site-key" };
 
     /// <summary>A browser-like client: https, cookies kept, redirects not followed (so each hop can be asserted).</summary>
@@ -36,7 +39,7 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseEnvironment("Testing");
+        builder.UseEnvironment(Environment);
         builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(new Dictionary<string, string?>
         {
             ["OnyxApi:BaseUrl"] = ApiBaseUrl,

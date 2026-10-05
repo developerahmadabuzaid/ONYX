@@ -13,4 +13,5 @@ public enum LeadActivityKind
     BookingCompleted = 8,
     BookingNoShow = 9,
     MarketingConsentWithdrawn = 10,
+    Erased = 11,
 }

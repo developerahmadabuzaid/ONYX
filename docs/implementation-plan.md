@@ -28,7 +28,8 @@
 | 6 CMS, content governance and SEO intelligence foundation | **done**: 534/534 tests (local PostgreSQL); build 0 warnings; no vulnerable packages; no new packages. Awaiting owner review before Stage 7. |
 | 7 Work, proof, insights, glossary, integrations | **done** (see Stage 7 notes). Awaiting owner review before Stage 8. |
 | 8 Leads, booking, Turnstile, attribution | **done**: 775/775 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `Stage8LeadsAndBooking` (additive). Awaiting owner review before Stage 9. |
-| 9–12, 5, 13 | awaiting approval (in execution order) |
+| 9 Privacy operations | **done**: 804/804 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `PrivacyOperations` (additive). Awaiting owner review before Stage 10. |
+| 10–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -202,6 +203,22 @@
 ### Stage 9 — Privacy operations
 - **Build:** retention policies (configurable, no hard-coded periods), enforcement job, data-subject export/delete, audit.
 - **Verify:** exact delete/anonymize per policy; complete export; deletion completeness.
+
+**Stage 9 delivered notes** (architecture.md §24.4 has the personal-data inventory and handling matrix):
+- **Data-subject requests (admin-operated, `Privacy.Manage`, 2FA-privileged):**
+  - Workflow: Received → Verified (identity check recorded) → Completed, or Rejected.
+  - **Export:** deterministic UTF-8 JSON, generated on demand and never stored, served no-store. Includes the identity data deferred from Stage 3. Never includes credentials or tokens; one-time link tokens in email bodies are redacted.
+  - **Erasure:** one locked transaction. Anonymizes inquiries, leads and bookings; deletes notes and emails; anonymizes and disables the admin account; minimizes related audit entries; keeps only the address hash on requests. Idempotent and concurrency-safe. Refused for the operator's own account and the last SuperAdmin.
+- **Retention:**
+  - One policy per category, with allowed actions per category and nothing preset.
+  - A preview counts what a setting would process.
+  - The daily `retention-enforcement` Worker job runs in bounded, idempotent batches, is audited, and is skipped while no policy is active.
+- **Stage 8 follow-ups:**
+  - Production now refuses to start without Turnstile keys (API secret, Web site key).
+  - `Lead.Company` is now redacted in audit diffs and the booking manage-token hash is no longer audited.
+  - The duplicate-first-inquiry edge case is deliberately left as is: it needs an owner decision on whether one person may have several open leads and what reopening does (architecture.md §24.4).
+- **Migration `PrivacyOperations`** is additive: 2 tables (`data_subject_requests`, `retention_policies`), 2 nullable `erased_at_utc` columns, and an index on `inquiries.normalized_email`.
+- **Open (owner/legal):** retention periods; identity-verification standard; IPs in exports and retained security audit; manual handling of media, author and testimonial data; backup interplay.
 
 ### Stage 10 — Site search (PostgreSQL)
 - **Build:**

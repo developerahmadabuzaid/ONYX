@@ -1,0 +1,57 @@
+@using Onyx.Contracts.Privacy
+@model DataSubjectRequestResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.PrivacyRequests";
+    var open = Model.Status is "Received" or "Verified";
+}
+<p><a asp-action="Index">@T["Nav.PrivacyRequests"]</a></p>
+<h1>@T["PrivacyType." + Model.Type] — <bdi dir="ltr">@(Model.SubjectEmail ?? "#" + Model.SubjectReference)</bdi></h1>
+<partial name="_CmsMessages" />
+<dl>
+    <dt>@T["Privacy.Status"]</dt><dd>@T["PrivacyStatus." + Model.Status]</dd>
+    <dt>@T["Privacy.Received"]</dt><dd><partial name="_Utc" model="(DateTimeOffset?)Model.ReceivedAtUtc" /></dd>
+    <dt>@T["Privacy.RequestNote"]</dt><dd dir="auto" class="multiline">@(Model.RequestNote ?? "—")</dd>
+    <dt>@T["Privacy.Verified"]</dt><dd><partial name="_Utc" model="Model.VerifiedAtUtc" /> @Model.VerificationNote</dd>
+    <dt>@T["Privacy.Completed"]</dt><dd><partial name="_Utc" model="Model.CompletedAtUtc" /></dd>
+    <dt>@T["Privacy.Result"]</dt><dd dir="ltr">@(Model.ResultSummary ?? "—")</dd>
+    @if (Model.RejectionReason is not null)
+    {
+        <dt>@T["Privacy.RejectionReason"]</dt><dd dir="auto">@Model.RejectionReason</dd>
+    }
+</dl>
+
+@if (Model.Status == "Received")
+{
+    <h2>@T["Privacy.Verify"]</h2>
+    <form method="post" asp-action="Verify" asp-route-id="@Model.Id">
+        <input type="hidden" name="version" value="@Model.Version">
+        <label>@T["Privacy.VerificationNote"] <textarea name="verificationNote" rows="2" maxlength="1000" required></textarea></label>
+        <button type="submit">@T["Privacy.Verify"]</button>
+    </form>
+}
+@if (Model.SubjectEmail is not null && Model.Type == "Export" && Model.Status is "Verified" or "Completed")
+{
+    <h2>@T["Privacy.Export"]</h2>
+    <form method="post" asp-action="Export" asp-route-id="@Model.Id">
+        <button type="submit">@T["Privacy.Download"]</button>
+    </form>
+}
+@if (Model.SubjectEmail is not null && Model.Type == "Erasure" && Model.Status == "Verified")
+{
+    <h2>@T["Privacy.Erase"]</h2>
+    <p role="alert">@T["Privacy.EraseWarning"]</p>
+    <form method="post" asp-action="Erase" asp-route-id="@Model.Id">
+        <label>@T["Privacy.ConfirmEmail"] <input type="email" name="confirmSubjectEmail" dir="ltr" required autocomplete="off"></label>
+        <button type="submit">@T["Privacy.Erase"]</button>
+    </form>
+}
+@if (open)
+{
+    <h2>@T["Privacy.Reject"]</h2>
+    <form method="post" asp-action="Reject" asp-route-id="@Model.Id">
+        <input type="hidden" name="version" value="@Model.Version">
+        <label>@T["Privacy.RejectionReason"] <textarea name="reason" rows="2" maxlength="1000" required></textarea></label>
+        <button type="submit">@T["Privacy.Reject"]</button>
+    </form>
+}
