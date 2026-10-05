@@ -29,4 +29,9 @@ public sealed record ContentDetailResponse(
     Guid? OfflineRedirectToId,
     IReadOnlyList<ContentTranslationResponse> Translations,
     IReadOnlyList<ContentPathResponse> Paths,
-    uint Version);
+    uint Version,
+    string? InsightKind = null,
+    string Origin = "Human",
+    Guid? AuthorId = null,
+    ProofVerificationResponse? ProofVerification = null,
+    int? FeaturedSlot = null);

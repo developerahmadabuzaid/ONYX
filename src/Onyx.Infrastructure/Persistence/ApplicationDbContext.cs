@@ -92,6 +92,12 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<ContentCalendarEntry> ContentCalendarEntries => Set<ContentCalendarEntry>();
 
+    public DbSet<Domain.Proof.FeaturedProject> FeaturedProjects => Set<Domain.Proof.FeaturedProject>();
+
+    public DbSet<Domain.Proof.ProofItem> ProofItems => Set<Domain.Proof.ProofItem>();
+
+    public DbSet<Domain.Insights.Author> Authors => Set<Domain.Insights.Author>();
+
     public DbSet<EmailTemplateCopy> EmailTemplateCopies => Set<EmailTemplateCopy>();
 
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
@@ -104,6 +110,12 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         catch (DbUpdateConcurrencyException exception)
         {
             throw new ConcurrencyConflictException("The record was changed by someone else. Reload and try again.", exception);
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is Npgsql.PostgresException { SqlState: "23505" } unique
+            && unique.ConstraintName is Configurations.Application.FeaturedProjectConfiguration.SlotIndex or Configurations.Application.FeaturedProjectConfiguration.ContentIndex)
+        {
+            // Two editors featured projects at the same moment; the slot table kept the limit. Report it as a conflict to retry.
+            throw new ConcurrencyConflictException("Another change to the featured projects happened at the same time. Reload and try again.", exception);
         }
     }
 

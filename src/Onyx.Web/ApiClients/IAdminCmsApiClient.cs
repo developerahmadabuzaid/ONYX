@@ -1,10 +1,12 @@
 using Onyx.Contracts.Brand;
 using Onyx.Contracts.Common;
 using Onyx.Contracts.Content;
+using Onyx.Contracts.Insights;
 using Onyx.Contracts.Intelligence;
 using Onyx.Contracts.Knowledge;
 using Onyx.Contracts.Media;
 using Onyx.Contracts.Messaging;
+using Onyx.Contracts.Proof;
 
 namespace Onyx.Web.ApiClients;
 
@@ -147,6 +149,33 @@ public interface IAdminCmsApiClient
     Task<ApiResult<InternalLinkReportResponse>> GetLinkReportAsync(CancellationToken cancellationToken);
 
     Task<ApiResult<GeneratedRecommendationsResponse>> GenerateLinkRecommendationsAsync(CancellationToken cancellationToken);
+
+    Task<ApiResult<ContentDetailResponse>> VerifyProofAsync(Guid id, VerifyProofRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<ContentDetailResponse>> RevokeProofAsync(Guid id, uint version, CancellationToken cancellationToken);
+
+    Task<ApiResult<ContentDetailResponse>> SetFeaturedAsync(Guid id, SetFeaturedRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<IReadOnlyList<ProofItemResponse>>> ListProofItemsAsync(Guid contentItemId, CancellationToken cancellationToken);
+
+    Task<ApiResult<ProofItemResponse>> CreateProofItemAsync(SaveProofItemRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<ProofItemResponse>> UpdateProofItemAsync(Guid id, SaveProofItemRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<ProofItemResponse>> VerifyProofItemAsync(Guid id, VerifyProofRequest request, CancellationToken cancellationToken);
+
+    /// <summary>publish or unpublish.</summary>
+    Task<ApiResult<ProofItemResponse>> ProofItemActionAsync(Guid id, string action, uint version, CancellationToken cancellationToken);
+
+    Task<ApiResult<NoContent>> DeleteProofItemAsync(Guid id, CancellationToken cancellationToken);
+
+    Task<ApiResult<IReadOnlyList<AuthorResponse>>> ListAuthorsAsync(CancellationToken cancellationToken);
+
+    Task<ApiResult<AuthorResponse>> CreateAuthorAsync(SaveAuthorRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<AuthorResponse>> UpdateAuthorAsync(Guid id, SaveAuthorRequest request, CancellationToken cancellationToken);
+
+    Task<ApiResult<NoContent>> DeleteAuthorAsync(Guid id, CancellationToken cancellationToken);
 
     Task<ApiResult<IReadOnlyList<EmailTemplateResponse>>> ListEmailTemplatesAsync(CancellationToken cancellationToken);
 

@@ -18,4 +18,6 @@ public sealed record PublicContentResponse(
     PublicCtaResponse? Cta,
     PublicMediaResponse? FeaturedImage,
     DateTimeOffset? PublishedAtUtc,
-    DateTimeOffset? ModifiedAtUtc);
+    DateTimeOffset? ModifiedAtUtc,
+    PublicInsightResponse? Insight = null,
+    PublicProofResponse? Proof = null);

@@ -1,0 +1,12 @@
+@model (string? NameAr, string? TitleAr, string? NameEn, string? TitleEn, string? Consent)
+<fieldset lang="ar" dir="rtl">
+    <legend>العربية</legend>
+    <label>@T["Cms.Name"] <input name="nameAr" value="@Model.NameAr" maxlength="150"></label>
+    <label>@T["Cms.Proof.Role"] <input name="titleAr" value="@Model.TitleAr" maxlength="150"></label>
+</fieldset>
+<fieldset lang="en" dir="ltr">
+    <legend>English</legend>
+    <label>@T["Cms.Name"] <input name="nameEn" value="@Model.NameEn" maxlength="150"></label>
+    <label>@T["Cms.Proof.Role"] <input name="titleEn" value="@Model.TitleEn" maxlength="150"></label>
+</fieldset>
+<label>@T["Cms.Author.Consent"] <textarea name="consentNote" rows="2" required maxlength="1000">@Model.Consent</textarea></label>

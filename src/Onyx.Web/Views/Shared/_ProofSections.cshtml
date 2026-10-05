@@ -1,0 +1,59 @@
+@using System.Globalization
+@model Onyx.Contracts.Content.PublicProofResponse
+@* Only verified, published proof reaches this partial; empty sections are not rendered (never padded). *@
+@if (Model.Capabilities.Count > 0)
+{
+    <section aria-labelledby="capabilities-heading">
+        <h2 id="capabilities-heading">@T["Proof.Capabilities"]</h2>
+        <ul>
+            @foreach (var capability in Model.Capabilities)
+            {
+                <li>
+                    <strong>@capability.Title</strong>
+                    @if (!string.IsNullOrEmpty(capability.Description))
+                    {
+                        <p>@capability.Description</p>
+                    }
+                </li>
+            }
+        </ul>
+    </section>
+}
+@if (Model.Metrics.Count > 0)
+{
+    <section aria-labelledby="metrics-heading">
+        <h2 id="metrics-heading">@T["Proof.Metrics"]</h2>
+        <dl>
+            @foreach (var metric in Model.Metrics)
+            {
+                <dt>@metric.Title</dt>
+                <dd>
+                    <span dir="ltr">@metric.Value</span>
+                    @if (metric.AsOf is { } asOf)
+                    {
+                        <span>(@T["Proof.AsOf"] <time datetime="@asOf.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@asOf.ToString("yyyy-MM", CultureInfo.InvariantCulture)</time>)</span>
+                    }
+                    @if (!string.IsNullOrEmpty(metric.Description))
+                    {
+                        <p>@metric.Description</p>
+                    }
+                </dd>
+            }
+        </dl>
+    </section>
+}
+@if (Model.Testimonials.Count > 0)
+{
+    <section aria-labelledby="testimonials-heading">
+        <h2 id="testimonials-heading">@T["Proof.Testimonials"]</h2>
+        @foreach (var testimonial in Model.Testimonials)
+        {
+            <figure>
+                <blockquote><p>@testimonial.Title</p></blockquote>
+                <figcaption>
+                    @testimonial.AttributionName@(string.IsNullOrEmpty(testimonial.AttributionRole) ? "" : ", " + testimonial.AttributionRole)@(string.IsNullOrEmpty(testimonial.AttributionOrganization) ? "" : ", " + testimonial.AttributionOrganization)
+                </figcaption>
+            </figure>
+        }
+    </section>
+}

@@ -63,4 +63,12 @@ public enum AuditAction
     EmailTemplateCopyChanged = 55,
     EmailTemplateCopyReset = 56,
     CalendarEntryDecided = 57,
+    ProofVerified = 58,
+    ProofVerificationRevoked = 59,
+    ProjectFeatured = 60,
+    ProjectUnfeatured = 61,
+    ProofItemPublished = 62,
+    ProofItemUnpublished = 63,
+    ProofItemDeleted = 64,
+    AuthorDeleted = 65,
 }

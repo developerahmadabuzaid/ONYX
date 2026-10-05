@@ -1,0 +1,29 @@
+@model Onyx.Web.Content.SectionListingViewModel
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+@{
+    var path = Onyx.Web.Content.SectionRoutes.PathOf(Model.Section, Model.LanguageCode)!;
+    var items = Model.Items;
+}
+<h1>@T["Section." + Model.Section]</h1>
+@if (items.Items.Count == 0)
+{
+    <p>@T["Section.Empty"]</p>
+}
+else
+{
+    <partial name="_ListingItems" model="items.Items" />
+    @if (items.TotalPages > 1)
+    {
+        <nav aria-label="@T["Section.Pages"]" dir="ltr">
+            @if (items.Page > 1)
+            {
+                <a href="@(SitePaths.Encode(path) + (items.Page > 2 ? $"?page={items.Page - 1}" : string.Empty))" rel="prev">@(items.Page - 1)</a>
+            }
+            <span>@items.Page / @items.TotalPages</span>
+            @if (items.Page < items.TotalPages)
+            {
+                <a href="@(SitePaths.Encode(path))?page=@(items.Page + 1)" rel="next">@(items.Page + 1)</a>
+            }
+        </nav>
+    }
+}

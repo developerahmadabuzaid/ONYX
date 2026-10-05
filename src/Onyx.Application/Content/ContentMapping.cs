@@ -10,7 +10,7 @@ namespace Onyx.Application.Content;
 public static class ContentMapping
 {
     private static readonly StructuredDataTypes[] StructuredDataValues =
-        [StructuredDataTypes.WebPage, StructuredDataTypes.BreadcrumbList, StructuredDataTypes.Service, StructuredDataTypes.FaqPage];
+        [StructuredDataTypes.WebPage, StructuredDataTypes.BreadcrumbList, StructuredDataTypes.Service, StructuredDataTypes.FaqPage, StructuredDataTypes.Article];
 
     public static Result<IReadOnlyList<ContentBlock>> ToBlocks(IReadOnlyList<ContentBlockDto>? dtos)
     {
@@ -164,7 +164,7 @@ public static class ContentMapping
         item.ScheduledUnpublishAtUtc,
         item.UpdatedAtUtc ?? item.CreatedAtUtc);
 
-    public static ContentDetailResponse ToDetail(ContentItem item, IReadOnlyList<ContentPath> paths) => new(
+    public static ContentDetailResponse ToDetail(ContentItem item, IReadOnlyList<ContentPath> paths, int? featuredSlot = null) => new(
         item.Id,
         item.Type.ToString(),
         item.ParentId,
@@ -190,7 +190,19 @@ public static class ContentMapping
         item.Translations.OrderBy(translation => translation.LanguageCode, StringComparer.Ordinal).Select(ToResponse).ToList(),
         paths.OrderByDescending(path => path.IsCurrent).ThenByDescending(path => path.CreatedAtUtc)
             .Select(path => new ContentPathResponse(path.LanguageCode, path.Path, path.IsCurrent, path.CreatedAtUtc, path.RetiredAtUtc)).ToList(),
-        item.Version);
+        item.Version,
+        item.InsightKind?.ToString(),
+        item.Origin.ToString(),
+        item.AuthorId,
+        item.ProofVerification is { } proof ? ToResponse(proof) : null,
+        featuredSlot);
+
+    public static ProofVerificationResponse ToResponse(Domain.Proof.ProofVerification verification)
+    {
+        ArgumentNullException.ThrowIfNull(verification);
+        return new ProofVerificationResponse(
+            verification.VerifiedById, verification.VerifiedAtUtc, verification.SourceNote, verification.ClientPermission.ToString(), verification.ClientPermissionNote);
+    }
 
     public static LocalizedTextDto ToDto(LocalizedText text) => new(text.LanguageCode, text.Text, text.Secondary);
 

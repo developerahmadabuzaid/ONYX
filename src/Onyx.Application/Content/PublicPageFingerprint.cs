@@ -6,7 +6,8 @@ namespace Onyx.Application.Content;
 
 /// <summary>
 /// A hash of what one language of a page shows to visitors and search engines: its visible content (title, summary, body, FAQs),
-/// its URL (slug and place in the hierarchy), how it is presented (type, presentation, featured image, call to action) and the
+/// its URL (slug and place in the hierarchy), how it is presented (type, presentation, featured image, call to action, an insight's
+/// kind, provenance label and credited author) and the
 /// SEO metadata that is actually served (meta title and description, canonical, robots, structured-data selection, Open Graph).
 /// Internal planning fields (primary and secondary keywords, search intent, target market, SEO status and notes), ordering and
 /// keys are excluded, so they never move <c>lastmod</c>. Each language is fingerprinted independently.
@@ -24,6 +25,9 @@ public static class PublicPageFingerprint
             snapshot.ParentId,
             snapshot.FeaturedImageId,
             snapshot.PrimaryCtaId,
+            snapshot.InsightKind,
+            snapshot.Origin,
+            snapshot.AuthorId,
             Page = translation is null
                 ? null
                 : new

@@ -12,4 +12,5 @@ public enum StructuredDataTypes
     BreadcrumbList = 2,
     Service = 4,
     FaqPage = 8,
+    Article = 16,
 }

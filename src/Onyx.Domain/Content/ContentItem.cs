@@ -1,5 +1,6 @@
 using System.Text.RegularExpressions;
 using Onyx.Domain.Common;
+using Onyx.Domain.Proof;
 
 namespace Onyx.Domain.Content;
 
@@ -86,6 +87,20 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
     /// <summary>Number of the latest revision; bumped by every recorded change so the row's concurrency token always moves.</summary>
     public int CurrentRevisionNumber { get; private set; }
 
+    /// <summary>Insights only: article or guide.</summary>
+    public InsightKind? InsightKind { get; private set; }
+
+    /// <summary>Insights only: how the text was written; once AI-assisted it stays AI-assisted.</summary>
+    public InsightOrigin Origin { get; private set; }
+
+    /// <summary>Insights only: the real person credited (see <c>Author</c>); null means the organization is credited.</summary>
+    public Guid? AuthorId { get; private set; }
+
+    /// <summary>Proof content only: verification of the current wording. Cleared by any edit.</summary>
+    /// <remarks>Not audited by value (notes may name client contacts); verification and revocation are audited explicitly.</remarks>
+    [NotAudited]
+    public ProofVerification? ProofVerification { get; private set; }
+
     /// <summary>PostgreSQL <c>xmin</c> optimistic concurrency token.</summary>
     public uint Version { get; private set; }
 
@@ -97,6 +112,11 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
 
     /// <summary>The item has a public page (taxonomy-only industries are tags, not pages).</summary>
     public bool HasPage => Presentation == ContentPresentation.Page;
+
+    /// <summary>Projects, case studies and the integrations showcase are public proof: publishing needs a recorded verification.</summary>
+    public bool IsProofBearing => IsProofType(Type);
+
+    public static bool IsProofType(ContentType type) => type is ContentType.Project or ContentType.CaseStudy or ContentType.Integration;
 
     public static Result<ContentItem> Create(ContentType type, Guid? parentId, string? key, ContentPresentation presentation, int sortOrder)
     {
@@ -121,11 +141,21 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
             return Error.Validation("Content.InvalidKey", "Keys use lower-case letters, digits, dots and hyphens (max 100).");
         }
 
-        return new ContentItem { Type = type, ParentId = parentId, Key = normalizedKey, Presentation = presentation, SortOrder = sortOrder, Status = ContentStatus.Draft };
+        return new ContentItem
+        {
+            Type = type,
+            ParentId = parentId,
+            Key = normalizedKey,
+            Presentation = presentation,
+            SortOrder = sortOrder,
+            Status = ContentStatus.Draft,
+            InsightKind = type == ContentType.Insight ? Content.InsightKind.Article : null,
+        };
     }
 
+    /// <summary>Slugs are unique per language within a scope. Case studies share one URL section whatever their project, so one scope.</summary>
     public static string BuildSlugScope(ContentType type, Guid? parentId) =>
-        parentId is { } parent ? $"{type}:{parent:N}" : type.ToString();
+        type != ContentType.CaseStudy && parentId is { } parent ? $"{type}:{parent:N}" : type.ToString();
 
     public ContentTranslation? GetTranslation(string languageCode) =>
         _translations.FirstOrDefault(translation => translation.LanguageCode == languageCode);
@@ -209,6 +239,80 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
             translation.SetSlugScope(BuildSlugScope(Type, ParentId));
         }
 
+        return Result.Success();
+    }
+
+    /// <summary>Insight byline and provenance. An AI-assisted insight can never be re-labelled as human-written.</summary>
+    public Result UpdateInsightSettings(InsightKind kind, InsightOrigin origin, Guid? authorId)
+    {
+        if (Type != ContentType.Insight)
+        {
+            return Error.Validation("Content.NotInsight", "Only insights have a kind, an origin and an author.");
+        }
+
+        if (!Enum.IsDefined(kind) || !Enum.IsDefined(origin))
+        {
+            return Error.Validation("Content.InvalidInsightSettings", "Unknown insight kind or origin.");
+        }
+
+        if (Origin == InsightOrigin.AiAssisted && origin == InsightOrigin.Human)
+        {
+            return Error.Validation("Content.OriginDowngrade", "AI-assisted content stays labelled as AI-assisted.");
+        }
+
+        if (InsightKind == kind && Origin == origin && AuthorId == authorId)
+        {
+            return Result.Success();
+        }
+
+        if (BeginEdit() is { } blocked)
+        {
+            return blocked;
+        }
+
+        InsightKind = kind;
+        Origin = origin;
+        AuthorId = authorId;
+        return Result.Success();
+    }
+
+    /// <summary>Records the verification of this proof content's current wording (CLAUDE.md §2.1). Does not change the workflow state.</summary>
+    public Result VerifyProof(Guid verifiedById, DateTimeOffset now, string? sourceNote, ClientPermission clientPermission, string? clientPermissionNote)
+    {
+        if (!IsProofBearing)
+        {
+            return Error.Validation("Content.NotProof", "Only projects, case studies and integrations carry proof verification.");
+        }
+
+        if (Status == ContentStatus.Archived)
+        {
+            return ContentErrors.Archived;
+        }
+
+        var verification = ProofVerification.Create(verifiedById, now, sourceNote, clientPermission, clientPermissionNote, clientPermissionRequired: false);
+        if (verification.IsFailure)
+        {
+            return verification.Error!;
+        }
+
+        ProofVerification = verification.Value;
+        return Result.Success();
+    }
+
+    /// <summary>Withdraws a verification. Live proof must be taken offline first, so nothing unverified stays public.</summary>
+    public Result RevokeProofVerification()
+    {
+        if (ProofVerification is null)
+        {
+            return Error.Conflict("Content.NotVerified", "There is no verification to revoke.");
+        }
+
+        if (IsLive)
+        {
+            return Error.Conflict("Content.RevokeLive", "Take the content offline before revoking its verification.");
+        }
+
+        ProofVerification = null;
         return Result.Success();
     }
 
@@ -309,6 +413,11 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
         if (timeZone is { Length: > TimeZoneMaxLength })
         {
             return Error.Validation("Content.InvalidTimeZone", "Unknown time zone.");
+        }
+
+        if (PublicationGuard() is { } guarded)
+        {
+            return guarded;
         }
 
         Status = ContentStatus.Scheduled;
@@ -517,8 +626,11 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
 
     private static Error? ValidateParentShape(ContentType type, Guid? parentId) => type switch
     {
-        ContentType.ServicePillar or ContentType.Industry when parentId is not null =>
+        ContentType.ServicePillar or ContentType.Industry or ContentType.Project or ContentType.Insight or ContentType.Topic
+            or ContentType.GlossaryTerm or ContentType.Integration when parentId is not null =>
             Error.Validation("Content.InvalidParent", $"A {type} cannot have a parent."),
+        ContentType.CaseStudy when parentId is null =>
+            Error.Validation("Content.InvalidParent", "A case study belongs to a project."),
         ContentType.Service when parentId is null =>
             Error.Validation("Content.InvalidParent", "A service belongs to a service pillar (or to a parent service for a sub-page)."),
         _ => null,
@@ -529,6 +641,11 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
         if (CheckPublishable(requiredLanguages) is { } error)
         {
             return error;
+        }
+
+        if (PublicationGuard() is { } guarded)
+        {
+            return guarded;
         }
 
         if (!HasPage)
@@ -553,10 +670,32 @@ public sealed partial class ContentItem : AuditableEntity, IAuditable
             return ContentErrors.Archived;
         }
 
+        // Verified proof covers exactly the verified wording: any change needs a new verification.
+        ProofVerification = null;
+
         if (Status is ContentStatus.PendingReview or ContentStatus.Approved or ContentStatus.Scheduled or ContentStatus.Published)
         {
             Status = ContentStatus.Draft;
             ClearWorkflow();
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Domain guards that no path can bypass (editor, API or Worker scheduler): unverified proof is never published, and an
+    /// AI-assisted insight needs a recorded human approval (approver and time) before it is scheduled or published.
+    /// </summary>
+    private Error? PublicationGuard()
+    {
+        if (IsProofBearing && ProofVerification is null)
+        {
+            return ContentErrors.ProofNotVerified;
+        }
+
+        if (Type == ContentType.Insight && Origin == InsightOrigin.AiAssisted && (ApprovedById is null || ApprovedAtUtc is null || ApprovedRevisionId is null))
+        {
+            return ContentErrors.AiApprovalRequired;
         }
 
         return null;

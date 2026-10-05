@@ -38,9 +38,12 @@ public sealed class ContentController(IAdminCmsApiClient cms, IStringLocalizer<S
     public async Task<IActionResult> Overview(Guid id, CancellationToken cancellationToken) => await OverviewAsync(id, null, cancellationToken);
 
     [HttpPost("{id:guid}/settings")]
-    public async Task<IActionResult> Settings(Guid id, Guid? parentId, string? key, string presentation, int sortOrder, Guid? primaryCtaId, Guid? featuredImageId, uint version, CancellationToken cancellationToken)
+    public async Task<IActionResult> Settings(
+        Guid id, Guid? parentId, string? key, string presentation, int sortOrder, Guid? primaryCtaId, Guid? featuredImageId, uint version,
+        string? insightKind, string? origin, Guid? authorId, CancellationToken cancellationToken)
     {
-        var result = await cms.UpdateSettingsAsync(id, new UpdateContentSettingsRequest(parentId, Blank(key), presentation, sortOrder, primaryCtaId, featuredImageId, version), cancellationToken);
+        var request = new UpdateContentSettingsRequest(parentId, Blank(key), presentation, sortOrder, primaryCtaId, featuredImageId, version, Blank(insightKind), Blank(origin), authorId);
+        var result = await cms.UpdateSettingsAsync(id, request, cancellationToken);
         return After(result, RedirectToAction(nameof(Overview), new { id }));
     }
 
@@ -280,6 +283,28 @@ public sealed class ContentController(IAdminCmsApiClient cms, IStringLocalizer<S
         return Failed(intelligence) ?? View(new ContentIntelligenceViewModel(content.Value!, intelligence.Value!));
     }
 
+    /// <summary>Records the verification of this proof content's current wording (the API requires Proof.Verify).</summary>
+    [HttpPost("{id:guid}/proof-verification")]
+    public async Task<IActionResult> VerifyProof(Guid id, string sourceNote, string clientPermission, string? clientPermissionNote, uint version, CancellationToken cancellationToken)
+    {
+        var result = await cms.VerifyProofAsync(id, new VerifyProofRequest(sourceNote ?? string.Empty, clientPermission, Blank(clientPermissionNote), version), cancellationToken);
+        return After(result, RedirectToAction(nameof(Overview), new { id }), "Cms.Proof.Verified");
+    }
+
+    [HttpPost("{id:guid}/proof-verification/revoke")]
+    public async Task<IActionResult> RevokeProof(Guid id, uint version, CancellationToken cancellationToken)
+    {
+        var result = await cms.RevokeProofAsync(id, version, cancellationToken);
+        return After(result, RedirectToAction(nameof(Overview), new { id }), "Cms.Done");
+    }
+
+    [HttpPost("{id:guid}/featured")]
+    public async Task<IActionResult> Featured(Guid id, bool featured, uint version, CancellationToken cancellationToken)
+    {
+        var result = await cms.SetFeaturedAsync(id, new SetFeaturedRequest(featured, version), cancellationToken);
+        return After(result, RedirectToAction(nameof(Overview), new { id }), "Cms.Done");
+    }
+
     private async Task<IActionResult> OverviewAsync(Guid id, PreviewLinkResponse? previewLink, CancellationToken cancellationToken)
     {
         var content = await cms.GetContentAsync(id, cancellationToken);
@@ -290,7 +315,10 @@ public sealed class ContentController(IAdminCmsApiClient cms, IStringLocalizer<S
 
         var quality = await cms.GetQualityAsync(id, cancellationToken);
         var timing = await cms.GetPublishingTimeAsync(id, cancellationToken);
-        return View("Overview", new ContentOverviewViewModel(content.Value!, quality.IsSuccess ? quality.Value : null, timing.IsSuccess ? timing.Value : null, previewLink));
+        var authors = content.Value!.Type == "Insight" && await cms.ListAuthorsAsync(cancellationToken) is { IsSuccess: true } listed ? listed.Value : null;
+        return View(
+            "Overview",
+            new ContentOverviewViewModel(content.Value!, quality.IsSuccess ? quality.Value : null, timing.IsSuccess ? timing.Value : null, previewLink, authors));
     }
 
     /// <summary>Form date-times are entered in UTC (labelled as such); the API stores UTC.</summary>

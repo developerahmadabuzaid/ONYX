@@ -1,0 +1,66 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Cms
+@model ProofItemsViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Content";
+    var c = Model.Content;
+}
+<partial name="~/Areas/Admin/Views/Content/_ContentNav.cshtml" model="c" />
+<h2>@T["Cms.Proof.Items"]</h2>
+<p class="hint">@T["Cms.Proof.ItemsHint"]</p>
+
+@foreach (var item in Model.Items)
+{
+    var ar = item.Texts.FirstOrDefault(text => text.LanguageCode == "ar");
+    var en = item.Texts.FirstOrDefault(text => text.LanguageCode == "en");
+    <section>
+        <h3 dir="auto">@(en?.Text ?? ar?.Text)</h3>
+        <p class="hint" dir="ltr">@item.Kind · @item.Status · @(item.Verification is null ? T["Cms.Proof.NotVerifiedShort"].Value : T["Cms.Proof.VerifiedShort"].Value)</p>
+        <details>
+            <summary>@T["Cms.Edit"]</summary>
+            <form method="post" asp-action="Update" asp-route-contentItemId="@c.Id" asp-route-id="@item.Id">
+                <input type="hidden" name="version" value="@item.Version">
+                <input type="hidden" name="Kind" value="@item.Kind">
+                <partial name="_ProofItemFields" model="new ProofItemForm { Kind = item.Kind, TitleAr = ar?.Text, DescriptionAr = ar?.Secondary, TitleEn = en?.Text, DescriptionEn = en?.Secondary, Value = item.Value, AsOf = item.AsOf, AttributionName = item.AttributionName, AttributionRole = item.AttributionRole, AttributionOrganization = item.AttributionOrganization, SortOrder = item.SortOrder }" />
+                <p class="hint">@T["Cms.Proof.EditResets"]</p>
+                <button type="submit">@T["Cms.Save"]</button>
+            </form>
+        </details>
+        <form method="post" asp-action="Verify" asp-route-contentItemId="@c.Id" asp-route-id="@item.Id">
+            <input type="hidden" name="version" value="@item.Version">
+            <label>@T["Cms.Proof.Source"] <input name="sourceNote" required maxlength="1000"></label>
+            <label>@T["Cms.Proof.ClientPermission"]
+                <select name="clientPermission">
+                    @foreach (var permission in CmsOptions.ClientPermissions)
+                    {
+                        <option value="@permission" selected="@(item.Kind == "Testimonial" && permission == "Granted")">@permission</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Cms.Proof.PermissionNote"] <input name="clientPermissionNote" maxlength="1000"></label>
+            <button type="submit">@T["Cms.Proof.Verify"]</button>
+        </form>
+        <form method="post" asp-action="Transition" asp-route-contentItemId="@c.Id" asp-route-id="@item.Id" class="inline">
+            <input type="hidden" name="version" value="@item.Version">
+            <button type="submit" name="operation" value="@(item.Status == "Published" ? "unpublish" : "publish")">@(item.Status == "Published" ? T["Cms.Action.unpublish"] : T["Cms.Action.publish"])</button>
+        </form>
+        <form method="post" asp-action="Delete" asp-route-contentItemId="@c.Id" asp-route-id="@item.Id" class="inline">
+            <button type="submit">@T["Cms.Delete"]</button>
+        </form>
+    </section>
+}
+
+<h3>@T["Cms.Proof.Add"]</h3>
+<form method="post" asp-action="Create" asp-route-contentItemId="@c.Id">
+    <label>@T["Cms.Type"]
+        <select name="Kind">
+            @foreach (var kind in CmsOptions.ProofItemKinds)
+            {
+                <option value="@kind">@kind</option>
+            }
+        </select>
+    </label>
+    <partial name="_ProofItemFields" model="new ProofItemForm()" />
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

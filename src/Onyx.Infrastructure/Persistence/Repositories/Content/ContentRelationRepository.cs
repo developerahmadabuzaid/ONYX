@@ -21,6 +21,10 @@ internal sealed class ContentRelationRepository(ApplicationDbContext dbContext) 
         await dbContext.ContentRelations.AsNoTracking().Where(relation => relation.FromContentItemId == fromContentItemId)
             .OrderBy(relation => relation.Position).ToListAsync(cancellationToken).ConfigureAwait(false);
 
+    public async Task<IReadOnlyList<ContentRelation>> ListToAsync(Guid toContentItemId, CancellationToken cancellationToken) =>
+        await dbContext.ContentRelations.AsNoTracking().Where(relation => relation.ToContentItemId == toContentItemId)
+            .ToListAsync(cancellationToken).ConfigureAwait(false);
+
     public Task<ContentRelation?> GetAsync(Guid id, CancellationToken cancellationToken) =>
         dbContext.ContentRelations.SingleOrDefaultAsync(relation => relation.Id == id, cancellationToken);
 

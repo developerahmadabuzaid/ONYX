@@ -14,6 +14,7 @@ public sealed class ContentRevisionService(
     IContentRepository content,
     IContentRevisionRepository revisions,
     IContentPathRepository paths,
+    Insights.IAuthorRepository authors,
     ContentAccess access,
     ContentRevisionRecorder revisionRecorder,
     MediaUsageIndexer mediaUsage,
@@ -102,6 +103,19 @@ public sealed class ContentRevisionService(
         if (settings.IsFailure)
         {
             return settings.Error!;
+        }
+
+        if (item.Type == ContentType.Insight)
+        {
+            // Provenance never goes backwards: restoring a human-written revision of AI-assisted content keeps the AI label.
+            var origin = item.Origin == InsightOrigin.AiAssisted ? InsightOrigin.AiAssisted : snapshot.Origin;
+            // An author removed since then is no longer credited (the organization is).
+            var author = snapshot.AuthorId is { } authorId && await authors.GetAsync(authorId, cancellationToken).ConfigureAwait(false) is not null ? snapshot.AuthorId : null;
+            var insight = item.UpdateInsightSettings(snapshot.InsightKind ?? InsightKind.Article, origin, author);
+            if (insight.IsFailure)
+            {
+                return insight.Error!;
+            }
         }
 
         foreach (var translation in snapshot.Translations)

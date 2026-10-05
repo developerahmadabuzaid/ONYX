@@ -587,6 +587,36 @@ Allowlisted NewsSource (RSS/Atom/API) → fetch via SafeOutboundHttp → normali
   - **AI surfaces:** Search Console merges AI Overview/AI Mode traffic into Web totals, so no separate "AI" figure is ever derived from it. Bing's AI Performance (Copilot citations) has no API; at most an admin CSV import labelled with its source and range.
   - **Health and decay:** assessments need equal-length windows, minimum impressions and the reporting delay before saying anything.
 
+## 24.2 Work, proof and insights (Stage 7, as built)
+
+- **One content model:** projects, case studies, insights, topics, glossary terms and integrations are `ContentItem` types. They share the Stage 6 lifecycle, revisions, previews, URL history, SEO, sitemaps, IndexNow announcements and Worker scheduling.
+  - **Type scope:** Projects → `Projects.*`, CaseStudy → `CaseStudies.*`, Insight/Topic → `Insights.*`, GlossaryTerm → `Glossary.*`, Integration → `Integrations.*`.
+- **URLs:**
+  - `/{lang}/أعمالنا|work/{project}`, `…/دراسات-الحالة|case-studies/{case-study}` (a case study's parent must be a project, which must be live; its URL does not move with the project);
+  - `/{lang}/المعرفة|insights/{insight}`, `…/مواضيع|topics/{topic}`;
+  - `/{lang}/المصطلحات|glossary/{term}`, `/{lang}/التكاملات|integrations/{slug}`.
+
+  Section roots render live listings (`GET /api/v1/content/listing`). An empty listing is `noindex`. Listing URLs can never be taken by a page slug.
+- **Proof guard (CLAUDE.md §2.1):**
+  - **Who it applies to:** projects, case studies and integrations need a recorded `ProofVerification` (verifier, time, source, client permission). Recording it requires `Proof.Verify`.
+  - **When it's enforced:** the quality gate refuses approval without it, and the domain refuses publishing or scheduling without it (editor, API and Worker alike).
+  - **Invalidation:** any edit clears the verification, and live proof cannot be un-verified until taken offline.
+  - **Audit:** verification notes are kept out of the audit diff (they may name client contacts); the explicit audit records who, when and the permission level.
+- **Proof items:** capabilities, metrics (verified value + as-of date) and testimonials (attribution + mandatory recorded client permission) are `ProofItem`s of a project or case study.
+  - **Visibility:** an item is shown only when verified and published, while its page is live. An edit returns it to an unverified draft.
+  - **Page signals:** publishing or removing a visible item moves the page's `lastmod` and announces its URLs.
+  - **Permissions:** testimonials need `Testimonials.*`; publishing other items needs `Content.Publish`.
+- **Featured work:** the `featured_projects` table has unique slots 1–3 and one slot per project, so the database holds the limit under concurrent requests (a lost race is a 409). Only live, verified projects can be featured (`Projects.Publish`). The homepage shows them via `GET /api/v1/content/featured-projects`.
+- **Insights:**
+  - **Kind:** Article or Guide.
+  - **Origin:** Human or AiAssisted. AI-assisted can never be downgraded, even by restoring a revision.
+  - **AI-approval guard:** an AI-assisted insight is scheduled or published only with a recorded human approval (approver, time, approved revision), and any edit withdraws the approval and the schedule. There is still no AI drafting and no agent code.
+  - **Authors:** real people with recorded consent (`Author`). Without one, the organization is credited. A deactivated author falls back to the organization.
+  - **Public page:** shows the byline, dates and an AI-assistance disclosure. `Article` JSON-LD is allowed only on insights.
+- **Topics:** an insight is tagged by relating it to a topic. The topic page lists its live insights, newest first.
+- **Work links on service and industry pages:** at most one contextual link to a project or case study (CLAUDE.md §2.2).
+- **Roles:** Marketing can draft and submit insights (generic `Content.Create/Edit` are limited by type scope to insights) but cannot approve or publish.
+
 ## 25. Security addendum (Rev 3)
 
 - **Turnstile** on contact, start-project, consultation request/booking, tool runs, report requests, and any other abuse-sensitive anonymous action. The API verifies every token server-side (secret in the secret store; expected hostname/action checked; single use). Client-side checks are never trusted. On failure → 400 ProblemDetails, logged without PII.

@@ -356,4 +356,58 @@
   <data name="Preview.Seo" xml:space="preserve"><value>How search engines will see this page</value></data>
   <data name="Preview.StructuredData" xml:space="preserve"><value>Structured data</value></data>
   <data name="Preview.TitleTag" xml:space="preserve"><value>Title tag</value></data>
+  <data name="Cms.Author.Consent" xml:space="preserve"><value>Recorded consent (how and when this person agreed to be credited)</value></data>
+  <data name="Cms.Author.Create" xml:space="preserve"><value>New author</value></data>
+  <data name="Cms.Author.Hint" xml:space="preserve"><value>Only real people who agreed to be credited publicly. Insights without an author are credited to the organization.</value></data>
+  <data name="Cms.Edit" xml:space="preserve"><value>Edit</value></data>
+  <data name="Cms.Insight.Author" xml:space="preserve"><value>Author</value></data>
+  <data name="Cms.Insight.Kind" xml:space="preserve"><value>Kind</value></data>
+  <data name="Cms.Insight.OrganizationByline" xml:space="preserve"><value>The organization (no individual author)</value></data>
+  <data name="Cms.Insight.Origin" xml:space="preserve"><value>How it was written</value></data>
+  <data name="Cms.Insight.OriginHint" xml:space="preserve"><value>AI-assisted content stays labelled as AI-assisted and needs a recorded human approval before it is scheduled or published.</value></data>
+  <data name="Cms.Insight.Settings" xml:space="preserve"><value>Insight</value></data>
+  <data name="Cms.Proof.Add" xml:space="preserve"><value>Add an item</value></data>
+  <data name="Cms.Proof.AsOf" xml:space="preserve"><value>Date it was true</value></data>
+  <data name="Cms.Proof.ClientPermission" xml:space="preserve"><value>Client permission</value></data>
+  <data name="Cms.Proof.EditResets" xml:space="preserve"><value>Saving returns the item to an unverified draft: it leaves the public page until it is verified and published again.</value></data>
+  <data name="Cms.Proof.Feature" xml:space="preserve"><value>Feature on the homepage</value></data>
+  <data name="Cms.Proof.FeaturedSlot" xml:space="preserve"><value>Featured (position {0} of 3)</value></data>
+  <data name="Cms.Proof.Hint" xml:space="preserve"><value>Record who verified this wording, against which source, and whether the client permitted being named. Any edit clears the verification.</value></data>
+  <data name="Cms.Proof.ItemTitle" xml:space="preserve"><value>Name, label or quote</value></data>
+  <data name="Cms.Proof.Items" xml:space="preserve"><value>Capabilities, metrics and testimonials</value></data>
+  <data name="Cms.Proof.ItemsHint" xml:space="preserve"><value>Shown on the public page only when verified and published. Metrics need the verified value and date; testimonials need the client's recorded permission.</value></data>
+  <data name="Cms.Proof.MetricFields" xml:space="preserve"><value>Metric only</value></data>
+  <data name="Cms.Proof.NotFeatured" xml:space="preserve"><value>Not featured</value></data>
+  <data name="Cms.Proof.NotVerified" xml:space="preserve"><value>Not verified: this proof cannot be approved or published yet.</value></data>
+  <data name="Cms.Proof.NotVerifiedShort" xml:space="preserve"><value>not verified</value></data>
+  <data name="Cms.Proof.Organization" xml:space="preserve"><value>Organization</value></data>
+  <data name="Cms.Proof.PermissionNote" xml:space="preserve"><value>Permission record (required when granted)</value></data>
+  <data name="Cms.Proof.Revoke" xml:space="preserve"><value>Revoke verification</value></data>
+  <data name="Cms.Proof.Role" xml:space="preserve"><value>Role</value></data>
+  <data name="Cms.Proof.Source" xml:space="preserve"><value>Verification source</value></data>
+  <data name="Cms.Proof.TestimonialFields" xml:space="preserve"><value>Testimonial only</value></data>
+  <data name="Cms.Proof.Unfeature" xml:space="preserve"><value>Remove from the homepage</value></data>
+  <data name="Cms.Proof.Value" xml:space="preserve"><value>Verified value</value></data>
+  <data name="Cms.Proof.Verification" xml:space="preserve"><value>Proof verification</value></data>
+  <data name="Cms.Proof.Verified" xml:space="preserve"><value>Verification recorded.</value></data>
+  <data name="Cms.Proof.VerifiedAt" xml:space="preserve"><value>Verified</value></data>
+  <data name="Cms.Proof.VerifiedShort" xml:space="preserve"><value>verified</value></data>
+  <data name="Cms.Proof.Verify" xml:space="preserve"><value>Record verification</value></data>
+  <data name="Home.FeaturedWork" xml:space="preserve"><value>Featured work</value></data>
+  <data name="Insight.AiDisclosure" xml:space="preserve"><value>Written with AI assistance and reviewed and approved by our team before publishing.</value></data>
+  <data name="Insight.By" xml:space="preserve"><value>By</value></data>
+  <data name="Insight.Updated" xml:space="preserve"><value>Updated</value></data>
+  <data name="Nav.Authors" xml:space="preserve"><value>Authors</value></data>
+  <data name="Proof.AsOf" xml:space="preserve"><value>as of</value></data>
+  <data name="Proof.Capabilities" xml:space="preserve"><value>Capabilities</value></data>
+  <data name="Proof.Metrics" xml:space="preserve"><value>Results</value></data>
+  <data name="Proof.Testimonials" xml:space="preserve"><value>What the client says</value></data>
+  <data name="Section.Empty" xml:space="preserve"><value>Nothing has been published here yet.</value></data>
+  <data name="Section.Pages" xml:space="preserve"><value>Pages</value></data>
+  <data name="Section.case-studies" xml:space="preserve"><value>Case studies</value></data>
+  <data name="Section.glossary" xml:space="preserve"><value>Glossary</value></data>
+  <data name="Section.insights" xml:space="preserve"><value>Insights</value></data>
+  <data name="Section.integrations" xml:space="preserve"><value>Integrations</value></data>
+  <data name="Section.topics" xml:space="preserve"><value>Topics</value></data>
+  <data name="Section.work" xml:space="preserve"><value>Our work</value></data>
 </root>

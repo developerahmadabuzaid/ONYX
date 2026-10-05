@@ -2,16 +2,20 @@ using System.Globalization;
 using Onyx.Contracts.Brand;
 using Onyx.Contracts.Common;
 using Onyx.Contracts.Content;
+using Onyx.Contracts.Insights;
 using Onyx.Contracts.Intelligence;
 using Onyx.Contracts.Knowledge;
 using Onyx.Contracts.Media;
 using Onyx.Contracts.Messaging;
+using Onyx.Contracts.Proof;
 
 namespace Onyx.Web.ApiClients;
 
 public sealed class AdminCmsApiClient(HttpClient httpClient) : OnyxApiClientBase(httpClient), IAdminCmsApiClient
 {
     private const string Content = "api/v1/admin/content";
+    private const string ProofItems = "api/v1/admin/proof-items";
+    private const string Authors = "api/v1/admin/authors";
 
     private static readonly HashSet<string> Transitions = new(StringComparer.Ordinal)
     {
@@ -230,6 +234,47 @@ public sealed class AdminCmsApiClient(HttpClient httpClient) : OnyxApiClientBase
 
     public Task<ApiResult<GeneratedRecommendationsResponse>> GenerateLinkRecommendationsAsync(CancellationToken cancellationToken) =>
         PostAsync<GeneratedRecommendationsResponse>("api/v1/admin/intelligence/link-report/recommendations", null, cancellationToken);
+
+    public Task<ApiResult<ContentDetailResponse>> VerifyProofAsync(Guid id, VerifyProofRequest request, CancellationToken cancellationToken) =>
+        PostAsync<ContentDetailResponse>($"{Content}/{id:D}/proof-verification", request, cancellationToken);
+
+    public Task<ApiResult<ContentDetailResponse>> RevokeProofAsync(Guid id, uint version, CancellationToken cancellationToken) =>
+        PostAsync<ContentDetailResponse>($"{Content}/{id:D}/proof-verification/revoke", new ContentVersionRequest(version), cancellationToken);
+
+    public Task<ApiResult<ContentDetailResponse>> SetFeaturedAsync(Guid id, SetFeaturedRequest request, CancellationToken cancellationToken) =>
+        PostAsync<ContentDetailResponse>($"{Content}/{id:D}/featured", request, cancellationToken);
+
+    public Task<ApiResult<IReadOnlyList<ProofItemResponse>>> ListProofItemsAsync(Guid contentItemId, CancellationToken cancellationToken) =>
+        GetAsync<IReadOnlyList<ProofItemResponse>>($"{ProofItems}?contentItemId={contentItemId:D}", cancellationToken);
+
+    public Task<ApiResult<ProofItemResponse>> CreateProofItemAsync(SaveProofItemRequest request, CancellationToken cancellationToken) =>
+        PostAsync<ProofItemResponse>(ProofItems, request, cancellationToken);
+
+    public Task<ApiResult<ProofItemResponse>> UpdateProofItemAsync(Guid id, SaveProofItemRequest request, CancellationToken cancellationToken) =>
+        PutAsync<ProofItemResponse>($"{ProofItems}/{id:D}", request, cancellationToken);
+
+    public Task<ApiResult<ProofItemResponse>> VerifyProofItemAsync(Guid id, VerifyProofRequest request, CancellationToken cancellationToken) =>
+        PostAsync<ProofItemResponse>($"{ProofItems}/{id:D}/verify", request, cancellationToken);
+
+    public Task<ApiResult<ProofItemResponse>> ProofItemActionAsync(Guid id, string action, uint version, CancellationToken cancellationToken) =>
+        action is "publish" or "unpublish"
+            ? PostAsync<ProofItemResponse>($"{ProofItems}/{id:D}/{action}", new ContentVersionRequest(version), cancellationToken)
+            : throw new ArgumentOutOfRangeException(nameof(action));
+
+    public Task<ApiResult<NoContent>> DeleteProofItemAsync(Guid id, CancellationToken cancellationToken) =>
+        DeleteAsync<NoContent>($"{ProofItems}/{id:D}", cancellationToken);
+
+    public Task<ApiResult<IReadOnlyList<AuthorResponse>>> ListAuthorsAsync(CancellationToken cancellationToken) =>
+        GetAsync<IReadOnlyList<AuthorResponse>>(Authors, cancellationToken);
+
+    public Task<ApiResult<AuthorResponse>> CreateAuthorAsync(SaveAuthorRequest request, CancellationToken cancellationToken) =>
+        PostAsync<AuthorResponse>(Authors, request, cancellationToken);
+
+    public Task<ApiResult<AuthorResponse>> UpdateAuthorAsync(Guid id, SaveAuthorRequest request, CancellationToken cancellationToken) =>
+        PutAsync<AuthorResponse>($"{Authors}/{id:D}", request, cancellationToken);
+
+    public Task<ApiResult<NoContent>> DeleteAuthorAsync(Guid id, CancellationToken cancellationToken) =>
+        DeleteAsync<NoContent>($"{Authors}/{id:D}", cancellationToken);
 
     public Task<ApiResult<IReadOnlyList<EmailTemplateResponse>>> ListEmailTemplatesAsync(CancellationToken cancellationToken) =>
         GetAsync<IReadOnlyList<EmailTemplateResponse>>("api/v1/admin/email-templates", cancellationToken);

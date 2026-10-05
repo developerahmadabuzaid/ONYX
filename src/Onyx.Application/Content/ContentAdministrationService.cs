@@ -19,6 +19,8 @@ public sealed class ContentAdministrationService(
     IContentClusterRepository clusters,
     IRedirectRepository redirects,
     IMediaRepository media,
+    Insights.IAuthorRepository authors,
+    Proof.IFeaturedProjectRepository featured,
     ContentAccess access,
     ContentAuthorizer authorizer,
     ContentRevisionRecorder revisionRecorder,
@@ -215,6 +217,15 @@ public sealed class ContentAdministrationService(
             return updated.Error!;
         }
 
+        if (item.Type == ContentType.Insight && (request.InsightKind is not null || request.Origin is not null || request.AuthorId is not null))
+        {
+            var insight = await ApplyInsightSettingsAsync(item, request, cancellationToken).ConfigureAwait(false);
+            if (insight.IsFailure)
+            {
+                return insight.Error!;
+            }
+        }
+
         return await SaveEditAsync(item, RevisionKind.SettingsUpdated, cancellationToken).ConfigureAwait(false);
     }
 
@@ -337,6 +348,18 @@ public sealed class ContentAdministrationService(
             return Error.Conflict("Relation.Exists", "This relation already exists.");
         }
 
+        // Full project content lives only in Work: a service or industry page links to at most one project or case study.
+        if (loaded.Value.Item.Type is ContentType.ServicePillar or ContentType.Service or ContentType.Industry
+            && target.Type is ContentType.Project or ContentType.CaseStudy)
+        {
+            var existing = await relations.ListFromAsync(id, cancellationToken).ConfigureAwait(false);
+            var linked = await content.GetLookupAsync(existing.Select(relation => relation.ToContentItemId).ToList(), cancellationToken).ConfigureAwait(false);
+            if (linked.Values.Any(other => other.Type is ContentType.Project or ContentType.CaseStudy))
+            {
+                return Error.Conflict("Relation.OneWorkLink", "Service and industry pages show only one contextual link to a project or case study.");
+            }
+        }
+
         var relation = ContentRelation.Create(id, request.ToContentItemId, kind, request.Position, request.Note, timeProvider.GetUtcNow());
         if (relation.IsFailure)
         {
@@ -432,8 +455,34 @@ public sealed class ContentAdministrationService(
             ? ContentSnapshotSerializer.Deserialize(revision.Snapshot)
             : null;
 
+    /// <summary>Kind, provenance and credited author of an insight. Only an existing, active author (a real, consenting person) can be credited.</summary>
+    private async Task<Result> ApplyInsightSettingsAsync(ContentItem item, UpdateContentSettingsRequest request, CancellationToken cancellationToken)
+    {
+        var kind = item.InsightKind ?? InsightKind.Article;
+        if (request.InsightKind is not null && !EnumParsing.TryParse(request.InsightKind, out kind))
+        {
+            return Error.Validation("Content.InvalidInsightSettings", "Unknown insight kind.");
+        }
+
+        var origin = item.Origin;
+        if (request.Origin is not null && !EnumParsing.TryParse(request.Origin, out origin))
+        {
+            return Error.Validation("Content.InvalidInsightSettings", "Unknown origin.");
+        }
+
+        if (request.AuthorId is { } authorId && await authors.GetAsync(authorId, cancellationToken).ConfigureAwait(false) is not { IsActive: true })
+        {
+            return Error.Validation("Content.InvalidAuthor", "Credit only an existing, active author.");
+        }
+
+        return item.UpdateInsightSettings(kind, origin, request.AuthorId);
+    }
+
     private async Task<ContentDetailResponse> DetailAsync(ContentItem item, CancellationToken cancellationToken) =>
-        ContentMapping.ToDetail(item, await paths.ListForItemAsync(item.Id, cancellationToken).ConfigureAwait(false));
+        ContentMapping.ToDetail(
+            item,
+            await paths.ListForItemAsync(item.Id, cancellationToken).ConfigureAwait(false),
+            item.Type == ContentType.Project ? (await featured.FindForContentAsync(item.Id, cancellationToken).ConfigureAwait(false))?.Slot : null);
 
     private async Task<Error?> ValidateParentAsync(ContentType type, Guid? parentId, Guid? itemId, CancellationToken cancellationToken)
     {
@@ -452,6 +501,7 @@ public sealed class ContentAdministrationService(
         {
             ContentType.Service => parentItem.Type is ContentType.ServicePillar or ContentType.Service,
             ContentType.Page => parentItem.Type == ContentType.Page,
+            ContentType.CaseStudy => parentItem.Type == ContentType.Project,
             _ => false,
         };
         if (!allowed)

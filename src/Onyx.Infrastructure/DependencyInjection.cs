@@ -156,6 +156,9 @@ public static class DependencyInjection
         services.AddScoped<Application.Intelligence.ISeoRecommendationRepository, SeoRecommendationRepository>();
         services.AddScoped<Application.Intelligence.IContentCalendarRepository, ContentCalendarRepository>();
         services.AddScoped<Application.Intelligence.IContentPerformanceRepository, ContentPerformanceRepository>();
+        services.AddScoped<Application.Proof.IFeaturedProjectRepository, FeaturedProjectRepository>();
+        services.AddScoped<Application.Proof.IProofItemRepository, ProofItemRepository>();
+        services.AddScoped<Application.Insights.IAuthorRepository, AuthorRepository>();
 
         AddSeo(services, configuration);
     }

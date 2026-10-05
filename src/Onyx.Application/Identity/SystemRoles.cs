@@ -40,6 +40,9 @@ public static class SystemRoles
             Permissions.Projects.View,
             Permissions.News.View,
             Permissions.Content.View,
+            // Drafting insights: generic create/edit are limited by type scope to the types Marketing can edit (Insights only).
+            Permissions.Content.Create,
+            Permissions.Content.Edit,
             Permissions.Content.SubmitForReview,
             Permissions.BrandKit.View,
             Permissions.Knowledge.View,

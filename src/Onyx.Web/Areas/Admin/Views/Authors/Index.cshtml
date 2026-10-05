@@ -1,0 +1,30 @@
+@using Onyx.Contracts.Insights
+@model IReadOnlyList<AuthorResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Authors";
+}
+<h1>@T["Nav.Authors"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Cms.Author.Hint"]</p>
+@foreach (var author in Model)
+{
+    var ar = author.Names.FirstOrDefault(name => name.LanguageCode == "ar");
+    var en = author.Names.FirstOrDefault(name => name.LanguageCode == "en");
+    <details>
+        <summary dir="auto">@(en?.Text ?? ar?.Text) @(author.IsActive ? "" : "(inactive)")</summary>
+        <form method="post" asp-action="Update" asp-route-id="@author.Id">
+            <input type="hidden" name="version" value="@author.Version">
+            <partial name="_AuthorFields" model="(ar?.Text, ar?.Secondary, en?.Text, en?.Secondary, author.ConsentNote)" />
+            <label><input type="checkbox" name="isActive" value="true" checked="@author.IsActive"> @T["Cms.Active"]</label>
+            <input type="hidden" name="isActive" value="false">
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+        <form method="post" asp-action="Delete" asp-route-id="@author.Id"><button type="submit">@T["Cms.Delete"]</button></form>
+    </details>
+}
+<h2>@T["Cms.Author.Create"]</h2>
+<form method="post" asp-action="Create">
+    <partial name="_AuthorFields" model="((string?)null, (string?)null, (string?)null, (string?)null, (string?)null)" />
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

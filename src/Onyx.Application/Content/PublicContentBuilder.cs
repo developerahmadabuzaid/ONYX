@@ -19,7 +19,9 @@ public sealed class PublicContentBuilder(
     IContentClusterRepository clusters,
     IMediaRepository media,
     ICallToActionRepository ctas,
-    CtaResolver ctaResolver)
+    CtaResolver ctaResolver,
+    Insights.IAuthorRepository authors,
+    Proof.IProofItemRepository proofItems)
 {
     private const int MaxAncestors = 10;
     private const int MaxRelated = 6;
@@ -113,7 +115,9 @@ public sealed class PublicContentBuilder(
             cta is null ? null : ToCta(cta, languageCode),
             snapshot.FeaturedImageId is { } featured && assets.TryGetValue(featured, out var featuredAsset) ? ToMedia(featuredAsset, null, null, languageCode) : null,
             item.FirstPublishedAtUtc,
-            item.GetTranslation(languageCode)?.LiveContentModifiedAtUtc ?? item.LastPublishedAtUtc);
+            item.GetTranslation(languageCode)?.LiveContentModifiedAtUtc ?? item.LastPublishedAtUtc,
+            snapshot.Type == ContentType.Insight ? await InsightAsync(snapshot, languageCode, cancellationToken).ConfigureAwait(false) : null,
+            snapshot.Type is ContentType.Project or ContentType.CaseStudy ? await ProofAsync(item.Id, languageCode, cancellationToken).ConfigureAwait(false) : null);
     }
 
     /// <summary>Indexable and self-canonical in <paramref name="languageCode"/>: the only pages hreflang and the sitemap may list.</summary>
@@ -146,7 +150,40 @@ public sealed class PublicContentBuilder(
             types.Add(nameof(StructuredDataTypes.FaqPage));
         }
 
+        if (selected.HasFlag(StructuredDataTypes.Article) && type == ContentType.Insight)
+        {
+            types.Add(nameof(StructuredDataTypes.Article));
+        }
+
         return types;
+    }
+
+    /// <summary>Byline from the snapshot: a credited author only while that author exists and is active, otherwise the organization.</summary>
+    private async Task<PublicInsightResponse> InsightAsync(ContentSnapshot snapshot, string languageCode, CancellationToken cancellationToken)
+    {
+        PublicAuthorResponse? author = null;
+        if (snapshot.AuthorId is { } authorId && await authors.GetAsync(authorId, cancellationToken).ConfigureAwait(false) is { IsActive: true } credited)
+        {
+            var name = credited.Names.FirstOrDefault(text => text.LanguageCode == languageCode) ?? credited.Names[0];
+            author = new PublicAuthorResponse(name.Text, name.Secondary);
+        }
+
+        return new PublicInsightResponse((snapshot.InsightKind ?? InsightKind.Article).ToString(), snapshot.Origin.ToString(), author);
+    }
+
+    /// <summary>Verified, published proof written in this language.</summary>
+    private async Task<PublicProofResponse> ProofAsync(Guid contentItemId, string languageCode, CancellationToken cancellationToken)
+    {
+        var published = await proofItems.ListPublishedForContentAsync(contentItemId, cancellationToken).ConfigureAwait(false);
+        List<PublicProofItemResponse> Of(Domain.Proof.ProofItemKind kind) => published
+            .Where(item => item.Kind == kind && item.Verification is not null)
+            .Select(item => (item, text: item.Texts.FirstOrDefault(text => text.LanguageCode == languageCode)))
+            .Where(entry => entry.text is not null)
+            .Select(entry => new PublicProofItemResponse(
+                entry.text!.Text, entry.text.Secondary, entry.item.Value, entry.item.AsOf, entry.item.AttributionName, entry.item.AttributionRole, entry.item.AttributionOrganization))
+            .ToList();
+
+        return new PublicProofResponse(Of(Domain.Proof.ProofItemKind.Capability), Of(Domain.Proof.ProofItemKind.Metric), Of(Domain.Proof.ProofItemKind.Testimonial));
     }
 
     public static PublicMediaResponse ToMedia(MediaAsset asset, string? altOverride, string? captionOverride, string languageCode)

@@ -29,6 +29,25 @@ public sealed class ContentController(IPublicContentService publicContent, ICont
     public async Task<ActionResult<IReadOnlyList<SitemapEntryResponse>>> Sitemap([FromQuery] string language, CancellationToken cancellationToken) =>
         Ok(await publicContent.GetSitemapAsync(language ?? string.Empty, cancellationToken));
 
+    /// <summary>
+    /// Live items of a public section: <c>work</c>, <c>case-studies</c>, <c>insights</c> (optionally one <paramref name="topic"/>),
+    /// <c>topics</c>, <c>glossary</c> or <c>integrations</c>.
+    /// </summary>
+    [HttpGet("listing")]
+    [AllowAnonymous]
+    [ProducesResponseType<PagedResult<ListingItemResponse>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ApiProblem>(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult> Listing(
+        [FromQuery] string language, [FromQuery] string section, [FromQuery] Guid? topic, [FromQuery] int page = 1, CancellationToken cancellationToken = default) =>
+        this.OkOrProblem(await publicContent.ListAsync(language ?? string.Empty, section ?? string.Empty, topic, page, cancellationToken));
+
+    /// <summary>The homepage's featured projects (at most three), in slot order.</summary>
+    [HttpGet("featured-projects")]
+    [AllowAnonymous]
+    [ProducesResponseType<IReadOnlyList<ListingItemResponse>>(StatusCodes.Status200OK)]
+    public async Task<ActionResult<IReadOnlyList<ListingItemResponse>>> FeaturedProjects([FromQuery] string language, CancellationToken cancellationToken) =>
+        Ok(await publicContent.GetFeaturedProjectsAsync(language ?? string.Empty, cancellationToken));
+
     /// <summary>Draft preview. The token is the only credential; responses are never cached.</summary>
     [HttpGet("preview")]
     [AllowAnonymous]

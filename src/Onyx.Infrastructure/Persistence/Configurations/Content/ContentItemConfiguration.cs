@@ -24,12 +24,16 @@ internal sealed class ContentItemConfiguration : IEntityTypeConfiguration<Conten
         builder.Property(item => item.ReviewNote).HasMaxLength(ContentItem.ReviewNoteMaxLength);
         builder.Property(item => item.ScheduleTimeZone).HasMaxLength(ContentItem.TimeZoneMaxLength);
         builder.Property(item => item.OfflineResolution).HasConversion<string>().HasMaxLength(30).IsRequired();
+        builder.Property(item => item.InsightKind).HasConversion<string>().HasMaxLength(20);
+        builder.Property(item => item.Origin).HasConversion<string>().HasMaxLength(20).IsRequired();
+        builder.Property(item => item.ProofVerification!).HasJsonColumn();
         builder.Property(item => item.Version).IsRowVersion().HasColumnName("xmin").HasColumnType("xid");
 
         builder.HasOne<ContentItem>().WithMany().HasForeignKey(item => item.ParentId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<ContentItem>().WithMany().HasForeignKey(item => item.OfflineRedirectToId).OnDelete(DeleteBehavior.Restrict);
         builder.HasOne<CallToAction>().WithMany().HasForeignKey(item => item.PrimaryCtaId).OnDelete(DeleteBehavior.SetNull);
         builder.HasOne<MediaAsset>().WithMany().HasForeignKey(item => item.FeaturedImageId).OnDelete(DeleteBehavior.Restrict);
+        builder.HasOne<Domain.Insights.Author>().WithMany().HasForeignKey(item => item.AuthorId).OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(item => item.Translations).WithOne().HasForeignKey(translation => translation.ContentItemId).OnDelete(DeleteBehavior.Cascade);
         builder.Navigation(item => item.Translations).HasField("_translations").UsePropertyAccessMode(PropertyAccessMode.Field);

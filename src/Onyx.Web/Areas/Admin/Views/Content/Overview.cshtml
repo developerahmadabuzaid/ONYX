@@ -145,9 +145,90 @@
         <label>@T["Cms.SortOrder"] <input type="number" name="sortOrder" value="@c.SortOrder"></label>
         <label>@T["Cms.Content.PrimaryCta"] <input name="primaryCtaId" value="@c.PrimaryCtaId" dir="ltr"></label>
         <label>@T["Cms.Content.FeaturedImage"] <input name="featuredImageId" value="@c.FeaturedImageId" dir="ltr"></label>
+        @if (c.Type == "Insight")
+        {
+            <fieldset>
+                <legend>@T["Cms.Insight.Settings"]</legend>
+                <label>@T["Cms.Insight.Kind"]
+                    <select name="insightKind">
+                        @foreach (var kind in CmsOptions.InsightKinds)
+                        {
+                            <option value="@kind" selected="@(c.InsightKind == kind)">@kind</option>
+                        }
+                    </select>
+                </label>
+                <label>@T["Cms.Insight.Origin"]
+                    <select name="origin">
+                        @foreach (var origin in CmsOptions.InsightOrigins.Where(origin => c.Origin != "AiAssisted" || origin == "AiAssisted"))
+                        {
+                            <option value="@origin" selected="@(c.Origin == origin)">@origin</option>
+                        }
+                    </select>
+                </label>
+                <p class="hint">@T["Cms.Insight.OriginHint"]</p>
+                <label>@T["Cms.Insight.Author"]
+                    <select name="authorId">
+                        <option value="">@T["Cms.Insight.OrganizationByline"]</option>
+                        @foreach (var author in Model.Authors?.Where(author => author.IsActive) ?? [])
+                        {
+                            <option value="@author.Id" selected="@(c.AuthorId == author.Id)">@(author.Names.FirstOrDefault()?.Text)</option>
+                        }
+                    </select>
+                </label>
+            </fieldset>
+        }
         <button type="submit">@T["Cms.Save"]</button>
     </form>
 </section>
+
+@if (CmsOptions.ProofTypes.Contains(c.Type))
+{
+    <section>
+        <h2>@T["Cms.Proof.Verification"]</h2>
+        @if (c.ProofVerification is { } verification)
+        {
+            <p>@T["Cms.Proof.VerifiedAt"] <partial name="_Utc" model="(DateTimeOffset?)verification.VerifiedAtUtc" /> · <span dir="ltr">@verification.ClientPermission</span></p>
+            <p class="hint">@verification.SourceNote</p>
+            <form method="post" asp-action="RevokeProof" asp-route-id="@c.Id" class="inline">
+                <input type="hidden" name="version" value="@c.Version">
+                <button type="submit">@T["Cms.Proof.Revoke"]</button>
+            </form>
+        }
+        else
+        {
+            <p class="errors">@T["Cms.Proof.NotVerified"]</p>
+        }
+        <p class="hint">@T["Cms.Proof.Hint"]</p>
+        <form method="post" asp-action="VerifyProof" asp-route-id="@c.Id">
+            <input type="hidden" name="version" value="@c.Version">
+            <label>@T["Cms.Proof.Source"] <textarea name="sourceNote" rows="2" required maxlength="1000"></textarea></label>
+            <label>@T["Cms.Proof.ClientPermission"]
+                <select name="clientPermission">
+                    @foreach (var permission in CmsOptions.ClientPermissions)
+                    {
+                        <option value="@permission">@permission</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Cms.Proof.PermissionNote"] <input name="clientPermissionNote" maxlength="1000"></label>
+            <button type="submit">@T["Cms.Proof.Verify"]</button>
+        </form>
+        @if (c.Type is "Project" or "CaseStudy")
+        {
+            <p><a asp-controller="ProofItems" asp-action="Index" asp-route-contentItemId="@c.Id">@T["Cms.Proof.Items"]</a></p>
+        }
+        @if (c.Type == "Project")
+        {
+            <h3>@T["Home.FeaturedWork"]</h3>
+            <p>@(c.FeaturedSlot is { } slot ? T["Cms.Proof.FeaturedSlot", slot].Value : T["Cms.Proof.NotFeatured"].Value)</p>
+            <form method="post" asp-action="Featured" asp-route-id="@c.Id" class="inline">
+                <input type="hidden" name="version" value="@c.Version">
+                <input type="hidden" name="featured" value="@(c.FeaturedSlot is null ? "true" : "false")">
+                <button type="submit">@(c.FeaturedSlot is null ? T["Cms.Proof.Feature"] : T["Cms.Proof.Unfeature"])</button>
+            </form>
+        }
+    </section>
+}
 
 <section>
     <h2>@T["Cms.Content.DeletePermanent"]</h2>

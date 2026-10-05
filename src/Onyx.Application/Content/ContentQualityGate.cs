@@ -41,12 +41,35 @@ public sealed class ContentQualityGate(
         }
 
         CheckCompleteness(item, findings);
+        CheckProofAndProvenance(item, findings);
         await CheckSlugsAndPathsAsync(item, snapshot, findings, cancellationToken).ConfigureAwait(false);
         await CheckSeoAsync(item, findings, cancellationToken).ConfigureAwait(false);
         CheckHeadings(item, findings);
         await CheckReferencesAsync(item, snapshot, findings, cancellationToken).ConfigureAwait(false);
 
         return new QualityReport(findings);
+    }
+
+    /// <summary>Stage 7 guards, shown before publishing so editors are never surprised by the domain refusing it.</summary>
+    private static void CheckProofAndProvenance(ContentItem item, List<QualityFinding> findings)
+    {
+        if (item.IsProofBearing && item.ProofVerification is null)
+        {
+            findings.Add(new(QualitySeverity.Error, "Proof.NotVerified",
+                "This is public proof: someone with proof-verification rights must record who verified the current wording, against which source, and the client's permission."));
+        }
+
+        if (item.Type == ContentType.Insight && item.Origin == InsightOrigin.AiAssisted)
+        {
+            findings.Add(new(QualitySeverity.Recommendation, "Insight.AiAssisted",
+                "AI-assisted: check every fact, figure and claim against approved company knowledge or a cited source before approving. Publishing needs a recorded human approval."));
+        }
+
+        if (item.Type == ContentType.Insight && item.AuthorId is null)
+        {
+            findings.Add(new(QualitySeverity.Recommendation, "Insight.OrganizationByline",
+                "No author is credited, so the organization is shown as the author. Credit a real, consenting person only."));
+        }
     }
 
     private static void CheckCompleteness(ContentItem item, List<QualityFinding> findings)
@@ -185,6 +208,11 @@ public sealed class ContentQualityGate(
                     ? new(QualitySeverity.Error, "Schema.FaqWithoutVisibleFaqs", "FAQ structured data requires visible FAQs on the page.", language, "structuredData")
                     : new(QualitySeverity.Recommendation, "Schema.FaqNoRichResult",
                         "FAQ markup matches the visible FAQs and is valid, but Google no longer shows FAQ rich results (since May 2026). Keep FAQs only where they genuinely help visitors.", language, "structuredData"));
+            }
+
+            if (seo.StructuredData.HasFlag(StructuredDataTypes.Article) && item.Type != ContentType.Insight)
+            {
+                findings.Add(new(QualitySeverity.Error, "Schema.ArticleOnNonInsight", "Article structured data can only describe an insight.", language, "structuredData"));
             }
 
             if (seo.StructuredData.HasFlag(StructuredDataTypes.Service) && item.Type is not (ContentType.Service or ContentType.ServicePillar))

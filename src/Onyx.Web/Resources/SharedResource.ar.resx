@@ -356,4 +356,58 @@
   <data name="Preview.Seo" xml:space="preserve"><value>كيف ستظهر هذه الصفحة لمحركات البحث</value></data>
   <data name="Preview.StructuredData" xml:space="preserve"><value>البيانات المنظمة</value></data>
   <data name="Preview.TitleTag" xml:space="preserve"><value>وسم العنوان</value></data>
+  <data name="Cms.Author.Consent" xml:space="preserve"><value>الموافقة المسجلة (كيف ومتى وافق هذا الشخص على ذكر اسمه)</value></data>
+  <data name="Cms.Author.Create" xml:space="preserve"><value>كاتب جديد</value></data>
+  <data name="Cms.Author.Hint" xml:space="preserve"><value>أشخاص حقيقيون وافقوا على ذكر أسمائهم علنًا فقط. المقالات بلا كاتب تُنسب إلى الشركة.</value></data>
+  <data name="Cms.Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Cms.Insight.Author" xml:space="preserve"><value>الكاتب</value></data>
+  <data name="Cms.Insight.Kind" xml:space="preserve"><value>النوع</value></data>
+  <data name="Cms.Insight.OrganizationByline" xml:space="preserve"><value>الشركة (بلا كاتب فرد)</value></data>
+  <data name="Cms.Insight.Origin" xml:space="preserve"><value>طريقة الكتابة</value></data>
+  <data name="Cms.Insight.OriginHint" xml:space="preserve"><value>المحتوى المكتوب بمساعدة الذكاء الاصطناعي يبقى موسومًا بذلك، ويتطلب موافقة بشرية مسجلة قبل جدولته أو نشره.</value></data>
+  <data name="Cms.Insight.Settings" xml:space="preserve"><value>المقال</value></data>
+  <data name="Cms.Proof.Add" xml:space="preserve"><value>إضافة عنصر</value></data>
+  <data name="Cms.Proof.AsOf" xml:space="preserve"><value>تاريخ صحة القيمة</value></data>
+  <data name="Cms.Proof.ClientPermission" xml:space="preserve"><value>إذن العميل</value></data>
+  <data name="Cms.Proof.EditResets" xml:space="preserve"><value>الحفظ يعيد العنصر إلى مسودة غير موثقة، فيُزال من الصفحة العامة حتى يُوثق ويُنشر من جديد.</value></data>
+  <data name="Cms.Proof.Feature" xml:space="preserve"><value>إبراز في الصفحة الرئيسية</value></data>
+  <data name="Cms.Proof.FeaturedSlot" xml:space="preserve"><value>مُبرز (الموضع {0} من 3)</value></data>
+  <data name="Cms.Proof.Hint" xml:space="preserve"><value>سجّل من وثّق هذه الصياغة، ومصدر التوثيق، وهل أذن العميل بذكر اسمه. أي تعديل يلغي التوثيق.</value></data>
+  <data name="Cms.Proof.ItemTitle" xml:space="preserve"><value>الاسم أو العنوان أو الاقتباس</value></data>
+  <data name="Cms.Proof.Items" xml:space="preserve"><value>القدرات والمقاييس والشهادات</value></data>
+  <data name="Cms.Proof.ItemsHint" xml:space="preserve"><value>تظهر على الصفحة العامة فقط بعد توثيقها ونشرها. تتطلب المقاييس القيمة الموثقة وتاريخها، وتتطلب الشهادات إذن العميل المسجل.</value></data>
+  <data name="Cms.Proof.MetricFields" xml:space="preserve"><value>للمقاييس فقط</value></data>
+  <data name="Cms.Proof.NotFeatured" xml:space="preserve"><value>غير مُبرز</value></data>
+  <data name="Cms.Proof.NotVerified" xml:space="preserve"><value>غير موثق: لا يمكن اعتماد هذا الدليل أو نشره بعد.</value></data>
+  <data name="Cms.Proof.NotVerifiedShort" xml:space="preserve"><value>غير موثق</value></data>
+  <data name="Cms.Proof.Organization" xml:space="preserve"><value>الجهة</value></data>
+  <data name="Cms.Proof.PermissionNote" xml:space="preserve"><value>سجل الإذن (مطلوب عند منح الإذن)</value></data>
+  <data name="Cms.Proof.Revoke" xml:space="preserve"><value>إلغاء التوثيق</value></data>
+  <data name="Cms.Proof.Role" xml:space="preserve"><value>المنصب</value></data>
+  <data name="Cms.Proof.Source" xml:space="preserve"><value>مصدر التوثيق</value></data>
+  <data name="Cms.Proof.TestimonialFields" xml:space="preserve"><value>للشهادات فقط</value></data>
+  <data name="Cms.Proof.Unfeature" xml:space="preserve"><value>إزالة من الصفحة الرئيسية</value></data>
+  <data name="Cms.Proof.Value" xml:space="preserve"><value>القيمة الموثقة</value></data>
+  <data name="Cms.Proof.Verification" xml:space="preserve"><value>توثيق الدليل</value></data>
+  <data name="Cms.Proof.Verified" xml:space="preserve"><value>تم تسجيل التوثيق.</value></data>
+  <data name="Cms.Proof.VerifiedAt" xml:space="preserve"><value>موثق في</value></data>
+  <data name="Cms.Proof.VerifiedShort" xml:space="preserve"><value>موثق</value></data>
+  <data name="Cms.Proof.Verify" xml:space="preserve"><value>تسجيل التوثيق</value></data>
+  <data name="Home.FeaturedWork" xml:space="preserve"><value>أعمال مختارة</value></data>
+  <data name="Insight.AiDisclosure" xml:space="preserve"><value>كُتب بمساعدة الذكاء الاصطناعي، وراجعه فريقنا واعتمده قبل النشر.</value></data>
+  <data name="Insight.By" xml:space="preserve"><value>بقلم</value></data>
+  <data name="Insight.Updated" xml:space="preserve"><value>حُدّث في</value></data>
+  <data name="Nav.Authors" xml:space="preserve"><value>الكتّاب</value></data>
+  <data name="Proof.AsOf" xml:space="preserve"><value>حتى</value></data>
+  <data name="Proof.Capabilities" xml:space="preserve"><value>القدرات</value></data>
+  <data name="Proof.Metrics" xml:space="preserve"><value>النتائج</value></data>
+  <data name="Proof.Testimonials" xml:space="preserve"><value>رأي العميل</value></data>
+  <data name="Section.Empty" xml:space="preserve"><value>لم يُنشر شيء هنا بعد.</value></data>
+  <data name="Section.Pages" xml:space="preserve"><value>الصفحات</value></data>
+  <data name="Section.case-studies" xml:space="preserve"><value>دراسات الحالة</value></data>
+  <data name="Section.glossary" xml:space="preserve"><value>المصطلحات</value></data>
+  <data name="Section.insights" xml:space="preserve"><value>المعرفة</value></data>
+  <data name="Section.integrations" xml:space="preserve"><value>التكاملات</value></data>
+  <data name="Section.topics" xml:space="preserve"><value>المواضيع</value></data>
+  <data name="Section.work" xml:space="preserve"><value>أعمالنا</value></data>
 </root>

@@ -43,6 +43,8 @@ public sealed class HomeController(
 
         var organization = await api.GetOrganizationAsync(cancellationToken);
         seo.StructuredDataJson = StructuredDataBuilder.BuildHome(lang, site.Value.PublicBaseUrl, localizer["Site.Name"].Value, organization);
-        return View();
+
+        // FeaturedWork: at most three live, verified projects, hidden entirely when there are none.
+        return View(await api.GetFeaturedProjectsAsync(lang, cancellationToken));
     }
 }

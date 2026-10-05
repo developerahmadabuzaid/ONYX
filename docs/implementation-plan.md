@@ -26,7 +26,8 @@
 | 3 Identity, permissions, audit | **done**, commit `6301cc3` |
 | 4 Onyx.Web foundation | **done**: 334/334 tests (local PostgreSQL 18); build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 6. |
 | 6 CMS, content governance and SEO intelligence foundation | **done**: 534/534 tests (local PostgreSQL); build 0 warnings; no vulnerable packages; no new packages. Awaiting owner review before Stage 7. |
-| 7–12, 5, 13 | awaiting approval (in execution order) |
+| 7 Work, proof, insights, glossary, integrations | **done** (see Stage 7 notes). Awaiting owner review before Stage 8. |
+| 8–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -172,6 +173,8 @@
 ### Stage 7 — Work, proof, insights, glossary, integrations
 - **Build:** projects, case studies, capabilities, testimonials, metrics, with the proof guard and the 3-featured limit; insights with scheduled publishing and the AI-approval guard; topics, glossary, integrations showcase.
 - **Verify:** guards can't be bypassed through the API; scheduled publishing runs via the Worker.
+
+**Stage 7 delivered notes:** projects, case studies, insights, topics, glossary terms and integrations are CMS content types (architecture.md §24.2); proof verification guard (approval, publishing and scheduling) with `Proof.Verify`; proof items (capabilities, metrics, testimonials) with their own verify/publish rules; race-safe 3-slot featured projects; AI-approval guard and non-downgradable AI provenance for insights; consenting authors with organization fallback; topic tagging and section listings; Article JSON-LD for insights; one work link per service/industry page; Marketing drafts insights. Migration `WorkProofInsights` is additive (three tables, four nullable or defaulted columns). **Not included:** the AI Content Engine (Phase 2), homepage visual design (Stage 5), any real portfolio content (owner input, §29 C12).
 
 ### Stage 8 — Leads, booking, Turnstile, attribution
 - **Build:** Inquiry → Lead with attribution (consent-aware); wizard + contact/consultation/service/similar-project forms; server-side Turnstile, honeypot, rate limits; booking (availability rules, slots, `.ics`, signed links, uniqueness); internal + visitor emails in the submission language; Admin leads (pipeline, origin panel, notes, assignment, audited export).

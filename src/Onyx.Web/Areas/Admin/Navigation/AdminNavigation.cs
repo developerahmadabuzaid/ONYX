@@ -10,6 +10,7 @@ public static class AdminNavigation
         new("Nav.Dashboard", "Dashboard", "Index", null),
         new("Nav.Notifications", "Notifications", "Index", null),
         new("Nav.Content", "Content", "Index", Permissions.Content.View),
+        new("Nav.Authors", "Authors", "Index", Permissions.Insights.View),
         new("Nav.Media", "MediaLibrary", "Index", Permissions.Media.View),
         new("Nav.Redirects", "Redirects", "Index", Permissions.Redirects.Manage),
         new("Nav.Ctas", "Ctas", "Index", Permissions.Ctas.View),

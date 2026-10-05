@@ -1,3 +1,4 @@
+using Onyx.Contracts.Common;
 using Onyx.Contracts.Content;
 using Onyx.Contracts.Organization;
 
@@ -19,4 +20,10 @@ public interface IPublicContentApiClient
 
     /// <summary>The IndexNow key for the key file, or null while IndexNow is inactive.</summary>
     Task<string?> GetIndexNowKeyAsync(CancellationToken cancellationToken);
+
+    /// <summary>Live items of a public section; null when the section does not exist.</summary>
+    Task<PagedResult<ListingItemResponse>?> ListAsync(string languageCode, string section, Guid? topicId, int page, CancellationToken cancellationToken);
+
+    /// <summary>The homepage's featured projects; empty when there are none or the API is unreachable.</summary>
+    Task<IReadOnlyList<ListingItemResponse>> GetFeaturedProjectsAsync(string languageCode, CancellationToken cancellationToken);
 }

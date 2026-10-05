@@ -5,7 +5,19 @@ public static class CmsOptions
 {
     public static IReadOnlyList<string> Languages { get; } = ["ar", "en"];
 
-    public static IReadOnlyList<string> ContentTypes { get; } = ["ServicePillar", "Service", "Industry", "Page"];
+    public static IReadOnlyList<string> ContentTypes { get; } =
+        ["ServicePillar", "Service", "Industry", "Page", "Project", "CaseStudy", "Insight", "Topic", "GlossaryTerm", "Integration"];
+
+    /// <summary>Types that are public proof and need a recorded verification before publishing.</summary>
+    public static IReadOnlySet<string> ProofTypes { get; } = new HashSet<string>(StringComparer.Ordinal) { "Project", "CaseStudy", "Integration" };
+
+    public static IReadOnlyList<string> InsightKinds { get; } = ["Article", "Guide"];
+
+    public static IReadOnlyList<string> InsightOrigins { get; } = ["Human", "AiAssisted"];
+
+    public static IReadOnlyList<string> ProofItemKinds { get; } = ["Capability", "Metric", "Testimonial"];
+
+    public static IReadOnlyList<string> ClientPermissions { get; } = ["NotApplicable", "Granted"];
 
     public static IReadOnlyList<string> Statuses { get; } = ["Draft", "PendingReview", "Approved", "Scheduled", "Published", "Archived"];
 
@@ -17,7 +29,7 @@ public static class CmsOptions
 
     public static IReadOnlyList<string> SeoStatuses { get; } = ["NotStarted", "InProgress", "Ready", "NeedsReview"];
 
-    public static IReadOnlyList<string> StructuredDataTypes { get; } = ["WebPage", "BreadcrumbList", "Service", "FaqPage"];
+    public static IReadOnlyList<string> StructuredDataTypes { get; } = ["WebPage", "BreadcrumbList", "Service", "FaqPage", "Article"];
 
     public static IReadOnlyList<string> RelationKinds { get; } = ["Related", "ServiceIndustry"];
 

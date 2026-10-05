@@ -1,0 +1,29 @@
+@using System.Globalization
+@model (Onyx.Contracts.Content.PublicContentResponse Content, Onyx.Contracts.Content.PublicInsightResponse Insight)
+@* Byline: a real, consenting author when one is credited, otherwise the organization. AI assistance is disclosed. *@
+<p class="byline">
+    @if (Model.Insight.Author is { } author)
+    {
+        <span>@T["Insight.By"] @author.Name</span>
+        @if (!string.IsNullOrEmpty(author.JobTitle))
+        {
+            <span>· @author.JobTitle</span>
+        }
+    }
+    else
+    {
+        <span>@T["Insight.By"] @T["Site.Name"]</span>
+    }
+    @if (Model.Content.PublishedAtUtc is { } published)
+    {
+        <span>· <time datetime="@published.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@published.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time></span>
+    }
+    @if (Model.Content.ModifiedAtUtc is { } modified && Model.Content.PublishedAtUtc is { } first && modified.Date > first.Date)
+    {
+        <span>· @T["Insight.Updated"] <time datetime="@modified.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@modified.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time></span>
+    }
+</p>
+@if (Model.Insight.Origin == "AiAssisted")
+{
+    <p class="disclosure">@T["Insight.AiDisclosure"]</p>
+}

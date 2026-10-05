@@ -25,6 +25,10 @@
 <article>
     <header>
         <h1>@content.Title</h1>
+        @if (content.Insight is { } insight)
+        {
+            <partial name="_InsightByline" model="(content, insight)" />
+        }
         @if (!string.IsNullOrEmpty(content.Summary))
         {
             <p>@content.Summary</p>
@@ -95,7 +99,18 @@
     {
         <partial name="_ContentCta" model="content.Cta" />
     }
+    @if (content.Proof is { } proof)
+    {
+        <partial name="_ProofSections" model="proof" />
+    }
 </article>
+@if (Model.TopicInsights is { Items.Count: > 0 } topicInsights)
+{
+    <section aria-labelledby="topic-insights-heading">
+        <h2 id="topic-insights-heading">@T["Section.insights"]</h2>
+        <partial name="_ListingItems" model="topicInsights.Items" />
+    </section>
+}
 @if (content.Related.Count > 0)
 {
     <aside aria-labelledby="related-heading">

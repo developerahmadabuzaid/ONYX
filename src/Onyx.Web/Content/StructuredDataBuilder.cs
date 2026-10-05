@@ -131,6 +131,39 @@ public static class StructuredDataBuilder
             graph.Add(service);
         }
 
+        if (types.Contains("Article") && content.Insight is { } insight)
+        {
+            // Only what the page shows: headline, dates, the credited person (or the organization) and the publisher's name.
+            var article = new JsonObject
+            {
+                ["@type"] = "Article",
+                ["headline"] = content.Title,
+                ["url"] = url,
+                ["mainEntityOfPage"] = url,
+                ["inLanguage"] = content.LanguageCode,
+                ["author"] = insight.Author is { } author
+                    ? new JsonObject { ["@type"] = "Person", ["name"] = author.Name }
+                    : new JsonObject { ["@type"] = "Organization", ["name"] = organizationName },
+                ["publisher"] = new JsonObject { ["@type"] = "Organization", ["name"] = organizationName },
+            };
+            if (content.PublishedAtUtc is { } published)
+            {
+                article["datePublished"] = published.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (content.ModifiedAtUtc is { } modified)
+            {
+                article["dateModified"] = modified.UtcDateTime.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture);
+            }
+
+            if (content.FeaturedImage is { } image)
+            {
+                article["image"] = SitePaths.Absolute(baseUrl, $"/media/{image.Id:D}");
+            }
+
+            graph.Add(article);
+        }
+
         if (types.Contains("FaqPage") && content.Faqs.Count > 0)
         {
             var questions = new JsonArray();

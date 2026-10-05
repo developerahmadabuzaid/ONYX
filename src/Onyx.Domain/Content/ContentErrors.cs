@@ -16,6 +16,12 @@ public static class ContentErrors
     public static readonly Error HierarchyTooDeep = Error.Validation(
         "Content.HierarchyTooDeep", $"Content can be nested at most {ContentItem.MaxHierarchyDepth} levels deep (counting the top-level item).");
 
+    public static readonly Error ProofNotVerified = Error.Validation(
+        "Content.ProofNotVerified", "Proof content (projects, case studies, integrations) needs a recorded verification of its current wording before publishing.");
+
+    public static readonly Error AiApprovalRequired = Error.Validation(
+        "Content.AiApprovalRequired", "AI-assisted insights can be published or scheduled only after a recorded human approval.");
+
     public static readonly Error IncompleteTranslations =
         Error.Validation("Content.IncompleteTranslations", "Every configured language needs a title, a slug and content before approval or publishing.");
 

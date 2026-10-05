@@ -3,4 +3,8 @@ using Onyx.Contracts.Content;
 namespace Onyx.Web.Areas.Admin.Models;
 
 public sealed record ContentOverviewViewModel(
-    ContentDetailResponse Content, QualityReportResponse? Quality, PublishingTimeRecommendationResponse? PublishingTime, PreviewLinkResponse? PreviewLink);
+    ContentDetailResponse Content,
+    QualityReportResponse? Quality,
+    PublishingTimeRecommendationResponse? PublishingTime,
+    PreviewLinkResponse? PreviewLink,
+    IReadOnlyList<Contracts.Insights.AuthorResponse>? Authors = null);

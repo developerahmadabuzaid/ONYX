@@ -205,7 +205,8 @@ public sealed partial class ContentTranslation : AuditableEntity, IAuditable
             return SeoInvalid("The target market must be an ISO 3166-1 alpha-2 country code, e.g. SA.");
         }
 
-        const StructuredDataTypes known = StructuredDataTypes.WebPage | StructuredDataTypes.BreadcrumbList | StructuredDataTypes.Service | StructuredDataTypes.FaqPage;
+        const StructuredDataTypes known = StructuredDataTypes.WebPage | StructuredDataTypes.BreadcrumbList | StructuredDataTypes.Service | StructuredDataTypes.FaqPage
+            | StructuredDataTypes.Article;
         return (profile.StructuredData & ~known) != 0 || !Enum.IsDefined(profile.SearchIntent) || !Enum.IsDefined(profile.Status)
             ? SeoInvalid("Unknown structured data, search intent or SEO status value.")
             : null;

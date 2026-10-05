@@ -52,6 +52,18 @@ public sealed class CmsAdministrationApiTests(PostgresFixture fixture) : Content
         { "GET", "/api/v1/admin/content-calendar" },
         { "GET", "/api/v1/admin/intelligence/capabilities" },
         { "GET", "/api/v1/admin/email-templates" },
+        { "POST", $"{Admin}/{Guid.Empty}/proof-verification" },
+        { "POST", $"{Admin}/{Guid.Empty}/proof-verification/revoke" },
+        { "POST", $"{Admin}/{Guid.Empty}/featured" },
+        { "GET", $"/api/v1/admin/proof-items?contentItemId={Guid.Empty}" },
+        { "POST", "/api/v1/admin/proof-items" },
+        { "PUT", $"/api/v1/admin/proof-items/{Guid.Empty}" },
+        { "POST", $"/api/v1/admin/proof-items/{Guid.Empty}/verify" },
+        { "POST", $"/api/v1/admin/proof-items/{Guid.Empty}/publish" },
+        { "DELETE", $"/api/v1/admin/proof-items/{Guid.Empty}" },
+        { "GET", "/api/v1/admin/authors" },
+        { "POST", "/api/v1/admin/authors" },
+        { "DELETE", $"/api/v1/admin/authors/{Guid.Empty}" },
     };
 
     [Theory]

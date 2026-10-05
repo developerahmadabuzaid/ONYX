@@ -1,3 +1,4 @@
+using Onyx.Contracts.Common;
 using Onyx.Contracts.Content;
 using Onyx.Contracts.Organization;
 
@@ -22,6 +23,22 @@ public sealed class PublicContentApiClient(HttpClient httpClient) : OnyxApiClien
         var result = await GetAsync<PublicOrganizationResponse>("api/v1/organization", cancellationToken).ConfigureAwait(false);
         // Structured data is optional: an unreachable API simply means no Organization node, never a failed page.
         return result.IsSuccess ? result.Value : null;
+    }
+
+    public async Task<PagedResult<ListingItemResponse>?> ListAsync(string languageCode, string section, Guid? topicId, int page, CancellationToken cancellationToken)
+    {
+        var topic = topicId is { } id ? $"&topic={id:D}" : string.Empty;
+        var result = await GetAsync<PagedResult<ListingItemResponse>>(
+            $"api/v1/content/listing?language={Uri.EscapeDataString(languageCode)}&section={Uri.EscapeDataString(section)}&page={Math.Max(page, 1).ToString(System.Globalization.CultureInfo.InvariantCulture)}{topic}",
+            cancellationToken).ConfigureAwait(false);
+        return result.IsUnavailable ? throw new ApiUnavailableException() : result.IsSuccess ? result.Value : null;
+    }
+
+    public async Task<IReadOnlyList<ListingItemResponse>> GetFeaturedProjectsAsync(string languageCode, CancellationToken cancellationToken)
+    {
+        // Optional on the homepage: an unreachable API simply means no featured block.
+        var result = await GetAsync<IReadOnlyList<ListingItemResponse>>($"api/v1/content/featured-projects?language={Uri.EscapeDataString(languageCode)}", cancellationToken).ConfigureAwait(false);
+        return result.IsSuccess && result.Value is not null ? result.Value : [];
     }
 
     public async Task<string?> GetIndexNowKeyAsync(CancellationToken cancellationToken)

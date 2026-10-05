@@ -14,15 +14,21 @@ namespace Onyx.Web.Controllers;
 /// Serves CMS content at its localized path. Reached only through <see cref="LocalizedRouteTransformer"/>; the API decides whether
 /// the path is live (200), moved (301 to the current path, never a chain), gone (410) or unknown (404).
 /// </summary>
-public sealed class PageController(IPublicContentApiClient api, SeoContext seo, IOptions<SiteOptions> site, IStringLocalizer<SharedResource> localizer) : Controller
+public sealed class PageController(
+    IPublicContentApiClient api, LanguageCatalog languages, SeoContext seo, IOptions<SiteOptions> site, IStringLocalizer<SharedResource> localizer) : Controller
 {
     [HttpGet]
-    public async Task<IActionResult> Show(string lang, string path, CancellationToken cancellationToken)
+    public async Task<IActionResult> Show(string lang, string path, [FromQuery] int page = 1, CancellationToken cancellationToken = default)
     {
         // One URL per page: "/en/x/" answers 301 to "/en/x" instead of serving a duplicate.
         if (Request.Path.Value is { Length: > 1 } requested && requested.EndsWith('/'))
         {
             return LocalRedirectPermanent(SitePaths.Encode(requested.TrimEnd('/')) + Request.QueryString);
+        }
+
+        if (SectionRoutes.Match(lang, path) is { } section)
+        {
+            return await ListingAsync(lang, section, page, cancellationToken);
         }
 
         var result = await api.ResolveAsync(lang, path, cancellationToken);
@@ -41,7 +47,10 @@ public sealed class PageController(IPublicContentApiClient api, SeoContext seo, 
         {
             case "Content" when resolved.Content is not null && resolved.Content.LanguageCode == lang:
                 seo.Apply(resolved.Content, site.Value.PublicBaseUrl, localizer["Site.Name"].Value);
-                return View(new PageViewModel(resolved.Content));
+                var topicInsights = resolved.Content.Type == "Topic"
+                    ? await api.ListAsync(lang, "insights", resolved.Content.Id, page, cancellationToken)
+                    : null;
+                return View(new PageViewModel(resolved.Content, null, topicInsights));
 
             // Redirect targets come from the API as site paths in this site's own languages; LocalRedirect rejects anything else.
             case "Redirect" when resolved.RedirectPath is { Length: > 1 } target && target.StartsWith('/') && !target.StartsWith("//", StringComparison.Ordinal):
@@ -53,5 +62,32 @@ public sealed class PageController(IPublicContentApiClient api, SeoContext seo, 
             default:
                 return NotFound();
         }
+    }
+
+    /// <summary>
+    /// A section listing (e.g. <c>/en/work</c>). Canonical to itself (page 2+ keeps its page number), with the other language's
+    /// listing as alternate. An empty listing is not indexed: it has nothing to offer searchers yet.
+    /// </summary>
+    private async Task<IActionResult> ListingAsync(string lang, string section, int page, CancellationToken cancellationToken)
+    {
+        var items = await api.ListAsync(lang, section, null, page, cancellationToken);
+        if (items is null || (page > 1 && items.Items.Count == 0))
+        {
+            return NotFound();
+        }
+
+        var pageSuffix = page > 1 ? $"?page={page.ToString(System.Globalization.CultureInfo.InvariantCulture)}" : string.Empty;
+        seo.Title = localizer[$"Section.{section}"].Value;
+        seo.CanonicalPath = SitePaths.Encode(SectionRoutes.PathOf(section, lang)!) + pageSuffix;
+        seo.NoIndex = items.TotalCount == 0;
+        if (!seo.NoIndex && page == 1)
+        {
+            foreach (var language in languages.Languages)
+            {
+                seo.Alternates[language.Code] = SitePaths.Encode(SectionRoutes.PathOf(section, language.Code)!);
+            }
+        }
+
+        return View("Listing", new SectionListingViewModel(section, lang, items));
     }
 }

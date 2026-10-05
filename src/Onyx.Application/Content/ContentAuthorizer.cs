@@ -34,6 +34,11 @@ public sealed class ContentAuthorizer(ICurrentAdmin currentAdmin)
         ContentType.Service => Permissions.Services.View,
         ContentType.Industry => Permissions.Industries.View,
         ContentType.Page => Permissions.Pages.View,
+        ContentType.Project => Permissions.Projects.View,
+        ContentType.CaseStudy => Permissions.CaseStudies.View,
+        ContentType.Insight or ContentType.Topic => Permissions.Insights.View,
+        ContentType.GlossaryTerm => Permissions.Glossary.View,
+        ContentType.Integration => Permissions.Integrations.View,
         _ => throw new ArgumentOutOfRangeException(nameof(type)),
     };
 
@@ -43,6 +48,11 @@ public sealed class ContentAuthorizer(ICurrentAdmin currentAdmin)
         ContentType.Service => Permissions.Services.Edit,
         ContentType.Industry => Permissions.Industries.Edit,
         ContentType.Page => Permissions.Pages.Edit,
+        ContentType.Project => Permissions.Projects.Edit,
+        ContentType.CaseStudy => Permissions.CaseStudies.Edit,
+        ContentType.Insight or ContentType.Topic => Permissions.Insights.Edit,
+        ContentType.GlossaryTerm => Permissions.Glossary.Edit,
+        ContentType.Integration => Permissions.Integrations.Edit,
         _ => throw new ArgumentOutOfRangeException(nameof(type)),
     };
 }

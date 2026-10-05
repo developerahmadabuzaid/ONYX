@@ -1,0 +1,18 @@
+@using System.Globalization
+@model IReadOnlyList<Onyx.Contracts.Content.ListingItemResponse>
+<ul class="listing">
+    @foreach (var item in Model)
+    {
+        <li>
+            <h3><a href="@SitePaths.Encode(item.Path)">@item.Title</a></h3>
+            @if (item.Type == "Insight" && item.PublishedAtUtc is { } published)
+            {
+                <time datetime="@published.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@published.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time>
+            }
+            @if (!string.IsNullOrEmpty(item.Summary))
+            {
+                <p>@item.Summary</p>
+            }
+        </li>
+    }
+</ul>

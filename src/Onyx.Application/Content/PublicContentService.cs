@@ -13,8 +13,24 @@ public sealed class PublicContentService(
     IContentPathRepository paths,
     IContentRevisionRepository revisions,
     IRedirectRepository redirects,
+    IContentRelationRepository relations,
+    Media.IMediaRepository media,
+    Proof.IFeaturedProjectRepository featured,
     PublicContentBuilder builder) : IPublicContentService
 {
+    public const int ListingPageSize = 20;
+
+    /// <summary>API section name → the content type it lists.</summary>
+    public static IReadOnlyDictionary<string, ContentType> SectionTypes { get; } = new Dictionary<string, ContentType>(StringComparer.Ordinal)
+    {
+        ["work"] = ContentType.Project,
+        ["case-studies"] = ContentType.CaseStudy,
+        ["insights"] = ContentType.Insight,
+        ["topics"] = ContentType.Topic,
+        ["glossary"] = ContentType.GlossaryTerm,
+        ["integrations"] = ContentType.Integration,
+    };
+
     public const string KindContent = "Content";
     public const string KindRedirect = "Redirect";
     public const string KindGone = "Gone";
@@ -188,6 +204,90 @@ public sealed class PublicContentService(
         }
 
         return NotFound;
+    }
+
+    public async Task<Domain.Common.Result<Contracts.Common.PagedResult<ListingItemResponse>>> ListAsync(
+        string languageCode, string section, Guid? topicId, int page, CancellationToken cancellationToken)
+    {
+        if (!SupportedLanguages.All.Contains(languageCode) || !SectionTypes.TryGetValue(section ?? string.Empty, out var type))
+        {
+            return Domain.Common.Error.NotFound("Listing.NotFound", "Unknown section.");
+        }
+
+        var live = (await content.ListLiveAsync(cancellationToken).ConfigureAwait(false)).Where(item => item.Type == type && item.HasPage).ToList();
+        if (topicId is { } topic)
+        {
+            if (type != ContentType.Insight)
+            {
+                return Domain.Common.Error.Validation("Listing.TopicFilter", "Only insights can be listed by topic.");
+            }
+
+            var tagged = (await relations.ListToAsync(topic, cancellationToken).ConfigureAwait(false)).Select(relation => relation.FromContentItemId).ToHashSet();
+            live = live.Where(item => tagged.Contains(item.Id)).ToList();
+        }
+
+        var entries = await ListingEntriesAsync(live, languageCode, cancellationToken).ConfigureAwait(false);
+        var ordered = type == ContentType.Insight
+            ? entries.OrderByDescending(entry => entry.Item.FirstPublishedAtUtc).ThenBy(entry => entry.Response.Title, StringComparer.Ordinal)
+            : entries.OrderBy(entry => entry.Item.SortOrder).ThenBy(entry => entry.Response.Title, StringComparer.Ordinal);
+        var pageNumber = Math.Max(page, 1);
+        var items = ordered.Skip((pageNumber - 1) * ListingPageSize).Take(ListingPageSize).Select(entry => entry.Response).ToList();
+        return new Contracts.Common.PagedResult<ListingItemResponse>(items, pageNumber, ListingPageSize, entries.Count);
+    }
+
+    public async Task<IReadOnlyList<ListingItemResponse>> GetFeaturedProjectsAsync(string languageCode, CancellationToken cancellationToken)
+    {
+        if (!SupportedLanguages.All.Contains(languageCode))
+        {
+            return [];
+        }
+
+        var slots = (await featured.ListAsync(cancellationToken).ConfigureAwait(false)).OrderBy(slot => slot.Slot).ToList();
+        var items = await content.GetLookupAsync(slots.Select(slot => slot.ContentItemId).ToList(), cancellationToken).ConfigureAwait(false);
+        var live = slots
+            .Select(slot => items.GetValueOrDefault(slot.ContentItemId))
+            .Where(item => item is { IsLive: true, Type: ContentType.Project, HasPage: true })
+            .Select(item => item!)
+            .ToList();
+        var entries = await ListingEntriesAsync(live, languageCode, cancellationToken).ConfigureAwait(false);
+        return live.Select(item => entries.FirstOrDefault(entry => entry.Item.Id == item.Id)).OfType<(ContentItem Item, ListingItemResponse Response)>()
+            .Select(entry => entry.Response).ToList();
+    }
+
+    /// <summary>Titles and summaries come from each item's live revision, never from unreviewed working copies.</summary>
+    private async Task<List<(ContentItem Item, ListingItemResponse Response)>> ListingEntriesAsync(
+        IReadOnlyList<ContentItem> live, string languageCode, CancellationToken cancellationToken)
+    {
+        if (live.Count == 0)
+        {
+            return [];
+        }
+
+        var snapshots = await revisions.GetManyAsync(live.Select(item => item.LiveRevisionId!.Value).ToList(), cancellationToken).ConfigureAwait(false);
+        var currentPaths = await paths.GetCurrentPathsAsync(live.Select(item => item.Id).ToList(), cancellationToken).ConfigureAwait(false);
+        var parsed = live
+            .Where(item => snapshots.ContainsKey(item.LiveRevisionId!.Value))
+            .Select(item => (Item: item, Snapshot: ContentSnapshotSerializer.Deserialize(snapshots[item.LiveRevisionId!.Value].Snapshot)))
+            .ToList();
+        var images = await media.GetLookupAsync(parsed.Select(entry => entry.Snapshot.FeaturedImageId).OfType<Guid>().Distinct().ToList(), cancellationToken).ConfigureAwait(false);
+
+        var result = new List<(ContentItem, ListingItemResponse)>();
+        foreach (var (item, snapshot) in parsed)
+        {
+            if (snapshot.Translation(languageCode) is not { } translation || !currentPaths.TryGetValue((item.Id, languageCode), out var path))
+            {
+                continue;
+            }
+
+            var image = snapshot.FeaturedImageId is { } imageId && images.TryGetValue(imageId, out var asset)
+                ? PublicContentBuilder.ToMedia(asset, null, null, languageCode)
+                : null;
+            result.Add((item, new ListingItemResponse(
+                item.Id, item.Type.ToString(), translation.Title, string.IsNullOrWhiteSpace(translation.Summary) ? null : translation.Summary,
+                $"/{languageCode}/{path}", item.FirstPublishedAtUtc, image)));
+        }
+
+        return result;
     }
 
     private static ContentResolveResponse Redirect(string languageCode, string path, string requested) =>

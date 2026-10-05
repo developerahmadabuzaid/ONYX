@@ -1,0 +1,24 @@
+@using System.Globalization
+@model ProofItemForm
+<fieldset lang="ar" dir="rtl">
+    <legend>العربية</legend>
+    <label>@T["Cms.Proof.ItemTitle"] <textarea name="TitleAr" rows="2" maxlength="1500">@Model.TitleAr</textarea></label>
+    <label>@T["Cms.Description"] <textarea name="DescriptionAr" rows="2" maxlength="2000">@Model.DescriptionAr</textarea></label>
+</fieldset>
+<fieldset lang="en" dir="ltr">
+    <legend>English</legend>
+    <label>@T["Cms.Proof.ItemTitle"] <textarea name="TitleEn" rows="2" maxlength="1500">@Model.TitleEn</textarea></label>
+    <label>@T["Cms.Description"] <textarea name="DescriptionEn" rows="2" maxlength="2000">@Model.DescriptionEn</textarea></label>
+</fieldset>
+<fieldset>
+    <legend>@T["Cms.Proof.MetricFields"]</legend>
+    <label>@T["Cms.Proof.Value"] <input name="Value" value="@Model.Value" dir="ltr" maxlength="40"></label>
+    <label>@T["Cms.Proof.AsOf"] <input type="date" name="AsOf" value="@(Model.AsOf?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture))" dir="ltr"></label>
+</fieldset>
+<fieldset>
+    <legend>@T["Cms.Proof.TestimonialFields"]</legend>
+    <label>@T["Cms.Name"] <input name="AttributionName" value="@Model.AttributionName" maxlength="200"></label>
+    <label>@T["Cms.Proof.Role"] <input name="AttributionRole" value="@Model.AttributionRole" maxlength="200"></label>
+    <label>@T["Cms.Proof.Organization"] <input name="AttributionOrganization" value="@Model.AttributionOrganization" maxlength="200"></label>
+</fieldset>
+<label>@T["Cms.SortOrder"] <input type="number" name="SortOrder" value="@Model.SortOrder"></label>

@@ -10,4 +10,12 @@ public enum ContentType
     Service = 1,
     Industry = 2,
     Page = 3,
+
+    // Stage 7: work, proof and knowledge content.
+    Project = 4,
+    CaseStudy = 5,
+    Insight = 6,
+    Topic = 7,
+    GlossaryTerm = 8,
+    Integration = 9,
 }

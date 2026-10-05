@@ -56,14 +56,24 @@ public sealed class ContentPathService(
         foreach (var translation in snapshot.Translations)
         {
             var language = translation.LanguageCode;
+            // Section types live under a fixed localized section (a case study under work, whatever its project); services and
+            // pages live under their parent's URL.
+            var sectioned = snapshot.Type is ContentType.ServicePillar or ContentType.Industry or ContentType.Project or ContentType.CaseStudy
+                or ContentType.Insight or ContentType.Topic or ContentType.GlossaryTerm or ContentType.Integration;
             string? prefix = snapshot.Type switch
             {
                 ContentType.ServicePillar => ContentRouteSegments.Services.GetValueOrDefault(language),
                 ContentType.Industry => ContentRouteSegments.Industries.GetValueOrDefault(language),
+                ContentType.Project => ContentRouteSegments.Work.GetValueOrDefault(language),
+                ContentType.CaseStudy => ContentRouteSegments.Sections["case-studies"].GetValueOrDefault(language),
+                ContentType.Insight => ContentRouteSegments.Insights.GetValueOrDefault(language),
+                ContentType.Topic => ContentRouteSegments.Sections["topics"].GetValueOrDefault(language),
+                ContentType.GlossaryTerm => ContentRouteSegments.Glossary.GetValueOrDefault(language),
+                ContentType.Integration => ContentRouteSegments.Integrations.GetValueOrDefault(language),
                 _ => snapshot.ParentId is { } parent ? parentPaths.GetValueOrDefault((parent, language)) : null,
             };
 
-            if (snapshot.Type is ContentType.ServicePillar or ContentType.Industry && prefix is null
+            if (sectioned && prefix is null
                 || snapshot.ParentId is not null && prefix is null)
             {
                 return Error.Validation("Content.NoRoute", $"No URL section is configured for '{language}', or the parent has no URL in that language.");
@@ -75,6 +85,12 @@ public sealed class ContentPathService(
             }
 
             var path = NormalizePath(prefix is null ? translation.Slug : $"{prefix}/{translation.Slug}");
+
+            // Section listing URLs (e.g. work/case-studies, insights/topics) belong to the listings, never to a page.
+            if (ContentRouteSegments.Sections.Values.Any(section => section.TryGetValue(language, out var listing) && string.Equals(listing, path, StringComparison.Ordinal)))
+            {
+                return Error.Validation("Content.ReservedSlug", $"'{translation.Slug}' is reserved by a section of the site.");
+            }
             if (path.Length is 0 or > ContentPath.PathMaxLength)
             {
                 return Error.Validation("Content.PathTooLong", "The resulting URL is too long.");
