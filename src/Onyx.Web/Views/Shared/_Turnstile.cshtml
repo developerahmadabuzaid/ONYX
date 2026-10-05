@@ -1,0 +1,11 @@
+@using System.Globalization
+@model string
+@* The anti-abuse challenge. The CSP allows its origin only on pages marked [AllowsTurnstile]; the API verifies the token. *@
+@{
+    var siteKey = ViewData["TurnstileSiteKey"] as string;
+}
+@if (siteKey is not null)
+{
+    <div class="cf-turnstile" data-sitekey="@siteKey" data-action="@Model" data-language="@CultureInfo.CurrentUICulture.TwoLetterISOLanguageName"></div>
+    <script src="@Onyx.Web.Configuration.TurnstileOptions.ScriptUrl" async defer></script>
+}

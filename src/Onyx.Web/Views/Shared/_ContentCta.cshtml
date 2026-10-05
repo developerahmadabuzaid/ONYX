@@ -1,13 +1,20 @@
-@model Onyx.Contracts.Content.PublicCtaResponse
-@* Only URL calls to action link anywhere yet: conversion actions (start a project, booking, tools…) get their routes in later
-   stages, and a call to action is never rendered as a dead link. *@
-@if (Model.Url is not null)
+@using System.Globalization
+@using Onyx.Contracts.Content
+@using Onyx.Web.Leads
+@model (PublicCtaResponse Cta, PublicContentResponse? Page)
+@inject LocalizedRouteTable Routes
+@* Conversion actions open their form with the page context; tool actions (Phase 2) are not linked yet, and a call to action
+   is never rendered as a dead link. *@
+@{
+    var href = CtaLinks.Href(Routes, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName, Model.Cta, Model.Page);
+}
+@if (href is not null)
 {
     <p>
-        <a href="@Model.Url" rel="noopener">@Model.Label</a>
-        @if (!string.IsNullOrEmpty(Model.Secondary))
+        <a href="@href" rel="@(Model.Cta.Url is not null ? "noopener" : null)">@Model.Cta.Label</a>
+        @if (!string.IsNullOrEmpty(Model.Cta.Secondary))
         {
-            <span>@Model.Secondary</span>
+            <span>@Model.Cta.Secondary</span>
         }
     </p>
 }

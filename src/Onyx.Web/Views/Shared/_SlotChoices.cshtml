@@ -1,0 +1,17 @@
+@using System.Globalization
+@model (Onyx.Contracts.Booking.AvailabilityResponse Availability, DateTimeOffset? Selected, DateTimeOffset? Exclude)
+@* Free slots grouped by local business date, with the time zone stated. Values are the UTC start (round-trip format). *@
+<p>@T["Booking.TimeZone"]: <bdi dir="ltr">@Model.Availability.TimeZoneId</bdi> — @string.Format(CultureInfo.InvariantCulture, T["Booking.SlotLength"].Value, Model.Availability.SlotMinutes)</p>
+@foreach (var day in Model.Availability.Slots.Where(slot => slot.StartUtc != Model.Exclude).GroupBy(slot => slot.StartLocal.Date))
+{
+    <fieldset>
+        <legend dir="ltr">@day.Key.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</legend>
+        @foreach (var slot in day)
+        {
+            <label dir="ltr">
+                <input type="radio" name="StartUtc" value="@slot.StartUtc.ToString("O", CultureInfo.InvariantCulture)" checked="@(Model.Selected == slot.StartUtc)" required>
+                @slot.StartLocal.ToString("HH:mm", CultureInfo.InvariantCulture)
+            </label>
+        }
+    </fieldset>
+}

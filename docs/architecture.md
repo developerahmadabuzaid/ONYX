@@ -617,6 +617,43 @@ Allowlisted NewsSource (RSS/Atom/API) → fetch via SafeOutboundHttp → normali
 - **Work links on service and industry pages:** at most one contextual link to a project or case study (CLAUDE.md §2.2).
 - **Roles:** Marketing can draft and submit insights (generic `Content.Create/Edit` are limited by type scope to insights) but cannot approve or publish.
 
+## 24.3 Leads, booking, Turnstile and attribution (Stage 8, as built)
+
+- **Model:**
+  - `Inquiry` is immutable: contact fields, message, versioned answers, service/project/CTA context, consent-aware `Attribution`, and the time Turnstile passed.
+  - `ConsentRecord` holds contact consent (required) and marketing consent (optional, separate, withdrawable by staff; audited), with `Leads:ConsentVersion`.
+  - `Lead`: stage New/Contacted/Qualified/Proposal/Won/Lost, source, primary pillar, owner, priority, an explained rule-based score, notes and an append-only activity timeline, with `xmin` concurrency.
+  - A new inquiry attaches to the open lead with the same normalized email; otherwise a lead is opened.
+- **Public API:**
+  - `POST /api/v1/inquiries` accepts StartProject, Contact, RequestConsultation, ServiceInquiry, SimilarProject and ContextualCta.
+  - `GET /api/v1/consultations/availability` and `POST /api/v1/consultations` handle booking.
+  - `POST /api/v1/consultations/manage{,/cancel,/reschedule,/calendar}` serve the visitor link; the token is always in the body.
+  - Every endpoint is anonymous and on the Strict rate limit.
+- **Submission order:** structural validation → honeypot (pretend success, store nothing) → contact/answers/consent/per-type requirements → referenced service/project/CTA must be live → **server-side Turnstile** (fails closed: 503 when not configured or unreachable) → one transaction: Inquiry + ConsentRecord + Lead (create or match) + activity + `InquirySubmitted` outbox event.
+  - Email is never sent in the request: the Worker sends the visitor confirmation (submission language) and the internal emails (configured recipients; a link to the lead, no contact details or message), and raises the `NewLead` notification (`Leads.View`).
+  - Handlers are idempotent through `processed_events` markers, which commit together with their emails and notification.
+- **Attribution:**
+  - **With Analytics consent:** Onyx.Web keeps HttpOnly first-touch (90 days) and session last-touch cookies, and the GA client id.
+  - **Without it:** those cookies are deleted, and only the submitting page's context is sent (its campaign tags and referrer, captured when the form was shown).
+  - **API checks:** the API drops first touch and the client id without consent, keeps only the referrer origin, accepts only site paths, and bounds every value.
+- **Booking:**
+  - **Availability:** internal, admin-managed (`BookingSettings` singleton, weekly `AvailabilityRule` windows, `AvailabilityException` dates) behind `IAvailabilityProvider`. The business time zone defaults to Asia/Riyadh. Daylight-saving gaps are skipped, and slots are stored in UTC.
+  - **Closed until configured:** booking stays closed until an administrator enters hours and enables it; until then the page offers a consultation request.
+  - **One transaction:** booking + Inquiry(Consultation) + lead + visitor confirmation with `.ics` (RFC 5545, UTC, stable UID across reschedules) and the signed manage link.
+  - **Double booking:** prevented by the slot check plus a partial unique index on confirmed start times (a concurrent loser gets 409 `Booking.SlotUnavailable`).
+  - **Manage token:** 256-bit random, SHA-256 hash stored; it moves to the replacement on reschedule and is cleared on cancel or outcome.
+  - **States:** Confirmed, Rescheduled, Cancelled, Completed, NoShow; Requested is reserved for an approval-first calendar provider. `IBookingCalendarProvider` defaults to internal (no external calendar).
+- **Admin:**
+  - **Leads:** `/api/v1/admin/leads` (list/filter/search, detail with origin panel, stage, priority, owner, notes, marketing-consent withdrawal, assignees, CSV export) and `/admin/inquiries`.
+  - **Bookings and availability:** `/admin/bookings` (cancel optionally emailing the visitor; Completed/NoShow after the start) and `/admin/availability`.
+  - **Visibility:** `Leads.ViewAll` sees every lead; `Leads.View` sees its own and unassigned leads (others are 404).
+  - **Assignment:** needs `Leads.Assign`, to an active user holding `Leads.View`.
+  - **Export:** needs `Leads.Export` (2FA-privileged), is UTF-8 CSV with formula neutralization, and is audited by row count and filters only.
+- **Turnstile on admin sign-in and password reset** (deferred here from Stage 3): enforced whenever Turnstile is configured (actions `admin-login`, `password-reset`, admin hostname). Without keys, sign-in keeps its existing protections rather than locking administrators out. The Web CSP allows `https://challenges.cloudflare.com` only on the pages that render the challenge.
+- **Conversion routes:** `ابدأ-مشروعك|start-a-project` (3-step wizard), `احجز-استشارة|book-a-consultation`, `تواصل-معنا|contact` (becomes a service, similar-project or CTA inquiry from context), and `إدارة-الحجز|manage-booking` (no-referrer, no-store, noindex). These segments are reserved from CMS slugs.
+  - Conversion CTAs now link to these pages with the page context. Tool CTAs stay unlinked until Phase 2.
+- **Not included:** retention and data-subject requests (Stage 9), an external calendar or meeting-link provider, WhatsApp, tools (Phase 2), visual design (Stage 5), and any preset business hours, recipients or consultation format (owner inputs).
+
 ## 25. Security addendum (Rev 3)
 
 - **Turnstile** on contact, start-project, consultation request/booking, tool runs, report requests, and any other abuse-sensitive anonymous action. The API verifies every token server-side (secret in the secret store; expected hostname/action checked; single use). Client-side checks are never trusted. On failure → 400 ProblemDetails, logged without PII.

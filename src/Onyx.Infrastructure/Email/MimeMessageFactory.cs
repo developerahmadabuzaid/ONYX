@@ -1,3 +1,4 @@
+using System.Text;
 using MimeKit;
 using Onyx.Application.Email;
 
@@ -26,7 +27,13 @@ internal static class MimeMessageFactory
         };
         message.From.Add(sender);
         message.To.Add(recipient);
-        message.Body = new BodyBuilder { HtmlBody = envelope.HtmlBody, TextBody = envelope.TextBody }.ToMessageBody();
+        var body = new BodyBuilder { HtmlBody = envelope.HtmlBody, TextBody = envelope.TextBody };
+        foreach (var attachment in envelope.Attachments ?? [])
+        {
+            body.Attachments.Add(attachment.FileName, Encoding.UTF8.GetBytes(attachment.Content), ContentType.Parse(attachment.ContentType + "; charset=utf-8"));
+        }
+
+        message.Body = body.ToMessageBody();
 
         // Content-* headers belong to the MIME entity, not the message envelope.
         message.Body.Headers.Replace(HeaderId.ContentLanguage, envelope.LanguageCode);

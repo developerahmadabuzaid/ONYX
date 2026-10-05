@@ -1,0 +1,7 @@
+@model string?
+<h1>@T["Booking.Booked.Title"]</h1>
+<p role="status">@T["Booking.Booked.Body"]</p>
+@if (!string.IsNullOrEmpty(Model))
+{
+    <p>@T["Lead.Reference"]: <bdi dir="ltr">@Model</bdi></p>
+}

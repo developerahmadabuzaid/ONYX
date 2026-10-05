@@ -1,0 +1,19 @@
+@using Onyx.Contracts.Leads
+@model TouchPointDto?
+@if (Model is null)
+{
+    <span>—</span>
+}
+else
+{
+    var tags = new[]
+    {
+        ("landing", Model.LandingPath), ("referrer", Model.Referrer), ("utm_source", Model.UtmSource), ("utm_medium", Model.UtmMedium),
+        ("utm_campaign", Model.UtmCampaign), ("utm_content", Model.UtmContent), ("utm_term", Model.UtmTerm),
+    };
+    <span>@string.Join(" · ", tags.Where(tag => tag.Item2 is not null).Select(tag => $"{tag.Item1}={tag.Item2}"))</span>
+    if (Model.AtUtc is { } at)
+    {
+        <span> — <partial name="_Utc" model="(DateTimeOffset?)at" /></span>
+    }
+}

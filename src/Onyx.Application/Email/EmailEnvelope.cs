@@ -8,4 +8,5 @@ public sealed record EmailEnvelope(
     string Subject,
     string HtmlBody,
     string TextBody,
-    string LanguageCode);
+    string LanguageCode,
+    IReadOnlyList<EmailAttachment>? Attachments = null);

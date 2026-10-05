@@ -8,6 +8,7 @@
     <input asp-for="Email" autocomplete="username" dir="ltr">
     <label asp-for="Password">@T["Field.Password"]</label>
     <input asp-for="Password" autocomplete="current-password" dir="ltr">
+    <partial name="_Turnstile" model='"admin-login"' />
     <button type="submit">@T["Login.Submit"]</button>
 </form>
 <p><a asp-action="ForgotPassword">@T["Login.Forgot"]</a></p>

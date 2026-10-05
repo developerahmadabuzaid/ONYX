@@ -14,4 +14,5 @@ public enum NotificationType
     OutboxMessageFailed = 8,
     SecurityAlert = 9,
     ContentPublishingFailed = 10,
+    BookingCancelled = 11,
 }

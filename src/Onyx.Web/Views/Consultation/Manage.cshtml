@@ -1,0 +1,47 @@
+@using System.Globalization
+@using Onyx.Web.Leads
+@model ManageBookingPageModel
+@* Reached through the signed link in the confirmation email. No referrer, no caching, never indexed (SensitivePage, noindex). *@
+<h1>@T["Booking.Manage.Title"]</h1>
+<div asp-validation-summary="ModelOnly" role="alert"></div>
+@if (Model.NoticeKey is not null)
+{
+    <p role="status">@T[Model.NoticeKey]</p>
+}
+@if (Model.Booking is { } booking)
+{
+    <dl>
+        <dt>@T["Booking.When"]</dt>
+        <dd dir="ltr">@booking.StartLocal.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) (@booking.TimeZoneId)</dd>
+        <dt>@T["Booking.Status"]</dt>
+        <dd>@T["BookingStatus." + booking.Status]</dd>
+    </dl>
+    if (booking.Status == "Confirmed")
+    {
+        <form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true">
+            <input type="hidden" name="token" value="@Model.Token">
+            <button type="submit" name="operation" value="calendar">@T["Booking.Manage.Calendar"]</button>
+        </form>
+    }
+    if (booking.CanManage)
+    {
+        <h2>@T["Booking.Manage.Reschedule"]</h2>
+        if (Model.Availability is { Slots.Count: > 0 } availability)
+        {
+            <form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true">
+                <input type="hidden" name="token" value="@Model.Token">
+                <partial name="_SlotChoices" model="(availability, (DateTimeOffset?)null, (DateTimeOffset?)booking.StartUtc)" />
+                <button type="submit" name="operation" value="reschedule">@T["Booking.Manage.Reschedule"]</button>
+            </form>
+        }
+        else
+        {
+            <p>@T["Booking.Manage.NoSlots"]</p>
+        }
+        <h2>@T["Booking.Manage.Cancel"]</h2>
+        <form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true">
+            <input type="hidden" name="token" value="@Model.Token">
+            <button type="submit" name="operation" value="cancel">@T["Booking.Manage.Cancel"]</button>
+        </form>
+    }
+}

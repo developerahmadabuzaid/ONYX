@@ -1,0 +1,82 @@
+@using Onyx.Web.Leads
+@model StartProjectFormModel
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+<h1>@T["Lead.StartProject.Title"]</h1>
+<p>@T["Lead.StartProject.Intro"]</p>
+<p>@string.Format(T["Lead.Step"].Value, Model.Step, StartProjectFormModel.LastStep)</p>
+<form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true" novalidate>
+    <div asp-validation-summary="ModelOnly" role="alert"></div>
+    <input type="hidden" name="Step" value="@Model.Step">
+    @if (Model.Step != 1)
+    {
+        foreach (var pillar in Model.Pillars)
+        {
+            <input type="hidden" name="Pillars" value="@pillar">
+        }
+    }
+    @if (Model.Step != 2)
+    {
+        <input type="hidden" name="Message" value="@Model.Message">
+        <input type="hidden" name="OrganizationSize" value="@Model.OrganizationSize">
+        <input type="hidden" name="Timeline" value="@Model.Timeline">
+    }
+    @switch (Model.Step)
+    {
+        case 1:
+            <fieldset>
+                <legend>@T["Lead.StartProject.Pillars"]</legend>
+                @foreach (var pillar in StartProjectFormModel.PillarOptions)
+                {
+                    <label><input type="checkbox" name="Pillars" value="@pillar" checked="@Model.Pillars.Contains(pillar)"> @T["Pillar." + pillar]</label>
+                }
+                <span asp-validation-for="Pillars"></span>
+            </fieldset>
+            <p><button type="submit" name="Command" value="next">@T["Form.Next"]</button></p>
+            break;
+        case 2:
+            <fieldset>
+                <legend>@T["Lead.StartProject.Project"]</legend>
+                <p>
+                    <label asp-for="Message">@T["Lead.StartProject.Goal"]</label>
+                    <textarea asp-for="Message" rows="6" maxlength="4000" required></textarea>
+                    <span asp-validation-for="Message"></span>
+                </p>
+                <p>
+                    <label asp-for="OrganizationSize">@T["Lead.StartProject.OrganizationSize"] (@T["Form.Optional"])</label>
+                    <select asp-for="OrganizationSize">
+                        <option value="">—</option>
+                        @foreach (var size in StartProjectFormModel.OrganizationSizeOptions)
+                        {
+                            <option value="@size" selected="@(Model.OrganizationSize == size)">@T["OrganizationSize." + size]</option>
+                        }
+                    </select>
+                </p>
+                <p>
+                    <label asp-for="Timeline">@T["Lead.StartProject.Timeline"] (@T["Form.Optional"])</label>
+                    <select asp-for="Timeline">
+                        <option value="">—</option>
+                        @foreach (var timeline in StartProjectFormModel.TimelineOptions)
+                        {
+                            <option value="@timeline" selected="@(Model.Timeline == timeline)">@T["Timeline." + timeline]</option>
+                        }
+                    </select>
+                </p>
+            </fieldset>
+            <p>
+                <button type="submit" name="Command" value="back" formnovalidate>@T["Form.Back"]</button>
+                <button type="submit" name="Command" value="next">@T["Form.Next"]</button>
+            </p>
+            break;
+        default:
+            <partial name="_LeadContactFields" model="Model" />
+            <p><button type="submit" name="Command" value="back" formnovalidate>@T["Form.Back"]</button></p>
+            <partial name="_LeadSubmit" model='(LeadPages.InquiryCaptchaAction, "Form.Send")' />
+            break;
+    }
+    @if (Model.Step != 3)
+    {
+        <input type="hidden" name="ServiceId" value="@Model.ServiceId">
+        <input type="hidden" name="CtaId" value="@Model.CtaId">
+        <input type="hidden" name="Context" value="@Model.Context">
+    }
+</form>

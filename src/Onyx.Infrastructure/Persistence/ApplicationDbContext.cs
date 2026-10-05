@@ -100,6 +100,26 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<EmailTemplateCopy> EmailTemplateCopies => Set<EmailTemplateCopy>();
 
+    public DbSet<Domain.Leads.Inquiry> Inquiries => Set<Domain.Leads.Inquiry>();
+
+    public DbSet<Domain.Leads.ConsentRecord> ConsentRecords => Set<Domain.Leads.ConsentRecord>();
+
+    public DbSet<Domain.Leads.Lead> Leads => Set<Domain.Leads.Lead>();
+
+    public DbSet<Domain.Leads.LeadNote> LeadNotes => Set<Domain.Leads.LeadNote>();
+
+    public DbSet<Domain.Leads.LeadActivity> LeadActivities => Set<Domain.Leads.LeadActivity>();
+
+    public DbSet<Domain.Booking.BookingSettings> BookingSettings => Set<Domain.Booking.BookingSettings>();
+
+    public DbSet<Domain.Booking.AvailabilityRule> AvailabilityRules => Set<Domain.Booking.AvailabilityRule>();
+
+    public DbSet<Domain.Booking.AvailabilityException> AvailabilityExceptions => Set<Domain.Booking.AvailabilityException>();
+
+    public DbSet<Domain.Booking.ConsultationBooking> ConsultationBookings => Set<Domain.Booking.ConsultationBooking>();
+
+    public DbSet<ProcessedEvent> ProcessedEvents => Set<ProcessedEvent>();
+
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
@@ -116,6 +136,11 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         {
             // Two editors featured projects at the same moment; the slot table kept the limit. Report it as a conflict to retry.
             throw new ConcurrencyConflictException("Another change to the featured projects happened at the same time. Reload and try again.", exception);
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is Npgsql.PostgresException { SqlState: "23505", ConstraintName: Configurations.Application.ConsultationBookingConfiguration.ConfirmedSlotIndex })
+        {
+            // A concurrent request confirmed the same slot first; the booking service reports it as "slot unavailable".
+            throw new ConcurrencyConflictException("That time was just booked. Choose another slot.", Application.Booking.BookingService.SlotTakenCode, exception);
         }
     }
 

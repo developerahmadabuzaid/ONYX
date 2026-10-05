@@ -21,6 +21,7 @@ public static class DependencyInjection
         services.AddScoped<Privacy.ICookieConsentService, Privacy.CookieConsentService>();
 
         AddContent(services);
+        AddLeads(services);
         services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
 
         AddDomainEventHandlers(services, assembly);
@@ -66,6 +67,23 @@ public static class DependencyInjection
         services.AddScoped<Intelligence.ISeoRecommendationService, Intelligence.SeoRecommendationService>();
         services.AddScoped<Intelligence.IInternalLinkAnalyzer, Intelligence.InternalLinkAnalyzer>();
         services.AddScoped<Intelligence.IContentCalendarService, Intelligence.ContentCalendarService>();
+    }
+
+    /// <summary>Stage 8: inquiries, leads and consultation booking. <see cref="Leads.LeadSettings"/> is registered by the host.</summary>
+    private static void AddLeads(IServiceCollection services)
+    {
+        services.AddScoped<Leads.InquiryIntake>();
+        services.AddScoped<Leads.InquiryRecorder>();
+        services.AddScoped<Leads.LeadNotifier>();
+        services.AddScoped<Leads.IInquiryService, Leads.InquiryService>();
+        services.AddScoped<Leads.ILeadAdministrationService, Leads.LeadAdministrationService>();
+
+        services.AddScoped<Booking.BookingMessages>();
+        services.AddScoped<Booking.IAvailabilityProvider, Booking.InternalAvailabilityProvider>();
+        services.AddScoped<Booking.IBookingCalendarProvider, Booking.InternalBookingCalendarProvider>();
+        services.AddScoped<Booking.IBookingService, Booking.BookingService>();
+        services.AddScoped<Booking.IBookingAdministrationService, Booking.BookingAdministrationService>();
+        services.AddScoped<Booking.IAvailabilityAdministrationService, Booking.AvailabilityAdministrationService>();
     }
 
     private static void AddDomainEventHandlers(IServiceCollection services, System.Reflection.Assembly assembly)

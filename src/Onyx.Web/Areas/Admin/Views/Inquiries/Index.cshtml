@@ -1,0 +1,46 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.Leads
+@model PagedResult<InquirySummaryResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Inquiries";
+}
+<h1>@T["Nav.Inquiries"]</h1>
+<partial name="_CmsMessages" />
+@if (Model.Items.Count == 0)
+{
+    <p>@T["Inquiries.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr><th>@T["Leads.Submitted"]</th><th>@T["Leads.Type"]</th><th>@T["Leads.Name"]</th><th>@T["Leads.Language"]</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var inquiry in Model.Items)
+            {
+                <tr>
+                    <td><partial name="_Utc" model="(DateTimeOffset?)inquiry.SubmittedAtUtc" /></td>
+                    <td>@T["InquiryType." + inquiry.Type]</td>
+                    <td dir="auto"><a asp-controller="Leads" asp-action="Details" asp-route-id="@inquiry.LeadId">@inquiry.Name</a>@(inquiry.Company is null ? "" : $" — {inquiry.Company}")</td>
+                    <td dir="ltr">@inquiry.LanguageCode</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pager" dir="ltr">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Page - 1)">@(Model.Page - 1)</a>
+            }
+            <span>@Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Page + 1)">@(Model.Page + 1)</a>
+            }
+        </nav>
+    }
+}

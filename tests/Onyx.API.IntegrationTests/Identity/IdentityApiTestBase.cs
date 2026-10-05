@@ -45,9 +45,17 @@ public abstract class IdentityApiTestBase(PostgresFixture fixture) : IAsyncLifet
         }
 
         await Fixture.ApplicationDatabase!.ResetAsync(Token);
-        _factory = new OnyxApiFactory("Testing", Fixture.ApplicationDatabase.ConnectionString, Settings, Time);
+        _factory = new OnyxApiFactory("Testing", Fixture.ApplicationDatabase.ConnectionString, Settings, Time, ConfigureTestServices);
         Client = _factory.CreateClient();
         await InScopeAsync(services => services.GetRequiredService<IIdentityBootstrapService>().SeedRolesAsync(Token));
+    }
+
+    /// <summary>The Turnstile token sent with sign-in; null while the test host has no Turnstile configured.</summary>
+    protected virtual string? LoginCaptchaToken() => null;
+
+    /// <summary>Replaces services of the API under test (e.g. the HTTP handler behind an external provider adapter).</summary>
+    protected virtual void ConfigureTestServices(IServiceCollection services)
+    {
     }
 
     public async ValueTask DisposeAsync()
@@ -115,7 +123,7 @@ public abstract class IdentityApiTestBase(PostgresFixture fixture) : IAsyncLifet
 
     protected async Task<(HttpStatusCode Status, LoginResponse? Body)> LoginAsync(string email, string password)
     {
-        using var response = await Client.PostAsJsonAsync("/api/v1/auth/login", new LoginRequest(email, password), Token);
+        using var response = await Client.PostAsJsonAsync("/api/v1/auth/login", new LoginRequest(email, password, LoginCaptchaToken()), Token);
         return (response.StatusCode, response.IsSuccessStatusCode ? await response.Content.ReadFromJsonAsync<LoginResponse>(Token) : null);
     }
 

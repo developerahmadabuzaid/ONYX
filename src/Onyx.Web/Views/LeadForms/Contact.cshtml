@@ -1,0 +1,15 @@
+@using Onyx.Web.Leads
+@model InquiryFormModel
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+<h1>@T["Lead.Contact.Title"]</h1>
+<p>@T["Lead.Contact.Intro"]</p>
+<form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true" novalidate>
+    <div asp-validation-summary="ModelOnly" role="alert"></div>
+    <p>
+        <label asp-for="Message">@T["Lead.Contact.Message"]</label>
+        <textarea asp-for="Message" rows="6" maxlength="4000" required></textarea>
+        <span asp-validation-for="Message"></span>
+    </p>
+    <partial name="_LeadContactFields" model="Model" />
+    <partial name="_LeadSubmit" model='(LeadPages.InquiryCaptchaAction, "Form.Send")' />
+</form>

@@ -42,7 +42,8 @@ internal sealed class EmailOutbox(
             rendered.Value.Subject,
             rendered.Value.HtmlBody,
             rendered.Value.TextBody,
-            requestContext.CorrelationId);
+            requestContext.CorrelationId,
+            request.Attachments);
 
         dbContext.EmailMessages.Add(message);
         return message.Id;

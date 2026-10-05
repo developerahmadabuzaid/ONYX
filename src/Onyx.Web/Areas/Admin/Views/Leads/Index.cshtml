@@ -1,0 +1,80 @@
+@model LeadListViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Leads";
+    var query = Model.Query;
+}
+<h1>@T["Nav.Leads"]</h1>
+<partial name="_CmsMessages" />
+<form method="get" asp-action="Index">
+    <label>@T["Leads.Stage"]
+        <select name="stage">
+            <option value="">@T["Leads.AnyStage"]</option>
+            @foreach (var stage in LeadListViewModel.Stages)
+            {
+                <option value="@stage" selected="@(query.Stage == stage)">@T["LeadStage." + stage]</option>
+            }
+        </select>
+    </label>
+    <label>@T["Leads.Owner"]
+        <select name="owner">
+            <option value="">@T["Leads.AnyOwner"]</option>
+            <option value="me" selected="@(query.Owner == "me")">@T["Leads.Mine"]</option>
+            <option value="unassigned" selected="@(query.Owner == "unassigned")">@T["Leads.Unassigned"]</option>
+        </select>
+    </label>
+    <label>@T["Leads.Search"] <input type="search" name="search" value="@query.Search" maxlength="100"></label>
+    <button type="submit">@T["Leads.Filter"]</button>
+</form>
+@if (Model.CanExport)
+{
+    <p><a asp-action="Export" asp-route-stage="@query.Stage" asp-route-owner="@query.Owner" asp-route-search="@query.Search">@T["Leads.Export"]</a></p>
+}
+@if (Model.Leads.Items.Count == 0)
+{
+    <p>@T["Leads.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>@T["Leads.Name"]</th>
+                <th>@T["Leads.Stage"]</th>
+                <th>@T["Leads.Source"]</th>
+                <th>@T["Leads.Priority"]</th>
+                <th>@T["Leads.Score"]</th>
+                <th>@T["Leads.Owner"]</th>
+                <th>@T["Leads.LastInquiry"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var lead in Model.Leads.Items)
+            {
+                <tr>
+                    <td dir="auto"><a asp-action="Details" asp-route-id="@lead.Id">@lead.DisplayName</a>@(lead.Company is null ? "" : $" — {lead.Company}")</td>
+                    <td>@T["LeadStage." + lead.Stage]</td>
+                    <td>@T["InquiryType." + lead.Source]</td>
+                    <td>@T["LeadPriority." + lead.Priority]</td>
+                    <td dir="ltr">@lead.Score</td>
+                    <td dir="auto">@(lead.OwnerName ?? T["Leads.Unassigned"].Value)</td>
+                    <td><partial name="_Utc" model="(DateTimeOffset?)lead.LastInquiryAtUtc" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.Leads.TotalPages > 1)
+    {
+        <nav class="pager" dir="ltr">
+            @if (Model.Leads.Page > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Leads.Page - 1)" asp-route-stage="@query.Stage" asp-route-owner="@query.Owner" asp-route-search="@query.Search">@(Model.Leads.Page - 1)</a>
+            }
+            <span>@Model.Leads.Page / @Model.Leads.TotalPages</span>
+            @if (Model.Leads.Page < Model.Leads.TotalPages)
+            {
+                <a asp-action="Index" asp-route-page="@(Model.Leads.Page + 1)" asp-route-stage="@query.Stage" asp-route-owner="@query.Owner" asp-route-search="@query.Search">@(Model.Leads.Page + 1)</a>
+            }
+        </nav>
+    }
+}

@@ -84,6 +84,7 @@ public static class DependencyInjection
         services.AddScoped<IEmailOutbox, EmailOutbox>();
 
         AddContent(services, configuration);
+        AddLeads(services, configuration);
 
         services.Configure<DomainEventRegistryOptions>(options => options.Assemblies.Add(typeof(IDomainEvent).Assembly));
         services.AddSingleton<DomainEventTypeRegistry>();
@@ -116,6 +117,59 @@ public static class DependencyInjection
             var seo = provider.GetRequiredService<IOptions<Seo.SeoOptions>>().Value;
             var site = provider.GetRequiredService<IOptions<Seo.PublicSiteOptions>>().Value;
             return new Application.Seo.OrganizationProfileSettings(seo.OrganizationStructuredDataEnabled, site.Origin?.ToString());
+        });
+    }
+
+    /// <summary>
+    /// Stage 8: inquiries, leads, booking, their email templates, the processed-event log and Turnstile verification
+    /// (fails closed until a secret is configured).
+    /// </summary>
+    private static void AddLeads(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Leads.LeadsOptions>().Bind(configuration.GetSection(Leads.LeadsOptions.SectionName)).ValidateDataAnnotations()
+            .Validate(
+                options => options.DefaultRecipients.Concat(options.RecipientsByType.Values.SelectMany(list => list)).All(Leads.LeadsOptions.IsValidAddress),
+                "Leads recipients must be valid email addresses.")
+            .Validate(
+                options => options.RecipientsByType.Keys.All(key => Enum.TryParse<Domain.Leads.InquiryType>(key, ignoreCase: false, out _)),
+                "Leads:RecipientsByType keys must be inquiry type names.")
+            .ValidateOnStart();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<Leads.LeadsOptions>>().Value;
+            var site = provider.GetRequiredService<IOptions<Seo.PublicSiteOptions>>().Value;
+            var adminBase = configuration["IdentitySecurity:AdminPortalBaseUrl"];
+            return new Application.Leads.LeadSettings(
+                options.ConsentVersion,
+                options.DefaultRecipients.ToList(),
+                options.RecipientsByType.ToDictionary(
+                    entry => Enum.Parse<Domain.Leads.InquiryType>(entry.Key), entry => (IReadOnlyList<string>)entry.Value.ToList()),
+                Uri.TryCreate(adminBase, UriKind.Absolute, out var admin) && (admin.Scheme == Uri.UriSchemeHttps || admin.IsLoopback) ? new Uri(admin.GetLeftPart(UriPartial.Authority)) : null,
+                site.Origin,
+                TimeSpan.FromHours(options.ManageLinkHoursAfterSlot));
+        });
+
+        services.AddScoped<Application.Leads.IInquiryRepository, InquiryRepository>();
+        services.AddScoped<Application.Leads.ILeadRepository, LeadRepository>();
+        services.AddScoped<Application.Booking.IBookingRepository, BookingRepository>();
+        services.AddScoped<Application.Booking.IAvailabilityRepository, AvailabilityRepository>();
+        services.AddScoped<Application.Abstractions.Messaging.IProcessedEventLog, Persistence.Outbox.ProcessedEventLog>();
+
+        services.AddSingleton<IEmailTemplate, InquiryReceivedEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, InquiryInternalEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, BookingConfirmedEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, BookingCancelledEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, BookingInternalEmailTemplate>();
+
+        services.AddOptions<Security.TurnstileOptions>().Bind(configuration.GetSection(Security.TurnstileOptions.SectionName)).ValidateDataAnnotations()
+            .Validate(
+                options => Uri.TryCreate(options.VerifyEndpoint, UriKind.Absolute, out var endpoint) && endpoint.Scheme == Uri.UriSchemeHttps,
+                "Turnstile:VerifyEndpoint must be an absolute https URL.")
+            .ValidateOnStart();
+        services.AddHttpClient<Application.Abstractions.ICaptchaVerifier, Security.TurnstileCaptchaVerifier>((provider, client) =>
+        {
+            client.Timeout = TimeSpan.FromSeconds(provider.GetRequiredService<IOptions<Security.TurnstileOptions>>().Value.TimeoutSeconds);
+            client.DefaultRequestHeaders.UserAgent.ParseAdd("OnyxVanguard-Turnstile/1.0");
         });
     }
 

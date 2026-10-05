@@ -1,0 +1,48 @@
+@using Onyx.Web.Leads
+@model BookingPageModel
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+@{
+    var form = Model.Form;
+}
+<h1>@T["Booking.Title"]</h1>
+@if (Model.Availability is null)
+{
+    <p>@T["Booking.RequestIntro"]</p>
+}
+else
+{
+    <p>@T["Booking.Intro"]</p>
+}
+<form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true" novalidate>
+    <div asp-validation-summary="ModelOnly" role="alert"></div>
+    <input type="hidden" name="RequestOnly" value="@(form.RequestOnly ? "true" : "false")">
+    @if (Model.Availability is { } availability && !form.RequestOnly)
+    {
+        <fieldset>
+            <legend>@T["Booking.ChooseSlot"]</legend>
+            <partial name="_SlotChoices" model="(availability, form.StartUtc, (DateTimeOffset?)null)" />
+            @Html.ValidationMessage("StartUtc")
+        </fieldset>
+    }
+    <fieldset>
+        <legend>@T["Lead.StartProject.Pillars"] (@T["Form.Optional"])</legend>
+        @foreach (var pillar in StartProjectFormModel.PillarOptions)
+        {
+            <label><input type="checkbox" name="Pillars" value="@pillar" checked="@form.Pillars.Contains(pillar)"> @T["Pillar." + pillar]</label>
+        }
+    </fieldset>
+    <p>
+        <label for="Message">@T["Booking.Message"]@(form.RequestOnly ? string.Empty : $" ({T["Form.Optional"]})")</label>
+        <textarea id="Message" name="Message" rows="5" maxlength="4000" required="@form.RequestOnly">@form.Message</textarea>
+        @Html.ValidationMessage("Message")
+    </p>
+    <partial name="_LeadContactFields" model="form" />
+    @if (form.RequestOnly)
+    {
+        <partial name="_LeadSubmit" model='(LeadPages.InquiryCaptchaAction, "Booking.SendRequest")' />
+    }
+    else
+    {
+        <partial name="_LeadSubmit" model='(LeadPages.BookingCaptchaAction, "Booking.Confirm")' />
+    }
+</form>

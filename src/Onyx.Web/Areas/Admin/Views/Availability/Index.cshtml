@@ -1,0 +1,68 @@
+@using System.Globalization
+@using Onyx.Contracts.Booking
+@model BookingSettingsResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Availability";
+    var days = new[] { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+}
+<h1>@T["Nav.Availability"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Availability.Hint"]</p>
+<p role="status">@(Model.IsBookable ? T["Availability.Open"] : T["Availability.Closed"])</p>
+
+<h2>@T["Availability.Settings"]</h2>
+<form method="post" asp-action="Settings">
+    <input type="hidden" name="version" value="@Model.Version">
+    <p><label><input type="checkbox" name="isEnabled" value="true" checked="@Model.IsEnabled"> @T["Availability.Enabled"]</label><input type="hidden" name="isEnabled" value="false"></p>
+    <p><label>@T["Availability.TimeZone"] <input name="timeZoneId" value="@Model.TimeZoneId" dir="ltr" required maxlength="100"></label></p>
+    <p><label>@T["Availability.SlotMinutes"] <input type="number" name="slotMinutes" value="@(Model.SlotMinutes == 0 ? "" : Model.SlotMinutes.ToString(CultureInfo.InvariantCulture))" min="15" max="240" step="5" required></label></p>
+    <p><label>@T["Availability.BufferMinutes"] <input type="number" name="bufferMinutes" value="@Model.BufferMinutes" min="0" max="120" required></label></p>
+    <p><label>@T["Availability.NoticeHours"] <input type="number" name="minimumNoticeHours" value="@Model.MinimumNoticeHours" min="0" max="336" required></label></p>
+    <p><label>@T["Availability.HorizonDays"] <input type="number" name="horizonDays" value="@(Model.HorizonDays == 0 ? "" : Model.HorizonDays.ToString(CultureInfo.InvariantCulture))" min="1" max="180" required></label></p>
+    <button type="submit">@T["Cms.Save"]</button>
+</form>
+
+<h2>@T["Availability.Windows"]</h2>
+@if (Model.Rules.Count == 0)
+{
+    <p>@T["Availability.NoWindows"]</p>
+}
+<ul>
+    @foreach (var rule in Model.Rules)
+    {
+        <li>
+            @T["Day." + rule.DayOfWeek] <bdi dir="ltr">@rule.StartTime–@rule.EndTime</bdi>
+            <form method="post" asp-action="DeleteRule" asp-route-id="@rule.Id" class="inline"><button type="submit">@T["Cms.Delete"]</button></form>
+        </li>
+    }
+</ul>
+<form method="post" asp-action="AddRule">
+    <label>@T["Availability.Day"]
+        <select name="dayOfWeek">
+            @foreach (var day in days)
+            {
+                <option value="@day">@T["Day." + day]</option>
+            }
+        </select>
+    </label>
+    <label>@T["Availability.From"] <input type="time" name="startTime" step="300" required></label>
+    <label>@T["Availability.To"] <input type="time" name="endTime" step="300" required></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>
+
+<h2>@T["Availability.Blocked"]</h2>
+<ul>
+    @foreach (var exception in Model.Exceptions)
+    {
+        <li>
+            <bdi dir="ltr">@exception.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</bdi> @exception.Reason
+            <form method="post" asp-action="DeleteException" asp-route-id="@exception.Id" class="inline"><button type="submit">@T["Cms.Delete"]</button></form>
+        </li>
+    }
+</ul>
+<form method="post" asp-action="AddException">
+    <label>@T["Availability.Date"] <input type="date" name="date" required></label>
+    <label>@T["Availability.Reason"] (@T["Form.Optional"]) <input name="reason" maxlength="200"></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

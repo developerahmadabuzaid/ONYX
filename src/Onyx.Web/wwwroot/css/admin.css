@@ -25,3 +25,6 @@ section { margin-block: 2rem; }
 .badge { font-size: 0.75rem; border: 1px solid #999; padding-inline: 0.25rem; margin-inline-start: 0.25rem; }
 .notice { color: #1d4d1d; }
 .media-preview { max-inline-size: 100%; block-size: auto; }
+
+/* Stage 8: multi-line text (notes, messages) keeps its line breaks. */
+.multiline { white-space: pre-line; }

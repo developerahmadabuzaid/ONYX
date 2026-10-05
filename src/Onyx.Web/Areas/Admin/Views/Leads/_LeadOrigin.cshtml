@@ -1,0 +1,12 @@
+@using Onyx.Contracts.Leads
+@model OriginResponse
+@* The attribution trail as stored. First touch and the analytics client id exist only when the visitor allowed analytics. *@
+<dl>
+    <dt>@T["Leads.AnalyticsConsent"]</dt><dd>@(Model.AnalyticsConsent ? T["Leads.Yes"] : T["Leads.No"])</dd>
+    <dt>@T["Leads.FirstTouch"]</dt><dd dir="ltr"><partial name="_TouchPoint" model="Model.FirstTouch" /></dd>
+    <dt>@T["Leads.LastTouch"]</dt><dd dir="ltr"><partial name="_TouchPoint" model="Model.LastTouch" /></dd>
+    <dt>@T["Leads.SubmissionPage"]</dt><dd dir="ltr">@(Model.SubmissionPath ?? "—")</dd>
+    <dt>@T["Leads.Device"]</dt><dd dir="ltr">@(Model.DeviceClass ?? "—")</dd>
+    <dt>@T["Leads.Market"]</dt><dd dir="ltr">@(Model.Market ?? "—")</dd>
+    <dt>@T["Leads.AnalyticsClientId"]</dt><dd dir="ltr">@(Model.AnalyticsClientId ?? "—")</dd>
+</dl>

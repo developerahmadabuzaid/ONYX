@@ -1,0 +1,164 @@
+@using System.Globalization
+@using Onyx.Contracts.Leads
+@model LeadDetailViewModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Leads";
+    var lead = Model.Lead;
+    var summary = lead.Summary;
+}
+<p><a asp-action="Index">@T["Nav.Leads"]</a></p>
+<h1 dir="auto">@summary.DisplayName</h1>
+<partial name="_CmsMessages" />
+<dl>
+    <dt>@T["Leads.Company"]</dt><dd dir="auto">@(summary.Company ?? "—")</dd>
+    <dt>@T["Leads.Stage"]</dt><dd>@T["LeadStage." + summary.Stage]</dd>
+    <dt>@T["Leads.Source"]</dt><dd>@T["InquiryType." + summary.Source]</dd>
+    <dt>@T["Leads.Priority"]</dt><dd>@T["LeadPriority." + summary.Priority]</dd>
+    <dt>@T["Leads.Score"]</dt>
+    <dd><span dir="ltr">@summary.Score</span> — @string.Join(", ", lead.ScoreReasons.Select(reason => T["LeadScore." + reason].Value))</dd>
+    <dt>@T["Leads.Owner"]</dt><dd dir="auto">@(summary.OwnerName ?? T["Leads.Unassigned"].Value)</dd>
+    <dt>@T["Leads.Language"]</dt><dd dir="ltr">@summary.LanguageCode</dd>
+</dl>
+<p class="hint">@T["Leads.ScoreHint"]</p>
+
+@if (Model.CanManage)
+{
+    <form method="post" asp-action="Stage" asp-route-id="@summary.Id" class="inline">
+        <input type="hidden" name="version" value="@summary.Version">
+        <label>@T["Leads.Stage"]
+            <select name="stage">
+                @foreach (var stage in LeadListViewModel.Stages)
+                {
+                    <option value="@stage" selected="@(summary.Stage == stage)">@T["LeadStage." + stage]</option>
+                }
+            </select>
+        </label>
+        <button type="submit">@T["Cms.Save"]</button>
+    </form>
+    <form method="post" asp-action="Priority" asp-route-id="@summary.Id" class="inline">
+        <input type="hidden" name="version" value="@summary.Version">
+        <label>@T["Leads.Priority"]
+            <select name="priority">
+                @foreach (var priority in LeadListViewModel.Priorities)
+                {
+                    <option value="@priority" selected="@(summary.Priority == priority)">@T["LeadPriority." + priority]</option>
+                }
+            </select>
+        </label>
+        <button type="submit">@T["Cms.Save"]</button>
+    </form>
+}
+@if (Model.CanAssign)
+{
+    <form method="post" asp-action="Owner" asp-route-id="@summary.Id" class="inline">
+        <input type="hidden" name="version" value="@summary.Version">
+        <label>@T["Leads.Owner"]
+            <select name="ownerId">
+                <option value="">@T["Leads.Unassigned"]</option>
+                @foreach (var assignee in Model.Assignees)
+                {
+                    <option value="@assignee.UserId" selected="@(summary.OwnerId == assignee.UserId)">@assignee.DisplayName</option>
+                }
+            </select>
+        </label>
+        <button type="submit">@T["Cms.Save"]</button>
+    </form>
+}
+
+<h2>@T["Leads.Inquiries"]</h2>
+@foreach (var inquiry in lead.Inquiries)
+{
+    <article>
+        <h3>@T["InquiryType." + inquiry.Type] — <partial name="_Utc" model="(DateTimeOffset?)inquiry.SubmittedAtUtc" /></h3>
+        <dl>
+            <dt>@T["Form.Name"]</dt><dd dir="auto">@inquiry.Name</dd>
+            <dt>@T["Form.Email"]</dt><dd dir="ltr">@inquiry.Email</dd>
+            <dt>@T["Form.Phone"]</dt><dd dir="ltr">@(inquiry.Phone ?? "—")</dd>
+            <dt>@T["Form.Company"]</dt><dd dir="auto">@(inquiry.Company ?? "—")</dd>
+            <dt>@T["Form.Country"]</dt><dd dir="ltr">@(inquiry.Country ?? "—")</dd>
+            <dt>@T["Leads.Language"]</dt><dd dir="ltr">@inquiry.LanguageCode</dd>
+        </dl>
+        @if (inquiry.Message is not null)
+        {
+            <p dir="auto" class="multiline">@inquiry.Message</p>
+        }
+        @if (inquiry.Answers.Count > 0)
+        {
+            <dl>
+                @foreach (var (key, values) in inquiry.Answers)
+                {
+                    <dt dir="ltr">@key</dt>
+                    <dd dir="ltr">@string.Join(", ", values)</dd>
+                }
+            </dl>
+        }
+        <details open>
+            <summary>@T["Leads.Origin"]</summary>
+            <partial name="_LeadOrigin" model="inquiry.Origin" />
+            <dl>
+                <dt>@T["Leads.Context"]</dt>
+                <dd dir="ltr">
+                    @(inquiry.ServiceId is { } service ? $"service {service:D} " : "")@(inquiry.ProjectId is { } project ? $"project {project:D} " : "")@(inquiry.CallToActionId is { } cta ? $"cta {cta:D}" : "")
+                    @if (inquiry.ServiceId is null && inquiry.ProjectId is null && inquiry.CallToActionId is null)
+                    {
+                        <span>—</span>
+                    }
+                </dd>
+            </dl>
+        </details>
+        @if (inquiry.Consent is { } consent)
+        {
+            <p>
+                @T["Leads.Consent"]: @T["Leads.ContactConsent"] ✓;
+                @T["Leads.MarketingConsent"]: @(consent.MarketingActive ? T["Leads.Yes"] : T["Leads.No"])
+                (v<bdi dir="ltr">@consent.ConsentVersion</bdi>)
+                @if (consent.MarketingWithdrawnAtUtc is { } withdrawn)
+                {
+                    <span>— @T["Leads.Withdrawn"] <partial name="_Utc" model="(DateTimeOffset?)withdrawn" /></span>
+                }
+            </p>
+            @if (consent.MarketingActive && Model.CanManage)
+            {
+                <form method="post" asp-action="WithdrawMarketing" asp-route-id="@summary.Id" asp-route-consentId="@consent.Id">
+                    <button type="submit">@T["Leads.WithdrawMarketing"]</button>
+                </form>
+            }
+        }
+    </article>
+}
+
+@if (lead.Bookings.Count > 0)
+{
+    <h2>@T["Nav.Bookings"]</h2>
+    <ul>
+        @foreach (var booking in lead.Bookings)
+        {
+            <li><partial name="_Utc" model="(DateTimeOffset?)booking.StartUtc" /> — @T["BookingStatus." + booking.Status]</li>
+        }
+    </ul>
+}
+
+<h2>@T["Leads.Notes"]</h2>
+@if (Model.CanManage)
+{
+    <form method="post" asp-action="Note" asp-route-id="@summary.Id">
+        <label>@T["Leads.AddNote"] <textarea name="body" rows="3" maxlength="4000" required></textarea></label>
+        <button type="submit">@T["Cms.Save"]</button>
+    </form>
+}
+@foreach (var note in lead.Notes)
+{
+    <article>
+        <p dir="auto" class="multiline">@note.Body</p>
+        <p class="hint">@(note.AuthorName ?? "—") — <partial name="_Utc" model="(DateTimeOffset?)note.CreatedAtUtc" /></p>
+    </article>
+}
+
+<h2>@T["Leads.Timeline"]</h2>
+<ol>
+    @foreach (var activity in lead.Activities)
+    {
+        <li><partial name="_Utc" model="(DateTimeOffset?)activity.OccurredAtUtc" /> — @T["LeadActivity." + activity.Kind] <bdi dir="ltr">@activity.Detail</bdi></li>
+    }
+</ol>

@@ -78,6 +78,9 @@ public static class ContentRouteSegments
         "preview", "language", "consent", "media", "sitemap", "sitemaps", "search", "admin", "api", "error", "robots",
         "services", "industries", "الخدمات", "القطاعات",
         "work", "insights", "glossary", "integrations", "أعمالنا", "المعرفة", "المصطلحات", "التكاملات",
+
+        // Stage 8 conversion pages (Leads.LeadRouteSegments).
+        "start-a-project", "book-a-consultation", "contact", "manage-booking", "ابدأ-مشروعك", "احجز-استشارة", "تواصل-معنا", "إدارة-الحجز",
     };
 
     private static Dictionary<string, string> Join(IReadOnlyDictionary<string, string> first, IReadOnlyDictionary<string, string> second) =>

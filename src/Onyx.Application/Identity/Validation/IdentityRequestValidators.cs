@@ -11,6 +11,7 @@ internal sealed class LoginRequestValidator : AbstractValidator<LoginRequest>
     {
         RuleFor(request => request.Email).NotEmpty().MaximumLength(254);
         RuleFor(request => request.Password).NotEmpty().MaximumLength(IdentityRules.PasswordMaxLength);
+        RuleFor(request => request.CaptchaToken).MaximumLength(2_048);
     }
 }
 
@@ -50,7 +51,11 @@ internal sealed class RefreshTokenRequestValidator : AbstractValidator<RefreshTo
 
 internal sealed class ForgotPasswordRequestValidator : AbstractValidator<ForgotPasswordRequest>
 {
-    public ForgotPasswordRequestValidator() => RuleFor(request => request.Email).ValidEmail();
+    public ForgotPasswordRequestValidator()
+    {
+        RuleFor(request => request.Email).ValidEmail();
+        RuleFor(request => request.CaptchaToken).MaximumLength(2_048);
+    }
 }
 
 internal sealed class ResetPasswordRequestValidator : AbstractValidator<ResetPasswordRequest>

@@ -1,0 +1,11 @@
+@model (string Action, string LabelKey)
+@* Without a configured anti-abuse key the form cannot be accepted, so it says so instead of offering a submit that would fail. *@
+@if (ViewData["TurnstileSiteKey"] is string)
+{
+    <partial name="_Turnstile" model="Model.Action" />
+    <p><button type="submit" name="Command" value="submit">@T[Model.LabelKey]</button></p>
+}
+else
+{
+    <p role="alert">@T["Form.Error.Unavailable"]</p>
+}

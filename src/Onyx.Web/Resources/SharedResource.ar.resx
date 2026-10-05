@@ -410,4 +410,210 @@
   <data name="Section.integrations" xml:space="preserve"><value>التكاملات</value></data>
   <data name="Section.topics" xml:space="preserve"><value>المواضيع</value></data>
   <data name="Section.work" xml:space="preserve"><value>أعمالنا</value></data>
+  <data name="Form.Required" xml:space="preserve"><value>هذا الحقل مطلوب.</value></data>
+  <data name="Form.TooLong" xml:space="preserve"><value>هذه القيمة أطول من المسموح.</value></data>
+  <data name="Form.InvalidEmail" xml:space="preserve"><value>أدخل بريداً إلكترونياً صحيحاً.</value></data>
+  <data name="Form.InvalidPhone" xml:space="preserve"><value>استخدم الأرقام والمسافات وعلامات + و- والأقواس فقط.</value></data>
+  <data name="Form.Invalid" xml:space="preserve"><value>هذه القيمة غير صحيحة.</value></data>
+  <data name="Form.ConsentRequired" xml:space="preserve"><value>يُرجى الموافقة على التواصل معك بخصوص طلبك.</value></data>
+  <data name="Form.ContactDetails" xml:space="preserve"><value>بيانات التواصل</value></data>
+  <data name="Form.Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Form.Email" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="Form.Phone" xml:space="preserve"><value>رقم الهاتف</value></data>
+  <data name="Form.Optional" xml:space="preserve"><value>اختياري</value></data>
+  <data name="Form.Company" xml:space="preserve"><value>الشركة</value></data>
+  <data name="Form.Country" xml:space="preserve"><value>الدولة</value></data>
+  <data name="Form.Country.None" xml:space="preserve"><value>غير محدد</value></data>
+  <data name="Country.SA" xml:space="preserve"><value>المملكة العربية السعودية</value></data>
+  <data name="Country.JO" xml:space="preserve"><value>الأردن</value></data>
+  <data name="Country.AE" xml:space="preserve"><value>الإمارات العربية المتحدة</value></data>
+  <data name="Country.QA" xml:space="preserve"><value>قطر</value></data>
+  <data name="Country.KW" xml:space="preserve"><value>الكويت</value></data>
+  <data name="Country.BH" xml:space="preserve"><value>البحرين</value></data>
+  <data name="Country.OM" xml:space="preserve"><value>عُمان</value></data>
+  <data name="Form.Consent" xml:space="preserve"><value>الموافقة</value></data>
+  <data name="Form.ContactConsent" xml:space="preserve"><value>أوافق على أن تتواصل معي Onyx بخصوص هذا الطلب.</value></data>
+  <data name="Form.MarketingConsent" xml:space="preserve"><value>أرغب أيضاً في تلقي أخبار ومقالات Onyx من حين لآخر، ويمكنني سحب هذه الموافقة في أي وقت.</value></data>
+  <data name="Form.Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="Form.Back" xml:space="preserve"><value>السابق</value></data>
+  <data name="Form.Send" xml:space="preserve"><value>إرسال</value></data>
+  <data name="Form.Error.Captcha" xml:space="preserve"><value>لم يكتمل التحقق من الحماية. أكمِله ثم حاول مرة أخرى.</value></data>
+  <data name="Form.Error.Unavailable" xml:space="preserve"><value>الإرسال عبر الموقع غير متاح حالياً. يُرجى المحاولة لاحقاً.</value></data>
+  <data name="Form.Error.MessageRequired" xml:space="preserve"><value>أخبرنا باختصار بما تحتاج إليه.</value></data>
+  <data name="Form.Error.Context" xml:space="preserve"><value>الصفحة التي جئت منها لم تعد متاحة. يُرجى إرسال طلبك بدونها.</value></data>
+  <data name="Form.Error.TooMany" xml:space="preserve"><value>محاولات كثيرة. انتظر دقيقة ثم حاول مرة أخرى.</value></data>
+  <data name="Form.Error.Generic" xml:space="preserve"><value>تعذّر إرسال طلبك. راجع النموذج وحاول مرة أخرى.</value></data>
+  <data name="Lead.StartProject.Title" xml:space="preserve"><value>ابدأ مشروعك</value></data>
+  <data name="Lead.StartProject.Intro" xml:space="preserve"><value>أخبرنا عن عملك وما تريد تحقيقه. نبدأ دائماً بفهم إجراءاتك وأهدافك.</value></data>
+  <data name="Lead.Step" xml:space="preserve"><value>الخطوة {0} من {1}</value></data>
+  <data name="Lead.StartProject.Pillars" xml:space="preserve"><value>ما المجالات التي تهمك؟</value></data>
+  <data name="Lead.StartProject.PillarRequired" xml:space="preserve"><value>اختر مجالاً واحداً على الأقل.</value></data>
+  <data name="Lead.StartProject.Project" xml:space="preserve"><value>مشروعك</value></data>
+  <data name="Lead.StartProject.Goal" xml:space="preserve"><value>ما الذي تريد تحقيقه؟</value></data>
+  <data name="Lead.StartProject.OrganizationSize" xml:space="preserve"><value>حجم المنشأة</value></data>
+  <data name="Lead.StartProject.Timeline" xml:space="preserve"><value>متى تودّ البدء؟</value></data>
+  <data name="Pillar.software" xml:space="preserve"><value>البرمجيات وتقنية المعلومات</value></data>
+  <data name="Pillar.ai" xml:space="preserve"><value>حلول الذكاء الاصطناعي</value></data>
+  <data name="Pillar.automation" xml:space="preserve"><value>الأتمتة</value></data>
+  <data name="Pillar.cybersecurity" xml:space="preserve"><value>الأمن السيبراني</value></data>
+  <data name="Pillar.digital-growth" xml:space="preserve"><value>النمو الرقمي والإبداع</value></data>
+  <data name="OrganizationSize.sme" xml:space="preserve"><value>منشأة صغيرة أو متوسطة</value></data>
+  <data name="OrganizationSize.mid-market" xml:space="preserve"><value>شركة متوسطة الحجم</value></data>
+  <data name="OrganizationSize.enterprise" xml:space="preserve"><value>مؤسسة كبيرة</value></data>
+  <data name="Timeline.asap" xml:space="preserve"><value>في أقرب وقت</value></data>
+  <data name="Timeline.1-3-months" xml:space="preserve"><value>خلال شهر إلى ثلاثة أشهر</value></data>
+  <data name="Timeline.3-6-months" xml:space="preserve"><value>خلال ثلاثة إلى ستة أشهر</value></data>
+  <data name="Timeline.exploring" xml:space="preserve"><value>ما زلت أستكشف الخيارات</value></data>
+  <data name="Lead.Contact.Title" xml:space="preserve"><value>تواصل مع Onyx</value></data>
+  <data name="Lead.Contact.Intro" xml:space="preserve"><value>أرسل لنا سؤالك أو طلبك وسيتواصل معك فريق Onyx.</value></data>
+  <data name="Lead.Contact.Message" xml:space="preserve"><value>رسالتك</value></data>
+  <data name="Lead.Sent.Title" xml:space="preserve"><value>شكراً لك</value></data>
+  <data name="Lead.Sent.Body" xml:space="preserve"><value>استلمنا طلبك، وأرسلنا تأكيداً إلى بريدك الإلكتروني.</value></data>
+  <data name="Lead.Reference" xml:space="preserve"><value>رقم المرجع</value></data>
+  <data name="Booking.Title" xml:space="preserve"><value>احجز استشارة</value></data>
+  <data name="Booking.Intro" xml:space="preserve"><value>اختر الموعد المناسب لك وأخبرنا باختصار عن احتياجك.</value></data>
+  <data name="Booking.RequestIntro" xml:space="preserve"><value>الحجز عبر الموقع غير متاح حالياً. أرسل طلب استشارة وسنتواصل معك لتحديد موعد.</value></data>
+  <data name="Booking.ChooseSlot" xml:space="preserve"><value>اختر موعداً</value></data>
+  <data name="Booking.Message" xml:space="preserve"><value>ما الذي تودّ مناقشته؟</value></data>
+  <data name="Booking.SendRequest" xml:space="preserve"><value>اطلب استشارة</value></data>
+  <data name="Booking.Confirm" xml:space="preserve"><value>تأكيد الحجز</value></data>
+  <data name="Booking.SlotRequired" xml:space="preserve"><value>اختر موعداً.</value></data>
+  <data name="Booking.TimeZone" xml:space="preserve"><value>المواعيد معروضة بتوقيت</value></data>
+  <data name="Booking.SlotLength" xml:space="preserve"><value>استشارة مدتها {0} دقيقة</value></data>
+  <data name="Booking.Booked.Title" xml:space="preserve"><value>شكراً لك</value></data>
+  <data name="Booking.Booked.Body" xml:space="preserve"><value>سجّلنا طلبك، وأرسلنا تأكيداً إلى بريدك الإلكتروني.</value></data>
+  <data name="Booking.Error.SlotTaken" xml:space="preserve"><value>حُجز هذا الموعد للتو. يُرجى اختيار موعد آخر.</value></data>
+  <data name="Booking.Error.Closed" xml:space="preserve"><value>الحجز عبر الموقع غير متاح حالياً. يُرجى إرسال طلب استشارة بدلاً منه.</value></data>
+  <data name="Booking.Error.SameSlot" xml:space="preserve"><value>اختر موعداً مختلفاً.</value></data>
+  <data name="Booking.Error.NotManageable" xml:space="preserve"><value>لم يعد بالإمكان تعديل هذا الحجز عبر الموقع.</value></data>
+  <data name="Booking.Error.LinkInvalid" xml:space="preserve"><value>هذا الرابط غير صالح، أو أن الحجز لم يعد قائماً.</value></data>
+  <data name="Booking.Manage.Title" xml:space="preserve"><value>استشارتك</value></data>
+  <data name="Booking.Manage.Cancelled" xml:space="preserve"><value>أُلغيت استشارتك.</value></data>
+  <data name="Booking.Manage.Rescheduled" xml:space="preserve"><value>تم تغيير موعد استشارتك، وأرسلنا تأكيداً جديداً إلى بريدك الإلكتروني.</value></data>
+  <data name="Booking.Manage.Calendar" xml:space="preserve"><value>تنزيل ملف التقويم</value></data>
+  <data name="Booking.Manage.Reschedule" xml:space="preserve"><value>تغيير الموعد</value></data>
+  <data name="Booking.Manage.NoSlots" xml:space="preserve"><value>لا توجد مواعيد أخرى متاحة عبر الموقع حالياً.</value></data>
+  <data name="Booking.Manage.Cancel" xml:space="preserve"><value>إلغاء الاستشارة</value></data>
+  <data name="Booking.When" xml:space="preserve"><value>الموعد</value></data>
+  <data name="Booking.Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="BookingStatus.Requested" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="BookingStatus.Confirmed" xml:space="preserve"><value>مؤكد</value></data>
+  <data name="BookingStatus.Rescheduled" xml:space="preserve"><value>نُقل إلى موعد آخر</value></data>
+  <data name="BookingStatus.Cancelled" xml:space="preserve"><value>ملغى</value></data>
+  <data name="BookingStatus.Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="BookingStatus.NoShow" xml:space="preserve"><value>لم يحضر</value></data>
+  <data name="Nav.Leads" xml:space="preserve"><value>العملاء المحتملون</value></data>
+  <data name="Nav.Inquiries" xml:space="preserve"><value>الطلبات</value></data>
+  <data name="Nav.Bookings" xml:space="preserve"><value>الحجوزات</value></data>
+  <data name="Nav.Availability" xml:space="preserve"><value>المواعيد المتاحة</value></data>
+  <data name="Leads.Stage" xml:space="preserve"><value>المرحلة</value></data>
+  <data name="Leads.AnyStage" xml:space="preserve"><value>كل المراحل</value></data>
+  <data name="LeadStage.New" xml:space="preserve"><value>جديد</value></data>
+  <data name="LeadStage.Contacted" xml:space="preserve"><value>تم التواصل</value></data>
+  <data name="LeadStage.Qualified" xml:space="preserve"><value>مؤهل</value></data>
+  <data name="LeadStage.Proposal" xml:space="preserve"><value>عرض مقدَّم</value></data>
+  <data name="LeadStage.Won" xml:space="preserve"><value>مكسوب</value></data>
+  <data name="LeadStage.Lost" xml:space="preserve"><value>خاسر</value></data>
+  <data name="Leads.Owner" xml:space="preserve"><value>المسؤول</value></data>
+  <data name="Leads.AnyOwner" xml:space="preserve"><value>الجميع</value></data>
+  <data name="Leads.Mine" xml:space="preserve"><value>المسندة إليّ</value></data>
+  <data name="Leads.Unassigned" xml:space="preserve"><value>غير مسند</value></data>
+  <data name="Leads.Search" xml:space="preserve"><value>بحث</value></data>
+  <data name="Leads.Filter" xml:space="preserve"><value>تصفية</value></data>
+  <data name="Leads.Export" xml:space="preserve"><value>تصدير CSV</value></data>
+  <data name="Leads.ExportFailed" xml:space="preserve"><value>تعذّر إنشاء ملف التصدير.</value></data>
+  <data name="Leads.Empty" xml:space="preserve"><value>لا يوجد عملاء محتملون يطابقون هذه التصفية.</value></data>
+  <data name="Leads.Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Leads.Source" xml:space="preserve"><value>المصدر</value></data>
+  <data name="Leads.Priority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="Leads.Score" xml:space="preserve"><value>التقييم</value></data>
+  <data name="Leads.LastInquiry" xml:space="preserve"><value>آخر طلب</value></data>
+  <data name="InquiryType.StartProject" xml:space="preserve"><value>ابدأ مشروعك</value></data>
+  <data name="InquiryType.Contact" xml:space="preserve"><value>تواصل</value></data>
+  <data name="InquiryType.Consultation" xml:space="preserve"><value>استشارة محجوزة</value></data>
+  <data name="InquiryType.RequestConsultation" xml:space="preserve"><value>طلب استشارة</value></data>
+  <data name="InquiryType.ServiceInquiry" xml:space="preserve"><value>استفسار عن خدمة</value></data>
+  <data name="InquiryType.SimilarProject" xml:space="preserve"><value>مشروع مشابه</value></data>
+  <data name="InquiryType.ToolFollowUp" xml:space="preserve"><value>متابعة أداة</value></data>
+  <data name="InquiryType.OpportunityFinder" xml:space="preserve"><value>مستكشف الفرص</value></data>
+  <data name="InquiryType.ContextualCta" xml:space="preserve"><value>دعوة إلى إجراء</value></data>
+  <data name="InquiryType.Advisor" xml:space="preserve"><value>المستشار</value></data>
+  <data name="LeadPriority.Low" xml:space="preserve"><value>منخفضة</value></data>
+  <data name="LeadPriority.Normal" xml:space="preserve"><value>عادية</value></data>
+  <data name="LeadPriority.High" xml:space="preserve"><value>مرتفعة</value></data>
+  <data name="Leads.Company" xml:space="preserve"><value>الشركة</value></data>
+  <data name="LeadScore.booked-consultation" xml:space="preserve"><value>حجز استشارة</value></data>
+  <data name="LeadScore.project-or-consultation-request" xml:space="preserve"><value>طلب مشروع أو استشارة</value></data>
+  <data name="LeadScore.service-or-project-interest" xml:space="preserve"><value>اهتمام بخدمة أو مشروع</value></data>
+  <data name="LeadScore.company-provided" xml:space="preserve"><value>ذكر الشركة</value></data>
+  <data name="LeadScore.phone-provided" xml:space="preserve"><value>ذكر رقم الهاتف</value></data>
+  <data name="LeadScore.detailed-brief" xml:space="preserve"><value>وصف مفصّل</value></data>
+  <data name="LeadScore.repeat-inquiry" xml:space="preserve"><value>طلب متكرر</value></data>
+  <data name="Leads.Language" xml:space="preserve"><value>اللغة</value></data>
+  <data name="Leads.ScoreHint" xml:space="preserve"><value>التقييم لترتيب العمل فقط؛ كل نقطة فيه تأتي من قاعدة معروضة، وليس توقعاً.</value></data>
+  <data name="Leads.Inquiries" xml:space="preserve"><value>الطلبات</value></data>
+  <data name="Leads.Origin" xml:space="preserve"><value>المصدر والتتبّع</value></data>
+  <data name="Leads.Context" xml:space="preserve"><value>جاء من</value></data>
+  <data name="Leads.Consent" xml:space="preserve"><value>الموافقة</value></data>
+  <data name="Leads.ContactConsent" xml:space="preserve"><value>التواصل</value></data>
+  <data name="Leads.MarketingConsent" xml:space="preserve"><value>التسويق</value></data>
+  <data name="Leads.Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="Leads.No" xml:space="preserve"><value>لا</value></data>
+  <data name="Leads.Withdrawn" xml:space="preserve"><value>سُحبت</value></data>
+  <data name="Leads.WithdrawMarketing" xml:space="preserve"><value>تسجيل سحب الموافقة التسويقية</value></data>
+  <data name="Leads.Notes" xml:space="preserve"><value>الملاحظات</value></data>
+  <data name="Leads.AddNote" xml:space="preserve"><value>إضافة ملاحظة</value></data>
+  <data name="Leads.Timeline" xml:space="preserve"><value>السجل الزمني</value></data>
+  <data name="LeadActivity.InquiryReceived" xml:space="preserve"><value>وصل طلب</value></data>
+  <data name="LeadActivity.StageChanged" xml:space="preserve"><value>تغيّرت المرحلة</value></data>
+  <data name="LeadActivity.Assigned" xml:space="preserve"><value>تغيّر المسؤول</value></data>
+  <data name="LeadActivity.PriorityChanged" xml:space="preserve"><value>تغيّرت الأولوية</value></data>
+  <data name="LeadActivity.NoteAdded" xml:space="preserve"><value>أُضيفت ملاحظة</value></data>
+  <data name="LeadActivity.BookingConfirmed" xml:space="preserve"><value>حُجزت استشارة</value></data>
+  <data name="LeadActivity.BookingCancelled" xml:space="preserve"><value>أُلغيت استشارة</value></data>
+  <data name="LeadActivity.BookingRescheduled" xml:space="preserve"><value>نُقلت استشارة</value></data>
+  <data name="LeadActivity.BookingCompleted" xml:space="preserve"><value>اكتملت استشارة</value></data>
+  <data name="LeadActivity.BookingNoShow" xml:space="preserve"><value>لم يحضر الاستشارة</value></data>
+  <data name="LeadActivity.MarketingConsentWithdrawn" xml:space="preserve"><value>سُحبت الموافقة التسويقية</value></data>
+  <data name="Leads.AnalyticsConsent" xml:space="preserve"><value>موافقة التحليلات</value></data>
+  <data name="Leads.FirstTouch" xml:space="preserve"><value>أول تفاعل</value></data>
+  <data name="Leads.LastTouch" xml:space="preserve"><value>آخر تفاعل</value></data>
+  <data name="Leads.SubmissionPage" xml:space="preserve"><value>أُرسل من</value></data>
+  <data name="Leads.Device" xml:space="preserve"><value>الجهاز</value></data>
+  <data name="Leads.Market" xml:space="preserve"><value>السوق</value></data>
+  <data name="Leads.AnalyticsClientId" xml:space="preserve"><value>معرّف عميل التحليلات</value></data>
+  <data name="Inquiries.Empty" xml:space="preserve"><value>لا توجد طلبات بعد.</value></data>
+  <data name="Leads.Submitted" xml:space="preserve"><value>تاريخ الإرسال</value></data>
+  <data name="Leads.Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Bookings.Upcoming" xml:space="preserve"><value>الحجوزات القادمة</value></data>
+  <data name="Bookings.All" xml:space="preserve"><value>كل الحجوزات</value></data>
+  <data name="Bookings.Empty" xml:space="preserve"><value>لا توجد حجوزات.</value></data>
+  <data name="Bookings.NotifyVisitor" xml:space="preserve"><value>إبلاغ الزائر بالبريد</value></data>
+  <data name="Bookings.Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Availability.Hint" xml:space="preserve"><value>أيام العمل وساعاته ومدة الموعد والحدود قرارات عمل؛ لا شيء مضبوط مسبقاً، ويبقى الحجز عبر الموقع مغلقاً حتى تُدخل هذه القيم ويُفعَّل الحجز.</value></data>
+  <data name="Availability.Open" xml:space="preserve"><value>الحجز عبر الموقع مفتوح.</value></data>
+  <data name="Availability.Closed" xml:space="preserve"><value>الحجز عبر الموقع مغلق، ويمكن للزوار إرسال طلب استشارة بدلاً منه.</value></data>
+  <data name="Availability.Settings" xml:space="preserve"><value>إعدادات الحجز</value></data>
+  <data name="Availability.Enabled" xml:space="preserve"><value>تفعيل الحجز عبر الموقع</value></data>
+  <data name="Availability.TimeZone" xml:space="preserve"><value>المنطقة الزمنية للعمل (IANA)</value></data>
+  <data name="Availability.SlotMinutes" xml:space="preserve"><value>مدة الموعد (بالدقائق)</value></data>
+  <data name="Availability.BufferMinutes" xml:space="preserve"><value>الفاصل بين الاستشارات (بالدقائق)</value></data>
+  <data name="Availability.NoticeHours" xml:space="preserve"><value>أقل مدة إشعار مسبق (بالساعات)</value></data>
+  <data name="Availability.HorizonDays" xml:space="preserve"><value>عدد الأيام المتاحة للحجز مقدماً</value></data>
+  <data name="Availability.Windows" xml:space="preserve"><value>ساعات العمل الأسبوعية</value></data>
+  <data name="Availability.NoWindows" xml:space="preserve"><value>لم تُضَف ساعات عمل بعد.</value></data>
+  <data name="Availability.Day" xml:space="preserve"><value>اليوم</value></data>
+  <data name="Availability.From" xml:space="preserve"><value>من</value></data>
+  <data name="Availability.To" xml:space="preserve"><value>إلى</value></data>
+  <data name="Availability.Blocked" xml:space="preserve"><value>الأيام المغلقة</value></data>
+  <data name="Availability.Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Availability.Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="Day.Sunday" xml:space="preserve"><value>الأحد</value></data>
+  <data name="Day.Monday" xml:space="preserve"><value>الاثنين</value></data>
+  <data name="Day.Tuesday" xml:space="preserve"><value>الثلاثاء</value></data>
+  <data name="Day.Wednesday" xml:space="preserve"><value>الأربعاء</value></data>
+  <data name="Day.Thursday" xml:space="preserve"><value>الخميس</value></data>
+  <data name="Day.Friday" xml:space="preserve"><value>الجمعة</value></data>
+  <data name="Day.Saturday" xml:space="preserve"><value>السبت</value></data>
+  <data name="Notification.Type.BookingCancelled" xml:space="preserve"><value>أُلغيت استشارة</value></data>
 </root>

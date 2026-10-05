@@ -1,0 +1,74 @@
+@using System.Globalization
+@using Onyx.Contracts.Booking
+@using Onyx.Contracts.Common
+@model PagedResult<BookingResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.Bookings";
+    var all = ViewData["All"] is true;
+}
+<h1>@T["Nav.Bookings"]</h1>
+<partial name="_CmsMessages" />
+<p>
+    @if (all)
+    {
+        <a asp-action="Index">@T["Bookings.Upcoming"]</a>
+    }
+    else
+    {
+        <a asp-action="Index" asp-route-all="true">@T["Bookings.All"]</a>
+    }
+</p>
+@if (Model.Items.Count == 0)
+{
+    <p>@T["Bookings.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr><th>@T["Booking.When"]</th><th>@T["Leads.Name"]</th><th>@T["Booking.Status"]</th><th>@T["Leads.Language"]</th><th></th></tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in Model.Items)
+            {
+                <tr>
+                    <td dir="ltr">@booking.StartLocal.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) (@booking.TimeZoneId)</td>
+                    <td dir="auto"><a asp-controller="Leads" asp-action="Details" asp-route-id="@booking.LeadId">@booking.LeadName</a></td>
+                    <td>@T["BookingStatus." + booking.Status]</td>
+                    <td dir="ltr">@booking.LanguageCode</td>
+                    <td>
+                        @if (booking.Status == "Confirmed")
+                        {
+                            <form method="post" asp-action="Cancel" asp-route-id="@booking.Id" class="inline">
+                                <input type="hidden" name="version" value="@booking.Version">
+                                <label><input type="checkbox" name="notifyVisitor" value="true" checked> @T["Bookings.NotifyVisitor"]</label>
+                                <input type="hidden" name="notifyVisitor" value="false">
+                                <button type="submit">@T["Bookings.Cancel"]</button>
+                            </form>
+                            <form method="post" asp-action="Outcome" asp-route-id="@booking.Id" class="inline">
+                                <input type="hidden" name="version" value="@booking.Version">
+                                <button type="submit" name="outcome" value="Completed">@T["BookingStatus.Completed"]</button>
+                                <button type="submit" name="outcome" value="NoShow">@T["BookingStatus.NoShow"]</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="pager" dir="ltr">
+            @if (Model.Page > 1)
+            {
+                <a asp-action="Index" asp-route-all="@all" asp-route-page="@(Model.Page - 1)">@(Model.Page - 1)</a>
+            }
+            <span>@Model.Page / @Model.TotalPages</span>
+            @if (Model.Page < Model.TotalPages)
+            {
+                <a asp-action="Index" asp-route-all="@all" asp-route-page="@(Model.Page + 1)">@(Model.Page + 1)</a>
+            }
+        </nav>
+    }
+}

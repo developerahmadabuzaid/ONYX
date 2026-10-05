@@ -27,7 +27,8 @@
 | 4 Onyx.Web foundation | **done**: 334/334 tests (local PostgreSQL 18); build 0 warnings; no vulnerable packages. Awaiting owner review before Stage 6. |
 | 6 CMS, content governance and SEO intelligence foundation | **done**: 534/534 tests (local PostgreSQL); build 0 warnings; no vulnerable packages; no new packages. Awaiting owner review before Stage 7. |
 | 7 Work, proof, insights, glossary, integrations | **done** (see Stage 7 notes). Awaiting owner review before Stage 8. |
-| 8–12, 5, 13 | awaiting approval (in execution order) |
+| 8 Leads, booking, Turnstile, attribution | **done**: 775/775 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `Stage8LeadsAndBooking` (additive). Awaiting owner review before Stage 9. |
+| 9–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -179,6 +180,24 @@
 ### Stage 8 — Leads, booking, Turnstile, attribution
 - **Build:** Inquiry → Lead with attribution (consent-aware); wizard + contact/consultation/service/similar-project forms; server-side Turnstile, honeypot, rate limits; booking (availability rules, slots, `.ics`, signed links, uniqueness); internal + visitor emails in the submission language; Admin leads (pipeline, origin panel, notes, assignment, audited export).
 - **Verify:** inquiry persists when email fails; Turnstile rejection; concurrent double booking blocked; attribution with/without consent.
+
+**Stage 8 delivered notes** (architecture.md §24.3):
+- **Leads:** immutable `Inquiry` + separate, withdrawable `ConsentRecord` + `Lead` pipeline (stage, source, pillar, owner, priority, explained rule-based score, notes, activity timeline, `xmin`). Inquiries from the same email attach to the open lead.
+- **Public forms (Onyx.Web → API only):**
+  - **Pages:** a 3-step project wizard, a contact form that becomes a service, similar-project or CTA inquiry from context, consultation booking with a request fallback, and a signed manage page (cancel, reschedule, `.ics`). Conversion CTAs now link to them; tool CTAs stay unlinked.
+  - **Abuse protection:** honeypot, Strict rate limit, and server-side Turnstile that fails closed. Turnstile is the only third-party origin in the CSP, and only on challenge pages.
+- **Attribution:** consent-aware. First touch and GA client id only with Analytics consent (HttpOnly cookies otherwise deleted). Without consent, only the submitting page's context is kept.
+- **Booking:**
+  - **Configuration:** internal admin-managed availability (time zone default Asia/Riyadh). Nothing preset: closed until configured.
+  - **Integrity:** UTC slots, one transaction with the visitor confirmation (`.ics` + signed link), and a partial unique index plus a slot check against concurrent double booking (409).
+- **Worker:** idempotent `InquirySubmitted` / `BookingConfirmed` / `BookingCancelled` handlers (`processed_events` markers) queue the visitor confirmation in the submission language, internal emails (configured recipients, lead link, no contact details) and `NewLead` / `NewBooking` / `BookingCancelled` notifications. Inquiries never depend on email delivery. Email attachments (calendar files only) are supported by the outbox.
+- **Admin:**
+  - **Screens:** leads (list/filter/search, detail with origin panel, stage, priority, owner, notes, marketing-consent withdrawal, CSV export), inquiries log, bookings, availability.
+  - **Visibility:** own and unassigned leads without `Leads.ViewAll`.
+  - **Audit:** stage, owner, priority, note, consent and export actions are audited without contact details. The export audit records only the row count and filters.
+- **Turnstile on admin sign-in and password reset** (deferred from Stage 3/4): enforced whenever Turnstile is configured. Without keys, sign-in keeps its existing protections so administrators are never locked out. **Owner decision requested:** whether production should refuse to start without Turnstile keys.
+- **Migration** `Stage8LeadsAndBooking` is additive: 10 tables (inquiries, consent_records, leads, lead_notes, lead_activities, booking_settings, availability_rules, availability_exceptions, consultation_bookings, processed_events) and one nullable `email_messages.attachments` jsonb column. No manual edits.
+- **Not included:** retention and data-subject requests (Stage 9), external calendar or meeting-link provider, tools (Phase 2), visual design (Stage 5). Business hours, recipients and the consultation format are owner inputs (§13.4 [OPEN]).
 
 ### Stage 9 — Privacy operations
 - **Build:** retention policies (configurable, no hard-coded periods), enforcement job, data-subject export/delete, audit.

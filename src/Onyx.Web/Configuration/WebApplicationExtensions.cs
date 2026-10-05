@@ -27,6 +27,7 @@ public static class WebApplicationExtensions
         app.UseAuthentication();
         app.UseRequestLocalization();
         app.UseAuthorization();
+        app.UseMiddleware<Attribution.AttributionMiddleware>();
 
         app.MapControllers();
         app.MapDynamicControllerRoute<LocalizedRouteTransformer>($"{{lang:{LanguageRouteConstraint.Name}}}/{{**path}}");

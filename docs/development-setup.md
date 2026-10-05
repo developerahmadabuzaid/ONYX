@@ -163,3 +163,39 @@ In production, run the published API with the same arguments (`dotnet Onyx.API.d
 The password is **not** changed. The account owner signs in with their password and must enrol a new authenticator straight away. The command prints only the user id and counts, never keys, codes, tokens or passwords.
 
 **Before running it:** verify the account owner's identity out of band, and record who authorized the recovery in `--reason`.
+
+## 8. Leads, booking and Turnstile (Stage 8)
+
+**Turnstile (Cloudflare) is the only external service the conversion forms use, and nothing enables it automatically.**
+- **Public forms fail closed.** Without keys, the contact, project and consultation forms say that online submission is unavailable, and the API refuses submissions with 503 `Captcha.Unavailable`.
+- **Admin sign-in and password reset** require a Turnstile token whenever Turnstile is configured. Without keys they keep their existing protections (rate limit, lockout, mandatory 2FA).
+- **Keys:** create a Turnstile widget in the Cloudflare dashboard that allows the site hostnames (add `localhost` for development), then store the keys:
+
+```powershell
+dotnet user-secrets set "Turnstile:SecretKey" "<secret key>" --project src/Onyx.API   # secret: never in appsettings or git
+# The site key is public (it is rendered into the form pages); set it in Onyx.Web's user secrets or environment:
+dotnet user-secrets set "Turnstile:SiteKey" "<site key>" --project src/Onyx.Web
+```
+
+- **What the API checks:** the token is verified server-side against Cloudflare's siteverify endpoint. The provider must report success for this secret; the token must be solved for the form's action (`inquiry`, `booking`, `admin-login`, `password-reset`), on an allowed hostname, within `Turnstile:MaxTokenAgeSeconds` (default 300); and each token is accepted once.
+  - **Allowed hostnames:** `Turnstile:AllowedHostnames` lists them. When it's empty, the hosts of `Site:PublicBaseUrl` and `IdentitySecurity:AdminPortalBaseUrl` are used.
+- **Logging:** the token, the secret and the visitor IP are never logged.
+
+**Business settings (no invented values):**
+
+| App | Setting | Value |
+|---|---|---|
+| Onyx.API + Onyx.Worker | `Leads:DefaultRecipients` | internal notification address(es); empty means inquiries are stored and shown in Admin, but no internal email is sent |
+| Onyx.API + Onyx.Worker | `Leads:RecipientsByType:{InquiryType}` | optional per-type addresses (e.g. `Consultation`) |
+| Onyx.API | `Leads:ConsentVersion` | identifies the form-consent wording; change it whenever that wording changes |
+| Onyx.API | `Leads:ManageLinkHoursAfterSlot` | how long the visitor booking link still serves the calendar file after the slot (default 24) |
+| Onyx.Worker | `IdentitySecurity:AdminPortalBaseUrl` | admin origin for the lead link in internal emails (same value as the API) |
+| Onyx.API + Onyx.Worker | `Site:PublicBaseUrl` | public origin for the visitor booking-management link (https) |
+| Onyx.API | `Turnstile:SecretKey` (secret) | see above |
+| Onyx.Web | `Turnstile:SiteKey` | see above |
+
+- **Consultation booking** is configured in Admin → Availability:
+  - the settings are the business time zone (default Asia/Riyadh), slot length, buffer, minimum notice, horizon, and the on/off switch;
+  - weekly hours and blocked dates are added there too.
+  - Nothing is preset. Online booking stays closed, and visitors get the consultation request form instead, until the hours are entered and booking is enabled.
+- **Emails** are queued by the Worker (visitor confirmations in the submission language; internal emails carry a link to the lead, never the visitor's contact details or message). The visitor booking confirmation, with its `.ics` file and signed manage link, is queued together with the booking. Wording is editable in Admin → Email templates.

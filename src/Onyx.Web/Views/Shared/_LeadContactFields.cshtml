@@ -1,0 +1,58 @@
+@model Onyx.Web.Leads.InquiryFormModel
+@* Contact details, consent and the hidden context shared by every public form. Functional template only (design is later). *@
+@{
+    var countries = new[] { "SA", "JO", "AE", "QA", "KW", "BH", "OM" };
+}
+<fieldset>
+    <legend>@T["Form.ContactDetails"]</legend>
+    <p>
+        <label asp-for="Name">@T["Form.Name"]</label>
+        <input asp-for="Name" autocomplete="name" required maxlength="150">
+        <span asp-validation-for="Name"></span>
+    </p>
+    <p>
+        <label asp-for="Email">@T["Form.Email"]</label>
+        <input asp-for="Email" type="email" autocomplete="email" dir="ltr" required maxlength="254">
+        <span asp-validation-for="Email"></span>
+    </p>
+    <p>
+        <label asp-for="Phone">@T["Form.Phone"] (@T["Form.Optional"])</label>
+        <input asp-for="Phone" type="tel" autocomplete="tel" dir="ltr" maxlength="40">
+        <span asp-validation-for="Phone"></span>
+    </p>
+    <p>
+        <label asp-for="Company">@T["Form.Company"] (@T["Form.Optional"])</label>
+        <input asp-for="Company" autocomplete="organization" maxlength="200">
+        <span asp-validation-for="Company"></span>
+    </p>
+    <p>
+        <label asp-for="Country">@T["Form.Country"] (@T["Form.Optional"])</label>
+        <select asp-for="Country">
+            <option value="">@T["Form.Country.None"]</option>
+            @foreach (var country in countries)
+            {
+                <option value="@country" selected="@(Model.Country == country)">@T["Country." + country]</option>
+            }
+        </select>
+    </p>
+</fieldset>
+<fieldset>
+    <legend>@T["Form.Consent"]</legend>
+    <p>
+        <label><input type="checkbox" name="ContactConsent" value="true" checked="@Model.ContactConsent" required> @T["Form.ContactConsent"]</label>
+        <input type="hidden" name="ContactConsent" value="false">
+        <span asp-validation-for="ContactConsent"></span>
+    </p>
+    <p>
+        <label><input type="checkbox" name="MarketingConsent" value="true" checked="@Model.MarketingConsent"> @T["Form.MarketingConsent"]</label>
+        <input type="hidden" name="MarketingConsent" value="false">
+    </p>
+</fieldset>
+@* Honeypot: hidden from people and assistive technology; bots that fill it are ignored. *@
+<div hidden aria-hidden="true">
+    <label>Website <input type="text" name="Website" value="" tabindex="-1" autocomplete="off"></label>
+</div>
+<input type="hidden" asp-for="ServiceId">
+<input type="hidden" asp-for="ProjectId">
+<input type="hidden" asp-for="CtaId">
+<input type="hidden" asp-for="Context">

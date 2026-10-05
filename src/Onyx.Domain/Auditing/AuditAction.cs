@@ -71,4 +71,13 @@ public enum AuditAction
     ProofItemUnpublished = 63,
     ProofItemDeleted = 64,
     AuthorDeleted = 65,
+    LeadStageChanged = 66,
+    LeadAssigned = 67,
+    LeadPriorityChanged = 68,
+    LeadNoteAdded = 69,
+    LeadsExported = 70,
+    MarketingConsentWithdrawn = 71,
+    BookingStatusChanged = 72,
+    BookingSettingsChanged = 73,
+    AvailabilityChanged = 74,
 }

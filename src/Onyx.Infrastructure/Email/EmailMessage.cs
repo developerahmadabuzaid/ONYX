@@ -64,6 +64,10 @@ public sealed class EmailMessage
 
     public string? CorrelationId { get; private set; }
 
+    /// <summary>Code-generated text attachments (e.g. a booking calendar file); null when there are none.</summary>
+    [SensitiveData]
+    public IReadOnlyList<Application.Email.EmailAttachment>? Attachments { get; private set; }
+
     public static EmailMessage Create(
         DateTimeOffset createdAtUtc,
         string templateKey,
@@ -73,8 +77,10 @@ public sealed class EmailMessage
         string subject,
         string htmlBody,
         string textBody,
-        string? correlationId) => new()
+        string? correlationId,
+        IReadOnlyList<Application.Email.EmailAttachment>? attachments = null) => new()
     {
+        Attachments = attachments is { Count: > 0 } ? attachments : null,
         Id = Guid.CreateVersion7(),
         CreatedAtUtc = createdAtUtc,
         TemplateKey = templateKey,

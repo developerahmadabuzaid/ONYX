@@ -17,7 +17,8 @@ public sealed class OnyxApiFactory(
     string environment,
     string connectionString,
     IReadOnlyDictionary<string, string?>? settings = null,
-    TimeProvider? timeProvider = null) : WebApplicationFactory<Program>
+    TimeProvider? timeProvider = null,
+    Action<IServiceCollection>? configureServices = null) : WebApplicationFactory<Program>
 {
     /// <summary>Points at a closed local port: lets HTTP-pipeline tests run without any database.</summary>
     public const string UnreachableDatabase = "Host=127.0.0.1;Port=1;Database=onyx_unavailable;Username=none;Password=none;Timeout=2";
@@ -53,6 +54,8 @@ public sealed class OnyxApiFactory(
                 services.RemoveAll<TimeProvider>();
                 services.AddSingleton(timeProvider);
             }
+
+            configureServices?.Invoke(services);
         });
     }
 }

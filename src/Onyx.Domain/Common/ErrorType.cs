@@ -8,4 +8,7 @@ public enum ErrorType
     Conflict = 3,
     Unauthorized = 4,
     Forbidden = 5,
+
+    /// <summary>A required dependency (e.g. the anti-abuse verifier) is not configured or not reachable; fail closed.</summary>
+    Unavailable = 6,
 }

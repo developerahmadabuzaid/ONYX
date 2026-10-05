@@ -184,7 +184,7 @@ public sealed partial class EmailProcessor(
     }
 
     private static EmailEnvelope ToEnvelope(EmailMessage message) =>
-        new(message.Id, message.ToAddress, message.ToName, message.Subject, message.HtmlBody, message.TextBody, message.LanguageCode);
+        new(message.Id, message.ToAddress, message.ToName, message.Subject, message.HtmlBody, message.TextBody, message.LanguageCode, message.Attachments);
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Email transport {ProviderKey} unavailable; batch postponed")]
     private static partial void LogProviderUnavailable(ILogger logger, Exception exception, string providerKey);

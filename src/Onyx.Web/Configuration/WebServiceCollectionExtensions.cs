@@ -40,7 +40,16 @@ public static class WebServiceCollectionExtensions
 
         services.AddSingleton<LanguageCatalog>();
         services.AddSingleton<LanguageSuggestion>();
-        services.AddSingleton<LocalizedRouteTable>();
+        services.AddSingleton(_ =>
+        {
+            var routes = new LocalizedRouteTable();
+            foreach (var route in Leads.LeadPages.Routes)
+            {
+                routes.Register(route);
+            }
+
+            return routes;
+        });
         services.AddSingleton<LocalizedRouteTransformer>();
         services.AddScoped<SeoContext>();
         services.AddScoped<ConsentState>();
@@ -117,6 +126,7 @@ public static class WebServiceCollectionExtensions
         services.AddOptions<OnyxApiOptions>().Bind(configuration.GetSection(OnyxApiOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<SiteOptions>().Bind(configuration.GetSection(SiteOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<ConsentOptions>().Bind(configuration.GetSection(ConsentOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddOptions<TurnstileOptions>().Bind(configuration.GetSection(TurnstileOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<DataProtectionSettings>().Bind(configuration.GetSection(DataProtectionSettings.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<WebLocalizationOptions>().Bind(configuration.GetSection(WebLocalizationOptions.SectionName)).ValidateOnStart();
         services.AddOptions<ForwardedHeadersSettings>()
@@ -170,6 +180,8 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<IAdminApiClient, AdminApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminCmsApiClient, AdminCmsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
+        Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
+        Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
 
         static void Configure(IHttpClientBuilder builder)
         {

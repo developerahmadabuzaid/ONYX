@@ -23,6 +23,7 @@ internal sealed class EmailMessageConfiguration : IEntityTypeConfiguration<Email
         builder.Property(message => message.LockedBy).HasMaxLength(EmailMessage.LockedByMaxLength);
         builder.Property(message => message.LastError).HasMaxLength(EmailMessage.LastErrorMaxLength);
         builder.Property(message => message.CorrelationId).HasMaxLength(EmailMessage.CorrelationIdMaxLength);
+        builder.Property(message => message.Attachments!).HasJsonColumn();
 
         builder.HasIndex(message => message.CreatedAtUtc)
             .HasDatabaseName("ix_email_messages_pending")

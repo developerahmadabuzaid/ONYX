@@ -45,8 +45,14 @@ public sealed class AuthService(
     IValidator<ForgotPasswordRequest> forgotValidator,
     IValidator<ResetPasswordRequest> resetValidator,
     IValidator<AcceptInvitationRequest> invitationValidator,
-    IValidator<ChangePasswordRequest> changePasswordValidator) : IAuthService
+    IValidator<ChangePasswordRequest> changePasswordValidator,
+    ICaptchaVerifier captcha,
+    IRequestContext requestContext) : IAuthService
 {
+    /// <summary>Turnstile actions of the admin sign-in and password-reset pages.</summary>
+    public const string LoginCaptchaAction = "admin-login";
+    public const string PasswordResetCaptchaAction = "password-reset";
+
     public const int RecoveryCodeCount = 10;
     private const string AuthenticatorIssuer = "Onyx Vanguard Solutions";
 
@@ -61,6 +67,13 @@ public sealed class AuthService(
         if (await loginValidator.ValidateToErrorAsync(request, cancellationToken).ConfigureAwait(false) is { } invalid)
         {
             return invalid;
+        }
+
+        // Before any account lookup: unverified attempts never reach the password check (or its lockout counter).
+        if (await VerifyCaptchaAsync(request.CaptchaToken, LoginCaptchaAction, cancellationToken).ConfigureAwait(false) is { } refused)
+        {
+            await RecordAndSaveAsync(AuditAction.LoginFailed, null, new { reason = "Captcha" }, cancellationToken).ConfigureAwait(false);
+            return refused;
         }
 
         var user = await users.FindByEmailAsync(request.Email.Trim()).ConfigureAwait(false);
@@ -262,6 +275,11 @@ public sealed class AuthService(
             return Result.Failure(invalid);
         }
 
+        if (await VerifyCaptchaAsync(request.CaptchaToken, PasswordResetCaptchaAction, cancellationToken).ConfigureAwait(false) is { } refused)
+        {
+            return Result.Failure(refused);
+        }
+
         var user = await users.FindByEmailAsync(request.Email.Trim()).ConfigureAwait(false);
         if (user is not { IsActive: true, EmailConfirmed: true })
         {
@@ -447,6 +465,22 @@ public sealed class AuthService(
             challenge => challenge.TokenHash == hash && challenge.Purpose == purpose && challenge.ConsumedAtUtc == null
                 && challenge.ExpiresAtUtc > now && challenge.FailedAttempts < maxAttempts,
             cancellationToken);
+    }
+
+    /// <summary>
+    /// Turnstile on the anonymous admin entry points (deferred here from Stage 3). Enforced whenever Turnstile is configured.
+    /// Without keys, sign-in keeps its existing protections (rate limit, lockout, mandatory 2FA) instead of locking every
+    /// administrator out; public forms, by contrast, fail closed.
+    /// </summary>
+    private async Task<Error?> VerifyCaptchaAsync(string? token, string action, CancellationToken cancellationToken)
+    {
+        if (!captcha.IsConfigured)
+        {
+            return null;
+        }
+
+        var verified = await captcha.VerifyAsync(token, action, requestContext.IpAddress, cancellationToken).ConfigureAwait(false);
+        return verified.IsFailure ? verified.Error : null;
     }
 
     private async Task RecordAndSaveAsync(AuditAction action, Guid? userId, object? details, CancellationToken cancellationToken)

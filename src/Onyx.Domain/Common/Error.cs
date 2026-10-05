@@ -31,6 +31,8 @@ public sealed record Error
 
     public static Error Forbidden(string code, string message) => new(code, message, ErrorType.Forbidden, null);
 
+    public static Error Unavailable(string code, string message) => new(code, message, ErrorType.Unavailable, null);
+
     public static Error Validation(string code, string message, IReadOnlyDictionary<string, string[]>? errors = null) =>
         new(code, message, ErrorType.Validation, errors);
 }

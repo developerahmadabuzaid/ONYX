@@ -9,4 +9,5 @@ public sealed record EmailRequest(
     string LanguageCode,
     string ToAddress,
     string? ToName,
-    IReadOnlyDictionary<string, string> Model);
+    IReadOnlyDictionary<string, string> Model,
+    IReadOnlyList<EmailAttachment>? Attachments = null);

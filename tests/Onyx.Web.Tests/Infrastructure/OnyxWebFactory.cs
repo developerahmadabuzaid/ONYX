@@ -23,6 +23,9 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
 
     public ManualTimeProvider Time { get; } = new(DateTimeOffset.FromUnixTimeSeconds(DateTimeOffset.UtcNow.ToUnixTimeSeconds()));
 
+    /// <summary>Extra configuration, applied when the host is first built. Turnstile has a public test site key by default.</summary>
+    public IDictionary<string, string?> Settings { get; } = new Dictionary<string, string?> { ["Turnstile:SiteKey"] = "test-site-key" };
+
     /// <summary>A browser-like client: https, cookies kept, redirects not followed (so each hop can be asserted).</summary>
     public HttpClient CreateBrowser() => CreateClient(new WebApplicationFactoryClientOptions
     {
@@ -40,6 +43,7 @@ public sealed class OnyxWebFactory : WebApplicationFactory<Program>
             ["Site:PublicBaseUrl"] = PublicBaseUrl,
             ["DataProtection:KeysDirectory"] = _keysDirectory,
         }));
+        builder.ConfigureAppConfiguration((_, configuration) => configuration.AddInMemoryCollection(Settings));
 
         // Provider-specific rule: capture every category at every level, regardless of appsettings filters.
         builder.ConfigureLogging(logging => logging.AddProvider(Logs).AddFilter<CapturingLoggerProvider>(null, LogLevel.Trace));

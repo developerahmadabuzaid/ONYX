@@ -25,7 +25,8 @@ public sealed partial class AccountController(
     IAdminApiClient adminApi,
     AdminSignInService signIn,
     LanguageCatalog languages,
-    IStringLocalizer<SharedResource> localizer) : Controller
+    IStringLocalizer<SharedResource> localizer,
+    Microsoft.Extensions.Options.IOptions<Configuration.TurnstileOptions> turnstile) : Controller
 {
     private const string ChallengeKey = "onyx.challenge";
     private const string EnrollmentKey = "onyx.enrollment";
@@ -34,8 +35,25 @@ public sealed partial class AccountController(
     private const string InvitationKey = "onyx.invite";
     private const string NoticeKey = "onyx.notice";
 
+    /// <summary>The Turnstile site key for the sign-in and password-reset pages (the API verifies the token when configured).</summary>
+    public override void OnActionExecuting(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext context)
+    {
+        ViewData["TurnstileSiteKey"] = turnstile.Value.IsConfigured ? turnstile.Value.SiteKey : null;
+        base.OnActionExecuting(context);
+    }
+
+    private string? CaptchaToken() => Request.HasFormContentType ? Request.Form[Leads.LeadFormMapper.TurnstileField].ToString() : null;
+
+    private static string? CaptchaMessage(Onyx.Contracts.Common.ApiProblem? problem) => problem?.Code switch
+    {
+        "Captcha.Failed" => "Form.Error.Captcha",
+        "Captcha.Unavailable" => "Form.Error.Unavailable",
+        _ => null,
+    };
+
     [HttpGet("login")]
     [AllowAnonymous]
+    [AllowsTurnstile]
     public IActionResult Login(string? returnUrl)
     {
         if (User.Identity?.IsAuthenticated == true)
@@ -57,6 +75,7 @@ public sealed partial class AccountController(
 
     [HttpPost("login")]
     [AllowAnonymous]
+    [AllowsTurnstile]
     public async Task<IActionResult> Login(LoginModel model, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -66,10 +85,10 @@ public sealed partial class AccountController(
             return View(model);
         }
 
-        var result = await authApi.LoginAsync(new LoginRequest(model.Email, model.Password), cancellationToken);
+        var result = await authApi.LoginAsync(new LoginRequest(model.Email, model.Password, CaptchaToken()), cancellationToken);
         if (!result.IsSuccess || result.Value is null)
         {
-            ModelState.AddModelError(string.Empty, localizer[IsCredentialFailure(result.StatusCode) ? "Login.Invalid" : "Login.Unavailable"]);
+            ModelState.AddModelError(string.Empty, localizer[CaptchaMessage(result.Problem) ?? (IsCredentialFailure(result.StatusCode) ? "Login.Invalid" : "Login.Unavailable")]);
             return View(new LoginModel { Email = model.Email });
         }
 
@@ -207,10 +226,12 @@ public sealed partial class AccountController(
 
     [HttpGet("forgot-password")]
     [AllowAnonymous]
+    [AllowsTurnstile]
     public IActionResult ForgotPassword() => View(new ForgotPasswordModel());
 
     [HttpPost("forgot-password")]
     [AllowAnonymous]
+    [AllowsTurnstile]
     public async Task<IActionResult> ForgotPassword(ForgotPasswordModel model, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(model);
@@ -219,10 +240,10 @@ public sealed partial class AccountController(
             return View(model);
         }
 
-        var result = await authApi.ForgotPasswordAsync(new ForgotPasswordRequest(model.Email), cancellationToken);
-        if (result.IsUnavailable)
+        var result = await authApi.ForgotPasswordAsync(new ForgotPasswordRequest(model.Email, CaptchaToken()), cancellationToken);
+        if (result.IsUnavailable || CaptchaMessage(result.Problem) is not null)
         {
-            ModelState.AddModelError(string.Empty, localizer["Login.Unavailable"]);
+            ModelState.AddModelError(string.Empty, localizer[CaptchaMessage(result.Problem) ?? "Login.Unavailable"]);
             return View(model);
         }
 

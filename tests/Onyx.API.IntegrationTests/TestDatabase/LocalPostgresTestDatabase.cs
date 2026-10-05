@@ -107,9 +107,15 @@ public sealed class LocalPostgresTestDatabase : ITestDatabase
         }
     }
 
+    /// <summary>
+    /// CREATE/DROP DATABASE wait for an immediate checkpoint; late in a full run (many dirty buffers) that can exceed Npgsql's
+    /// default 30-second command timeout, so these administrative statements get a longer one.
+    /// </summary>
+    private const int DatabaseCommandTimeoutSeconds = 180;
+
     private static async Task ExecuteAsync(NpgsqlConnection connection, string sql, CancellationToken cancellationToken)
     {
-        await using var command = new NpgsqlCommand(sql, connection);
+        await using var command = new NpgsqlCommand(sql, connection) { CommandTimeout = DatabaseCommandTimeoutSeconds };
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 }

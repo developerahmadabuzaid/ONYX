@@ -17,4 +17,16 @@ public sealed class ConcurrencyConflictException : Exception
         : base(message, innerException)
     {
     }
+
+    public ConcurrencyConflictException(string message, string conflictCode, Exception innerException)
+        : base(message, innerException)
+    {
+        ConflictCode = conflictCode;
+    }
+
+    /// <summary>
+    /// Set when a database uniqueness rule (rather than a row version) rejected the change, so the service can return its own
+    /// error (e.g. a slot booked by a concurrent request).
+    /// </summary>
+    public string? ConflictCode { get; }
 }

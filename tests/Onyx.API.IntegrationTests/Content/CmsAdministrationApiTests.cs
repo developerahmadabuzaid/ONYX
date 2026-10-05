@@ -12,6 +12,7 @@ using Onyx.Contracts.Intelligence;
 using Onyx.Contracts.Knowledge;
 using Onyx.Contracts.Media;
 using Onyx.Contracts.Messaging;
+using Onyx.Infrastructure.Email.Templates;
 
 namespace Onyx.API.IntegrationTests.Content;
 
@@ -173,7 +174,7 @@ public sealed class CmsAdministrationApiTests(PostgresFixture fixture) : Content
         Fixture.RequireDatabase();
         var (_, owner) = await SignInSuperAdminAsync();
         var templates = await ReadAsync<List<EmailTemplateResponse>>(await owner.GetAsync("/api/v1/admin/email-templates", Token));
-        var reset = templates.First(template => template.RequiredPlaceholders.Count > 0 && template.HasAction);
+        var reset = templates.Single(template => template.Key == PasswordResetEmailTemplate.TemplateKey);
         var required = reset.RequiredPlaceholders.First();
         var path = $"/api/v1/admin/email-templates/{reset.Key}/en";
 

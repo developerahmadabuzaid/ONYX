@@ -198,7 +198,7 @@ public sealed class PublicContentBuilder(
     private static PublicCtaResponse ToCta(CallToAction cta, string languageCode)
     {
         var text = cta.Texts.First(entry => entry.LanguageCode == languageCode);
-        return new PublicCtaResponse(cta.ActionType.ToString(), text.Text, text.Secondary, cta.ActionType == CtaActionType.Url ? cta.TargetUrl : null);
+        return new PublicCtaResponse(cta.ActionType.ToString(), text.Text, text.Secondary, cta.ActionType == CtaActionType.Url ? cta.TargetUrl : null, cta.Id);
     }
 
     private static PublicBlockResponse? MapBlock(

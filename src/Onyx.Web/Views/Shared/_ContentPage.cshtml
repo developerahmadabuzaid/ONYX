@@ -80,7 +80,7 @@
                 <partial name="_ContentImage" model="(Model, block.Image, false)" />
                 break;
             case "CallToAction" when block.Cta is not null:
-                <partial name="_ContentCta" model="block.Cta" />
+                <partial name="_ContentCta" model="(block.Cta, content)" />
                 break;
         }
     }
@@ -97,7 +97,7 @@
     }
     @if (content.Cta is not null)
     {
-        <partial name="_ContentCta" model="content.Cta" />
+        <partial name="_ContentCta" model="(content.Cta, content)" />
     }
     @if (content.Proof is { } proof)
     {

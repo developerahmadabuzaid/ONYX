@@ -6,7 +6,8 @@ using Onyx.Infrastructure.Persistence;
 namespace Onyx.Infrastructure.BackgroundJobs;
 
 /// <summary>
-/// Housekeeping for operational tables that hold no personal data: delivered outbox messages and old job-run history.
+/// Housekeeping for operational tables that hold no personal data: delivered outbox messages, their processed-event markers
+/// and old job-run history.
 /// Dead-lettered messages are kept for investigation. Personal-data retention (emails, leads…) is handled by retention policies.
 /// </summary>
 public sealed class OperationalCleanupJob(ApplicationDbContext dbContext, IOptions<WorkerOptions> options, TimeProvider timeProvider) : IScheduledJob
@@ -33,6 +34,12 @@ public sealed class OperationalCleanupJob(ApplicationDbContext dbContext, IOptio
             .ExecuteDeleteAsync(cancellationToken)
             .ConfigureAwait(false);
 
-        return JobOutcome.Succeeded($"Removed {outboxRemoved} delivered outbox messages and {runsRemoved} job runs.");
+        // Markers only guard against redelivery; once the delivered outbox message is gone it cannot be redelivered.
+        var markersRemoved = await dbContext.ProcessedEvents
+            .Where(processed => processed.ProcessedAtUtc < outboxCutoff)
+            .ExecuteDeleteAsync(cancellationToken)
+            .ConfigureAwait(false);
+
+        return JobOutcome.Succeeded($"Removed {outboxRemoved} delivered outbox messages, {markersRemoved} processed-event markers and {runsRemoved} job runs.");
     }
 }
