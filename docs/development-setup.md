@@ -220,3 +220,10 @@ Erasure cannot be undone. Data in backups ages out with the backup retention (ar
 - **Enabling:** the daily Worker job (`retention-enforcement`, 02:30) acts only on categories saved **enabled with a period**.
 - **Job sizing:** `Privacy:RetentionBatchSize` (default 200) and `Privacy:RetentionMaxBatchesPerRun` (default 50) bound each run. Both are technical limits, not retention periods.
 - **Results:** each run is recorded as a job run and audited per category (counts only).
+
+## 10. Site search (Stage 10)
+
+- **Server requirements:** PostgreSQL 17 or later, with the database created as in §2 (builtin `C.UTF-8` locale, UTF8). The built-in `arabic`, `english` and `simple` text-search configurations ship with PostgreSQL. The `SiteSearch` migration creates the `pg_trgm` extension. It is a trusted extension, so the database owner (`onyx_owner`) can create it without superuser rights. The search integration tests verify all of this on the server they run against.
+- **Filling the index:** publishing, unpublishing and URL changes re-index pages through the Worker's outbox. The `search-index-reconcile` job (every 30 minutes) builds the index the first time and repairs anything missed. On a fresh database, run the Worker once, or wait for the job, before expecting results.
+- **Rate limit:** `RateLimiting:Search:PermitLimit` / `WindowSeconds` (default 30 per 60 seconds per client IP) in Onyx.API settings.
+- **Privacy:** search queries are never stored. Request logs record the path only, and Onyx.Web's outbound HttpClient logging stays at `Warning`. Keep it there, because lower levels log full request URIs, including the search text.

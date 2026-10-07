@@ -48,6 +48,8 @@ public static class WebServiceCollectionExtensions
                 routes.Register(route);
             }
 
+            routes.Register(Search.SearchPages.Route);
+
             return routes;
         });
         services.AddSingleton<LocalizedRouteTransformer>();
@@ -184,6 +186,7 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<IAdminApiClient, AdminApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminCmsApiClient, AdminCmsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
+        Configure(services.AddHttpClient<ISearchApiClient, SearchApiClient>());
         Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
         Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminPrivacyApiClient, AdminPrivacyApiClient>().AddHttpMessageHandler<AccessTokenHandler>());

@@ -1,0 +1,43 @@
+@using System.Globalization
+@using Onyx.Web.Search
+@model SearchPageModel
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+<h1>@T["Search.Title"]</h1>
+<partial name="_SearchForm" model="Model.Query" />
+@if (Model.RateLimited)
+{
+    <p role="alert">@T["Form.Error.TooMany"]</p>
+}
+else if (Model.Results is { } results)
+{
+    if (results.Total == 0)
+    {
+        <p role="status">@T["Search.NoResults"]</p>
+    }
+    else
+    {
+        <p role="status">@string.Format(CultureInfo.InvariantCulture, T["Search.ResultCount"].Value, results.Total)</p>
+        foreach (var group in results.Groups)
+        {
+            <section>
+                <h2>@T["SearchGroup." + group.Group] <span>(@group.Total)</span></h2>
+                <ul>
+                    @foreach (var item in group.Items)
+                    {
+                        <li>
+                            <a href="@SitePaths.Encode(item.Path)">@item.Title</a>
+                            @if (!string.IsNullOrEmpty(item.Summary))
+                            {
+                                <p>@item.Summary</p>
+                            }
+                        </li>
+                    }
+                </ul>
+            </section>
+        }
+    }
+}
+else if (Model.Query.Length > 0)
+{
+    <p role="status">@T["Search.NoResults"]</p>
+}

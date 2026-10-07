@@ -713,6 +713,39 @@ Privacy operations are run by staff (admin-operated). There is no public, anonym
 - the identity-verification standard operators must apply;
 - backup retention versus erasure (§26).
 
+## 24.5 Site search (Stage 10, as built)
+
+Implements §18 for the content that exists today. News joins in Stage 11.
+
+- **Resources:** `GET /api/v1/search?language={ar|en}&q=` is anonymous and rate limited per client IP (`RateLimiting:Search`, default 30 per minute). Responses are `no-store`. The Web page is `/ar/بحث` / `/en/search`: GET only, `noindex, follow` (even after launch), `no-store`. A search form sits in the public header, and `بحث` is a reserved Arabic route segment.
+- **Corpus (`search_documents`):** one row per content item and language. It holds the display title, summary and path, plus normalized title, summary, body and names columns. Two stored generated vectors are built from them:
+  - `search_vector`: title A, summary B, body C, using the `arabic` or `english` configuration by row language;
+  - `names_vector`: `simple` over title + slug words.
+  
+  GIN indexes cover both vectors, a GIN `gin_trgm_ops` index covers the normalized title, and the row is unique per (content item, language).
+- **What is indexed:** only what the public page shows (title, summary, block text, list items, captions, FAQs).
+  - SEO keywords, internal notes, competitor and planning data are **never** indexed.
+  - A language is indexed only when it would appear in the sitemap: the item is live, has a page, the live revision has that language, the language is `index` with no external canonical, and it has a current path.
+  - Drafts, unverified proof (it can't go live), offline, archived, `noindex` and canonicalized pages are therefore never returned.
+- **Keeping it current:**
+  - The Worker handles `ContentPublicationChanged` and `PublicUrlsChanged` outbox events (re-index the item and items under changed paths).
+  - The `search-index-reconcile` job (`every:30m`, bounded at 500 items per run, idempotent) fills the index the first time and heals missed events.
+  - The body is capped at 100,000 characters.
+- **Normalization:** `SearchTextNormalizer` (the "ArabicTextNormalizer" of §18) applies the §18 rules at index and query time.
+  - **Stemmer workaround:** PostgreSQL's Snowball Arabic stemmer keeps a conjunction before the article whole (`والذكاء`). After stripping the article it also stops removing a final ه (normalized ة), so `الموسسه` and `موسسه` stem differently. The index therefore also stores each word's bare form (conjunction and article removed when four or more letters remain). Queries use the bare form, so a word matches with or without و/ف/ال.
+- **Query:**
+  - The query is trimmed and capped at 100 characters. Fewer than 2 meaningful characters returns nothing without a database call.
+  - Only double-quoted phrases and leading `-` exclusions survive as syntax. Everything is passed as bound parameters to `websearch_to_tsquery`.
+  - Matching uses four paths: the stemmed vector; the names vector (exact names and brands); a `:*` prefix on the last plain word; and `word_similarity` ≥ 0.4 on the normalized title (typos).
+  - An excluded word rules a page out on every path.
+  - Score = `ts_rank_cd(…, 32)` × group boost + 0.5 for a name match + 0.3 × title similarity.
+  - Groups and boosts: Services 1.3 (pillars, services), Industries 1.2, Work 1.15 (projects, case studies), Insights 1.0 (insights, topics), Glossary 0.95, Integrations 0.95, Pages 0.9. At most 5 results per group, with the group total.
+  - Freshness applies to news only, so it arrives with Stage 11.
+- **Performance note:** `word_similarity` is evaluated per row (the trigram index serves `%`-style operators only). This is fine for a site-sized corpus. If the corpus grows large, switch the typo path to the `<%` operator.
+- **Server requirements (verified by tests):** PostgreSQL ≥ 17; databases created with `LOCALE_PROVIDER builtin`, `BUILTIN_LOCALE 'C.UTF-8'`, UTF8; the built-in `arabic`, `english` and `simple` configurations; `pg_trgm`, a trusted extension, created by the migration. If a host ever lacked the `arabic` configuration, the documented fallback is `simple` over the normalized text, with no stemming. That would be a code change; nothing switches silently.
+- **Privacy:** **no new personal data.** Queries are never stored and never logged. The request log records path and status only, not the query string. Search documents hold published public content only, so Stage 9 export, erasure and retention are unaffected.
+- **Open (non-blocking):** confirm `pg_trgm` and the `arabic` configuration on the production host. Decide whether aggregate search-term reporting (§18 "logged only in aggregate") is wanted; it is not built.
+
 ## 25. Security addendum (Rev 3)
 
 - **Turnstile** on contact, start-project, consultation request/booking, tool runs, report requests, and any other abuse-sensitive anonymous action. The API verifies every token server-side (secret in the secret store; expected hostname/action checked; single use). Client-side checks are never trusted. On failure → 400 ProblemDetails, logged without PII.

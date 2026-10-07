@@ -671,4 +671,16 @@
   <data name="RetentionCategoryHint.AuditLogs" xml:space="preserve"><value>Anonymize removes user names and IP addresses; delete removes the entries.</value></data>
   <data name="RetentionCategoryHint.DataSubjectRequests" xml:space="preserve"><value>Completed or rejected requests, measured from when they were closed.</value></data>
   <data name="LeadActivity.Erased" xml:space="preserve"><value>Personal data erased</value></data>
+  <data name="Search.Title" xml:space="preserve"><value>Search</value></data>
+  <data name="Search.Label" xml:space="preserve"><value>Search the site</value></data>
+  <data name="Search.Submit" xml:space="preserve"><value>Search</value></data>
+  <data name="Search.NoResults" xml:space="preserve"><value>No published pages match your search.</value></data>
+  <data name="Search.ResultCount" xml:space="preserve"><value>{0} result(s)</value></data>
+  <data name="SearchGroup.Services" xml:space="preserve"><value>Services</value></data>
+  <data name="SearchGroup.Industries" xml:space="preserve"><value>Industries</value></data>
+  <data name="SearchGroup.Work" xml:space="preserve"><value>Our work</value></data>
+  <data name="SearchGroup.Insights" xml:space="preserve"><value>Insights</value></data>
+  <data name="SearchGroup.Glossary" xml:space="preserve"><value>Glossary</value></data>
+  <data name="SearchGroup.Integrations" xml:space="preserve"><value>Integrations</value></data>
+  <data name="SearchGroup.Pages" xml:space="preserve"><value>Pages</value></data>
 </root>

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
+using NpgsqlTypes;
 using Onyx.Infrastructure.Persistence;
 
 #nullable disable
@@ -20,6 +21,7 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                 .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
+            NpgsqlModelBuilderExtensions.HasPostgresExtension(modelBuilder, "pg_trgm");
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -3815,6 +3817,125 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasDatabaseName("ix_processed_events_key");
 
                     b.ToTable("processed_events", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Infrastructure.Search.SearchDocument", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("BodyNormalized")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("body_normalized");
+
+                    b.Property<Guid>("ContentItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("content_item_id");
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("content_type");
+
+                    b.Property<string>("GroupName")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)")
+                        .HasColumnName("group_name");
+
+                    b.Property<DateTimeOffset>("IndexedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("indexed_at_utc");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<Guid>("LiveRevisionId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("live_revision_id");
+
+                    b.Property<string>("NamesNormalized")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("names_normalized");
+
+                    b.Property<NpgsqlTsVector>("NamesVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("names_vector")
+                        .HasComputedColumnSql("to_tsvector('simple'::regconfig, names_normalized)", true);
+
+                    b.Property<string>("Path")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("path");
+
+                    b.Property<DateTimeOffset?>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc");
+
+                    b.Property<NpgsqlTsVector>("SearchVector")
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("tsvector")
+                        .HasColumnName("search_vector")
+                        .HasComputedColumnSql("setweight(to_tsvector(CASE WHEN language_code = 'ar' THEN 'arabic'::regconfig ELSE 'english'::regconfig END, title_normalized), 'A') || setweight(to_tsvector(CASE WHEN language_code = 'ar' THEN 'arabic'::regconfig ELSE 'english'::regconfig END, summary_normalized), 'B') || setweight(to_tsvector(CASE WHEN language_code = 'ar' THEN 'arabic'::regconfig ELSE 'english'::regconfig END, body_normalized), 'C')", true);
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("summary");
+
+                    b.Property<string>("SummaryNormalized")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("summary_normalized");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("title");
+
+                    b.Property<string>("TitleNormalized")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("title_normalized");
+
+                    b.HasKey("Id")
+                        .HasName("pk_search_documents");
+
+                    b.HasIndex("NamesVector")
+                        .HasDatabaseName("ix_search_documents_names_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("NamesVector"), "gin");
+
+                    b.HasIndex("Path")
+                        .HasDatabaseName("ix_search_documents_path");
+
+                    b.HasIndex("SearchVector")
+                        .HasDatabaseName("ix_search_documents_search_vector");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("SearchVector"), "gin");
+
+                    b.HasIndex("TitleNormalized")
+                        .HasDatabaseName("ix_search_documents_title_normalized");
+
+                    NpgsqlIndexBuilderExtensions.HasMethod(b.HasIndex("TitleNormalized"), "gin");
+                    NpgsqlIndexBuilderExtensions.HasOperators(b.HasIndex("TitleNormalized"), new[] { "gin_trgm_ops" });
+
+                    b.HasIndex("ContentItemId", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_search_documents_content_item_id_language_code");
+
+                    b.ToTable("search_documents", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>

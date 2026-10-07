@@ -29,7 +29,8 @@
 | 7 Work, proof, insights, glossary, integrations | **done** (see Stage 7 notes). Awaiting owner review before Stage 8. |
 | 8 Leads, booking, Turnstile, attribution | **done**: 775/775 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `Stage8LeadsAndBooking` (additive). Awaiting owner review before Stage 9. |
 | 9 Privacy operations | **done**: 804/804 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `PrivacyOperations` (additive). Awaiting owner review before Stage 10. |
-| 10–12, 5, 13 | awaiting approval (in execution order) |
+| 10 Site search (PostgreSQL) | **done**: 851/851 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `SiteSearch` (additive). Awaiting owner review before Stage 11. |
+| 11–12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -229,6 +230,19 @@
   - `websearch_to_tsquery` querying with bound parameters; ranking (`ts_rank_cd` × type boost × freshness + trigram);
   - grouped results page (`noindex`), rate limits, length caps.
 - **Verify:** the `arabic` configuration and ICU locale on the server (fallback `simple` documented if absent); Arabic queries robust to diacritics/alef/ta marbuta/alef maqsura/hamza variants and Arabic-Indic digits; English stemming; exact brand names; typo tolerance; unpublished never returned; SQL-injection attempts treated as text.
+
+**Stage 10 delivered notes** (architecture.md §24.5 has the full as-built description):
+- **Search:**
+  - Public `GET /api/v1/search` (anonymous, own rate limit, 100-character cap, no-store) and the Web page `/ar/بحث` · `/en/search` (`noindex, follow`, no-store), with a header search form.
+  - Results are grouped as Services, Industries, Work, Insights, Glossary, Integrations, Pages, with at most 5 per group.
+- **Index:**
+  - `search_documents` holds only what public pages show, with the same eligibility as the sitemap. Drafts, unverified proof, offline, `noindex` and canonicalized pages are never indexed; neither are SEO keywords or internal notes.
+  - It is kept current by outbox events plus the `search-index-reconcile` Worker job (every 30 minutes, bounded, idempotent).
+- **Matching:** stemmed `arabic`/`english` vector (A/B/C), `simple` names vector, last-word prefix, and trigram title similarity. Phrases and `-` exclusions are supported; everything is a bound parameter.
+- **Arabic stemmer workaround:** PostgreSQL's Arabic stemmer treats words with a conjunction or article inconsistently, so bare word forms are indexed as well and used in queries (§24.5).
+- **Deferred:** freshness ranking and the News group arrive with Stage 11. Aggregate search-term reporting is not built (no queries are stored).
+- **No new personal data:** queries are neither stored nor logged.
+- **Migration `SiteSearch`** is additive: the `pg_trgm` extension and one table with 2 generated vector columns and 5 indexes.
 
 ### Stage 11 — News Hub
 - **Build:** SafeOutboundHttp; sources/items; feed reading (**RSS library approval requested then**); normalize, dedupe, classify; `ITextGenerationService` (inactive → items Held); Admin news/sources; public news (items `noindex` by default); homepage section.

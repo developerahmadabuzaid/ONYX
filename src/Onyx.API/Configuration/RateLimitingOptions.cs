@@ -13,6 +13,10 @@ public sealed class RateLimitingOptions
     /// <summary>Named policy <see cref="RateLimitPolicies.Strict"/> for authentication, password reset, public forms and tools.</summary>
     [Required]
     public FixedWindowSettings Strict { get; set; } = new() { PermitLimit = 10, WindowSeconds = 60 };
+
+    /// <summary>Named policy <see cref="RateLimitPolicies.Search"/> for public site search (per client IP).</summary>
+    [Required]
+    public FixedWindowSettings Search { get; set; } = new() { PermitLimit = 30, WindowSeconds = 60 };
 }
 
 public sealed class FixedWindowSettings
@@ -27,4 +31,6 @@ public sealed class FixedWindowSettings
 public static class RateLimitPolicies
 {
     public const string Strict = "strict";
+
+    public const string Search = "search";
 }

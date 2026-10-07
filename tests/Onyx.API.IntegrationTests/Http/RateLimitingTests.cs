@@ -42,6 +42,29 @@ public sealed class RateLimitingTests
     }
 
     [Fact]
+    public async Task Site_search_has_its_own_per_client_limit()
+    {
+        await using var factory = new OnyxApiFactory("Testing", OnyxApiFactory.UnreachableDatabase, new Dictionary<string, string?>
+        {
+            ["RateLimiting:Global:PermitLimit"] = "100",
+            ["RateLimiting:Search:PermitLimit"] = "2",
+            ["RateLimiting:Search:WindowSeconds"] = "60",
+        });
+        using var client = factory.CreateClient();
+
+        // A one-letter query is answered without touching the database.
+        var search = new Uri("/api/v1/search?language=en&q=a", UriKind.Relative);
+        using var first = await client.GetAsync(search, TestContext.Current.CancellationToken);
+        using var second = await client.GetAsync(search, TestContext.Current.CancellationToken);
+        using var third = await client.GetAsync(search, TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        Assert.Equal(HttpStatusCode.TooManyRequests, third.StatusCode);
+        Assert.NotNull(third.Headers.RetryAfter);
+    }
+
+    [Fact]
     public async Task Health_endpoints_are_not_rate_limited()
     {
         await using var factory = CreateFactory(globalLimit: 1, strictLimit: 1);

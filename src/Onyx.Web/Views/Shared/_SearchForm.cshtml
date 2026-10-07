@@ -1,0 +1,15 @@
+@using System.Globalization
+@using Onyx.Web.Search
+@model string?
+@inject LocalizedRouteTable Routes
+@* GET form (no state change, no antiforgery needed). The query is length-capped here and again by the API. *@
+@{
+    var action = Routes.PathFor(SearchPages.Search, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+}
+@if (action is not null)
+{
+    <form method="get" action="@action" role="search">
+        <label>@T["Search.Label"] <input type="search" name="q" value="@Model" maxlength="@SearchPages.MaxQueryLength" dir="auto"></label>
+        <button type="submit">@T["Search.Submit"]</button>
+    </form>
+}

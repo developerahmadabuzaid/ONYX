@@ -26,7 +26,7 @@ public sealed class JobSchedulingTests(PostgresFixture fixture) : WorkerDatabase
             second.Get<JobScheduler>().SynchronizeDefinitionsAsync(Token));
 
         var definitions = await ReadAsync(db => db.JobDefinitions);
-        Assert.Equal(4, definitions.Count);
+        Assert.Equal(5, definitions.Count);
         var testJob = definitions.Single(job => job.Name == TestJob.JobName);
         Assert.Equal("every:10m", testJob.Schedule);
         Assert.True(testJob.IsEnabled);
@@ -34,6 +34,7 @@ public sealed class JobSchedulingTests(PostgresFixture fixture) : WorkerDatabase
         Assert.Contains(definitions, job => job.Name == OperationalCleanupJob.JobName && job.Schedule == "daily@03:00");
         Assert.Contains(definitions, job => job.Name == ContentSchedulingJob.JobName && job.Schedule == "every:1m");
         Assert.Contains(definitions, job => job.Name == RetentionEnforcementJob.JobName && job.Schedule == "daily@02:30");
+        Assert.Contains(definitions, job => job.Name == SearchIndexReconcileJob.JobName && job.Schedule == "every:30m");
     }
 
     [Fact]

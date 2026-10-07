@@ -125,6 +125,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<Domain.Privacy.RetentionPolicy> RetentionPolicies => Set<Domain.Privacy.RetentionPolicy>();
 
+    public DbSet<Search.SearchDocument> SearchDocuments => Set<Search.SearchDocument>();
+
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
@@ -180,6 +182,8 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     {
         // Identity's own model first, then Onyx configurations, then conventions (snake_case) last.
         base.OnModelCreating(builder);
+        // Trigram similarity for site search (typo tolerance, partial words); a trusted extension the database owner can create.
+        builder.HasPostgresExtension("pg_trgm");
         builder.ApplyCoreInfrastructureModel();
         builder.ApplyConfigurationsFromAssembly(
             typeof(ApplicationDbContext).Assembly,

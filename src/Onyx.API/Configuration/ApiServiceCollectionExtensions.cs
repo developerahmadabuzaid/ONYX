@@ -83,7 +83,7 @@ public static class ApiServiceCollectionExtensions
 
         services.AddOptions<RateLimitingOptions>()
             .BindConfiguration(RateLimitingOptions.SectionName)
-            .Validate(options => IsValid(options.Global) && IsValid(options.Strict), "RateLimiting windows and permit limits must be positive.")
+            .Validate(options => IsValid(options.Global) && IsValid(options.Strict) && IsValid(options.Search), "RateLimiting windows and permit limits must be positive.")
             .ValidateOnStart();
 
         services.AddOptions<ForwardedHeadersSettings>()
@@ -126,6 +126,12 @@ public static class ApiServiceCollectionExtensions
             options.AddPolicy(RateLimitPolicies.Strict, context =>
             {
                 var window = context.RequestServices.GetRequiredService<IOptions<RateLimitingOptions>>().Value.Strict;
+                return RateLimitPartition.GetFixedWindowLimiter(ClientPartitionKey(context), _ => ToLimiterOptions(window));
+            });
+
+            options.AddPolicy(RateLimitPolicies.Search, context =>
+            {
+                var window = context.RequestServices.GetRequiredService<IOptions<RateLimitingOptions>>().Value.Search;
                 return RateLimitPartition.GetFixedWindowLimiter(ClientPartitionKey(context), _ => ToLimiterOptions(window));
             });
 

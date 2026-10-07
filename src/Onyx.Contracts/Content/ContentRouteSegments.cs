@@ -81,6 +81,9 @@ public static class ContentRouteSegments
 
         // Stage 8 conversion pages (Leads.LeadRouteSegments).
         "start-a-project", "book-a-consultation", "contact", "manage-booking", "ابدأ-مشروعك", "احجز-استشارة", "تواصل-معنا", "إدارة-الحجز",
+
+        // Stage 10 site search ("search" is reserved above).
+        "بحث",
     };
 
     private static Dictionary<string, string> Join(IReadOnlyDictionary<string, string> first, IReadOnlyDictionary<string, string> second) =>

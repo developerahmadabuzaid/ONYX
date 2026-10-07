@@ -23,6 +23,8 @@ public static class DependencyInjection
         AddContent(services);
         AddLeads(services);
         AddPrivacy(services);
+        services.AddScoped<Search.SearchIndexer>();
+        services.AddScoped<Search.SiteSearchQueryService>();
         services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
 
         AddDomainEventHandlers(services, assembly);

@@ -87,6 +87,8 @@ public static class DependencyInjection
         services.AddScoped<Application.Privacy.IDataSubjectRequestRepository, DataSubjectRequestRepository>();
         services.AddScoped<Application.Privacy.IRetentionPolicyRepository, RetentionPolicyRepository>();
         services.AddScoped<Application.Privacy.IPersonalDataStore, Privacy.PersonalDataStore>();
+        services.AddScoped<Application.Search.ISearchDocumentRepository, Search.SearchDocumentRepository>();
+        services.AddScoped<Application.Search.ISiteSearchService, Search.PostgresSiteSearchService>();
 
         services.AddSingleton<IEmailTemplate, ProviderTestEmailTemplate>();
         services.AddScoped<IEmailTemplateRenderer, EmailTemplateRenderer>();
