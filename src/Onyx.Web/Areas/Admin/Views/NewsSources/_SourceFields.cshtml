@@ -1,0 +1,40 @@
+@using Onyx.Contracts.News
+@model NewsSourceResponse?
+@{
+    var categories = ViewData["Categories"] as IReadOnlyList<NewsCategoryResponse>;
+}
+<label>@T["NewsSourceAdmin.Name"] <input name="Name" value="@Model?.Name" maxlength="150" required dir="auto"></label>
+<label>@T["NewsSourceAdmin.Homepage"] <input type="url" name="HomepageUrl" value="@Model?.HomepageUrl" maxlength="2000" required dir="ltr" placeholder="https://"></label>
+<label>@T["NewsSourceAdmin.FeedUrl"] <input type="url" name="FeedUrl" value="@Model?.FeedUrl" maxlength="2000" required dir="ltr" placeholder="https://" autocomplete="off"></label>
+<label>@T["NewsSourceAdmin.Format"]
+    <select name="FeedFormat">
+        @foreach (var format in new[] { "Rss", "Atom" })
+        {
+            <option value="@format" selected="@(Model?.FeedFormat == format)">@format</option>
+        }
+    </select>
+</label>
+<label>@T["NewsSourceAdmin.Language"]
+    <select name="LanguageCode">
+        <option value="ar" selected="@(Model?.LanguageCode == "ar")">العربية</option>
+        <option value="en" selected="@(Model?.LanguageCode == "en")">English</option>
+    </select>
+</label>
+<label>@T["NewsSourceAdmin.DefaultCategory"]
+    @if (categories is not null)
+    {
+        <select name="DefaultCategoryId">
+            @foreach (var category in categories)
+            {
+                <option value="@category.Id" selected="@(category.Id == Model?.DefaultCategoryId)">@(category.Translations.FirstOrDefault(t => t.LanguageCode == "en")?.Name ?? category.Key)</option>
+            }
+        </select>
+    }
+    else
+    {
+        <input name="DefaultCategoryId" value="@Model?.DefaultCategoryId" required dir="ltr">
+    }
+</label>
+<label>@T["NewsSourceAdmin.Interval"] <input type="number" name="FetchIntervalMinutes" value="@(Model?.FetchIntervalMinutes ?? 60)" min="15" max="1440" required></label>
+<label>@T["NewsSourceAdmin.LicensingNote"] <textarea name="LicensingNote" rows="3" maxlength="2000">@Model?.LicensingNote</textarea></label>
+<label><input type="checkbox" name="AutoPublish" value="true" checked="@(Model?.AutoPublish == true)"> @T["NewsSourceAdmin.AutoPublish"]</label>

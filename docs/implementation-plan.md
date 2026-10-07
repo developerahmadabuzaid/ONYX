@@ -30,7 +30,8 @@
 | 8 Leads, booking, Turnstile, attribution | **done**: 775/775 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `Stage8LeadsAndBooking` (additive). Awaiting owner review before Stage 9. |
 | 9 Privacy operations | **done**: 804/804 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `PrivacyOperations` (additive). Awaiting owner review before Stage 10. |
 | 10 Site search (PostgreSQL) | **done**: 851/851 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `SiteSearch` (additive). Awaiting owner review before Stage 11. |
-| 11–12, 5, 13 | awaiting approval (in execution order) |
+| 11 News Hub | **done**: 1009/1009 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); one owner-approved package (System.ServiceModel.Syndication 10.0.12, no transitive dependencies); migration `NewsHub` (additive). Awaiting owner review before Stage 12. |
+| 12, 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -247,6 +248,18 @@
 ### Stage 11 — News Hub
 - **Build:** SafeOutboundHttp; sources/items; feed reading (**RSS library approval requested then**); normalize, dedupe, classify; `ITextGenerationService` (inactive → items Held); Admin news/sources; public news (items `noindex` by default); homepage section.
 - **Verify:** SSRF suite; dedupe; no auto-publish without a summary; no full text stored; attribution on every item.
+
+**Stage 11 delivered notes** (architecture.md §24.6 has the full as-built description):
+- **Package:** System.ServiceModel.Syndication 10.0.12 (owner-approved). No transitive packages. Used only by `Onyx.Infrastructure.News.SyndicationNewsFeedReader`, enforced by architecture tests.
+- **AI boundary only:** the structured `INewsSummaryService` port plus a not-configured default. No prompts and no AI logic. Until Onyx's external Agent is connected, every ingested item is Held for editors and nothing is published automatically.
+- **Pipeline:**
+  - The `news-ingestion` Worker job runs every 15 minutes, bounded by sources, entries, summary requests and a time budget, with one scope per source. It is idempotent: the canonical-URL hash is unique and deleted items stay as tombstones.
+  - Rule-based classification; same-title detection within 72 h; per-source backoff and one notification per failure episode.
+- **SafeOutboundHttp:** used by every admin-supplied URL fetch, with a resolved-address allowlist, a pinned connection (rebinding-proof), re-validated redirects, size and time caps, and robots.txt.
+- **Admin:** news items, sources (allowlist with licensing note) and categories. Every change is permission-checked, version-checked and audited.
+- **Public:** hub, category and item pages (items `noindex, follow` by default), the homepage `LatestNews`, the news sitemap entries, and News in site search (published and indexable only).
+- **Migration `NewsHub`** is additive: 5 tables, indexes, and the 4 seeded launch categories with ar/en names.
+- **Open:** source allowlist and licensing review; `noindex` default confirmation; Arabic review of the category names; connecting the external Agent.
 
 ### Stage 12 — Admin Analytics & Marketing
 - **Build:** GA4 + Search Console adapters (**Google API package approval requested then**; inactive until credentials), sync jobs, local aggregates, dashboards, funnel view; consent-gated GA4 tag + conversion events.

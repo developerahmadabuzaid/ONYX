@@ -227,3 +227,18 @@ Erasure cannot be undone. Data in backups ages out with the backup retention (ar
 - **Filling the index:** publishing, unpublishing and URL changes re-index pages through the Worker's outbox. The `search-index-reconcile` job (every 30 minutes) builds the index the first time and repairs anything missed. On a fresh database, run the Worker once, or wait for the job, before expecting results.
 - **Rate limit:** `RateLimiting:Search:PermitLimit` / `WindowSeconds` (default 30 per 60 seconds per client IP) in Onyx.API settings.
 - **Privacy:** search queries are never stored. Request logs record the path only, and Onyx.Web's outbound HttpClient logging stays at `Warning`. Keep it there, because lower levels log full request URIs, including the search text.
+
+## 11. News Hub (Stage 11)
+
+- **Nothing is preset.** The migration seeds the four launch categories but no news source. Add sources in Admin → News sources, staff holding `NewsSources.Manage`:
+  - a new source is **blocked**;
+  - record the reviewed licensing/terms note, then **Allow** it;
+  - the Worker fetches it on the next `news-ingestion` run (every 15 minutes).
+- **Feed URLs** must be public `https://` URLs on a domain name. Internal hosts, IP addresses, credentials and non-standard ports are refused, at registration and again when the Worker connects.
+- **Summaries and publishing.** No summary service is connected, because Onyx's AI Agent is external, so every ingested item is **Held**. Editors write the Arabic and English headline and summary in Admin → News items and publish. Nothing is published automatically until an adapter for `INewsSummaryService` is registered *and* a source is set to auto-publish.
+- **Settings (Onyx.Worker):**
+  - `News:MaxSourcesPerRun` (10), `News:MaxEntriesPerSource` (50), `News:MaxSummariesPerRun` (20), `News:SummaryTimeoutSeconds` (30), `News:RunBudgetMinutes` (4), `News:SimilarWindowHours` (72);
+  - `SafeOutboundHttp:TimeoutSeconds` (20), `ConnectTimeoutSeconds` (10), `MaxResponseBytes` (2 MB), `MaxRedirects` (3), `UserAgent` (`OnyxVanguard-NewsReader/1.0`; robots.txt rules are matched against its first part).
+  
+  All are technical bounds, not business facts.
+- **Network:** the Worker host needs outbound HTTPS to the allowlisted publishers. The gateway refuses proxies and private addresses by design, so outbound traffic must reach the public internet directly.

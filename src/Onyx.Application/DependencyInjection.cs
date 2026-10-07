@@ -25,6 +25,7 @@ public static class DependencyInjection
         AddPrivacy(services);
         services.AddScoped<Search.SearchIndexer>();
         services.AddScoped<Search.SiteSearchQueryService>();
+        AddNews(services);
         services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
 
         AddDomainEventHandlers(services, assembly);
@@ -97,6 +98,21 @@ public static class DependencyInjection
     {
         services.AddScoped<Privacy.SubjectEraser>();
         services.AddScoped<Privacy.IRetentionService, Privacy.RetentionService>();
+    }
+
+    /// <summary>
+    /// Stage 11: News Hub. <see cref="News.NewsSettings"/>, <see cref="News.INewsFeedReader"/> and <see cref="News.INewsSummaryService"/>
+    /// (the external AI Agent boundary; "not configured" until an adapter is connected) are registered by Infrastructure.
+    /// </summary>
+    private static void AddNews(IServiceCollection services)
+    {
+        services.AddScoped<News.NewsSlugAllocator>();
+        services.AddScoped<News.NewsIngestionService>();
+        services.AddScoped<News.NewsSourceAdministrationService>();
+        services.AddScoped<News.NewsCategoryAdministrationService>();
+        services.AddScoped<News.NewsAdministrationService>();
+        services.AddScoped<News.PublicNewsService>();
+        services.AddScoped<News.NewsSearchIndexer>();
     }
 
     private static void AddDomainEventHandlers(IServiceCollection services, System.Reflection.Assembly assembly)

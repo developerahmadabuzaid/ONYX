@@ -1,0 +1,39 @@
+@using Onyx.Contracts.News
+@model IReadOnlyList<NewsCategoryResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.NewsCategories";
+}
+<h1>@T["Nav.NewsCategories"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["NewsCategoryAdmin.Hint"]</p>
+@foreach (var category in Model)
+{
+    var ar = category.Translations.FirstOrDefault(t => t.LanguageCode == "ar");
+    var en = category.Translations.FirstOrDefault(t => t.LanguageCode == "en");
+    <section>
+        <h2 dir="ltr">@category.Key</h2>
+        <form method="post" asp-action="Update" asp-route-id="@category.Id">
+            <input type="hidden" name="version" value="@category.Version">
+            <input type="hidden" name="Key" value="@category.Key">
+            <label>@T["NewsCategoryAdmin.NameAr"] <input name="NameAr" value="@ar?.Name" maxlength="80" required dir="rtl" lang="ar"></label>
+            <label>@T["NewsCategoryAdmin.SlugAr"] <input name="SlugAr" value="@ar?.Slug" maxlength="80" dir="rtl" lang="ar"></label>
+            <label>@T["NewsCategoryAdmin.NameEn"] <input name="NameEn" value="@en?.Name" maxlength="80" required dir="ltr" lang="en"></label>
+            <label>@T["NewsCategoryAdmin.SlugEn"] <input name="SlugEn" value="@en?.Slug" maxlength="80" dir="ltr" lang="en"></label>
+            <label>@T["NewsCategoryAdmin.SortOrder"] <input type="number" name="SortOrder" value="@category.SortOrder"></label>
+            <label>@T["NewsCategoryAdmin.Keywords"] <textarea name="Keywords" rows="2" dir="auto">@string.Join(", ", category.Keywords)</textarea></label>
+            <button type="submit">@T["Cms.Save"]</button>
+        </form>
+    </section>
+}
+<h2>@T["NewsCategoryAdmin.New"]</h2>
+<form method="post" asp-action="Create">
+    <label>@T["NewsCategoryAdmin.Key"] <input name="Key" maxlength="60" required dir="ltr" pattern="[a-z0-9\-]+"></label>
+    <label>@T["NewsCategoryAdmin.NameAr"] <input name="NameAr" maxlength="80" required dir="rtl" lang="ar"></label>
+    <label>@T["NewsCategoryAdmin.SlugAr"] <input name="SlugAr" maxlength="80" dir="rtl" lang="ar"></label>
+    <label>@T["NewsCategoryAdmin.NameEn"] <input name="NameEn" maxlength="80" required dir="ltr" lang="en"></label>
+    <label>@T["NewsCategoryAdmin.SlugEn"] <input name="SlugEn" maxlength="80" dir="ltr" lang="en"></label>
+    <label>@T["NewsCategoryAdmin.SortOrder"] <input type="number" name="SortOrder" value="10"></label>
+    <label>@T["NewsCategoryAdmin.Keywords"] <textarea name="Keywords" rows="2" dir="auto"></textarea></label>
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

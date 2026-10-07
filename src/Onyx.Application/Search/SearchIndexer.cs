@@ -65,7 +65,8 @@ public sealed class SearchIndexer(
     {
         var live = (await content.ListLiveAsync(cancellationToken).ConfigureAwait(false)).Where(item => item.HasPage).ToList();
         var liveById = live.ToDictionary(item => item.Id);
-        var states = await index.ListStatesAsync(cancellationToken).ConfigureAwait(false);
+        // News documents belong to NewsSearchIndexer; this reconcile only owns CMS pages.
+        var states = (await index.ListStatesAsync(cancellationToken).ConfigureAwait(false)).Where(state => state.Group != SearchGroups.News).ToList();
         var currentPaths = await paths.GetCurrentPathsAsync(live.Select(item => item.Id).ToList(), cancellationToken).ConfigureAwait(false);
 
         var due = new HashSet<Guid>(states.Where(state => !liveById.ContainsKey(state.ContentItemId)).Select(state => state.ContentItemId));

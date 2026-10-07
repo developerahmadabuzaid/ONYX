@@ -10,7 +10,13 @@ using Onyx.Web.Resources;
 namespace Onyx.Web.Controllers;
 
 public sealed class HomeController(
-    LanguageCatalog languages, SeoContext seo, IPublicContentApiClient api, IOptions<SiteOptions> site, IStringLocalizer<SharedResource> localizer) : Controller
+    LanguageCatalog languages,
+    SeoContext seo,
+    IPublicContentApiClient api,
+    IPublicNewsApiClient news,
+    LocalizedRouteTable routes,
+    IOptions<SiteOptions> site,
+    IStringLocalizer<SharedResource> localizer) : Controller
 {
     /// <summary>
     /// <c>/</c> → Arabic, unless the visitor explicitly chose another language. Accept-Language never redirects. The answer
@@ -45,6 +51,10 @@ public sealed class HomeController(
         seo.StructuredDataJson = StructuredDataBuilder.BuildHome(lang, site.Value.PublicBaseUrl, localizer["Site.Name"].Value, organization);
 
         // FeaturedWork: at most three live, verified projects, hidden entirely when there are none.
-        return View(await api.GetFeaturedProjectsAsync(lang, cancellationToken));
+        // LatestNews (architecture.md §7): up to four published News Hub items, hidden when there are none.
+        return View(new HomePageModel(
+            await api.GetFeaturedProjectsAsync(lang, cancellationToken),
+            await news.GetLatestAsync(lang, cancellationToken),
+            routes.PathFor(News.NewsPages.Hub, lang)));
     }
 }

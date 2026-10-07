@@ -1,0 +1,66 @@
+@using Onyx.Contracts.Common
+@using Onyx.Contracts.News
+@model PagedResult<NewsItemListItemResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.News";
+    var status = ViewData["Status"] as string;
+}
+<h1>@T["Nav.News"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["NewsAdmin.Hint"]</p>
+<form method="get" asp-action="Index">
+    <label>@T["NewsAdmin.Status"]
+        <select name="status">
+            <option value="">@T["NewsAdmin.AnyStatus"]</option>
+            @foreach (var option in new[] { "Held", "Published", "Hidden", "Unpublished", "Deleted" })
+            {
+                <option value="@option" selected="@(status == option)">@T["NewsStatus." + option]</option>
+            }
+        </select>
+    </label>
+    <button type="submit">@T["Leads.Filter"]</button>
+</form>
+@if (Model.Items.Count == 0)
+{
+    <p>@T["NewsAdmin.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr>
+                <th>@T["NewsAdmin.Ingested"]</th><th>@T["NewsAdmin.OriginalTitle"]</th><th>@T["NewsAdmin.Publisher"]</th>
+                <th>@T["NewsAdmin.Status"]</th><th>@T["NewsAdmin.Summaries"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td><partial name="_Utc" model="(DateTimeOffset?)item.IngestedAtUtc" /></td>
+                    <td dir="auto"><a asp-action="Details" asp-route-id="@item.Id">@item.OriginalTitle</a></td>
+                    <td dir="auto">@item.Publisher</td>
+                    <td>
+                        @T["NewsStatus." + item.Status]
+                        @if (item.HoldReason is not null)
+                        {
+                            <span>(@T["NewsHold." + item.HoldReason])</span>
+                        }
+                    </td>
+                    <td dir="ltr">@(item.SummaryLanguages.Count == 0 ? "—" : string.Join(", ", item.SummaryLanguages))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <p>
+        @if (Model.Page > 1)
+        {
+            <a asp-action="Index" asp-route-status="@status" asp-route-page="@(Model.Page - 1)">←</a>
+        }
+        @if (Model.Page < Model.TotalPages)
+        {
+            <a asp-action="Index" asp-route-status="@status" asp-route-page="@(Model.Page + 1)">→</a>
+        }
+    </p>
+}

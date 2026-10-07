@@ -13,7 +13,7 @@ namespace Onyx.Web.Controllers;
 /// <c>/sitemap.xml</c> (index) and <c>/sitemaps/{lang}.xml</c>: live, indexable, self-canonical pages only, with hreflang alternates.
 /// <c>/robots.txt</c> blocks everything until launch (<see cref="SiteOptions.AllowIndexing"/>).
 /// </summary>
-public sealed class SitemapController(IPublicContentApiClient api, LanguageCatalog languages, IOptions<SiteOptions> site) : Controller
+public sealed class SitemapController(IPublicContentApiClient api, IPublicNewsApiClient news, LanguageCatalog languages, IOptions<SiteOptions> site) : Controller
 {
     private const string SitemapNamespace = "http://www.sitemaps.org/schemas/sitemap/0.9";
     private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
@@ -65,19 +65,22 @@ public sealed class SitemapController(IPublicContentApiClient api, LanguageCatal
     public async Task<IActionResult> Language(string lang, CancellationToken cancellationToken)
     {
         var result = await api.GetSitemapAsync(lang, cancellationToken);
-        if (result.IsUnavailable)
+        var newsResult = await news.GetSitemapAsync(lang, cancellationToken);
+        if (result.IsUnavailable || newsResult.IsUnavailable)
         {
             throw new ApiUnavailableException();
         }
 
-        if (!result.IsSuccess || result.Value is null)
+        if (!result.IsSuccess || result.Value is null || !newsResult.IsSuccess || newsResult.Value is null)
         {
             return StatusCode(StatusCodes.Status502BadGateway);
         }
 
         MarkNoIndexBeforeLaunch();
         var home = new SitemapEntryResponse($"/{lang}/", null, languages.Languages.ToDictionary(language => language.Code, language => $"/{language.Code}/", StringComparer.Ordinal));
-        var entries = new[] { home }.Concat(result.Value);
+
+        // News: the hub and categories with published items, and only items an editor marked indexable (architecture.md §17.3).
+        var entries = new[] { home }.Concat(result.Value).Concat(newsResult.Value);
         var document = Write(writer =>
         {
             writer.WriteStartElement("urlset", SitemapNamespace);

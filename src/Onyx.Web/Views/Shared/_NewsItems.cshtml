@@ -1,0 +1,20 @@
+@using System.Globalization
+@model IReadOnlyList<Onyx.Contracts.News.PublicNewsItemSummaryResponse>
+@* Every listed item shows Onyx's own headline and summary with its attribution: publisher and both dates. *@
+<ul class="listing news">
+    @foreach (var item in Model)
+    {
+        <li>
+            <h3><a href="@SitePaths.Encode(item.Path)">@item.Title</a></h3>
+            <p class="attribution">@string.Format(CultureInfo.InvariantCulture, T["News.ReportedBy"].Value, item.Publisher)</p>
+            <p class="dates">
+                @if (item.SourcePublishedAtUtc is { } original)
+                {
+                    <span>@T["News.SourceDate"] <time datetime="@original.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@original.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time></span>
+                }
+                <span>@T["News.OnyxDate"] <time datetime="@item.PublishedAtUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@item.PublishedAtUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time></span>
+            </p>
+            <p>@item.Summary</p>
+        </li>
+    }
+</ul>

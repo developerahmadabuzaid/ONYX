@@ -1,0 +1,42 @@
+@using System.Globalization
+@using Onyx.Contracts.News
+@model PublicNewsListResponse
+@* Functional semantic template only: visual design is a later, separately approved stage. *@
+@{
+    var basePath = SitePaths.Encode(Model.Category?.Path ?? Model.Alternates.GetValueOrDefault(Model.LanguageCode) ?? $"/{Model.LanguageCode}/");
+    var lastPage = Model.PageSize <= 0 ? 1 : (int)Math.Ceiling(Model.TotalCount / (double)Model.PageSize);
+}
+<h1>@(Model.Category?.Name ?? T["News.Title"].Value)</h1>
+<p class="hint">@T["News.Intro"]</p>
+@if (Model.Categories.Count > 0)
+{
+    <nav aria-label="@T["News.Categories"]">
+        <ul>
+            @foreach (var category in Model.Categories)
+            {
+                <li><a href="@SitePaths.Encode(category.Path)" aria-current="@(category.Key == Model.Category?.Key ? "page" : null)">@category.Name</a></li>
+            }
+        </ul>
+    </nav>
+}
+@if (Model.Items.Count == 0)
+{
+    <p role="status">@T["News.Empty"]</p>
+}
+else
+{
+    <partial name="_NewsItems" model="Model.Items" />
+    @if (lastPage > 1)
+    {
+        <nav aria-label="@T["News.Pages"]">
+            @if (Model.Page > 1)
+            {
+                <a rel="prev" href="@(Model.Page == 2 ? basePath : $"{basePath}?page={(Model.Page - 1).ToString(CultureInfo.InvariantCulture)}")">@T["News.Newer"]</a>
+            }
+            @if (Model.Page < lastPage)
+            {
+                <a rel="next" href="@($"{basePath}?page={(Model.Page + 1).ToString(CultureInfo.InvariantCulture)}")">@T["News.Older"]</a>
+            }
+        </nav>
+    }
+}

@@ -683,4 +683,95 @@
   <data name="SearchGroup.Glossary" xml:space="preserve"><value>المصطلحات</value></data>
   <data name="SearchGroup.Integrations" xml:space="preserve"><value>التكاملات</value></data>
   <data name="SearchGroup.Pages" xml:space="preserve"><value>الصفحات</value></data>
+  <data name="News.Title" xml:space="preserve"><value>آخر الأخبار</value></data>
+  <data name="News.Intro" xml:space="preserve"><value>ملخصات موجزة من Onyx لأخبار التقنية، مع رابط إلى الخبر الأصلي في كل مرة.</value></data>
+  <data name="News.Categories" xml:space="preserve"><value>تصنيفات الأخبار</value></data>
+  <data name="News.Empty" xml:space="preserve"><value>لم تُنشر أي أخبار بعد.</value></data>
+  <data name="News.Pages" xml:space="preserve"><value>صفحات الأخبار</value></data>
+  <data name="News.Newer" xml:space="preserve"><value>أخبار أحدث</value></data>
+  <data name="News.Older" xml:space="preserve"><value>أخبار أقدم</value></data>
+  <data name="News.ReportedBy" xml:space="preserve"><value>ملخص من Onyx — نقلاً عن {0}</value></data>
+  <data name="News.SourceDate" xml:space="preserve"><value>تاريخ النشر الأصلي</value></data>
+  <data name="News.OnyxDate" xml:space="preserve"><value>تاريخ النشر في Onyx</value></data>
+  <data name="News.Publisher" xml:space="preserve"><value>الناشر</value></data>
+  <data name="News.Category" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="News.ReadOriginal" xml:space="preserve"><value>اقرأ الخبر الأصلي</value></data>
+  <data name="News.Back" xml:space="preserve"><value>العودة إلى الأخبار</value></data>
+  <data name="News.All" xml:space="preserve"><value>كل الأخبار</value></data>
+  <data name="Home.LatestNews" xml:space="preserve"><value>آخر الأخبار</value></data>
+  <data name="SearchGroup.News" xml:space="preserve"><value>الأخبار</value></data>
+  <data name="Nav.News" xml:space="preserve"><value>الأخبار</value></data>
+  <data name="Nav.NewsSources" xml:space="preserve"><value>مصادر الأخبار</value></data>
+  <data name="Nav.NewsCategories" xml:space="preserve"><value>تصنيفات الأخبار</value></data>
+  <data name="NewsAdmin.Hint" xml:space="preserve"><value>تبقى الأخبار معلّقة حتى يكون لها عنوان وملخص من Onyx بالعربية والإنجليزية. وما دامت خدمة التلخيص الخارجية غير متصلة، ينتظر كل خبر جديد هنا مراجعة المحرر.</value></data>
+  <data name="NewsAdmin.Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="NewsAdmin.AnyStatus" xml:space="preserve"><value>أي حالة</value></data>
+  <data name="NewsAdmin.Empty" xml:space="preserve"><value>لا توجد أخبار.</value></data>
+  <data name="NewsAdmin.Ingested" xml:space="preserve"><value>تاريخ الاستلام</value></data>
+  <data name="NewsAdmin.OriginalTitle" xml:space="preserve"><value>العنوان الأصلي</value></data>
+  <data name="NewsAdmin.Publisher" xml:space="preserve"><value>الناشر</value></data>
+  <data name="NewsAdmin.Summaries" xml:space="preserve"><value>ملخصات Onyx</value></data>
+  <data name="NewsAdmin.OriginalLink" xml:space="preserve"><value>الخبر الأصلي</value></data>
+  <data name="NewsAdmin.SourceDate" xml:space="preserve"><value>وقت النشر في المصدر</value></data>
+  <data name="NewsAdmin.Published" xml:space="preserve"><value>النشر في Onyx</value></data>
+  <data name="NewsAdmin.SummaryOrigin" xml:space="preserve"><value>كاتب الملخص</value></data>
+  <data name="NewsAdmin.AutoPublished" xml:space="preserve"><value>نُشر تلقائياً</value></data>
+  <data name="NewsAdmin.Indexable" xml:space="preserve"><value>مسموح بفهرسته في محركات البحث</value></data>
+  <data name="NewsAdmin.SimilarTo" xml:space="preserve"><value>خبر مشابه حديث</value></data>
+  <data name="NewsAdmin.OnyxText" xml:space="preserve"><value>عنوان Onyx وملخصه</value></data>
+  <data name="NewsAdmin.Headline" xml:space="preserve"><value>العنوان</value></data>
+  <data name="NewsAdmin.Summary" xml:space="preserve"><value>الملخص (نص عادي، من 40 إلى 700 حرف، بصياغتك الخاصة)</value></data>
+  <data name="NewsAdmin.SaveText" xml:space="preserve"><value>حفظ النص</value></data>
+  <data name="NewsAdmin.Category" xml:space="preserve"><value>التصنيف</value></data>
+  <data name="NewsAdmin.ChangeCategory" xml:space="preserve"><value>تغيير التصنيف</value></data>
+  <data name="NewsAdmin.Publication" xml:space="preserve"><value>النشر</value></data>
+  <data name="NewsAdmin.Publish" xml:space="preserve"><value>نشر</value></data>
+  <data name="NewsAdmin.Unpublish" xml:space="preserve"><value>إلغاء النشر</value></data>
+  <data name="NewsAdmin.Hide" xml:space="preserve"><value>إخفاء</value></data>
+  <data name="NewsAdmin.MarkIndexable" xml:space="preserve"><value>السماح لمحركات البحث بالفهرسة</value></data>
+  <data name="NewsAdmin.MarkNoIndex" xml:space="preserve"><value>منع الفهرسة في محركات البحث</value></data>
+  <data name="NewsAdmin.Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="NewsAdmin.DeleteWarning" xml:space="preserve"><value>يزيل الحذف نصوص Onyx نهائياً، ويُحتفظ برابط الخبر حتى لا يُستورد الخبر نفسه مرة أخرى.</value></data>
+  <data name="NewsStatus.Held" xml:space="preserve"><value>معلّق</value></data>
+  <data name="NewsStatus.Published" xml:space="preserve"><value>منشور</value></data>
+  <data name="NewsStatus.Hidden" xml:space="preserve"><value>مخفي</value></data>
+  <data name="NewsStatus.Unpublished" xml:space="preserve"><value>غير منشور</value></data>
+  <data name="NewsStatus.Deleted" xml:space="preserve"><value>محذوف</value></data>
+  <data name="NewsHold.SummaryUnavailable" xml:space="preserve"><value>لا يوجد ملخص من Onyx بعد</value></data>
+  <data name="NewsHold.SummaryRejected" xml:space="preserve"><value>رُفض الملخص المُولَّد في الفحوص</value></data>
+  <data name="NewsHold.AutoPublishOff" xml:space="preserve"><value>المصدر لا ينشر تلقائياً</value></data>
+  <data name="NewsHold.SimilarItem" xml:space="preserve"><value>مشابه لخبر حديث</value></data>
+  <data name="NewsOrigin.Manual" xml:space="preserve"><value>المحرر</value></data>
+  <data name="NewsOrigin.Generated" xml:space="preserve"><value>خدمة التلخيص الخارجية</value></data>
+  <data name="NewsSourceAdmin.Hint" xml:space="preserve"><value>لا يُجلب إلا من المصادر المسموح بها. يبقى المصدر الجديد محظوراً حتى تسجّل ملاحظة الترخيص والشروط بعد مراجعتها وتسمح به.</value></data>
+  <data name="NewsSourceAdmin.Empty" xml:space="preserve"><value>لا توجد مصادر بعد.</value></data>
+  <data name="NewsSourceAdmin.New" xml:space="preserve"><value>إضافة مصدر</value></data>
+  <data name="NewsSourceAdmin.Name" xml:space="preserve"><value>اسم الناشر</value></data>
+  <data name="NewsSourceAdmin.Homepage" xml:space="preserve"><value>الصفحة الرئيسية (https)</value></data>
+  <data name="NewsSourceAdmin.FeedUrl" xml:space="preserve"><value>رابط الخلاصة (https)</value></data>
+  <data name="NewsSourceAdmin.Format" xml:space="preserve"><value>صيغة الخلاصة</value></data>
+  <data name="NewsSourceAdmin.Language" xml:space="preserve"><value>لغة المصدر</value></data>
+  <data name="NewsSourceAdmin.DefaultCategory" xml:space="preserve"><value>التصنيف الافتراضي</value></data>
+  <data name="NewsSourceAdmin.Interval" xml:space="preserve"><value>الجلب كل (دقيقة)</value></data>
+  <data name="NewsSourceAdmin.LicensingNote" xml:space="preserve"><value>ملاحظة الترخيص والشروط (مطلوبة للسماح)</value></data>
+  <data name="NewsSourceAdmin.AutoPublish" xml:space="preserve"><value>النشر تلقائياً عندما تقدّم خدمة التلخيص الخارجية ملخصاً صالحاً</value></data>
+  <data name="NewsSourceAdmin.Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="NewsSourceAdmin.LastFetched" xml:space="preserve"><value>آخر محاولة</value></data>
+  <data name="NewsSourceAdmin.LastSucceeded" xml:space="preserve"><value>آخر نجاح</value></data>
+  <data name="NewsSourceAdmin.NextFetch" xml:space="preserve"><value>الجلب التالي</value></data>
+  <data name="NewsSourceAdmin.LastError" xml:space="preserve"><value>آخر خطأ</value></data>
+  <data name="NewsSourceAdmin.Failures" xml:space="preserve"><value>الإخفاقات المتتالية</value></data>
+  <data name="NewsSourceAdmin.Allow" xml:space="preserve"><value>السماح بالمصدر</value></data>
+  <data name="NewsSourceAdmin.Block" xml:space="preserve"><value>حظر</value></data>
+  <data name="NewsSourceStatus.Allowed" xml:space="preserve"><value>مسموح به</value></data>
+  <data name="NewsSourceStatus.Blocked" xml:space="preserve"><value>محظور</value></data>
+  <data name="NewsCategoryAdmin.Hint" xml:space="preserve"><value>تحدد الكلمات المفتاحية تصنيف الخبر المستورد، وإذا لم يتطابق شيء يُستخدم التصنيف الافتراضي للمصدر.</value></data>
+  <data name="NewsCategoryAdmin.New" xml:space="preserve"><value>إضافة تصنيف</value></data>
+  <data name="NewsCategoryAdmin.Key" xml:space="preserve"><value>المعرّف</value></data>
+  <data name="NewsCategoryAdmin.NameAr" xml:space="preserve"><value>الاسم بالعربية</value></data>
+  <data name="NewsCategoryAdmin.SlugAr" xml:space="preserve"><value>الرابط المختصر بالعربية</value></data>
+  <data name="NewsCategoryAdmin.NameEn" xml:space="preserve"><value>الاسم بالإنجليزية</value></data>
+  <data name="NewsCategoryAdmin.SlugEn" xml:space="preserve"><value>الرابط المختصر بالإنجليزية</value></data>
+  <data name="NewsCategoryAdmin.SortOrder" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="NewsCategoryAdmin.Keywords" xml:space="preserve"><value>الكلمات المفتاحية (مفصولة بفواصل)</value></data>
 </root>

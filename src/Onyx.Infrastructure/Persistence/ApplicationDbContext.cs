@@ -127,6 +127,16 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<Search.SearchDocument> SearchDocuments => Set<Search.SearchDocument>();
 
+    public DbSet<Domain.News.NewsSource> NewsSources => Set<Domain.News.NewsSource>();
+
+    public DbSet<Domain.News.NewsCategory> NewsCategories => Set<Domain.News.NewsCategory>();
+
+    public DbSet<Domain.News.NewsCategoryTranslation> NewsCategoryTranslations => Set<Domain.News.NewsCategoryTranslation>();
+
+    public DbSet<Domain.News.NewsItem> NewsItems => Set<Domain.News.NewsItem>();
+
+    public DbSet<Domain.News.NewsItemTranslation> NewsItemTranslations => Set<Domain.News.NewsItemTranslation>();
+
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
@@ -148,6 +158,13 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         {
             // A concurrent request confirmed the same slot first; the booking service reports it as "slot unavailable".
             throw new ConcurrencyConflictException("That time was just booked. Choose another slot.", Application.Booking.BookingService.SlotTakenCode, exception);
+        }
+        catch (DbUpdateException exception) when (exception.InnerException is Npgsql.PostgresException { SqlState: "23505" } unique
+            && unique.ConstraintName is Configurations.Application.NewsItemConfiguration.UrlHashIndex or Configurations.Application.NewsSourceConfiguration.FeedUrlIndex
+                or "ix_news_item_translations_language_code_slug" or "ix_news_category_translations_language_code_slug")
+        {
+            // A concurrent change stored the same article, feed or slug first; the next attempt sees it and skips or retries.
+            throw new ConcurrencyConflictException("The same news item, feed or slug was saved at the same time. Reload and try again.", exception);
         }
     }
 

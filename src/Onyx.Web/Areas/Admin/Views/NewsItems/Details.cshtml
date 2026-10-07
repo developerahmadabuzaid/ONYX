@@ -1,0 +1,114 @@
+@using Onyx.Contracts.News
+@using Onyx.Web.News
+@model NewsItemResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.News";
+    var categories = ViewData["Categories"] as IReadOnlyList<NewsCategoryResponse>;
+    var editable = Model.Status != "Deleted";
+}
+<p><a asp-action="Index">@T["Nav.News"]</a></p>
+<h1 dir="auto">@Model.OriginalTitle</h1>
+<partial name="_CmsMessages" />
+<dl>
+    <dt>@T["NewsAdmin.Status"]</dt>
+    <dd>
+        @T["NewsStatus." + Model.Status]
+        @if (Model.HoldReason is not null)
+        {
+            <span>— @T["NewsHold." + Model.HoldReason]</span>
+        }
+    </dd>
+    <dt>@T["NewsAdmin.Publisher"]</dt><dd dir="auto">@Model.Publisher</dd>
+    <dt>@T["NewsAdmin.OriginalLink"]</dt>
+    <dd dir="ltr">
+        @if (NewsPages.IsSafeExternalLink(Model.OriginalUrl))
+        {
+            <a href="@Model.OriginalUrl" rel="nofollow noopener noreferrer" target="_blank">@Model.OriginalUrl</a>
+        }
+        else
+        {
+            @Model.OriginalUrl
+        }
+    </dd>
+    <dt>@T["NewsAdmin.SourceDate"]</dt><dd><partial name="_Utc" model="Model.SourcePublishedAtUtc" /></dd>
+    <dt>@T["NewsAdmin.Ingested"]</dt><dd><partial name="_Utc" model="(DateTimeOffset?)Model.IngestedAtUtc" /></dd>
+    <dt>@T["NewsAdmin.Published"]</dt><dd><partial name="_Utc" model="Model.PublishedAtUtc" /></dd>
+    <dt>@T["NewsAdmin.SummaryOrigin"]</dt><dd>@(Model.SummaryOrigin is null ? "—" : T["NewsOrigin." + Model.SummaryOrigin])</dd>
+    <dt>@T["NewsAdmin.AutoPublished"]</dt><dd>@(Model.AutoPublished ? T["Cms.Yes"] : T["Cms.No"])</dd>
+    <dt>@T["NewsAdmin.Indexable"]</dt><dd>@(Model.Indexable ? T["Cms.Yes"] : T["Cms.No"])</dd>
+    @if (Model.SimilarToItemId is { } similar)
+    {
+        <dt>@T["NewsAdmin.SimilarTo"]</dt><dd><a asp-action="Details" asp-route-id="@similar">@similar</a></dd>
+    }
+</dl>
+
+@if (editable)
+{
+    @foreach (var language in new[] { "ar", "en" })
+    {
+        var translation = Model.Translations.FirstOrDefault(candidate => candidate.LanguageCode == language);
+        <section lang="@language" dir="@(language == "ar" ? "rtl" : "ltr")">
+            <h2>@T["NewsAdmin.OnyxText"] (@language)</h2>
+            @if (translation is not null)
+            {
+                <p class="hint" dir="ltr">@translation.Slug</p>
+            }
+            <form method="post" asp-action="EditTranslation" asp-route-id="@Model.Id" asp-route-language="@language">
+                <input type="hidden" name="version" value="@Model.Version">
+                <label>@T["NewsAdmin.Headline"] <input name="title" value="@translation?.Title" maxlength="200" required></label>
+                <label>@T["NewsAdmin.Summary"] <textarea name="summary" rows="5" minlength="40" maxlength="700" required>@translation?.Summary</textarea></label>
+                <button type="submit">@T["NewsAdmin.SaveText"]</button>
+            </form>
+        </section>
+    }
+
+    @if (categories is not null)
+    {
+        <h2>@T["NewsAdmin.Category"]</h2>
+        <form method="post" asp-action="ChangeCategory" asp-route-id="@Model.Id">
+            <input type="hidden" name="version" value="@Model.Version">
+            <select name="categoryId">
+                @foreach (var category in categories)
+                {
+                    <option value="@category.Id" selected="@(category.Id == Model.CategoryId)">@(category.Translations.FirstOrDefault(t => t.LanguageCode == "en")?.Name ?? category.Key)</option>
+                }
+            </select>
+            <button type="submit">@T["NewsAdmin.ChangeCategory"]</button>
+        </form>
+    }
+
+    <h2>@T["NewsAdmin.Publication"]</h2>
+    @if (Model.Status is "Held" or "Hidden" or "Unpublished")
+    {
+        <form method="post" asp-action="ChangeState" asp-route-id="@Model.Id" asp-route-operation="publish">
+            <input type="hidden" name="version" value="@Model.Version">
+            <button type="submit">@T["NewsAdmin.Publish"]</button>
+        </form>
+    }
+    @if (Model.Status == "Published")
+    {
+        <form method="post" asp-action="ChangeState" asp-route-id="@Model.Id" asp-route-operation="unpublish">
+            <input type="hidden" name="version" value="@Model.Version">
+            <button type="submit">@T["NewsAdmin.Unpublish"]</button>
+        </form>
+    }
+    @if (Model.Status is "Held" or "Published" or "Unpublished")
+    {
+        <form method="post" asp-action="ChangeState" asp-route-id="@Model.Id" asp-route-operation="hide">
+            <input type="hidden" name="version" value="@Model.Version">
+            <button type="submit">@T["NewsAdmin.Hide"]</button>
+        </form>
+    }
+    <form method="post" asp-action="SetIndexing" asp-route-id="@Model.Id">
+        <input type="hidden" name="version" value="@Model.Version">
+        <input type="hidden" name="indexable" value="@(Model.Indexable ? "false" : "true")">
+        <button type="submit">@(Model.Indexable ? T["NewsAdmin.MarkNoIndex"] : T["NewsAdmin.MarkIndexable"])</button>
+    </form>
+    <h2>@T["NewsAdmin.Delete"]</h2>
+    <p role="alert">@T["NewsAdmin.DeleteWarning"]</p>
+    <form method="post" asp-action="ChangeState" asp-route-id="@Model.Id" asp-route-operation="delete">
+        <input type="hidden" name="version" value="@Model.Version">
+        <button type="submit">@T["NewsAdmin.Delete"]</button>
+    </form>
+}

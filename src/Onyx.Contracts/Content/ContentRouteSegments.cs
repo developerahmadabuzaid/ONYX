@@ -84,6 +84,9 @@ public static class ContentRouteSegments
 
         // Stage 10 site search ("search" is reserved above).
         "بحث",
+
+        // Stage 11 News Hub (News.NewsRouteSegments).
+        "news", "آخر-الأخبار",
     };
 
     private static Dictionary<string, string> Join(IReadOnlyDictionary<string, string> first, IReadOnlyDictionary<string, string> second) =>

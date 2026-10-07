@@ -49,6 +49,7 @@ public static class WebServiceCollectionExtensions
             }
 
             routes.Register(Search.SearchPages.Route);
+            routes.Register(News.NewsPages.Route);
 
             return routes;
         });
@@ -187,6 +188,8 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<IAdminCmsApiClient, AdminCmsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
         Configure(services.AddHttpClient<ISearchApiClient, SearchApiClient>());
+        Configure(services.AddHttpClient<IPublicNewsApiClient, PublicNewsApiClient>());
+        Configure(services.AddHttpClient<IAdminNewsApiClient, AdminNewsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
         Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminPrivacyApiClient, AdminPrivacyApiClient>().AddHttpMessageHandler<AccessTokenHandler>());

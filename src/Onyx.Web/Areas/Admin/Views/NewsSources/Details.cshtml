@@ -1,0 +1,40 @@
+@using Onyx.Contracts.News
+@model NewsSourceResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.NewsSources";
+}
+<p><a asp-action="Index">@T["Nav.NewsSources"]</a></p>
+<h1 dir="auto">@Model.Name</h1>
+<partial name="_CmsMessages" />
+<dl>
+    <dt>@T["NewsSourceAdmin.Status"]</dt><dd>@T["NewsSourceStatus." + Model.Status]</dd>
+    <dt>@T["NewsSourceAdmin.LastFetched"]</dt><dd><partial name="_Utc" model="Model.LastFetchedAtUtc" /></dd>
+    <dt>@T["NewsSourceAdmin.LastSucceeded"]</dt><dd><partial name="_Utc" model="Model.LastSucceededAtUtc" /></dd>
+    <dt>@T["NewsSourceAdmin.NextFetch"]</dt><dd><partial name="_Utc" model="Model.NextFetchAtUtc" /></dd>
+    <dt>@T["NewsSourceAdmin.LastError"]</dt><dd dir="ltr">@(Model.LastError ?? "—")</dd>
+    <dt>@T["NewsSourceAdmin.Failures"]</dt><dd>@Model.ConsecutiveFailures</dd>
+</dl>
+<p><a asp-controller="NewsItems" asp-action="Index" asp-route-sourceId="@Model.Id">@T["Nav.News"]</a></p>
+
+@if (Model.Status == "Blocked")
+{
+    <form method="post" asp-action="Allow" asp-route-id="@Model.Id">
+        <input type="hidden" name="version" value="@Model.Version">
+        <button type="submit">@T["NewsSourceAdmin.Allow"]</button>
+    </form>
+}
+else
+{
+    <form method="post" asp-action="Block" asp-route-id="@Model.Id">
+        <input type="hidden" name="version" value="@Model.Version">
+        <button type="submit">@T["NewsSourceAdmin.Block"]</button>
+    </form>
+}
+
+<h2>@T["Cms.Edit"]</h2>
+<form method="post" asp-action="Update" asp-route-id="@Model.Id">
+    <input type="hidden" name="version" value="@Model.Version">
+    <partial name="_SourceFields" model="Model" />
+    <button type="submit">@T["Cms.Save"]</button>
+</form>

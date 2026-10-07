@@ -98,6 +98,7 @@ public static class DependencyInjection
 
         AddContent(services, configuration);
         AddLeads(services, configuration);
+        AddNews(services, configuration);
 
         services.Configure<DomainEventRegistryOptions>(options => options.Assemblies.Add(typeof(IDomainEvent).Assembly));
         services.AddSingleton<DomainEventTypeRegistry>();
@@ -199,6 +200,36 @@ public static class DependencyInjection
             client.Timeout = TimeSpan.FromSeconds(provider.GetRequiredService<IOptions<Security.TurnstileOptions>>().Value.TimeoutSeconds);
             client.DefaultRequestHeaders.UserAgent.ParseAdd("OnyxVanguard-Turnstile/1.0");
         });
+    }
+
+    /// <summary>
+    /// Stage 11: News Hub repositories, the SSRF-safe outbound client (every admin-supplied URL goes through it), the feed reader
+    /// and the news summary boundary. The summary service is the not-configured placeholder until Onyx's external AI Agent is
+    /// integrated by registering an adapter for <see cref="Application.News.INewsSummaryService"/>; items stay held until then.
+    /// </summary>
+    private static void AddNews(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<News.NewsOptions>().Bind(configuration.GetSection(News.NewsOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<News.NewsOptions>>().Value;
+            return new Application.News.NewsSettings(
+                options.MaxSourcesPerRun, options.MaxEntriesPerSource, options.MaxSummariesPerRun, TimeSpan.FromSeconds(options.SummaryTimeoutSeconds),
+                TimeSpan.FromMinutes(options.RunBudgetMinutes), TimeSpan.FromHours(options.SimilarWindowHours));
+        });
+
+        services.AddOptions<Outbound.SafeOutboundHttpOptions>().Bind(configuration.GetSection(Outbound.SafeOutboundHttpOptions.SectionName))
+            .ValidateDataAnnotations().ValidateOnStart();
+        services.TryAddSingleton<Outbound.IOutboundDnsResolver, Outbound.SystemDnsResolver>();
+        services.TryAddSingleton<Outbound.IOutboundConnector, Outbound.SocketConnector>();
+        services.AddSingleton<Outbound.SafeOutboundHttpClient>();
+        services.AddSingleton<Outbound.RobotsTxtPolicy>();
+
+        services.AddScoped<Application.News.INewsSourceRepository, NewsSourceRepository>();
+        services.AddScoped<Application.News.INewsCategoryRepository, NewsCategoryRepository>();
+        services.AddScoped<Application.News.INewsItemRepository, NewsItemRepository>();
+        services.AddScoped<Application.News.INewsFeedReader, News.SyndicationNewsFeedReader>();
+        services.TryAddScoped<Application.News.INewsSummaryService, News.NotConfiguredNewsSummaryService>();
     }
 
     /// <summary>Stage 6: CMS repositories, media storage and inspection, content settings.</summary>

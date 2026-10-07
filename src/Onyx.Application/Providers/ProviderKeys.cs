@@ -16,6 +16,9 @@ public static class ProviderKeys
     public const string SerpProvider = "seo.serp";
     public const string BehaviorAnalytics = "analytics.behavior";
 
+    // News summaries from Onyx's external AI Agent (Stage 11): NotConfigured until an adapter for the Agent is connected.
+    public const string NewsSummaries = "ai.news-summary";
+
     // Search-engine change notification (IndexNow: Bing and other participants; not Google). Inactive until configured.
     public const string IndexNow = "seo.indexnow";
 }

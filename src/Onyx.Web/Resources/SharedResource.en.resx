@@ -683,4 +683,95 @@
   <data name="SearchGroup.Glossary" xml:space="preserve"><value>Glossary</value></data>
   <data name="SearchGroup.Integrations" xml:space="preserve"><value>Integrations</value></data>
   <data name="SearchGroup.Pages" xml:space="preserve"><value>Pages</value></data>
+  <data name="News.Title" xml:space="preserve"><value>Latest news</value></data>
+  <data name="News.Intro" xml:space="preserve"><value>Short Onyx summaries of technology news, each linked to the original report.</value></data>
+  <data name="News.Categories" xml:space="preserve"><value>News categories</value></data>
+  <data name="News.Empty" xml:space="preserve"><value>No news has been published yet.</value></data>
+  <data name="News.Pages" xml:space="preserve"><value>News pages</value></data>
+  <data name="News.Newer" xml:space="preserve"><value>Newer news</value></data>
+  <data name="News.Older" xml:space="preserve"><value>Older news</value></data>
+  <data name="News.ReportedBy" xml:space="preserve"><value>Summary by Onyx — reported by {0}</value></data>
+  <data name="News.SourceDate" xml:space="preserve"><value>Originally published</value></data>
+  <data name="News.OnyxDate" xml:space="preserve"><value>Published on Onyx</value></data>
+  <data name="News.Publisher" xml:space="preserve"><value>Publisher</value></data>
+  <data name="News.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="News.ReadOriginal" xml:space="preserve"><value>Read the original report</value></data>
+  <data name="News.Back" xml:space="preserve"><value>Back to the news</value></data>
+  <data name="News.All" xml:space="preserve"><value>All news</value></data>
+  <data name="Home.LatestNews" xml:space="preserve"><value>Latest news</value></data>
+  <data name="SearchGroup.News" xml:space="preserve"><value>News</value></data>
+  <data name="Nav.News" xml:space="preserve"><value>News items</value></data>
+  <data name="Nav.NewsSources" xml:space="preserve"><value>News sources</value></data>
+  <data name="Nav.NewsCategories" xml:space="preserve"><value>News categories</value></data>
+  <data name="NewsAdmin.Hint" xml:space="preserve"><value>Items are held until they have an Onyx headline and summary in Arabic and English. While no external summary service is connected, every new item waits here for an editor.</value></data>
+  <data name="NewsAdmin.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="NewsAdmin.AnyStatus" xml:space="preserve"><value>Any status</value></data>
+  <data name="NewsAdmin.Empty" xml:space="preserve"><value>No news items.</value></data>
+  <data name="NewsAdmin.Ingested" xml:space="preserve"><value>Received</value></data>
+  <data name="NewsAdmin.OriginalTitle" xml:space="preserve"><value>Original title</value></data>
+  <data name="NewsAdmin.Publisher" xml:space="preserve"><value>Publisher</value></data>
+  <data name="NewsAdmin.Summaries" xml:space="preserve"><value>Onyx summaries</value></data>
+  <data name="NewsAdmin.OriginalLink" xml:space="preserve"><value>Original article</value></data>
+  <data name="NewsAdmin.SourceDate" xml:space="preserve"><value>Source publication time</value></data>
+  <data name="NewsAdmin.Published" xml:space="preserve"><value>Published on Onyx</value></data>
+  <data name="NewsAdmin.SummaryOrigin" xml:space="preserve"><value>Summary written by</value></data>
+  <data name="NewsAdmin.AutoPublished" xml:space="preserve"><value>Published automatically</value></data>
+  <data name="NewsAdmin.Indexable" xml:space="preserve"><value>Search engines may index</value></data>
+  <data name="NewsAdmin.SimilarTo" xml:space="preserve"><value>Similar recent item</value></data>
+  <data name="NewsAdmin.OnyxText" xml:space="preserve"><value>Onyx headline and summary</value></data>
+  <data name="NewsAdmin.Headline" xml:space="preserve"><value>Headline</value></data>
+  <data name="NewsAdmin.Summary" xml:space="preserve"><value>Summary (plain text, 40–700 characters, in your own words)</value></data>
+  <data name="NewsAdmin.SaveText" xml:space="preserve"><value>Save text</value></data>
+  <data name="NewsAdmin.Category" xml:space="preserve"><value>Category</value></data>
+  <data name="NewsAdmin.ChangeCategory" xml:space="preserve"><value>Change category</value></data>
+  <data name="NewsAdmin.Publication" xml:space="preserve"><value>Publication</value></data>
+  <data name="NewsAdmin.Publish" xml:space="preserve"><value>Publish</value></data>
+  <data name="NewsAdmin.Unpublish" xml:space="preserve"><value>Unpublish</value></data>
+  <data name="NewsAdmin.Hide" xml:space="preserve"><value>Hide</value></data>
+  <data name="NewsAdmin.MarkIndexable" xml:space="preserve"><value>Allow search engines to index</value></data>
+  <data name="NewsAdmin.MarkNoIndex" xml:space="preserve"><value>Keep out of search engines (noindex)</value></data>
+  <data name="NewsAdmin.Delete" xml:space="preserve"><value>Delete</value></data>
+  <data name="NewsAdmin.DeleteWarning" xml:space="preserve"><value>Deleting removes the Onyx texts for good. The article link is kept so the same article is not imported again.</value></data>
+  <data name="NewsStatus.Held" xml:space="preserve"><value>Held</value></data>
+  <data name="NewsStatus.Published" xml:space="preserve"><value>Published</value></data>
+  <data name="NewsStatus.Hidden" xml:space="preserve"><value>Hidden</value></data>
+  <data name="NewsStatus.Unpublished" xml:space="preserve"><value>Unpublished</value></data>
+  <data name="NewsStatus.Deleted" xml:space="preserve"><value>Deleted</value></data>
+  <data name="NewsHold.SummaryUnavailable" xml:space="preserve"><value>no Onyx summary yet</value></data>
+  <data name="NewsHold.SummaryRejected" xml:space="preserve"><value>generated summary rejected by the checks</value></data>
+  <data name="NewsHold.AutoPublishOff" xml:space="preserve"><value>source does not publish automatically</value></data>
+  <data name="NewsHold.SimilarItem" xml:space="preserve"><value>similar to a recent item</value></data>
+  <data name="NewsOrigin.Manual" xml:space="preserve"><value>Editor</value></data>
+  <data name="NewsOrigin.Generated" xml:space="preserve"><value>External summary service</value></data>
+  <data name="NewsSourceAdmin.Hint" xml:space="preserve"><value>Only allowlisted sources are fetched. A new source stays blocked until you record the reviewed licensing/terms note and allow it.</value></data>
+  <data name="NewsSourceAdmin.Empty" xml:space="preserve"><value>No sources yet.</value></data>
+  <data name="NewsSourceAdmin.New" xml:space="preserve"><value>Add a source</value></data>
+  <data name="NewsSourceAdmin.Name" xml:space="preserve"><value>Publisher name</value></data>
+  <data name="NewsSourceAdmin.Homepage" xml:space="preserve"><value>Homepage (https)</value></data>
+  <data name="NewsSourceAdmin.FeedUrl" xml:space="preserve"><value>Feed URL (https)</value></data>
+  <data name="NewsSourceAdmin.Format" xml:space="preserve"><value>Feed format</value></data>
+  <data name="NewsSourceAdmin.Language" xml:space="preserve"><value>Source language</value></data>
+  <data name="NewsSourceAdmin.DefaultCategory" xml:space="preserve"><value>Default category</value></data>
+  <data name="NewsSourceAdmin.Interval" xml:space="preserve"><value>Fetch every (minutes)</value></data>
+  <data name="NewsSourceAdmin.LicensingNote" xml:space="preserve"><value>Licensing/terms note (required to allow)</value></data>
+  <data name="NewsSourceAdmin.AutoPublish" xml:space="preserve"><value>Publish automatically when the external summary service provides a valid summary</value></data>
+  <data name="NewsSourceAdmin.Status" xml:space="preserve"><value>Status</value></data>
+  <data name="NewsSourceAdmin.LastFetched" xml:space="preserve"><value>Last attempt</value></data>
+  <data name="NewsSourceAdmin.LastSucceeded" xml:space="preserve"><value>Last success</value></data>
+  <data name="NewsSourceAdmin.NextFetch" xml:space="preserve"><value>Next fetch</value></data>
+  <data name="NewsSourceAdmin.LastError" xml:space="preserve"><value>Last error</value></data>
+  <data name="NewsSourceAdmin.Failures" xml:space="preserve"><value>Consecutive failures</value></data>
+  <data name="NewsSourceAdmin.Allow" xml:space="preserve"><value>Allow (allowlist)</value></data>
+  <data name="NewsSourceAdmin.Block" xml:space="preserve"><value>Block</value></data>
+  <data name="NewsSourceStatus.Allowed" xml:space="preserve"><value>Allowed</value></data>
+  <data name="NewsSourceStatus.Blocked" xml:space="preserve"><value>Blocked</value></data>
+  <data name="NewsCategoryAdmin.Hint" xml:space="preserve"><value>Keywords decide which category an imported item gets; without a match the source&apos;s default category is used.</value></data>
+  <data name="NewsCategoryAdmin.New" xml:space="preserve"><value>Add a category</value></data>
+  <data name="NewsCategoryAdmin.Key" xml:space="preserve"><value>Key</value></data>
+  <data name="NewsCategoryAdmin.NameAr" xml:space="preserve"><value>Arabic name</value></data>
+  <data name="NewsCategoryAdmin.SlugAr" xml:space="preserve"><value>Arabic slug</value></data>
+  <data name="NewsCategoryAdmin.NameEn" xml:space="preserve"><value>English name</value></data>
+  <data name="NewsCategoryAdmin.SlugEn" xml:space="preserve"><value>English slug</value></data>
+  <data name="NewsCategoryAdmin.SortOrder" xml:space="preserve"><value>Order</value></data>
+  <data name="NewsCategoryAdmin.Keywords" xml:space="preserve"><value>Keywords (comma-separated)</value></data>
 </root>

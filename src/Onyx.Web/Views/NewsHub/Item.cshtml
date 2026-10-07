@@ -1,0 +1,31 @@
+@using System.Globalization
+@using Onyx.Contracts.News
+@using Onyx.Web.News
+@model PublicNewsItemResponse
+@* Functional semantic template only. Attribution is always visible: Onyx's summary label, publisher, original link and dates. *@
+<article>
+    <h1>@Model.Title</h1>
+    <p class="attribution"><strong>@string.Format(CultureInfo.InvariantCulture, T["News.ReportedBy"].Value, Model.Publisher)</strong></p>
+    <p>@Model.Summary</p>
+    <dl>
+        <dt>@T["News.Publisher"]</dt>
+        <dd>@Model.Publisher</dd>
+        @if (Model.SourcePublishedAtUtc is { } original)
+        {
+            <dt>@T["News.SourceDate"]</dt>
+            <dd><time datetime="@original.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)" dir="ltr">@original.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</time></dd>
+        }
+        <dt>@T["News.OnyxDate"]</dt>
+        <dd><time datetime="@Model.PublishedAtUtc.ToString("yyyy-MM-ddTHH:mm:ssZ", CultureInfo.InvariantCulture)" dir="ltr">@Model.PublishedAtUtc.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</time></dd>
+        @if (Model.Category is { } category)
+        {
+            <dt>@T["News.Category"]</dt>
+            <dd><a href="@SitePaths.Encode(category.Path)">@category.Name</a></dd>
+        }
+    </dl>
+    @if (NewsPages.IsSafeExternalLink(Model.OriginalUrl))
+    {
+        <p><a href="@Model.OriginalUrl" rel="nofollow noopener noreferrer external">@T["News.ReadOriginal"]</a></p>
+    }
+    <p><a href="@SitePaths.Encode(Model.Path[..Model.Path.LastIndexOf('/')])">@T["News.Back"]</a></p>
+</article>

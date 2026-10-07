@@ -124,6 +124,9 @@ public sealed class ContentSiteTests : IAsyncLifetime
             new("/ar/الخدمات/حلول", _factory.Time.GetUtcNow(), new Dictionary<string, string> { ["ar"] = "/ar/الخدمات/حلول", ["en"] = "/en/services/solutions" }),
         }));
 
+        // Stage 11: the language sitemap also asks the API for News Hub entries (none here).
+        _factory.Api.On(HttpMethod.Get, "api/v1/news/sitemap", _ => FakeOnyxApi.Json(new List<SitemapEntryResponse>()));
+
         using var index = await _browser.GetPathAsync("/sitemap.xml");
         var indexXml = XDocument.Parse(await index.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
         Assert.Equal(["https://www.onyx.test/sitemaps/ar.xml", "https://www.onyx.test/sitemaps/en.xml"], indexXml.Descendants().Where(e => e.Name.LocalName == "loc").Select(e => e.Value));

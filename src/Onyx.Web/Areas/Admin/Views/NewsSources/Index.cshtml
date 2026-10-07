@@ -1,0 +1,37 @@
+@using Onyx.Contracts.News
+@model IReadOnlyList<NewsSourceResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.NewsSources";
+}
+<h1>@T["Nav.NewsSources"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["NewsSourceAdmin.Hint"]</p>
+@if (Model.Count == 0)
+{
+    <p>@T["NewsSourceAdmin.Empty"]</p>
+}
+else
+{
+    <table>
+        <thead>
+            <tr><th>@T["NewsSourceAdmin.Name"]</th><th>@T["NewsSourceAdmin.Status"]</th><th>@T["NewsSourceAdmin.LastSucceeded"]</th><th>@T["NewsSourceAdmin.LastError"]</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var source in Model)
+            {
+                <tr>
+                    <td dir="auto"><a asp-action="Details" asp-route-id="@source.Id">@source.Name</a></td>
+                    <td>@T["NewsSourceStatus." + source.Status]</td>
+                    <td><partial name="_Utc" model="source.LastSucceededAtUtc" /></td>
+                    <td dir="ltr">@(source.LastError ?? "—")</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+<h2>@T["NewsSourceAdmin.New"]</h2>
+<form method="post" asp-action="Create">
+    <partial name="_SourceFields" model="(NewsSourceResponse?)null" />
+    <button type="submit">@T["Cms.Create"]</button>
+</form>

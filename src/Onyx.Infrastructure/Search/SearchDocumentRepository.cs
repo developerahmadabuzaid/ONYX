@@ -45,7 +45,7 @@ internal sealed class SearchDocumentRepository(ApplicationDbContext dbContext, T
         }
 
         return await dbContext.SearchDocuments.AsNoTracking()
-            .Where(document => paths.Contains(document.Path))
+            .Where(document => paths.Contains(document.Path) && document.GroupName != SearchGroups.News)
             .Select(document => document.ContentItemId)
             .Distinct()
             .ToListAsync(cancellationToken)
@@ -54,7 +54,7 @@ internal sealed class SearchDocumentRepository(ApplicationDbContext dbContext, T
 
     public async Task<IReadOnlyList<IndexedDocumentState>> ListStatesAsync(CancellationToken cancellationToken) =>
         await dbContext.SearchDocuments.AsNoTracking()
-            .Select(document => new IndexedDocumentState(document.ContentItemId, document.LanguageCode, document.LiveRevisionId, document.Path))
+            .Select(document => new IndexedDocumentState(document.ContentItemId, document.LanguageCode, document.LiveRevisionId, document.Path, document.GroupName))
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
 

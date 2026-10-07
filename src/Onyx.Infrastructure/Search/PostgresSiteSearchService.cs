@@ -8,16 +8,21 @@ namespace Onyx.Infrastructure.Search;
 /// PostgreSQL site search (architecture.md §18): <c>websearch_to_tsquery</c> over the weighted, stemmed vector (Arabic or English
 /// configuration by language), the unstemmed names vector (exact names and brands, plus a prefix match on the last word) and
 /// trigram word similarity on titles (typos and partial words). Ranking: <c>ts_rank_cd</c> × group boost, plus a names bonus
-/// and title similarity. Every value, including the query text, is a bound parameter; nothing user-supplied becomes SQL.
+/// and title similarity; news is also weighted by freshness. Every value, including the query text, is a bound parameter;
+/// nothing user-supplied becomes SQL.
 /// </summary>
-internal sealed class PostgresSiteSearchService(ApplicationDbContext dbContext) : ISiteSearchService
+internal sealed class PostgresSiteSearchService(ApplicationDbContext dbContext, TimeProvider timeProvider) : ISiteSearchService
 {
     /// <summary>Minimum trigram word similarity for a title-only match (typo tolerance).</summary>
     public const double TitleSimilarityThreshold = 0.4;
 
+    /// <summary>News freshness: the full-text score of an item this old is halved (30 days).</summary>
+    public const double FreshnessHalfLifeSeconds = 30 * 86_400;
+
     public async Task<IReadOnlyList<SearchHit>> SearchAsync(SiteSearchQuery query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);
+        var now = timeProvider.GetUtcNow();
         var configuration = query.LanguageCode == "ar" ? "arabic" : "english";
         var prefix = query.PrefixTerm is null ? null : query.PrefixTerm + ":*";
 
@@ -42,6 +47,10 @@ internal sealed class PostgresSiteSearchService(ApplicationDbContext dbContext) 
                            WHEN 'Glossary' THEN {SearchGroups.Boost(SearchGroups.Glossary)}
                            WHEN 'Integrations' THEN {SearchGroups.Boost(SearchGroups.Integrations)}
                            ELSE {SearchGroups.Boost(SearchGroups.Pages)} END)::float8
+                       -- Freshness (news only): halves the full-text score after about a month.
+                       * (CASE WHEN d.group_name = 'News' AND d.published_at_utc IS NOT NULL
+                               THEN 1.0 / (1.0 + GREATEST(0, EXTRACT(EPOCH FROM (CAST({now} AS timestamptz) - d.published_at_utc))) / {FreshnessHalfLifeSeconds})
+                               ELSE 1.0 END)::float8
                        + (CASE WHEN d.names_vector @@ q.names THEN 0.5 ELSE 0 END)::float8
                        + 0.3 * word_similarity({query.Text}, d.title_normalized)::float8 AS score
                 FROM search_documents d, q

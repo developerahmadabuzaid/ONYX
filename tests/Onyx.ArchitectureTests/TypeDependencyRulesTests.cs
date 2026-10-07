@@ -78,6 +78,46 @@ public sealed class TypeDependencyRulesTests
         Assert.True(result.IsSuccessful, Describe("Onyx.Web (public site)", "intelligence / admin CMS client", result));
     }
 
+    [Theory]
+    [InlineData("Onyx.Domain")]
+    [InlineData("Onyx.Contracts")]
+    [InlineData("Onyx.Application")]
+    [InlineData("Onyx.API")]
+    [InlineData("Onyx.Web")]
+    [InlineData("Onyx.Worker")]
+    public void The_feed_parsing_package_is_used_only_by_infrastructure(string assemblyName) =>
+        AssertNoDependency(assemblyName, ["System.ServiceModel.Syndication"]);
+
+    [Fact]
+    public void Inside_infrastructure_only_the_news_feed_reader_parses_feeds()
+    {
+        // Owner approval (Stage 11): System.ServiceModel.Syndication stays behind INewsFeedReader.
+        var result = Types.InAssembly(Load("Onyx.Infrastructure"))
+            .That().DoNotResideInNamespace("Onyx.Infrastructure.News")
+            .ShouldNot().HaveDependencyOn("System.ServiceModel.Syndication")
+            .GetResult();
+
+        Assert.True(result.IsSuccessful, Describe("Onyx.Infrastructure (outside News)", "System.ServiceModel.Syndication", result));
+
+        // The rule is not vacuous: the reader itself is seen depending on the package.
+        var users = Types.InAssembly(Load("Onyx.Infrastructure")).That().HaveDependencyOn("System.ServiceModel.Syndication").GetTypes();
+        Assert.Contains(users, type => type.Name == "SyndicationNewsFeedReader");
+    }
+
+    [Fact]
+    public void Public_api_controllers_never_reach_news_administration()
+    {
+        var result = Types.InAssembly(Load("Onyx.API"))
+            .That().ResideInNamespace("Onyx.API.Controllers")
+            .And().DoNotResideInNamespace("Onyx.API.Controllers.Admin")
+            .ShouldNot().HaveDependencyOnAny(
+                "Onyx.Application.News.NewsAdministrationService", "Onyx.Application.News.NewsSourceAdministrationService",
+                "Onyx.Application.News.NewsCategoryAdministrationService", "Onyx.Application.News.NewsIngestionService")
+            .GetResult();
+
+        Assert.True(result.IsSuccessful, Describe("Onyx.API (public controllers)", "news administration", result));
+    }
+
     private static void AssertNoDependency(string assemblyName, string[] forbidden)
     {
         var result = Types.InAssembly(Load(assemblyName))

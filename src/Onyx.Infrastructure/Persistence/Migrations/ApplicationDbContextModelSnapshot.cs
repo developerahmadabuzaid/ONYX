@@ -2697,6 +2697,511 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                     b.ToTable("email_template_copies", (string)null);
                 });
 
+            modelBuilder.Entity("Onyx.Domain.News.NewsCategory", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasMaxLength(60)
+                        .HasColumnType("character varying(60)")
+                        .HasColumnName("key");
+
+                    b.Property<string>("Keywords")
+                        .IsRequired()
+                        .HasColumnType("jsonb")
+                        .HasColumnName("keywords");
+
+                    b.Property<int>("SortOrder")
+                        .HasColumnType("integer")
+                        .HasColumnName("sort_order");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_categories");
+
+                    b.HasIndex("Key")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_categories_key");
+
+                    b.ToTable("news_categories", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0000-7000-8000-000000000001"),
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Key = "artificial-intelligence",
+                            Keywords = "[]",
+                            SortOrder = 1
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0000-7000-8000-000000000002"),
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Key = "software-technology",
+                            Keywords = "[]",
+                            SortOrder = 2
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0000-7000-8000-000000000003"),
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Key = "digital-marketing",
+                            Keywords = "[]",
+                            SortOrder = 3
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0000-7000-8000-000000000004"),
+                            CreatedAtUtc = new DateTimeOffset(new DateTime(2026, 10, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Key = "cybersecurity",
+                            Keywords = "[]",
+                            SortOrder = 4
+                        });
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsCategoryTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("name");
+
+                    b.Property<Guid>("NewsCategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("news_category_id");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("slug");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_category_translations");
+
+                    b.HasIndex("LanguageCode", "Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_category_translations_language_code_slug");
+
+                    b.HasIndex("NewsCategoryId", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_category_translations_news_category_id_language_code");
+
+                    b.ToTable("news_category_translations", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000001"),
+                            LanguageCode = "ar",
+                            Name = "الذكاء الاصطناعي",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000001"),
+                            Slug = "الذكاء-الاصطناعي"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000002"),
+                            LanguageCode = "en",
+                            Name = "Artificial Intelligence",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000001"),
+                            Slug = "artificial-intelligence"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000003"),
+                            LanguageCode = "ar",
+                            Name = "البرمجيات والتقنية",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000002"),
+                            Slug = "البرمجيات-والتقنية"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000004"),
+                            LanguageCode = "en",
+                            Name = "Software & Technology",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000002"),
+                            Slug = "software-technology"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000005"),
+                            LanguageCode = "ar",
+                            Name = "التسويق الرقمي",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000003"),
+                            Slug = "التسويق-الرقمي"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000006"),
+                            LanguageCode = "en",
+                            Name = "Digital Marketing",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000003"),
+                            Slug = "digital-marketing"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000007"),
+                            LanguageCode = "ar",
+                            Name = "الأمن السيبراني",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000004"),
+                            Slug = "الأمن-السيبراني"
+                        },
+                        new
+                        {
+                            Id = new Guid("0192f0c0-0001-7000-8000-000000000008"),
+                            LanguageCode = "en",
+                            Name = "Cybersecurity",
+                            NewsCategoryId = new Guid("0192f0c0-0000-7000-8000-000000000004"),
+                            Slug = "cybersecurity"
+                        });
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AutoPublished")
+                        .HasColumnType("boolean")
+                        .HasColumnName("auto_published");
+
+                    b.Property<Guid>("CategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("category_id");
+
+                    b.Property<string>("ClusterKey")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("cluster_key");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<DateTimeOffset?>("FirstPublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("first_published_at_utc");
+
+                    b.Property<string>("HoldReason")
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("hold_reason");
+
+                    b.Property<bool>("Indexable")
+                        .HasColumnType("boolean")
+                        .HasColumnName("indexable");
+
+                    b.Property<DateTimeOffset>("IngestedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("ingested_at_utc");
+
+                    b.Property<string>("OriginalTitle")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasColumnName("original_title");
+
+                    b.Property<string>("OriginalUrl")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("original_url");
+
+                    b.Property<string>("OriginalUrlHash")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("character(64)")
+                        .HasColumnName("original_url_hash")
+                        .IsFixedLength();
+
+                    b.Property<DateTimeOffset?>("PublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("published_at_utc");
+
+                    b.Property<string>("Publisher")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("publisher");
+
+                    b.Property<Guid?>("SimilarToItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("similar_to_item_id");
+
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("source_id");
+
+                    b.Property<string>("SourceLanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("source_language_code");
+
+                    b.Property<DateTimeOffset?>("SourcePublishedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("source_published_at_utc");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("status");
+
+                    b.Property<string>("SummaryOrigin")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("summary_origin");
+
+                    b.Property<string>("SummaryProvider")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("summary_provider");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_items");
+
+                    b.HasIndex("CategoryId")
+                        .HasDatabaseName("ix_news_items_category_id");
+
+                    b.HasIndex("OriginalUrlHash")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_items_original_url_hash");
+
+                    b.HasIndex("SourceId", "IngestedAtUtc")
+                        .HasDatabaseName("ix_news_items_source_id_ingested_at_utc");
+
+                    b.HasIndex("Status", "PublishedAtUtc")
+                        .HasDatabaseName("ix_news_items_status_published_at_utc");
+
+                    b.HasIndex("SourceLanguageCode", "ClusterKey", "IngestedAtUtc")
+                        .HasDatabaseName("ix_news_items_source_language_code_cluster_key_ingested_at_utc");
+
+                    b.ToTable("news_items", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsItemTranslation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<Guid>("NewsItemId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("news_item_id");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)")
+                        .HasColumnName("slug");
+
+                    b.Property<string>("Summary")
+                        .IsRequired()
+                        .HasMaxLength(700)
+                        .HasColumnType("character varying(700)")
+                        .HasColumnName("summary");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasColumnName("title");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_item_translations");
+
+                    b.HasIndex("LanguageCode", "Slug")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_item_translations_language_code_slug");
+
+                    b.HasIndex("NewsItemId", "LanguageCode")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_item_translations_news_item_id_language_code");
+
+                    b.ToTable("news_item_translations", (string)null);
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsSource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
+                        .HasColumnName("id");
+
+                    b.Property<bool>("AutoPublish")
+                        .HasColumnType("boolean")
+                        .HasColumnName("auto_publish");
+
+                    b.Property<int>("ConsecutiveFailures")
+                        .HasColumnType("integer")
+                        .HasColumnName("consecutive_failures");
+
+                    b.Property<DateTimeOffset>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at_utc");
+
+                    b.Property<Guid?>("CreatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("created_by_id");
+
+                    b.Property<Guid>("DefaultCategoryId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("default_category_id");
+
+                    b.Property<string>("FeedFormat")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("feed_format");
+
+                    b.Property<string>("FeedUrl")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("feed_url");
+
+                    b.Property<int>("FetchIntervalMinutes")
+                        .HasColumnType("integer")
+                        .HasColumnName("fetch_interval_minutes");
+
+                    b.Property<string>("HomepageUrl")
+                        .IsRequired()
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("homepage_url");
+
+                    b.Property<string>("LanguageCode")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("language_code");
+
+                    b.Property<string>("LastError")
+                        .HasMaxLength(300)
+                        .HasColumnType("character varying(300)")
+                        .HasColumnName("last_error");
+
+                    b.Property<DateTimeOffset?>("LastFetchedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_fetched_at_utc");
+
+                    b.Property<DateTimeOffset?>("LastSucceededAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("last_succeeded_at_utc");
+
+                    b.Property<string>("LicensingNote")
+                        .HasMaxLength(2000)
+                        .HasColumnType("character varying(2000)")
+                        .HasColumnName("licensing_note");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("character varying(150)")
+                        .HasColumnName("name");
+
+                    b.Property<DateTimeOffset?>("NextFetchAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("next_fetch_at_utc");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("character varying(10)")
+                        .HasColumnName("status");
+
+                    b.Property<DateTimeOffset?>("UpdatedAtUtc")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at_utc");
+
+                    b.Property<Guid?>("UpdatedById")
+                        .HasColumnType("uuid")
+                        .HasColumnName("updated_by_id");
+
+                    b.Property<uint>("Version")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("xid")
+                        .HasColumnName("xmin");
+
+                    b.HasKey("Id")
+                        .HasName("pk_news_sources");
+
+                    b.HasIndex("DefaultCategoryId")
+                        .HasDatabaseName("ix_news_sources_default_category_id");
+
+                    b.HasIndex("FeedUrl")
+                        .IsUnique()
+                        .HasDatabaseName("ix_news_sources_feed_url");
+
+                    b.HasIndex("Status", "NextFetchAtUtc")
+                        .HasDatabaseName("ix_news_sources_status_next_fetch_at_utc");
+
+                    b.ToTable("news_sources", (string)null);
+                });
+
             modelBuilder.Entity("Onyx.Domain.Notifications.AdminNotification", b =>
                 {
                     b.Property<Guid>("Id")
@@ -4312,6 +4817,53 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                         .HasConstraintName("fk_media_usages_media_assets_media_asset_id");
                 });
 
+            modelBuilder.Entity("Onyx.Domain.News.NewsCategoryTranslation", b =>
+                {
+                    b.HasOne("Onyx.Domain.News.NewsCategory", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("NewsCategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_news_category_translations_news_categories_news_category_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsItem", b =>
+                {
+                    b.HasOne("Onyx.Domain.News.NewsCategory", null)
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_news_items_news_categories_category_id");
+
+                    b.HasOne("Onyx.Domain.News.NewsSource", null)
+                        .WithMany()
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_news_items_news_sources_source_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsItemTranslation", b =>
+                {
+                    b.HasOne("Onyx.Domain.News.NewsItem", null)
+                        .WithMany("Translations")
+                        .HasForeignKey("NewsItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_news_item_translations_news_items_news_item_id");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsSource", b =>
+                {
+                    b.HasOne("Onyx.Domain.News.NewsCategory", null)
+                        .WithMany()
+                        .HasForeignKey("DefaultCategoryId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("fk_news_sources_news_categories_default_category_id");
+                });
+
             modelBuilder.Entity("Onyx.Domain.Notifications.NotificationReadState", b =>
                 {
                     b.HasOne("Onyx.Domain.Notifications.AdminNotification", null)
@@ -4390,6 +4942,16 @@ namespace Onyx.Infrastructure.Persistence.Migrations
                 });
 
             modelBuilder.Entity("Onyx.Domain.Content.ContentItem", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsCategory", b =>
+                {
+                    b.Navigation("Translations");
+                });
+
+            modelBuilder.Entity("Onyx.Domain.News.NewsItem", b =>
                 {
                     b.Navigation("Translations");
                 });
