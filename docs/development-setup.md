@@ -242,3 +242,18 @@ Erasure cannot be undone. Data in backups ages out with the backup retention (ar
   
   All are technical bounds, not business facts.
 - **Network:** the Worker host needs outbound HTTPS to the allowlisted publishers. The gateway refuses proxies and private addresses by design, so outbound traffic must reach the public internet directly.
+
+## 12. Analytics and search performance (Stage 12)
+
+Both providers stay **Not configured** until real values exist. Nothing is preset and no sample data is shown.
+
+- **Onyx.Worker (and Onyx.API) settings.** The key is a secret: use the secret store or environment variables, never appsettings in source control.
+  - `Analytics:Google:Ga4PropertyId`: the GA4 property id, digits only.
+  - `Analytics:Google:SearchConsoleSiteUrl`: `sc-domain:example.com` or a URL-prefix property such as `https://www.example.com/`.
+  - `Analytics:Google:ServiceAccountKeyJson` (or `Analytics:Google:ServiceAccountKeyFile`, a path mounted by the host).
+- **Granting the service account access.** Grant it read-only access: **Viewer** on the GA4 property and **Restricted** (read) on the Search Console property. Onyx requests only `analytics.readonly` and `webmasters.readonly`.
+- **Onyx.Web setting.** `Analytics:Ga4MeasurementId` (`G-…`) enables the browser tag. It loads only for visitors who accepted analytics cookies, never on admin pages.
+- **Sync.** The `analytics-ga4-sync` (05:00) and `analytics-gsc-sync` (05:30) jobs run daily. *Admin → Analytics connections → Sync now* (`ProviderConnections.Manage`) makes a job due immediately.
+  - Technical bounds: `Analytics:Sync:InitialDays` (28), `RefreshDays` (3), `MaxDaysPerRun` (31), `MaxRowsPerReport` (25,000), `MaxRowsPerDay` (500), `WebAnalyticsDelayDays` (1), `SearchDelayDays` (3), `FetchTimeoutSeconds` (120), `StaleAfterHours` (48).
+  - These defaults are for the owner to confirm at activation.
+- **Retention.** Analytics aggregates have their own category in Admin → Retention policies (`AnalyticsAggregates`, delete only). It stays inactive until a period is entered.

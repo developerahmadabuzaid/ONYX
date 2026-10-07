@@ -76,6 +76,7 @@ public static class WebServiceCollectionExtensions
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add<AdminSessionEndedFilter>();
                 options.Filters.Add<ApiUnavailableFilter>();
+                options.Filters.Add<Analytics.AnalyticsTagFilter>();
             })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization(options => options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
@@ -134,6 +135,9 @@ public static class WebServiceCollectionExtensions
                 (turnstile, environment) => !environment.IsProduction() || turnstile.IsConfigured,
                 "Production requires Turnstile:SiteKey (the public site key of the Cloudflare Turnstile widget).")
             .ValidateOnStart();
+        services.AddOptions<AnalyticsOptions>().Bind(configuration.GetSection(AnalyticsOptions.SectionName))
+            .Validate(options => AnalyticsOptions.IsValidMeasurementId(options.Ga4MeasurementId), "Analytics:Ga4MeasurementId must look like G-XXXXXXXX (or be empty).")
+            .ValidateOnStart();
         services.AddOptions<DataProtectionSettings>().Bind(configuration.GetSection(DataProtectionSettings.SectionName)).ValidateDataAnnotations().ValidateOnStart();
         services.AddOptions<WebLocalizationOptions>().Bind(configuration.GetSection(WebLocalizationOptions.SectionName)).ValidateOnStart();
         services.AddOptions<ForwardedHeadersSettings>()
@@ -190,6 +194,7 @@ public static class WebServiceCollectionExtensions
         Configure(services.AddHttpClient<ISearchApiClient, SearchApiClient>());
         Configure(services.AddHttpClient<IPublicNewsApiClient, PublicNewsApiClient>());
         Configure(services.AddHttpClient<IAdminNewsApiClient, AdminNewsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminAnalyticsApiClient, AdminAnalyticsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
         Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminPrivacyApiClient, AdminPrivacyApiClient>().AddHttpMessageHandler<AccessTokenHandler>());

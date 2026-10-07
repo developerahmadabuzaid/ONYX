@@ -100,4 +100,5 @@ public enum AuditAction
     NewsItemIndexingChanged = 92,
     NewsCategoryCreated = 93,
     NewsCategoryUpdated = 94,
+    AnalyticsSyncRequested = 95,
 }

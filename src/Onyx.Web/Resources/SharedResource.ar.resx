@@ -774,4 +774,141 @@
   <data name="NewsCategoryAdmin.SlugEn" xml:space="preserve"><value>الرابط المختصر بالإنجليزية</value></data>
   <data name="NewsCategoryAdmin.SortOrder" xml:space="preserve"><value>الترتيب</value></data>
   <data name="NewsCategoryAdmin.Keywords" xml:space="preserve"><value>الكلمات المفتاحية (مفصولة بفواصل)</value></data>
+  <data name="Nav.Analytics" xml:space="preserve"><value>التحليلات</value></data>
+  <data name="Nav.SearchPerformance" xml:space="preserve"><value>أداء البحث</value></data>
+  <data name="Nav.AnalyticsIntegrations" xml:space="preserve"><value>اتصالات التحليلات</value></data>
+  <data name="RetentionCategory.AnalyticsAggregates" xml:space="preserve"><value>مجاميع التحليلات</value></data>
+  <data name="Analytics.Reports" xml:space="preserve"><value>التقارير</value></data>
+  <data name="Analytics.Tab.overview" xml:space="preserve"><value>نظرة عامة</value></data>
+  <data name="Analytics.Tab.traffic" xml:space="preserve"><value>الزيارات</value></data>
+  <data name="Analytics.Tab.landing-pages" xml:space="preserve"><value>صفحات الهبوط</value></data>
+  <data name="Analytics.Tab.content" xml:space="preserve"><value>أداء المحتوى</value></data>
+  <data name="Analytics.Tab.funnel" xml:space="preserve"><value>مسار العملاء المحتملين</value></data>
+  <data name="Analytics.Tab.campaigns" xml:space="preserve"><value>الحملات</value></data>
+  <data name="Analytics.Tab.conversions" xml:space="preserve"><value>التحويلات</value></data>
+  <data name="Analytics.Tab.search" xml:space="preserve"><value>البحث العضوي</value></data>
+  <data name="Analytics.Tab.search-queries" xml:space="preserve"><value>استعلامات البحث</value></data>
+  <data name="Analytics.Tab.search-pages" xml:space="preserve"><value>صفحات البحث</value></data>
+  <data name="Analytics.Tab.search-signals" xml:space="preserve"><value>مؤشرات البحث</value></data>
+  <data name="Analytics.Report.overview" xml:space="preserve"><value>نظرة عامة</value></data>
+  <data name="Analytics.Report.traffic" xml:space="preserve"><value>الزيارات ومصادرها</value></data>
+  <data name="Analytics.Report.landingPages" xml:space="preserve"><value>صفحات الهبوط</value></data>
+  <data name="Analytics.Report.campaigns" xml:space="preserve"><value>الحملات والإسناد</value></data>
+  <data name="Analytics.Report.conversions" xml:space="preserve"><value>أداء التحويلات</value></data>
+  <data name="Analytics.Report.content" xml:space="preserve"><value>أداء المحتوى</value></data>
+  <data name="Analytics.Report.funnel" xml:space="preserve"><value>مسار العملاء المحتملين</value></data>
+  <data name="Analytics.Report.searchOverview" xml:space="preserve"><value>البحث العضوي</value></data>
+  <data name="Analytics.Report.searchQueries" xml:space="preserve"><value>استعلامات البحث</value></data>
+  <data name="Analytics.Report.searchPages" xml:space="preserve"><value>صفحات البحث</value></data>
+  <data name="Analytics.Report.searchSignals" xml:space="preserve"><value>مؤشرات البحث</value></data>
+  <data name="Analytics.From" xml:space="preserve"><value>من</value></data>
+  <data name="Analytics.To" xml:space="preserve"><value>إلى</value></data>
+  <data name="Analytics.Apply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="Analytics.Period" xml:space="preserve"><value>الفترة:</value></data>
+  <data name="Analytics.GroupBy" xml:space="preserve"><value>التجميع حسب</value></data>
+  <data name="Analytics.Touch" xml:space="preserve"><value>نقطة الإسناد</value></data>
+  <data name="Analytics.Touch.first" xml:space="preserve"><value>أول تفاعل</value></data>
+  <data name="Analytics.Touch.last" xml:space="preserve"><value>آخر تفاعل</value></data>
+  <data name="Analytics.Group.source" xml:space="preserve"><value>مصدر UTM</value></data>
+  <data name="Analytics.Group.medium" xml:space="preserve"><value>وسيط UTM</value></data>
+  <data name="Analytics.Group.campaign" xml:space="preserve"><value>حملة UTM</value></data>
+  <data name="Analytics.Group.landingpage" xml:space="preserve"><value>صفحة الهبوط</value></data>
+  <data name="Analytics.Group.service" xml:space="preserve"><value>الخدمة</value></data>
+  <data name="Analytics.Group.market" xml:space="preserve"><value>السوق</value></data>
+  <data name="Analytics.Group.language" xml:space="preserve"><value>اللغة</value></data>
+  <data name="Analytics.Group.inquirytype" xml:space="preserve"><value>نوع الطلب</value></data>
+  <data name="Analytics.Source.analytics.ga4" xml:space="preserve"><value>Google Analytics 4</value></data>
+  <data name="Analytics.Source.search.gsc" xml:space="preserve"><value>Google Search Console</value></data>
+  <data name="Analytics.Source.onyx" xml:space="preserve"><value>بيانات Onyx الخاصة</value></data>
+  <data name="Analytics.State.NotConfigured" xml:space="preserve"><value>غير مُعدّ</value></data>
+  <data name="Analytics.State.Disabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="Analytics.State.Failed" xml:space="preserve"><value>فشل (تُعرض آخر بيانات سليمة)</value></data>
+  <data name="Analytics.State.NoData" xml:space="preserve"><value>متصل — لا توجد بيانات لهذه الفترة</value></data>
+  <data name="Analytics.State.Ok" xml:space="preserve"><value>متصل</value></data>
+  <data name="Analytics.Syncing" xml:space="preserve"><value>المزامنة جارية</value></data>
+  <data name="Analytics.Stale" xml:space="preserve"><value>قديمة: لا توجد مزامنة ناجحة مؤخراً</value></data>
+  <data name="Analytics.Coverage" xml:space="preserve"><value>البيانات المتوفرة للفترة</value></data>
+  <data name="Analytics.LastSync" xml:space="preserve"><value>آخر مزامنة ناجحة</value></data>
+  <data name="Analytics.LastFailure" xml:space="preserve"><value>آخر فشل</value></data>
+  <data name="Analytics.Truncated" xml:space="preserve"><value>بلغت آخر مزامنة حدّ الصفوف؛ وجُمعت الصفوف الأصغر تحت &quot;(other)&quot;</value></data>
+  <data name="Analytics.NoRows" xml:space="preserve"><value>لا توجد بيانات لهذه الفترة.</value></data>
+  <data name="Analytics.NotConnectedNoRows" xml:space="preserve"><value>غير متصل: لا تتوفر بيانات (ولا يُعرض أي رقم على أنه صفر).</value></data>
+  <data name="Analytics.Column.label" xml:space="preserve"><value>العنصر</value></data>
+  <data name="Analytics.Column.activeUsers" xml:space="preserve"><value>المستخدمون النشطون</value></data>
+  <data name="Analytics.Column.sessions" xml:space="preserve"><value>الجلسات</value></data>
+  <data name="Analytics.Column.engagedSessions" xml:space="preserve"><value>الجلسات المتفاعلة</value></data>
+  <data name="Analytics.Column.pageViews" xml:space="preserve"><value>المشاهدات</value></data>
+  <data name="Analytics.Column.count" xml:space="preserve"><value>العدد</value></data>
+  <data name="Analytics.Column.inquiries" xml:space="preserve"><value>الطلبات</value></data>
+  <data name="Analytics.Column.ga4Sessions" xml:space="preserve"><value>جلسات GA4</value></data>
+  <data name="Analytics.Column.onyxLeads" xml:space="preserve"><value>العملاء المحتملون في Onyx</value></data>
+  <data name="Analytics.Column.onyxWon" xml:space="preserve"><value>المكسوبون في Onyx</value></data>
+  <data name="Analytics.Column.ga4Events" xml:space="preserve"><value>أحداث GA4 (الزوار الموافقون)</value></data>
+  <data name="Analytics.Column.onyxRecords" xml:space="preserve"><value>سجلات Onyx</value></data>
+  <data name="Analytics.Column.leads" xml:space="preserve"><value>العملاء المحتملون</value></data>
+  <data name="Analytics.Column.New" xml:space="preserve"><value>جديد</value></data>
+  <data name="Analytics.Column.Contacted" xml:space="preserve"><value>تم التواصل</value></data>
+  <data name="Analytics.Column.Qualified" xml:space="preserve"><value>مؤهل</value></data>
+  <data name="Analytics.Column.Proposal" xml:space="preserve"><value>عرض سعر</value></data>
+  <data name="Analytics.Column.Won" xml:space="preserve"><value>مكسوب</value></data>
+  <data name="Analytics.Column.Lost" xml:space="preserve"><value>مفقود</value></data>
+  <data name="Analytics.Column.clicks" xml:space="preserve"><value>النقرات</value></data>
+  <data name="Analytics.Column.impressions" xml:space="preserve"><value>مرات الظهور</value></data>
+  <data name="Analytics.Column.ctr" xml:space="preserve"><value>نسبة النقر</value></data>
+  <data name="Analytics.Column.position" xml:space="preserve"><value>متوسط الترتيب</value></data>
+  <data name="Analytics.Column.previousClicks" xml:space="preserve"><value>النقرات في الفترة السابقة</value></data>
+  <data name="Analytics.Column.change" xml:space="preserve"><value>التغيّر</value></data>
+  <data name="Analytics.Row.total" xml:space="preserve"><value>الإجمالي</value></data>
+  <data name="Analytics.Row.inquiries" xml:space="preserve"><value>الطلبات</value></data>
+  <data name="Analytics.Row.newLeads" xml:space="preserve"><value>عملاء محتملون جدد</value></data>
+  <data name="Analytics.Row.bookings" xml:space="preserve"><value>حجوزات الاستشارة</value></data>
+  <data name="Analytics.Row.won" xml:space="preserve"><value>عملاء مكسوبون (المرحلة الحالية)</value></data>
+  <data name="Analytics.Row.lost" xml:space="preserve"><value>عملاء مفقودون (المرحلة الحالية)</value></data>
+  <data name="Analytics.Section.webDaily" xml:space="preserve"><value>الزيارات اليومية</value></data>
+  <data name="Analytics.Section.firstParty" xml:space="preserve"><value>سجلات Onyx في هذه الفترة</value></data>
+  <data name="Analytics.Section.sourceMedium" xml:space="preserve"><value>المصدر / الوسيط</value></data>
+  <data name="Analytics.Section.country" xml:space="preserve"><value>الدولة</value></data>
+  <data name="Analytics.Section.device" xml:space="preserve"><value>الجهاز</value></data>
+  <data name="Analytics.Section.ga4LandingPages" xml:space="preserve"><value>صفحات الهبوط (GA4)</value></data>
+  <data name="Analytics.Section.onyxInquiriesByLandingPage" xml:space="preserve"><value>طلبات Onyx حسب صفحة الهبوط</value></data>
+  <data name="Analytics.Section.signalTrafficWithoutInquiries" xml:space="preserve"><value>مؤشر: صفحات هبوط لها زيارات دون أي طلب في Onyx</value></data>
+  <data name="Analytics.Section.ga4Campaigns" xml:space="preserve"><value>الحملات (GA4)</value></data>
+  <data name="Analytics.Section.onyxLeadsByCampaign" xml:space="preserve"><value>عملاء Onyx المحتملون حسب حملة UTM</value></data>
+  <data name="Analytics.Section.campaignComparison" xml:space="preserve"><value>جنباً إلى جنب حسب اسم الحملة (مقارنة إجمالية)</value></data>
+  <data name="Analytics.Section.conversionComparison" xml:space="preserve"><value>أحداث التحويل وسجلات Onyx</value></data>
+  <data name="Analytics.Section.onyxInquiriesByType" xml:space="preserve"><value>طلبات Onyx حسب النوع</value></data>
+  <data name="Analytics.Section.ga4Content" xml:space="preserve"><value>الجلسات حسب الصفحة (GA4)</value></data>
+  <data name="Analytics.Section.funnelTotal" xml:space="preserve"><value>مسار العملاء المحتملين — جميعهم</value></data>
+  <data name="Analytics.Section.funnelBy" xml:space="preserve"><value>مسار العملاء المحتملين</value></data>
+  <data name="Analytics.Section.searchDaily" xml:space="preserve"><value>أداء البحث اليومي</value></data>
+  <data name="Analytics.Section.searchCountry" xml:space="preserve"><value>البحث حسب الدولة</value></data>
+  <data name="Analytics.Section.searchDevice" xml:space="preserve"><value>البحث حسب الجهاز</value></data>
+  <data name="Analytics.Section.searchQueries" xml:space="preserve"><value>الاستعلامات</value></data>
+  <data name="Analytics.Section.searchPages" xml:space="preserve"><value>الصفحات (كل لغة على حدة)</value></data>
+  <data name="Analytics.Section.signalHighImpressionsLowCtr" xml:space="preserve"><value>مؤشر: ظهور كثير مع نسبة نقر منخفضة</value></data>
+  <data name="Analytics.Section.signalClicksDeclining" xml:space="preserve"><value>مؤشر: انخفاض النقرات مقارنة بالفترة السابقة</value></data>
+  <data name="Analytics.Section.signalClicksImproving" xml:space="preserve"><value>مؤشر: تحسّن النقرات مقارنة بالفترة السابقة</value></data>
+  <data name="Analytics.Section.signalQueryOpportunities" xml:space="preserve"><value>مؤشر: استعلامات قريبة من الصفحة الأولى</value></data>
+  <data name="Analytics.Section.signalVisibleWithoutInquiries" xml:space="preserve"><value>مؤشر: ظهور في البحث دون طلبات في Onyx</value></data>
+  <data name="Analytics.Section.signalNoVisibility" xml:space="preserve"><value>مؤشر: صفحات منشورة بلا مرات ظهور مسجّلة</value></data>
+  <data name="Analytics.Note.SeparateDatasets" xml:space="preserve"><value>زيارات GA4 ومسار العملاء المحتملين في Onyx مجموعتا بيانات منفصلتان. تقارير GA4 لا تحمل معرّفاً للزائر، لذلك لا يُطابَق أي شيء على مستوى الزائر أو العميل المحتمل؛ والأرقام المعروضة جنباً إلى جنب مقارنات إجمالية، لا معدلات تحويل ولا أسباب.</value></data>
+  <data name="Analytics.Note.ConsentLimited" xml:space="preserve"><value>يحسب GA4 فقط الزوار الذين قبلوا ملفات تعريف الارتباط التحليلية؛ أما سجلات Onyx فتحسب كل طلب.</value></data>
+  <data name="Analytics.Note.SearchDelay" xml:space="preserve"><value>تصبح بيانات Search Console نهائية بعد بضعة أيام فقط؛ وتنتهي الفترة عند آخر يوم نهائي.</value></data>
+  <data name="Analytics.Note.Signals" xml:space="preserve"><value>المؤشرات ملاحظات مبنية على حدود ثابتة ليراجعها المحرر. لا يُغيَّر شيء تلقائياً.</value></data>
+  <data name="Analytics.Note.CurrentStage" xml:space="preserve"><value>مراحل العملاء المحتملين هي المرحلة الحالية لكل عميل.</value></data>
+  <data name="Analytics.Note.UsersNotAdditive" xml:space="preserve"><value>لا يُجمع المستخدمون اليوميون عبر الأيام، لذلك لا يتضمن الإجمالي عدد المستخدمين.</value></data>
+  <data name="Analytics.Note.Touch.first" xml:space="preserve"><value>مجمّعة حسب أول تفاعل لكل عميل محتمل (يُحتفظ به فقط بموافقة التحليلات؛ وإلا &quot;(not set)&quot;).</value></data>
+  <data name="Analytics.Note.Touch.last" xml:space="preserve"><value>مجمّعة حسب آخر تفاعل قبل الطلب.</value></data>
+  <data name="Analytics.Integrations.Hint" xml:space="preserve"><value>حالة مزودي التحليلات. بيانات الاعتماد موجودة فقط في مخزن الأسرار على الخادم ولا تُعرض هنا أبداً.</value></data>
+  <data name="Analytics.Integrations.Setup" xml:space="preserve"><value>غير مُعدّ: يجب أن يضبط المالك خاصية GA4 وخاصية Search Console ومفتاح حساب خدمة للقراءة فقط في إعدادات الخادم (راجع docs/development-setup.md).</value></data>
+  <data name="Analytics.SyncNow" xml:space="preserve"><value>زامن الآن</value></data>
+  <data name="Analytics.SyncRequested" xml:space="preserve"><value>طُلبت المزامنة؛ سينفّذها Worker قريباً.</value></data>
+  <data name="Analytics.ConnectionStatus" xml:space="preserve"><value>الاتصال</value></data>
+  <data name="Analytics.LastChecked" xml:space="preserve"><value>آخر فحص</value></data>
+  <data name="Analytics.LastSucceeded" xml:space="preserve"><value>آخر نجاح</value></data>
+  <data name="Analytics.Connection.NotConfigured" xml:space="preserve"><value>غير مُعدّ</value></data>
+  <data name="Analytics.Connection.Configured" xml:space="preserve"><value>مُعدّ (لم يُتحقق منه بعد)</value></data>
+  <data name="Analytics.Connection.Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="Analytics.Connection.Error" xml:space="preserve"><value>خطأ</value></data>
+  <data name="Analytics.Connection.Disabled" xml:space="preserve"><value>معطّل</value></data>
 </root>

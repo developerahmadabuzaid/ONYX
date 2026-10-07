@@ -37,6 +37,7 @@ public sealed class ConsultationController(
         if (slug == BookedSlug)
         {
             Describe(LeadPages.BookConsultation, lang, "Booking.Booked.Title", noIndex: true, BookedSlug);
+            ViewData[Analytics.AnalyticsTag.ConversionKey] = TempData[Analytics.AnalyticsTag.ConversionKey] as string;
             return View("Booked", TempData[ReferenceKey] as string);
         }
 
@@ -101,11 +102,15 @@ public sealed class ConsultationController(
         }
 
         TempData[ReferenceKey] = reference;
+        TempData[Analytics.AnalyticsTag.ConversionKey] = form.RequestOnly
+            ? Analytics.ConversionEvent.ForInquiry(InquiryTypes.RequestConsultation)
+            : Analytics.ConversionEvent.ForBooking();
         return LocalRedirect(PathOf(LeadPages.BookConsultation, lang, BookedSlug)!);
     }
 
     [HttpGet]
     [SensitivePage]
+    [Analytics.NoAnalytics]
     public async Task<IActionResult> Manage(string lang, string? slug, [FromQuery] string? token, CancellationToken cancellationToken)
     {
         Describe(LeadPages.ManageBooking, lang, "Booking.Manage.Title", noIndex: true);
@@ -120,6 +125,7 @@ public sealed class ConsultationController(
     /// <summary><paramref name="operation"/> is <c>cancel</c>, <c>reschedule</c> or <c>calendar</c>.</summary>
     [HttpPost]
     [SensitivePage]
+    [Analytics.NoAnalytics]
     public async Task<IActionResult> Manage(string lang, string? slug, string? token, string? operation, DateTimeOffset? startUtc, CancellationToken cancellationToken)
     {
         Describe(LeadPages.ManageBooking, lang, "Booking.Manage.Title", noIndex: true);

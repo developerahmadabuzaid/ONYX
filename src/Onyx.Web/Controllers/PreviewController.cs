@@ -11,6 +11,7 @@ namespace Onyx.Web.Controllers;
 /// sends no referrer, so the token cannot leak to other sites or caches.
 /// </summary>
 [SensitivePage]
+[Analytics.NoAnalytics]
 public sealed class PreviewController(IPublicContentApiClient api, SeoContext seo) : Controller
 {
     public const int MaxTokenLength = 128;

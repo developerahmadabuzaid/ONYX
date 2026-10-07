@@ -677,6 +677,8 @@ Privacy operations are run by staff (admin-operated). There is no public, anonym
 | Admin notifications (2) | no personal fields | not affected | `Notifications` |
 | Media, authors, testimonial attributions (6–7) | not linkable to an email address | handled manually by editors (documented open item) | n/a |
 | Outbox events, processed-event markers, jobs | ids only | queued `InquirySubmitted` events for erased inquiries are skipped by the Worker | operational cleanup |
+| Analytics aggregates: GA4 and Search Console daily totals per page, source/medium/campaign, country, device, query; conversion event counts; sync state (12) | not linkable to a person (provider aggregates; no IP, client or user id, email or name; Search Console omits anonymized rare queries) | not affected. The first-party funnel reads inquiries and leads live, so erased records count only with the fields erasure keeps (campaign tags, market, language) | `AnalyticsAggregates` (delete; no preset period) |
+| Content performance snapshots from providers (6, written from 12) | page-level aggregates only | not affected | with `AnalyticsAggregates` |
 
 **Data-subject requests**
 - **Workflow:** Received → Verified (the operator records how the requester's identity was verified) → Completed, or Rejected. Only a verified request can run. The subject is the address stored when the request was received; every later step takes only the request id.
@@ -799,6 +801,66 @@ Implements §17. The four launch categories are seeded by the migration. **No ne
   - native Arabic review of the seeded category names;
   - when to connect the external Agent;
   - optionally, category keywords.
+
+## 24.7 Analytics, search performance and marketing intelligence (Stage 12, as built)
+
+Implements §15. No ad platforms (§15 future providers), no AI. Both providers are **not configured** until the owner supplies real ids and a key.
+
+- **Packages (owner-approved):** `Google.Apis.Auth` 1.77.0, `Google.Apis.AnalyticsData.v1beta` 1.76.0.4269 and `Google.Apis.SearchConsole.v1` 1.75.0.4234, in `Onyx.Infrastructure` only (namespace `Onyx.Infrastructure.Analytics`, enforced by architecture tests).
+  - Transitive: `Google.Apis`/`Google.Apis.Core` 1.77.0, `Newtonsoft.Json` 13.0.4, `System.Management` 7.0.2, `System.CodeDom` 7.0.0.
+  - Read-only scopes only: `analytics.readonly`, `webmasters.readonly`.
+- **Credentials:** a service-account key from the secret store or environment (`Analytics:Google:ServiceAccountKeyJson`) or a mounted file (`…KeyFile`). It is loaded with `CredentialFactory.FromJson<ServiceAccountCredential>`, which accepts only a service-account key; any other credential type, such as an external-account config pointing at arbitrary URLs, is refused. Keys and tokens are never stored, logged or returned. Google's in-memory token cache handles refresh.
+  - Non-secret ids are typed options: `Analytics:Google:Ga4PropertyId` (digits) and `…:SearchConsoleSiteUrl` (`sc-domain:host` or an `https://…/` prefix). They are validated at start, so a typo can't masquerade as "not configured".
+  - `ProviderConnection` keeps status only; no new columns were needed.
+- **Ports (Application):** `IWebAnalyticsProvider` and `ISearchPerformanceProvider` take provider-neutral requests and return daily aggregate rows.
+  - **GA4 reports:** daily totals (active users, sessions, engaged sessions, views); daily acquisition by landing page × session source × medium × campaign × country × device; daily counts of Onyx's two conversion events only.
+  - **Search Console reports:** web search, `final` data only. Daily totals, pages, queries, and country × device (clicks, impressions, CTR, position, exactly as reported).
+  - **No visitor identifiers:** GA4 exposes no client id here, and none is requested. No GA4 custom client-id dimension was created (owner decision).
+- **Local aggregates:** `web_analytics_daily_metrics`, `search_performance_daily_metrics` and `analytics_sync_states`.
+  - Every row stores its provider, day, report kind, bounded dimensions, metrics and collection time, and is unique on (provider, day, kind, SHA-256 of the dimensions).
+  - Landing pages and search pages are reduced to site paths (query and fragment dropped, percent-decoding, NFC), carry their language from the first segment (Arabic and English are never merged), and are mapped to the current public CMS page when one exists.
+  - **Bounded cardinality:** per day and report only the largest `MaxRowsPerDay` (500) rows are kept; the rest are summed into `(other)` and the run is marked truncated. Users are never summed across rows or days.
+- **Sync (Worker jobs):** `analytics-ga4-sync` (daily 05:00) and `analytics-gsc-sync` (daily 05:30).
+  - **Not configured or disabled:** Skipped, recorded as not configured, never failed and never zeroes.
+  - **Window:** the first run loads 28 days; later runs reload the last 3 days, at most 31 days per run (gaps catch up over several runs), never days that aren't final. GA4 is synced up to yesterday, Search Console up to 3 days ago.
+  - **Paging and time limits:** at most 25,000 rows per report and a 2-minute fetch limit.
+  - **Idempotent:** the synced days are replaced in one transaction.
+  - **Failure:** the safe code is recorded on the sync state and the connection (Error, one `IntegrationFailed` notification), and the job run fails. The last good data stays visible as "Failed" and, after 48 h, "stale".
+  - **Run now:** `ProviderConnections.Manage` can request a run, which only makes the job due. The request is audited (`AnalyticsSyncRequested`).
+  - All window and limit values are configurable technical defaults (`Analytics:Sync:*`), pending owner confirmation.
+- **Content intelligence:** each sync writes weekly (Monday–Sunday) `ContentPerformanceSnapshot`s per CMS page and language, replacing earlier ones for the same week. Search Console contributes clicks, impressions, CTR and position; GA4 contributes sessions, engaged sessions and views. The existing Stage 6 health assessment uses them; nothing is rewritten or published automatically.
+- **Reports (Admin API, no-store; Web Admin → Analytics, Search performance, Analytics connections):**
+  - **`Analytics.View`:** overview, traffic/acquisition, landing pages, content performance, lead funnel, campaigns/attribution, conversion performance.
+  - **`SearchPerformance.View`:** organic search overview (daily, country, device), queries, pages, signals.
+  - **`ProviderConnections.Manage`:** connection status, coverage, sync now.
+  - Every report states its period (default: the latest 28 days with data; at most 366 days, never in the future) and each source's state: NotConfigured, Disabled, Failed, NoData or Ok, plus stale, syncing, coverage and truncation. Missing data shows a state, never a zero.
+- **Funnel and attribution:** the first-party funnel uses Stage 8 attribution only (first or last touch: UTM source, medium, campaign, landing page; plus service, market, language, inquiry type). Leads are counted by current stage (New, Contacted, Qualified, Proposal, Won, Lost).
+  - **GA4 and the funnel are separate datasets.** Nothing is joined per visitor or per lead.
+  - Side-by-side views (campaign name, landing path, conversion event) are aggregate comparisons for the same period, shown only where both datasets have the key, and labelled as such. No conversion rate or cause is computed.
+- **Deterministic signals** (fixed thresholds in `AnalyticsSignalRules`; observations, never applied):
+  - high impressions with low CTR;
+  - clicks declining or improving against the previous equal period;
+  - queries at positions 8–20;
+  - search-visible pages without first-party inquiries;
+  - landing pages with traffic but no inquiries;
+  - live CMS pages with no recorded impressions.
+- **Conversion events:** `inquiry_submitted` (with `inquiry_type`) and `consultation_booking_confirmed`, plus `language`, sent from the browser on the confirmation page.
+  - They are passed once through TempData from the successful POST, so a refresh sends nothing.
+  - They carry no names, emails, references or free text, and are sent only with analytics consent.
+  - There is no server-side tracking.
+- **GA4 tag:** rendered only when `Analytics:Ga4MeasurementId` is set, the visitor gave analytics consent under the current policy version, and the page is public. It is never rendered on `/admin`, the manage-booking token page or previews (`[NoAnalytics]`).
+  - **CSP:** only that response's policy adds `https://www.googletagmanager.com` (script) and Google's documented collection origins (connect, img). Scripts use the existing nonce; there is no `unsafe-inline` or `unsafe-eval`.
+  - **What GA4 sees:** `page_location` keeps the path and `utm_*` parameters only; `page_referrer` is reduced to a path (same site) or an origin. Cookies are set on the exact host.
+  - **Withdrawal:** withdrawing or refusing consent expires `_ga`/`_ga_*` cookies (host-only and host domain), and the tag stops loading.
+  - **Consent Mode v2** is not implemented (owner decision).
+- **Retention:** new category `AnalyticsAggregates` (delete only, no preset period, inactive until the owner sets one). It deletes old daily rows and provider-written content snapshots in batches and moves the recorded coverage start.
+- **Privacy:** no raw IPs, client or user ids, fingerprints or cross-site identifiers are stored; aggregates only (§24.4 inventory).
+- **Open:**
+  - GA4 property id, measurement id, Search Console property and a read-only service-account key (§29 B7);
+  - confirmation of the sync windows and schedule;
+  - the `AnalyticsAggregates` retention period;
+  - whether to adopt Consent Mode v2;
+  - whether to add a GA4 client-id custom dimension later (legal review).
 
 ## 25. Security addendum (Rev 3)
 

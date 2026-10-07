@@ -1,0 +1,115 @@
+@using System.Globalization
+@using Onyx.Contracts.Analytics
+@model AnalyticsReportResponse
+@{
+    Layout = "_AdminLayout";
+    var report = (string)ViewData["ReportKey"]!;
+    var tabs = ViewData["Tabs"] as IReadOnlyList<string> ?? [];
+    var isSearch = report.StartsWith("search", StringComparison.Ordinal);
+    ViewData["TitleKey"] = isSearch ? "Nav.SearchPerformance" : "Nav.Analytics";
+    var groupBy = ViewData["GroupBy"] as string ?? "source";
+    var touch = ViewData["Touch"] as string ?? "last";
+    string Format(string column, double? value) => value is not { } number ? "—"
+        : column == "ctr" ? number.ToString("P2", CultureInfo.InvariantCulture)
+        : column is "position" or "change" ? number.ToString("0.##", CultureInfo.InvariantCulture)
+        : number.ToString("N0", CultureInfo.InvariantCulture);
+    string SectionTitle(string key) => key.StartsWith("funnelBy:", StringComparison.Ordinal)
+        ? T["Analytics.Section.funnelBy"].Value + " — " + T["Analytics.Group." + key["funnelBy:".Length..]].Value
+        : T["Analytics.Section." + key].Value;
+    string Label(AnalyticsSectionResponse section, string label) =>
+        section.Key is "firstParty" || label == "total" ? T["Analytics.Row." + label].Value : label;
+}
+<h1>@T[isSearch ? "Nav.SearchPerformance" : "Nav.Analytics"] — @T["Analytics.Report." + Model.Report]</h1>
+<partial name="_CmsMessages" />
+<nav aria-label="@T["Analytics.Reports"]">
+    <ul>
+        @foreach (var tab in tabs)
+        {
+            <li><a asp-action="Report" asp-route-report="@tab" aria-current="@(tab == report ? "page" : null)">@T["Analytics.Tab." + tab]</a></li>
+        }
+    </ul>
+</nav>
+
+<form method="get" asp-action="Report" asp-route-report="@report">
+    <label>@T["Analytics.From"] <input type="date" name="from" value="@Model.From.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr"></label>
+    <label>@T["Analytics.To"] <input type="date" name="to" value="@Model.To.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr"></label>
+    @if (report is "funnel" or "campaigns" or "landing-pages")
+    {
+        @if (report == "funnel")
+        {
+            <label>@T["Analytics.GroupBy"]
+                <select name="groupBy">
+                    @foreach (var option in new[] { "source", "medium", "campaign", "landingpage", "service", "market", "language", "inquirytype" })
+                    {
+                        <option value="@option" selected="@(groupBy == option)">@T["Analytics.Group." + option]</option>
+                    }
+                </select>
+            </label>
+        }
+        <label>@T["Analytics.Touch"]
+            <select name="touch">
+                <option value="last" selected="@(touch == "last")">@T["Analytics.Touch.last"]</option>
+                <option value="first" selected="@(touch == "first")">@T["Analytics.Touch.first"]</option>
+            </select>
+        </label>
+    }
+    <button type="submit">@T["Analytics.Apply"]</button>
+</form>
+
+<p role="status"><strong>@T["Analytics.Period"]</strong> <bdi dir="ltr">@Model.From.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) – @Model.To.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</bdi> (UTC)</p>
+<ul class="analytics-sources">
+    @foreach (var source in Model.Sources)
+    {
+        <partial name="_AnalyticsStatus" model="source" />
+    }
+</ul>
+
+@foreach (var section in Model.Sections)
+{
+    var notConnected = section.Source.Split('+').Any(provider => Model.Sources.FirstOrDefault(source => source.ProviderKey == provider)?.State is "NotConfigured" or "Disabled");
+    <section>
+        <h2>@SectionTitle(section.Key) <small>(@string.Join(" + ", section.Source.Split('+').Select(provider => T["Analytics.Source." + provider].Value)))</small></h2>
+        @if (section.Rows.Count == 0)
+        {
+            <p>@T[notConnected ? "Analytics.NotConnectedNoRows" : "Analytics.NoRows"]</p>
+        }
+        else
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>@T["Analytics.Column.label"]</th>
+                        @foreach (var column in section.Columns)
+                        {
+                            <th>@T["Analytics.Column." + column]</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in section.Rows)
+                    {
+                        <tr>
+                            <td dir="auto">@Label(section, row.Label) @if (row.LanguageCode is not null) { <small>(@row.LanguageCode)</small> }</td>
+                            @for (var index = 0; index < section.Columns.Count; index++)
+                            {
+                                <td dir="ltr">@Format(section.Columns[index], index < row.Values.Count ? row.Values[index] : null)</td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+}
+
+@if (Model.Notes.Count > 0)
+{
+    <aside>
+        <ul>
+            @foreach (var note in Model.Notes)
+            {
+                <li>@T[note]</li>
+            }
+        </ul>
+    </aside>
+}

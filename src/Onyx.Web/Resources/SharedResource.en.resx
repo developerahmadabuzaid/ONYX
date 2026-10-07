@@ -774,4 +774,141 @@
   <data name="NewsCategoryAdmin.SlugEn" xml:space="preserve"><value>English slug</value></data>
   <data name="NewsCategoryAdmin.SortOrder" xml:space="preserve"><value>Order</value></data>
   <data name="NewsCategoryAdmin.Keywords" xml:space="preserve"><value>Keywords (comma-separated)</value></data>
+  <data name="Nav.Analytics" xml:space="preserve"><value>Analytics</value></data>
+  <data name="Nav.SearchPerformance" xml:space="preserve"><value>Search performance</value></data>
+  <data name="Nav.AnalyticsIntegrations" xml:space="preserve"><value>Analytics connections</value></data>
+  <data name="RetentionCategory.AnalyticsAggregates" xml:space="preserve"><value>Analytics aggregates</value></data>
+  <data name="Analytics.Reports" xml:space="preserve"><value>Reports</value></data>
+  <data name="Analytics.Tab.overview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Analytics.Tab.traffic" xml:space="preserve"><value>Traffic</value></data>
+  <data name="Analytics.Tab.landing-pages" xml:space="preserve"><value>Landing pages</value></data>
+  <data name="Analytics.Tab.content" xml:space="preserve"><value>Content performance</value></data>
+  <data name="Analytics.Tab.funnel" xml:space="preserve"><value>Lead funnel</value></data>
+  <data name="Analytics.Tab.campaigns" xml:space="preserve"><value>Campaigns</value></data>
+  <data name="Analytics.Tab.conversions" xml:space="preserve"><value>Conversions</value></data>
+  <data name="Analytics.Tab.search" xml:space="preserve"><value>Organic search</value></data>
+  <data name="Analytics.Tab.search-queries" xml:space="preserve"><value>Search queries</value></data>
+  <data name="Analytics.Tab.search-pages" xml:space="preserve"><value>Search pages</value></data>
+  <data name="Analytics.Tab.search-signals" xml:space="preserve"><value>Search signals</value></data>
+  <data name="Analytics.Report.overview" xml:space="preserve"><value>Overview</value></data>
+  <data name="Analytics.Report.traffic" xml:space="preserve"><value>Traffic and acquisition</value></data>
+  <data name="Analytics.Report.landingPages" xml:space="preserve"><value>Landing pages</value></data>
+  <data name="Analytics.Report.campaigns" xml:space="preserve"><value>Campaigns and attribution</value></data>
+  <data name="Analytics.Report.conversions" xml:space="preserve"><value>Conversion performance</value></data>
+  <data name="Analytics.Report.content" xml:space="preserve"><value>Content performance</value></data>
+  <data name="Analytics.Report.funnel" xml:space="preserve"><value>Lead funnel</value></data>
+  <data name="Analytics.Report.searchOverview" xml:space="preserve"><value>Organic search</value></data>
+  <data name="Analytics.Report.searchQueries" xml:space="preserve"><value>Search queries</value></data>
+  <data name="Analytics.Report.searchPages" xml:space="preserve"><value>Search pages</value></data>
+  <data name="Analytics.Report.searchSignals" xml:space="preserve"><value>Search signals</value></data>
+  <data name="Analytics.From" xml:space="preserve"><value>From</value></data>
+  <data name="Analytics.To" xml:space="preserve"><value>To</value></data>
+  <data name="Analytics.Apply" xml:space="preserve"><value>Apply</value></data>
+  <data name="Analytics.Period" xml:space="preserve"><value>Period:</value></data>
+  <data name="Analytics.GroupBy" xml:space="preserve"><value>Group by</value></data>
+  <data name="Analytics.Touch" xml:space="preserve"><value>Attribution touch</value></data>
+  <data name="Analytics.Touch.first" xml:space="preserve"><value>First touch</value></data>
+  <data name="Analytics.Touch.last" xml:space="preserve"><value>Last touch</value></data>
+  <data name="Analytics.Group.source" xml:space="preserve"><value>UTM source</value></data>
+  <data name="Analytics.Group.medium" xml:space="preserve"><value>UTM medium</value></data>
+  <data name="Analytics.Group.campaign" xml:space="preserve"><value>UTM campaign</value></data>
+  <data name="Analytics.Group.landingpage" xml:space="preserve"><value>Landing page</value></data>
+  <data name="Analytics.Group.service" xml:space="preserve"><value>Service</value></data>
+  <data name="Analytics.Group.market" xml:space="preserve"><value>Market</value></data>
+  <data name="Analytics.Group.language" xml:space="preserve"><value>Language</value></data>
+  <data name="Analytics.Group.inquirytype" xml:space="preserve"><value>Inquiry type</value></data>
+  <data name="Analytics.Source.analytics.ga4" xml:space="preserve"><value>Google Analytics 4</value></data>
+  <data name="Analytics.Source.search.gsc" xml:space="preserve"><value>Google Search Console</value></data>
+  <data name="Analytics.Source.onyx" xml:space="preserve"><value>Onyx first-party data</value></data>
+  <data name="Analytics.State.NotConfigured" xml:space="preserve"><value>Not configured</value></data>
+  <data name="Analytics.State.Disabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="Analytics.State.Failed" xml:space="preserve"><value>Failed (the last good data is shown)</value></data>
+  <data name="Analytics.State.NoData" xml:space="preserve"><value>Connected — no data for this period</value></data>
+  <data name="Analytics.State.Ok" xml:space="preserve"><value>Connected</value></data>
+  <data name="Analytics.Syncing" xml:space="preserve"><value>sync in progress</value></data>
+  <data name="Analytics.Stale" xml:space="preserve"><value>stale: no successful sync recently</value></data>
+  <data name="Analytics.Coverage" xml:space="preserve"><value>data held for</value></data>
+  <data name="Analytics.LastSync" xml:space="preserve"><value>last successful sync</value></data>
+  <data name="Analytics.LastFailure" xml:space="preserve"><value>last failure</value></data>
+  <data name="Analytics.Truncated" xml:space="preserve"><value>the last sync reached its row cap; smaller rows are summed as &quot;(other)&quot;</value></data>
+  <data name="Analytics.NoRows" xml:space="preserve"><value>No data for this period.</value></data>
+  <data name="Analytics.NotConnectedNoRows" xml:space="preserve"><value>Not connected: no data is available (nothing is shown as zero).</value></data>
+  <data name="Analytics.Column.label" xml:space="preserve"><value>Item</value></data>
+  <data name="Analytics.Column.activeUsers" xml:space="preserve"><value>Active users</value></data>
+  <data name="Analytics.Column.sessions" xml:space="preserve"><value>Sessions</value></data>
+  <data name="Analytics.Column.engagedSessions" xml:space="preserve"><value>Engaged sessions</value></data>
+  <data name="Analytics.Column.pageViews" xml:space="preserve"><value>Views</value></data>
+  <data name="Analytics.Column.count" xml:space="preserve"><value>Count</value></data>
+  <data name="Analytics.Column.inquiries" xml:space="preserve"><value>Inquiries</value></data>
+  <data name="Analytics.Column.ga4Sessions" xml:space="preserve"><value>GA4 sessions</value></data>
+  <data name="Analytics.Column.onyxLeads" xml:space="preserve"><value>Onyx leads</value></data>
+  <data name="Analytics.Column.onyxWon" xml:space="preserve"><value>Won in Onyx</value></data>
+  <data name="Analytics.Column.ga4Events" xml:space="preserve"><value>GA4 events (consenting visitors)</value></data>
+  <data name="Analytics.Column.onyxRecords" xml:space="preserve"><value>Onyx records</value></data>
+  <data name="Analytics.Column.leads" xml:space="preserve"><value>Leads</value></data>
+  <data name="Analytics.Column.New" xml:space="preserve"><value>New</value></data>
+  <data name="Analytics.Column.Contacted" xml:space="preserve"><value>Contacted</value></data>
+  <data name="Analytics.Column.Qualified" xml:space="preserve"><value>Qualified</value></data>
+  <data name="Analytics.Column.Proposal" xml:space="preserve"><value>Proposal</value></data>
+  <data name="Analytics.Column.Won" xml:space="preserve"><value>Won</value></data>
+  <data name="Analytics.Column.Lost" xml:space="preserve"><value>Lost</value></data>
+  <data name="Analytics.Column.clicks" xml:space="preserve"><value>Clicks</value></data>
+  <data name="Analytics.Column.impressions" xml:space="preserve"><value>Impressions</value></data>
+  <data name="Analytics.Column.ctr" xml:space="preserve"><value>CTR</value></data>
+  <data name="Analytics.Column.position" xml:space="preserve"><value>Average position</value></data>
+  <data name="Analytics.Column.previousClicks" xml:space="preserve"><value>Clicks, previous period</value></data>
+  <data name="Analytics.Column.change" xml:space="preserve"><value>Change</value></data>
+  <data name="Analytics.Row.total" xml:space="preserve"><value>Total</value></data>
+  <data name="Analytics.Row.inquiries" xml:space="preserve"><value>Inquiries</value></data>
+  <data name="Analytics.Row.newLeads" xml:space="preserve"><value>New leads</value></data>
+  <data name="Analytics.Row.bookings" xml:space="preserve"><value>Consultation bookings</value></data>
+  <data name="Analytics.Row.won" xml:space="preserve"><value>Leads won (current stage)</value></data>
+  <data name="Analytics.Row.lost" xml:space="preserve"><value>Leads lost (current stage)</value></data>
+  <data name="Analytics.Section.webDaily" xml:space="preserve"><value>Daily traffic</value></data>
+  <data name="Analytics.Section.firstParty" xml:space="preserve"><value>Onyx records in this period</value></data>
+  <data name="Analytics.Section.sourceMedium" xml:space="preserve"><value>Source / medium</value></data>
+  <data name="Analytics.Section.country" xml:space="preserve"><value>Country</value></data>
+  <data name="Analytics.Section.device" xml:space="preserve"><value>Device</value></data>
+  <data name="Analytics.Section.ga4LandingPages" xml:space="preserve"><value>Landing pages (GA4)</value></data>
+  <data name="Analytics.Section.onyxInquiriesByLandingPage" xml:space="preserve"><value>Onyx inquiries by landing page</value></data>
+  <data name="Analytics.Section.signalTrafficWithoutInquiries" xml:space="preserve"><value>Signal: landing pages with traffic but no Onyx inquiry</value></data>
+  <data name="Analytics.Section.ga4Campaigns" xml:space="preserve"><value>Campaigns (GA4)</value></data>
+  <data name="Analytics.Section.onyxLeadsByCampaign" xml:space="preserve"><value>Onyx leads by UTM campaign</value></data>
+  <data name="Analytics.Section.campaignComparison" xml:space="preserve"><value>Side by side by campaign name (aggregate comparison)</value></data>
+  <data name="Analytics.Section.conversionComparison" xml:space="preserve"><value>Conversion events and Onyx records</value></data>
+  <data name="Analytics.Section.onyxInquiriesByType" xml:space="preserve"><value>Onyx inquiries by type</value></data>
+  <data name="Analytics.Section.ga4Content" xml:space="preserve"><value>Sessions by page (GA4)</value></data>
+  <data name="Analytics.Section.funnelTotal" xml:space="preserve"><value>Lead funnel — all leads</value></data>
+  <data name="Analytics.Section.funnelBy" xml:space="preserve"><value>Lead funnel</value></data>
+  <data name="Analytics.Section.searchDaily" xml:space="preserve"><value>Daily search performance</value></data>
+  <data name="Analytics.Section.searchCountry" xml:space="preserve"><value>Search by country</value></data>
+  <data name="Analytics.Section.searchDevice" xml:space="preserve"><value>Search by device</value></data>
+  <data name="Analytics.Section.searchQueries" xml:space="preserve"><value>Queries</value></data>
+  <data name="Analytics.Section.searchPages" xml:space="preserve"><value>Pages (each language separately)</value></data>
+  <data name="Analytics.Section.signalHighImpressionsLowCtr" xml:space="preserve"><value>Signal: many impressions, low CTR</value></data>
+  <data name="Analytics.Section.signalClicksDeclining" xml:space="preserve"><value>Signal: clicks declining against the previous period</value></data>
+  <data name="Analytics.Section.signalClicksImproving" xml:space="preserve"><value>Signal: clicks improving against the previous period</value></data>
+  <data name="Analytics.Section.signalQueryOpportunities" xml:space="preserve"><value>Signal: queries near the first page</value></data>
+  <data name="Analytics.Section.signalVisibleWithoutInquiries" xml:space="preserve"><value>Signal: search visibility without Onyx inquiries</value></data>
+  <data name="Analytics.Section.signalNoVisibility" xml:space="preserve"><value>Signal: live pages with no recorded impressions</value></data>
+  <data name="Analytics.Note.SeparateDatasets" xml:space="preserve"><value>GA4 traffic and Onyx&apos;s lead funnel are separate datasets. GA4 reports carry no visitor identifier, so nothing is matched per visitor or per lead; numbers shown side by side are aggregate comparisons, not conversion rates or causes.</value></data>
+  <data name="Analytics.Note.ConsentLimited" xml:space="preserve"><value>GA4 counts only visitors who accepted analytics cookies; Onyx records count every submission.</value></data>
+  <data name="Analytics.Note.SearchDelay" xml:space="preserve"><value>Search Console data becomes final only after a few days; the period ends at the latest final day.</value></data>
+  <data name="Analytics.Note.Signals" xml:space="preserve"><value>Signals are observations from fixed thresholds for an editor to review. Nothing is changed automatically.</value></data>
+  <data name="Analytics.Note.CurrentStage" xml:space="preserve"><value>Lead stages are each lead&apos;s current stage.</value></data>
+  <data name="Analytics.Note.UsersNotAdditive" xml:space="preserve"><value>Daily users do not add up across days, so the total has no user count.</value></data>
+  <data name="Analytics.Note.Touch.first" xml:space="preserve"><value>Grouped by each lead&apos;s first touch (kept only with analytics consent; otherwise &quot;(not set)&quot;).</value></data>
+  <data name="Analytics.Note.Touch.last" xml:space="preserve"><value>Grouped by the last touch before the inquiry.</value></data>
+  <data name="Analytics.Integrations.Hint" xml:space="preserve"><value>Status of the analytics providers. Credentials live only in the server&apos;s secret store and are never shown here.</value></data>
+  <data name="Analytics.Integrations.Setup" xml:space="preserve"><value>Not configured: the GA4 property, the Search Console property and a read-only service-account key must be set in the server configuration by the owner (see docs/development-setup.md).</value></data>
+  <data name="Analytics.SyncNow" xml:space="preserve"><value>Sync now</value></data>
+  <data name="Analytics.SyncRequested" xml:space="preserve"><value>Sync requested; the Worker runs it shortly.</value></data>
+  <data name="Analytics.ConnectionStatus" xml:space="preserve"><value>Connection</value></data>
+  <data name="Analytics.LastChecked" xml:space="preserve"><value>Last checked</value></data>
+  <data name="Analytics.LastSucceeded" xml:space="preserve"><value>Last success</value></data>
+  <data name="Analytics.Connection.NotConfigured" xml:space="preserve"><value>Not configured</value></data>
+  <data name="Analytics.Connection.Configured" xml:space="preserve"><value>Configured (not yet verified)</value></data>
+  <data name="Analytics.Connection.Active" xml:space="preserve"><value>Active</value></data>
+  <data name="Analytics.Connection.Error" xml:space="preserve"><value>Error</value></data>
+  <data name="Analytics.Connection.Disabled" xml:space="preserve"><value>Disabled</value></data>
 </root>

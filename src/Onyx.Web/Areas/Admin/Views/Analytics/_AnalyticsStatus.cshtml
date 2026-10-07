@@ -1,0 +1,32 @@
+@using System.Globalization
+@using Onyx.Contracts.Analytics
+@model AnalyticsDataStatusResponse
+@* One source's state: never shows unavailable data as zero. *@
+<li role="status">
+    <strong>@T["Analytics.Source." + Model.ProviderKey]</strong>:
+    @T["Analytics.State." + Model.State]
+    @if (Model.IsSyncing)
+    {
+        <span>· @T["Analytics.Syncing"]</span>
+    }
+    @if (Model.IsStale)
+    {
+        <span>· @T["Analytics.Stale"]</span>
+    }
+    @if (Model.DataFromDate is { } dataFrom && Model.DataThroughDate is { } dataThrough)
+    {
+        <span>· @T["Analytics.Coverage"] <bdi dir="ltr">@dataFrom.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) – @dataThrough.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</bdi></span>
+    }
+    @if (Model.LastSyncAtUtc is not null)
+    {
+        <span>· @T["Analytics.LastSync"] <partial name="_Utc" model="Model.LastSyncAtUtc" /></span>
+    }
+    @if (Model.LastFailureCode is not null)
+    {
+        <span>· @T["Analytics.LastFailure"] <code dir="ltr">@Model.LastFailureCode</code></span>
+    }
+    @if (Model.LastRunTruncated)
+    {
+        <span>· @T["Analytics.Truncated"]</span>
+    }
+</li>

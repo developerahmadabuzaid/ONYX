@@ -17,6 +17,10 @@
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
     <!-- Stage 11, owner-approved: RSS/Atom parsing behind INewsFeedReader, Onyx.Infrastructure only. -->
     <PackageVersion Include="System.ServiceModel.Syndication" Version="10.0.12" />
+    <!-- Stage 12, owner-approved: GA4 Data API and Search Console (read-only scopes), Onyx.Infrastructure only, behind the analytics ports. -->
+    <PackageVersion Include="Google.Apis.Auth" Version="1.77.0" />
+    <PackageVersion Include="Google.Apis.AnalyticsData.v1beta" Version="1.76.0.4269" />
+    <PackageVersion Include="Google.Apis.SearchConsole.v1" Version="1.75.0.4234" />
   </ItemGroup>
 
   <ItemGroup Label="Application">

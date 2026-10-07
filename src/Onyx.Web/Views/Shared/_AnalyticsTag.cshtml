@@ -1,0 +1,22 @@
+@using System.Globalization
+@using Microsoft.Extensions.Options
+@using Onyx.Web.Analytics
+@using Onyx.Web.Configuration
+@using Onyx.Web.Security
+@inject IOptions<AnalyticsOptions> AnalyticsSettings
+@inject IOptions<SiteOptions> Site
+@* GA4, only when AnalyticsTagFilter allowed it for this response (consent + configured + public page); the CSP then allows Google's origins. *@
+@if (Context.Items.ContainsKey(SecurityHeadersMiddleware.AnalyticsItemKey) && AnalyticsSettings.Value.Ga4MeasurementId is { } measurementId
+     && Context.Items[SecurityHeadersMiddleware.NonceItemKey] is string nonce)
+{
+    var origin = string.IsNullOrEmpty(Site.Value.PublicBaseUrl) ? $"{Context.Request.Scheme}://{Context.Request.Host}" : Site.Value.PublicBaseUrl;
+    var script = AnalyticsTag.Script(
+        measurementId,
+        AnalyticsTag.PageLocation(origin, Context.Request),
+        AnalyticsTag.PageReferrer(origin, Context.Request.Headers.Referer.ToString()),
+        Context.Request.Host.Host,
+        ViewData[AnalyticsTag.ConversionKey] as string,
+        CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+    <script async src="@AnalyticsTag.ScriptUrl(measurementId)" nonce="@nonce"></script>
+    <script nonce="@nonce">@Html.Raw(script)</script>
+}

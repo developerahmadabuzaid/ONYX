@@ -2,6 +2,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Onyx.API.IntegrationTests.Infrastructure;
+using Onyx.Application.Analytics;
 using Onyx.Application.Jobs;
 using Onyx.Contracts.Authorization;
 using Onyx.Domain.Notifications;
@@ -26,7 +27,7 @@ public sealed class JobSchedulingTests(PostgresFixture fixture) : WorkerDatabase
             second.Get<JobScheduler>().SynchronizeDefinitionsAsync(Token));
 
         var definitions = await ReadAsync(db => db.JobDefinitions);
-        Assert.Equal(6, definitions.Count);
+        Assert.Equal(8, definitions.Count);
         var testJob = definitions.Single(job => job.Name == TestJob.JobName);
         Assert.Equal("every:10m", testJob.Schedule);
         Assert.True(testJob.IsEnabled);
@@ -36,6 +37,8 @@ public sealed class JobSchedulingTests(PostgresFixture fixture) : WorkerDatabase
         Assert.Contains(definitions, job => job.Name == RetentionEnforcementJob.JobName && job.Schedule == "daily@02:30");
         Assert.Contains(definitions, job => job.Name == SearchIndexReconcileJob.JobName && job.Schedule == "every:30m");
         Assert.Contains(definitions, job => job.Name == NewsIngestionJob.JobName && job.Schedule == "every:15m");
+        Assert.Contains(definitions, job => job.Name == AnalyticsIntegrationService.WebAnalyticsJob && job.Schedule == "daily@05:00");
+        Assert.Contains(definitions, job => job.Name == AnalyticsIntegrationService.SearchPerformanceJob && job.Schedule == "daily@05:30");
     }
 
     [Fact]

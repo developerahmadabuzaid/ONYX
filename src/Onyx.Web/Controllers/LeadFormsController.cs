@@ -97,6 +97,7 @@ public sealed class LeadFormsController(
         }
 
         TempData[ReferenceKey] = result.Value!.Reference;
+        TempData[Analytics.AnalyticsTag.ConversionKey] = Analytics.ConversionEvent.ForInquiry(InquiryTypes.StartProject);
         return LocalRedirect(PathOf(LeadPages.StartProject, lang, SentSlug)!);
     }
 
@@ -149,12 +150,15 @@ public sealed class LeadFormsController(
         }
 
         TempData[ReferenceKey] = result.Value!.Reference;
+        TempData[Analytics.AnalyticsTag.ConversionKey] = Analytics.ConversionEvent.ForInquiry(type);
         return LocalRedirect(PathOf(LeadPages.Contact, lang, SentSlug)!);
     }
 
     private ViewResult Sent(string pageKey, string lang)
     {
         Describe(pageKey, lang, "Lead.Sent.Title", noIndex: true, SentSlug);
+        // The conversion event travels once from the successful POST: a refresh of this page never sends it again.
+        ViewData[Analytics.AnalyticsTag.ConversionKey] = TempData[Analytics.AnalyticsTag.ConversionKey] as string;
         return View("Sent", TempData[ReferenceKey] as string);
     }
 }

@@ -31,7 +31,8 @@
 | 9 Privacy operations | **done**: 804/804 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `PrivacyOperations` (additive). Awaiting owner review before Stage 10. |
 | 10 Site search (PostgreSQL) | **done**: 851/851 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); no new packages; migration `SiteSearch` (additive). Awaiting owner review before Stage 11. |
 | 11 News Hub | **done**: 1009/1009 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); one owner-approved package (System.ServiceModel.Syndication 10.0.12, no transitive dependencies); migration `NewsHub` (additive). Awaiting owner review before Stage 12. |
-| 12, 5, 13 | awaiting approval (in execution order) |
+| 12 Admin Analytics & Marketing | **done**: 1070/1070 tests (local PostgreSQL, 0 skipped); build 0 warnings; no vulnerable packages (incl. transitive); one owner-approved package set (Google.Apis.Auth 1.77.0, Google.Apis.AnalyticsData.v1beta 1.76.0.4269, Google.Apis.SearchConsole.v1 1.75.0.4234); migration `AnalyticsAggregates` (additive). Providers stay Not configured until real credentials exist. Awaiting owner review before Stage 5. |
+| 5, 13 | awaiting approval (in execution order) |
 
 ---
 
@@ -264,6 +265,17 @@
 ### Stage 12 — Admin Analytics & Marketing
 - **Build:** GA4 + Search Console adapters (**Google API package approval requested then**; inactive until credentials), sync jobs, local aggregates, dashboards, funnel view; consent-gated GA4 tag + conversion events.
 - **Verify:** fake adapters end to end in tests; "Not connected" with no credentials and never sample data.
+
+**Stage 12 delivered notes** (architecture.md §24.7 has the full as-built description):
+- **Packages (owner-approved):** Google.Apis.Auth 1.77.0, Google.Apis.AnalyticsData.v1beta 1.76.0.4269, Google.Apis.SearchConsole.v1 1.75.0.4234; Infrastructure only, read-only scopes, enforced by architecture tests. No fake provider is registered by the application; tests register their own.
+- **Providers:** GA4 and Search Console adapters behind `IWebAnalyticsProvider` / `ISearchPerformanceProvider`, not configured until the owner supplies ids and a service-account key (secret store).
+- **Sync:** daily Worker jobs with bounded windows, paging and per-day row caps (`(other)`), idempotent day replacement, sync state, safe failure codes, `IntegrationFailed`, and a queued "sync now". Weekly content performance snapshots feed the Stage 6 intelligence layer.
+- **Reports:** overview, traffic, landing pages, content, funnel, campaigns, conversions, organic search, queries, pages, signals, integrations. Each shows its period and each source's state, and never shows zero for missing data.
+- **Separate datasets:** GA4 traffic and the first-party lead funnel (Stage 8 attribution, current lead stages) are compared only in aggregate by shared keys.
+- **Browser:** the GA4 tag loads only with analytics consent and a configured measurement id on public pages; the CSP adds Google's origins for that response only; GA cookies are removed on withdrawal. Two conversion events (`inquiry_submitted`, `consultation_booking_confirmed`) are sent once and carry no personal data. Consent Mode v2 is not implemented.
+- **Retention and privacy:** new category `AnalyticsAggregates` (delete only, no preset period); privacy inventory updated.
+- **Migration `AnalyticsAggregates`** is additive: 3 tables with unique idempotency keys.
+- **Open:** real GA4/Search Console ids and key, sync window confirmation, retention period, Consent Mode v2 decision.
 
 ### Stage 13 — Hardening and launch readiness
 - Security review (permission matrix, CSP, rate limits, uploads), Core Web Vitals and caching, WCAG 2.2 AA audit, SEO audit, production configuration checklist, backup/recovery runbook (PostgreSQL PITR), README, host-neutral deployment notes.

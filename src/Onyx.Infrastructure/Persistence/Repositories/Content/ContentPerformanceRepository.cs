@@ -23,4 +23,15 @@ internal sealed class ContentPerformanceRepository(ApplicationDbContext dbContex
             .OrderByDescending(snapshot => snapshot.PeriodEndUtc).Take(take).ToListAsync(cancellationToken).ConfigureAwait(false);
 
     public Task<bool> AnyAsync(CancellationToken cancellationToken) => dbContext.ContentPerformanceSnapshots.AnyAsync(cancellationToken);
+
+    public async Task ReplacePeriodAsync(
+        EvidenceSource source, DateTimeOffset periodStartUtc, IReadOnlyList<ContentPerformanceSnapshot> snapshots, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(snapshots);
+        await dbContext.ContentPerformanceSnapshots
+            .Where(snapshot => snapshot.Source == source && snapshot.PeriodStartUtc == periodStartUtc)
+            .ExecuteDeleteAsync(cancellationToken)
+            .ConfigureAwait(false);
+        dbContext.ContentPerformanceSnapshots.AddRange(snapshots);
+    }
 }

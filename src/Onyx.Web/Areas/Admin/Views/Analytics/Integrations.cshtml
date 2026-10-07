@@ -1,0 +1,29 @@
+@using Onyx.Contracts.Analytics
+@model IReadOnlyList<AnalyticsIntegrationResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.AnalyticsIntegrations";
+}
+<h1>@T["Nav.AnalyticsIntegrations"]</h1>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Analytics.Integrations.Hint"]</p>
+@foreach (var integration in Model)
+{
+    <section>
+        <h2>@T["Analytics.Source." + integration.ProviderKey]</h2>
+        <dl>
+            <dt>@T["Analytics.ConnectionStatus"]</dt><dd>@T["Analytics.Connection." + integration.ConnectionStatus]</dd>
+            <dt>@T["Analytics.LastChecked"]</dt><dd><partial name="_Utc" model="integration.LastCheckedAtUtc" /></dd>
+            <dt>@T["Analytics.LastSucceeded"]</dt><dd><partial name="_Utc" model="integration.LastSucceededAtUtc" /></dd>
+            <dt>@T["Analytics.LastFailure"]</dt><dd dir="ltr">@(integration.LastError ?? "—")</dd>
+        </dl>
+        <ul><partial name="_AnalyticsStatus" model="integration.Data" /></ul>
+        @if (integration.ConnectionStatus == "NotConfigured")
+        {
+            <p>@T["Analytics.Integrations.Setup"]</p>
+        }
+        <form method="post" asp-action="Sync" asp-route-providerKey="@integration.ProviderKey">
+            <button type="submit">@T["Analytics.SyncNow"]</button>
+        </form>
+    </section>
+}

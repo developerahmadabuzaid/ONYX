@@ -104,6 +104,31 @@ public sealed class TypeDependencyRulesTests
         Assert.Contains(users, type => type.Name == "SyndicationNewsFeedReader");
     }
 
+    [Theory]
+    [InlineData("Onyx.Domain")]
+    [InlineData("Onyx.Contracts")]
+    [InlineData("Onyx.Application")]
+    [InlineData("Onyx.API")]
+    [InlineData("Onyx.Web")]
+    [InlineData("Onyx.Worker")]
+    public void Google_sdk_types_are_used_only_by_infrastructure(string assemblyName) =>
+        AssertNoDependency(assemblyName, ["Google", "Newtonsoft"]);
+
+    [Fact]
+    public void Inside_infrastructure_only_the_analytics_adapters_use_google_types()
+    {
+        // Owner approval (Stage 12): the Google client libraries stay behind IWebAnalyticsProvider / ISearchPerformanceProvider.
+        var result = Types.InAssembly(Load("Onyx.Infrastructure"))
+            .That().DoNotResideInNamespace("Onyx.Infrastructure.Analytics")
+            .ShouldNot().HaveDependencyOnAny("Google", "Newtonsoft")
+            .GetResult();
+        Assert.True(result.IsSuccessful, Describe("Onyx.Infrastructure (outside Analytics)", "Google", result));
+
+        var users = Types.InAssembly(Load("Onyx.Infrastructure")).That().HaveDependencyOn("Google.Apis").GetTypes().Select(type => type.Name).ToList();
+        Assert.Contains("GoogleAnalyticsDataProvider", users);
+        Assert.Contains("GoogleSearchConsoleProvider", users);
+    }
+
     [Fact]
     public void Public_api_controllers_never_reach_news_administration()
     {

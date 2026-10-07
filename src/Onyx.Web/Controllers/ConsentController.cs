@@ -43,8 +43,26 @@ public sealed partial class ConsentController(
             MaxAge = TimeSpan.FromDays(options.Value.CookieLifetimeDays),
         });
 
+        if (!allowAnalytics)
+        {
+            RemoveAnalyticsCookies();
+        }
+
         var safe = returnUrl is not null && Url.IsLocalUrl(returnUrl) && returnUrl.StartsWith($"/{lang}", StringComparison.Ordinal);
         return LocalRedirect(safe ? returnUrl! : $"/{lang}/");
+    }
+
+    /// <summary>
+    /// Withdrawing (or refusing) analytics consent removes GA4's cookies. The tag sets them on this exact host (cookie_domain),
+    /// so they are expired both host-only and for the host domain; with consent withdrawn the tag no longer loads at all.
+    /// </summary>
+    private void RemoveAnalyticsCookies()
+    {
+        foreach (var name in Request.Cookies.Keys.Where(Analytics.AnalyticsTag.IsAnalyticsCookie))
+        {
+            Response.Cookies.Delete(name, new CookieOptions { Path = "/", Secure = true, SameSite = SameSiteMode.Lax });
+            Response.Cookies.Delete(name, new CookieOptions { Path = "/", Domain = Request.Host.Host, Secure = true, SameSite = SameSiteMode.Lax });
+        }
     }
 
     [LoggerMessage(Level = LogLevel.Warning, Message = "Cookie consent receipt could not be recorded (status {StatusCode})")]

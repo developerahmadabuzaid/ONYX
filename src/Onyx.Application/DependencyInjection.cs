@@ -26,6 +26,9 @@ public static class DependencyInjection
         services.AddScoped<Search.SearchIndexer>();
         services.AddScoped<Search.SiteSearchQueryService>();
         AddNews(services);
+        services.AddScoped<Analytics.AnalyticsSyncService>();
+        services.AddScoped<Analytics.AnalyticsReportService>();
+        services.AddScoped<Analytics.AnalyticsIntegrationService>();
         services.AddScoped<Email.IEmailTemplateAdministrationService, Email.EmailTemplateAdministrationService>();
 
         AddDomainEventHandlers(services, assembly);

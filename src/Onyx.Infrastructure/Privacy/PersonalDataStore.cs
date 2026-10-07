@@ -141,6 +141,9 @@ internal sealed class PersonalDataStore(ApplicationDbContext dbContext) : IPerso
                 var closed = DueRequests(cutoff).OrderBy(request => request.CompletedAtUtc).Select(request => request.Id).Take(batchSize);
                 return await dbContext.DataSubjectRequests.Where(request => closed.Contains(request.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
 
+            case (RetentionCategory.AnalyticsAggregates, RetentionAction.Delete):
+                return await DeleteAnalyticsBatchAsync(cutoff, batchSize, cancellationToken).ConfigureAwait(false);
+
             default:
                 throw new InvalidOperationException($"Retention {action} is not supported for {category}.");
         }
@@ -155,8 +158,49 @@ internal sealed class PersonalDataStore(ApplicationDbContext dbContext) : IPerso
             (RetentionCategory.AuditLogs, RetentionAction.Delete) => dbContext.AuditLogs.LongCountAsync(log => log.OccurredAtUtc < cutoff, cancellationToken),
             (RetentionCategory.AuditLogs, RetentionAction.Anonymize) => DueIdentifiedAudit(cutoff).LongCountAsync(cancellationToken),
             (RetentionCategory.DataSubjectRequests, RetentionAction.Delete) => DueRequests(cutoff).LongCountAsync(cancellationToken),
+            (RetentionCategory.AnalyticsAggregates, RetentionAction.Delete) => CountAnalyticsDueAsync(cutoff, cancellationToken),
             _ => throw new InvalidOperationException($"Retention {action} is not supported for {category}."),
         };
+
+    /// <summary>Analytics aggregates measured by their day (snapshots by their period end); no personal data involved.</summary>
+    private async Task<long> CountAnalyticsDueAsync(DateTimeOffset cutoff, CancellationToken cancellationToken)
+    {
+        var day = DateOnly.FromDateTime(cutoff.UtcDateTime);
+        return await dbContext.WebAnalyticsDailyMetrics.LongCountAsync(metric => metric.Date < day, cancellationToken).ConfigureAwait(false)
+            + await dbContext.SearchPerformanceDailyMetrics.LongCountAsync(metric => metric.Date < day, cancellationToken).ConfigureAwait(false)
+            + await ProviderSnapshotsDue(cutoff).LongCountAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task<int> DeleteAnalyticsBatchAsync(DateTimeOffset cutoff, int batchSize, CancellationToken cancellationToken)
+    {
+        var day = DateOnly.FromDateTime(cutoff.UtcDateTime);
+        var web = dbContext.WebAnalyticsDailyMetrics.Where(metric => metric.Date < day).OrderBy(metric => metric.Date).Select(metric => metric.Id).Take(batchSize);
+        var deleted = await dbContext.WebAnalyticsDailyMetrics.Where(metric => web.Contains(metric.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        if (deleted < batchSize)
+        {
+            var search = dbContext.SearchPerformanceDailyMetrics.Where(metric => metric.Date < day).OrderBy(metric => metric.Date).Select(metric => metric.Id).Take(batchSize - deleted);
+            deleted += await dbContext.SearchPerformanceDailyMetrics.Where(metric => search.Contains(metric.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        if (deleted < batchSize)
+        {
+            var snapshots = ProviderSnapshotsDue(cutoff).OrderBy(snapshot => snapshot.PeriodEndUtc).Select(snapshot => snapshot.Id).Take(batchSize - deleted);
+            deleted += await dbContext.ContentPerformanceSnapshots.Where(snapshot => snapshots.Contains(snapshot.Id)).ExecuteDeleteAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        // Coverage now starts at the cutoff day: dashboards never claim days that were removed.
+        await dbContext.AnalyticsSyncStates.Where(state => state.DataThroughDate != null && state.DataThroughDate < day)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(state => state.DataFromDate, (DateOnly?)null).SetProperty(state => state.DataThroughDate, (DateOnly?)null), cancellationToken)
+            .ConfigureAwait(false);
+        await dbContext.AnalyticsSyncStates.Where(state => state.DataFromDate != null && state.DataFromDate < day)
+            .ExecuteUpdateAsync(setters => setters.SetProperty(state => state.DataFromDate, day), cancellationToken)
+            .ConfigureAwait(false);
+        return deleted;
+    }
+
+    private IQueryable<Domain.Intelligence.ContentPerformanceSnapshot> ProviderSnapshotsDue(DateTimeOffset cutoff) =>
+        dbContext.ContentPerformanceSnapshots.Where(snapshot => snapshot.PeriodEndUtc <= cutoff
+            && (snapshot.Source == Domain.Intelligence.EvidenceSource.WebAnalytics || snapshot.Source == Domain.Intelligence.EvidenceSource.SearchConsole));
 
     private async Task<SubjectRecords> LoadAsync(List<Guid> leadIds, string? email, CancellationToken cancellationToken)
     {

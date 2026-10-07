@@ -47,6 +47,8 @@ public static class WorkerServiceCollectionExtensions
         services.AddScoped<IScheduledJob, RetentionEnforcementJob>();
         services.AddScoped<IScheduledJob, SearchIndexReconcileJob>();
         services.AddScoped<IScheduledJob, NewsIngestionJob>();
+        services.AddScoped<IScheduledJob, WebAnalyticsSyncJob>();
+        services.AddScoped<IScheduledJob, SearchPerformanceSyncJob>();
 
         services.AddHostedService<OutboxDispatcherService>();
         services.AddHostedService<EmailDispatcherService>();

@@ -99,6 +99,7 @@ public static class DependencyInjection
         AddContent(services, configuration);
         AddLeads(services, configuration);
         AddNews(services, configuration);
+        AddAnalytics(services, configuration);
 
         services.Configure<DomainEventRegistryOptions>(options => options.Assemblies.Add(typeof(IDomainEvent).Assembly));
         services.AddSingleton<DomainEventTypeRegistry>();
@@ -230,6 +231,34 @@ public static class DependencyInjection
         services.AddScoped<Application.News.INewsItemRepository, NewsItemRepository>();
         services.AddScoped<Application.News.INewsFeedReader, News.SyndicationNewsFeedReader>();
         services.TryAddScoped<Application.News.INewsSummaryService, News.NotConfiguredNewsSummaryService>();
+    }
+
+    /// <summary>
+    /// Stage 12: analytics. The Google adapters (GA4 Data API, Search Console; read-only scopes) are the only implementations;
+    /// they report "not configured" until the owner supplies the property, site and service-account key (secret store). No fake
+    /// or sample provider is registered here: tests register their own.
+    /// </summary>
+    private static void AddAnalytics(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Analytics.GoogleAnalyticsOptions>().Bind(configuration.GetSection(Analytics.GoogleAnalyticsOptions.SectionName))
+            .Validate(options => options.IsWellFormed(), "Analytics:Google ids must be well-formed (digits for Ga4PropertyId; sc-domain:host or an https URL ending in '/' for SearchConsoleSiteUrl).")
+            .ValidateOnStart();
+        services.AddOptions<Analytics.AnalyticsSyncOptions>().Bind(configuration.GetSection(Analytics.AnalyticsSyncOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton(provider =>
+        {
+            var options = provider.GetRequiredService<IOptions<Analytics.AnalyticsSyncOptions>>().Value;
+            return new Application.Analytics.AnalyticsSettings(
+                options.InitialDays, options.RefreshDays, options.MaxDaysPerRun, options.MaxRowsPerReport, options.MaxRowsPerDay, options.WebAnalyticsDelayDays,
+                options.SearchDelayDays, TimeSpan.FromSeconds(options.FetchTimeoutSeconds), TimeSpan.FromHours(options.StaleAfterHours));
+        });
+
+        services.AddSingleton<Analytics.GoogleServiceAccount>();
+        services.TryAddSingleton<Application.Analytics.IWebAnalyticsProvider, Analytics.GoogleAnalyticsDataProvider>();
+        services.TryAddSingleton<Application.Analytics.ISearchPerformanceProvider, Analytics.GoogleSearchConsoleProvider>();
+        services.AddScoped<Application.Analytics.IAnalyticsMetricRepository, AnalyticsMetricRepository>();
+        services.AddScoped<Application.Analytics.IAnalyticsSyncStateRepository, AnalyticsSyncStateRepository>();
+        services.AddScoped<Application.Analytics.IAnalyticsFunnelRepository, AnalyticsFunnelRepository>();
+        services.AddScoped<Application.Jobs.IJobTrigger, BackgroundJobs.JobTrigger>();
     }
 
     /// <summary>Stage 6: CMS repositories, media storage and inspection, content settings.</summary>

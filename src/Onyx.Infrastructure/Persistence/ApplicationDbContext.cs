@@ -137,6 +137,12 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<Domain.News.NewsItemTranslation> NewsItemTranslations => Set<Domain.News.NewsItemTranslation>();
 
+    public DbSet<Domain.Analytics.WebAnalyticsDailyMetric> WebAnalyticsDailyMetrics => Set<Domain.Analytics.WebAnalyticsDailyMetric>();
+
+    public DbSet<Domain.Analytics.SearchPerformanceDailyMetric> SearchPerformanceDailyMetrics => Set<Domain.Analytics.SearchPerformanceDailyMetric>();
+
+    public DbSet<Domain.Analytics.AnalyticsSyncState> AnalyticsSyncStates => Set<Domain.Analytics.AnalyticsSyncState>();
+
     /// <summary>Optimistic-concurrency failures surface as <see cref="ConcurrencyConflictException"/> (409), never as a generic error.</summary>
     public override async Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {

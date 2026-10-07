@@ -10,6 +10,10 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <!-- Feed parsing for the News Hub (owner-approved, Stage 11); used only by News.SyndicationNewsFeedReader. -->
     <PackageReference Include="System.ServiceModel.Syndication" />
+    <!-- GA4 Data API and Search Console (owner-approved, Stage 12); used only by the Analytics adapters. -->
+    <PackageReference Include="Google.Apis.Auth" />
+    <PackageReference Include="Google.Apis.AnalyticsData.v1beta" />
+    <PackageReference Include="Google.Apis.SearchConsole.v1" />
     <!-- Pin EF Core to the latest patched version (Npgsql depends on an older minimum). -->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
