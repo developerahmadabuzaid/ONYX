@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 
@@ -16,7 +17,7 @@ public sealed class PermissionPolicyProvider(IOptions<AuthorizationOptions> opti
             return await base.GetPolicyAsync(policyName).ConfigureAwait(false);
         }
 
-        return new AuthorizationPolicyBuilder()
+        return new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
             .RequireAuthenticatedUser()
             .AddRequirements(new PermissionRequirement(policyName[PolicyPrefix.Length..]))
             .Build();

@@ -1,0 +1,114 @@
+{
+  "key": "idea-to-product",
+  "parent": "services",
+  "type": "page",
+  "icon": "integrated",
+  "pillar": "software",
+  "related": ["services.software", "services.growth", "services.ai-agents", "how-we-work"],
+  "translations": {
+    "ar": {
+      "path": "من-الفكرة-إلى-منتج-رقمي",
+      "nav": "من الفكرة إلى منتج رقمي",
+      "title": "من الفكرة إلى منتج رقمي: تطوير المنتجات والنسخة الأولى",
+      "description": "مسار أونيكس لرواد الأعمال والشركات التي تبني منتجاً رقمياً جديداً: اكتشاف المنتج، تخطيط النسخة الأولى (MVP)، تصميم تجربة المستخدم، البنية، التطوير، الاختبار، الإطلاق والتوسع.",
+      "eyebrow": "مسار تطوير المنتجات",
+      "h1": "من الفكرة إلى منتج رقمي",
+      "lead": "لرواد الأعمال والشركات التي تطلق منتجاً جديداً: نساعدك على اختبار الفكرة، وتحديد النسخة الأولى بذكاء، وبنائها على أساس تقني يتحمل النمو. ندعم المنتجات التي تعتمد وكلاء ذكاء اصطناعي أو ترغب في إدماج الأتمتة الذكية في خدماتها.",
+      "summary": "من اكتشاف المنتج وتخطيط النسخة الأولى إلى الإطلاق والتوسع، مع دعم منتجات الوكلاء والأتمتة.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "who-for",
+          "heading": "لمن هذا المسار؟",
+          "paragraphs": [
+            "لرواد الأعمال الذين لديهم فكرة منتج رقمي ويريدون تحويلها إلى منتج حقيقي، وللشركات القائمة التي تريد إطلاق منصة أو خدمة رقمية جديدة بجانب أعمالها.",
+            "التحدي في المنتجات الجديدة ليس البرمجة وحدها، بل اتخاذ القرارات الصحيحة مبكراً: ما الذي يُبنى أولاً، وما الذي يمكن تأجيله، وكيف نقيس إن كانت الفكرة تحقق قيمة للمستخدمين."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "journey",
+          "eyebrow": "الرحلة",
+          "heading": "مراحل بناء المنتج",
+          "items": [
+            { "id": "discovery", "title": "اكتشاف المنتج", "text": "نحدد المشكلة التي يحلها المنتج، والمستخدمين المستهدفين، والبدائل الموجودة، والفرضيات التي يجب التحقق منها.", "deliverables": ["تعريف المشكلة والمستخدمين", "الفرضيات الأساسية", "مؤشرات النجاح الأولية"] },
+            { "id": "mvp", "title": "تخطيط النسخة الأولى (MVP)", "text": "نختار أصغر مجموعة مزايا تقدّم قيمة حقيقية وتختبر الفرضيات الأهم، ونؤجل ما عداها بوعي.", "deliverables": ["نطاق النسخة الأولى", "خارطة طريق للمراحل التالية", "تقدير أولي للجهد"] },
+            { "id": "ux", "title": "تصميم تجربة وواجهة المستخدم", "text": "نصمم رحلات المستخدم والواجهات ونختبرها بنماذج تفاعلية قبل البرمجة لتقليل التعديلات المكلفة لاحقاً.", "deliverables": ["رحلات المستخدم", "نماذج تفاعلية", "واجهات ثنائية اللغة"] },
+            { "id": "architecture", "title": "البنية التقنية", "text": "نختار بنية بسيطة تكفي للنسخة الأولى وقابلة للتوسع لاحقاً، دون تعقيد مبكر لا يحتاجه المنتج بعد.", "deliverables": ["قرارات تقنية موثقة", "نموذج البيانات", "خطة الاستضافة"] },
+            { "id": "development", "title": "التطوير", "text": "نبني المنتج على مراحل قصيرة، ونعرض أجزاء عاملة بانتظام لتختبرها وتوجّه الأولويات.", "deliverables": ["إصدارات عاملة منتظمة", "شيفرة مراجعة ومختبرة"] },
+            { "id": "testing", "title": "الاختبار", "text": "اختبارات وظيفية وأمنية وأداء، واختبار مع مستخدمين حقيقيين حيث يمكن قبل الإطلاق العام.", "deliverables": ["نتائج الاختبارات", "ملاحظات المستخدمين الأوائل"] },
+            { "id": "launch", "title": "الإطلاق", "text": "إطلاق منظم مع مراقبة وتحليلات مبنية على موافقة المستخدم، وخطة واضحة للتعامل مع الملاحظات الأولى.", "deliverables": ["بيئة تشغيل مراقبة", "قياس الاستخدام", "خطة ما بعد الإطلاق"] },
+            { "id": "scaling", "title": "التوسع", "text": "بعد إثبات القيمة، نوسّع المزايا والبنية بناءً على الاستخدام الفعلي، لا على التوقعات وحدها.", "deliverables": ["خارطة تطوير مبنية على البيانات", "تحسينات الأداء والبنية"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "roles",
+          "eyebrow": "الشراكة",
+          "heading": "ما تقدمه أنت وما نقدمه نحن",
+          "items": [
+            { "title": "أنت: معرفة السوق والعملاء", "text": "فهمك للمشكلة والجمهور وقرارات المنتج الأساسية." },
+            { "title": "نحن: الهندسة والتصميم", "text": "تحويل الفكرة إلى منتج عملي بمعايير هندسية واضحة." },
+            { "title": "معاً: الأولويات", "text": "قرارات مشتركة حول ما يُبنى أولاً وما يُؤجل." },
+            { "title": "معاً: التعلّم", "text": "قراءة بيانات الاستخدام وتعديل الخطة بناءً عليها." }
+          ],
+          "note": "لا نعد بنجاح تجاري للمنتج؛ دورنا بناء منتج جيد الهندسة يمنح فكرتك أفضل فرصة للاختبار والنمو."
+        }
+      ],
+      "ctaTitle": "لديك فكرة منتج رقمي؟",
+      "ctaText": "شاركنا الفكرة والمرحلة التي وصلت إليها، وسنقترح الخطوة الأولى المناسبة."
+    },
+    "en": {
+      "path": "idea-to-digital-product",
+      "nav": "From Idea to Digital Product",
+      "title": "From Idea to Digital Product: MVP and Product Development",
+      "description": "ONYX's journey for founders and companies building a new digital product: discovery, MVP planning, UX, architecture, development, testing, launch and scaling — including AI agent and automation products.",
+      "eyebrow": "Product development journey",
+      "h1": "From idea to digital product",
+      "lead": "For founders and companies launching something new: we help you test the idea, scope the first version wisely and build it on a technical foundation that can grow. We support products that rely on AI agents, or that want intelligent automation built into their service.",
+      "summary": "From product discovery and MVP planning to launch and scale — including AI agent and automation products.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "who-for",
+          "heading": "Who this journey is for",
+          "paragraphs": [
+            "For founders with a digital product idea who want to turn it into a real product, and for established companies launching a new platform or digital service alongside their business.",
+            "The challenge with new products is not just engineering; it is making the right decisions early — what to build first, what to defer, and how to measure whether the idea creates value for users."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "journey",
+          "eyebrow": "The journey",
+          "heading": "Stages of building the product",
+          "items": [
+            { "id": "discovery", "title": "Product discovery", "text": "We define the problem the product solves, the target users, the existing alternatives and the assumptions that need testing.", "deliverables": ["Problem and user definition", "Key assumptions", "Initial success indicators"] },
+            { "id": "mvp", "title": "MVP planning", "text": "We choose the smallest set of features that delivers real value and tests the most important assumptions, and deliberately defer the rest.", "deliverables": ["First-version scope", "A roadmap for later stages", "An initial effort estimate"] },
+            { "id": "ux", "title": "UI/UX design", "text": "We design user journeys and interfaces and test them with interactive prototypes before coding, reducing costly changes later.", "deliverables": ["User journeys", "Interactive prototypes", "Bilingual interfaces"] },
+            { "id": "architecture", "title": "Architecture", "text": "We choose a simple architecture that is enough for the first version and can scale later, without premature complexity the product doesn't need yet.", "deliverables": ["Documented technical decisions", "Data model", "Hosting plan"] },
+            { "id": "development", "title": "Software development", "text": "We build the product in short cycles and regularly demonstrate working parts so you can try them and steer priorities.", "deliverables": ["Regular working releases", "Reviewed, tested code"] },
+            { "id": "testing", "title": "Testing", "text": "Functional, security and performance testing — and testing with real users where possible before the public launch.", "deliverables": ["Test results", "Feedback from early users"] },
+            { "id": "launch", "title": "Launch", "text": "A structured launch with monitoring and consent-based analytics, and a clear plan for handling the first feedback.", "deliverables": ["A monitored production environment", "Usage measurement", "A post-launch plan"] },
+            { "id": "scaling", "title": "Scaling", "text": "Once value is proven, we grow features and infrastructure based on actual usage, not on projections alone.", "deliverables": ["A data-informed roadmap", "Performance and architecture improvements"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "roles",
+          "eyebrow": "The partnership",
+          "heading": "What you bring and what we bring",
+          "items": [
+            { "title": "You: market and customer knowledge", "text": "Your understanding of the problem, the audience and the core product decisions." },
+            { "title": "Us: engineering and design", "text": "Turning the idea into a working product to clear engineering standards." },
+            { "title": "Together: priorities", "text": "Shared decisions on what to build first and what to defer." },
+            { "title": "Together: learning", "text": "Reading usage data and adjusting the plan accordingly." }
+          ],
+          "note": "We don't promise commercial success for a product; our role is to build a well-engineered product that gives your idea the best chance to be tested and to grow."
+        }
+      ],
+      "ctaTitle": "Have a digital product idea?",
+      "ctaText": "Share the idea and the stage you have reached, and we will suggest the right first step."
+    }
+  }
+}

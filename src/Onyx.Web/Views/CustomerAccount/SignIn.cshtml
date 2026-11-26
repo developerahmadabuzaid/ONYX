@@ -1,0 +1,36 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model SignInForm
+<section class="customer-auth">
+    <h1>@T["Customer.SignIn.Title"]</h1>
+    <p>@T["Customer.SignIn.Intro"]</p>
+    <partial name="_CustomerNotice" />
+    <form method="post" action="@Routes.PathFor(CustomerPages.SignIn, lang)" asp-antiforgery="true" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <input type="hidden" asp-for="ReturnUrl">
+        <p>
+            <label asp-for="Email">@T["Form.Email"]</label>
+            <input asp-for="Email" type="email" autocomplete="email" dir="ltr" required maxlength="254">
+            <span asp-validation-for="Email"></span>
+        </p>
+        <p>
+            <label asp-for="Password">@T["Customer.Password"]</label>
+            <input asp-for="Password" type="password" autocomplete="current-password" required maxlength="128">
+            <span asp-validation-for="Password"></span>
+        </p>
+        <partial name="_CustomerSubmit" model='(CustomerPages.SignInCaptchaAction, "Customer.SignIn.Submit")' />
+    </form>
+    @if (ViewData["NotVerified"] is true)
+    {
+        <p><a href="@CustomerPages.WithReturn(Routes.PathFor(CustomerPages.VerifyEmail, lang, "resend")!, Model.ReturnUrl)">@T["Customer.SignIn.ResendLink"]</a></p>
+    }
+    <ul class="customer-links">
+        <li><a href="@CustomerPages.WithReturn(Routes.PathFor(CustomerPages.Register, lang)!, Model.ReturnUrl)">@T["Customer.SignIn.CreateAccount"]</a></li>
+        <li><a href="@Routes.PathFor(CustomerPages.ForgotPassword, lang)">@T["Customer.SignIn.Forgot"]</a></li>
+    </ul>
+    <p class="note">@T["Customer.SignIn.StaffNote"]</p>
+</section>

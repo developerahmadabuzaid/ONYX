@@ -1,0 +1,11 @@
+@using Onyx.Web.Areas.Admin.Navigation
+@model (AdminNavigationItem Item, bool IsActive, int Badge)
+<a class="a-nav__link@(Model.IsActive ? " is-active" : string.Empty)" asp-area="Admin" asp-controller="@Model.Item.Controller" asp-action="@Model.Item.Action"
+   aria-current="@(Model.IsActive ? "page" : null)" title="@T[Model.Item.ResourceKey]">
+    <partial name="_AdminIcon" model="AdminIcons.For(Model.Item.ResourceKey)" />
+    <span class="a-nav__label">@T[Model.Item.ResourceKey]</span>
+    @if (Model.Badge > 0)
+    {
+        <span class="a-nav__badge" dir="ltr">@(Model.Badge > 99 ? "99+" : Model.Badge.ToString(System.Globalization.CultureInfo.InvariantCulture))</span>
+    }
+</a>

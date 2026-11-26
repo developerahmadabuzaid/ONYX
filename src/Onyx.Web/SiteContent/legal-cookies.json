@@ -1,0 +1,53 @@
+{
+  "key": "legal.cookies",
+  "type": "legal",
+  "draft": true,
+  "translations": {
+    "ar": {
+      "path": "سياسة-ملفات-الارتباط",
+      "nav": "سياسة ملفات تعريف الارتباط",
+      "title": "سياسة ملفات تعريف الارتباط",
+      "description": "كيف يستخدم موقع أونيكس ملفات تعريف الارتباط، وفئاتها، وكيف تدير تفضيلاتك.",
+      "eyebrow": "الشؤون القانونية",
+      "h1": "سياسة ملفات تعريف الارتباط",
+      "lead": "نستخدم ملفات تعريف الارتباط الضرورية لتشغيل الموقع، ولا نستخدم ملفات التحليلات أو التسويق إلا بعد موافقتك.",
+      "sections": [
+        { "kind": "prose", "id": "what", "heading": "ما ملفات تعريف الارتباط؟", "paragraphs": ["ملفات نصية صغيرة يحفظها المتصفح عند زيارة موقع، وتساعد الموقع على تذكّر تفضيلاتك وتشغيل بعض الوظائف."] },
+        {
+          "kind": "checklist",
+          "id": "categories",
+          "heading": "الفئات التي نستخدمها",
+          "items": [
+            { "title": "ضرورية (مفعّلة دائماً)", "text": "لازمة لعمل الموقع وأمانه: تذكّر اللغة التي اخترتها، وحفظ تفضيلات الموافقة، وحماية النماذج من الطلبات المزوّرة." },
+            { "title": "تحليلية (بموافقتك)", "text": "تساعدنا على فهم استخدام الموقع بشكل مجمّع لتحسينه. لا تُحمّل إلا بعد موافقتك." },
+            { "title": "تسويقية (بموافقتك)", "text": "تُستخدم لقياس الحملات التسويقية إن فُعّلت. لا تُحمّل إلا بعد موافقتك." }
+          ]
+        },
+        { "kind": "prose", "id": "manage", "heading": "إدارة تفضيلاتك", "paragraphs": ["يمكنك قبول الفئات الاختيارية أو رفضها أو اختيار بعضها من شريط الموافقة عند زيارتك الأولى. نسجل اختيارك ونطلب موافقتك مجدداً عند تغيير هذه السياسة. يمكنك أيضاً حذف ملفات تعريف الارتباط من إعدادات متصفحك. [تُضاف آلية لتعديل التفضيلات من أي صفحة وقائمة تفصيلية بالملفات ومددها بعد المراجعة.]"] }
+      ]
+    },
+    "en": {
+      "path": "cookie-policy",
+      "nav": "Cookie Policy",
+      "title": "Cookie Policy",
+      "description": "How the ONYX website uses cookies, the categories it uses and how to manage your preferences.",
+      "eyebrow": "Legal",
+      "h1": "Cookie Policy",
+      "lead": "We use the cookies needed to run the website, and only use analytics or marketing cookies after you consent.",
+      "sections": [
+        { "kind": "prose", "id": "what", "heading": "What are cookies?", "paragraphs": ["Small text files your browser stores when you visit a website, helping the site remember your preferences and run certain functions."] },
+        {
+          "kind": "checklist",
+          "id": "categories",
+          "heading": "The categories we use",
+          "items": [
+            { "title": "Necessary (always on)", "text": "Needed for the website to work securely: remembering the language you chose, storing your consent preferences and protecting forms against forged requests." },
+            { "title": "Analytics (with your consent)", "text": "Help us understand aggregated use of the website so we can improve it. Loaded only after you consent." },
+            { "title": "Marketing (with your consent)", "text": "Used to measure marketing campaigns, if enabled. Loaded only after you consent." }
+          ]
+        },
+        { "kind": "prose", "id": "manage", "heading": "Managing your preferences", "paragraphs": ["You can accept, reject or choose among the optional categories in the consent banner on your first visit. We record your choice and ask again when this policy changes. You can also delete cookies in your browser settings. [A way to change preferences from any page and a detailed list of cookies and their durations are to be added after review.]"] }
+      ]
+    }
+  }
+}

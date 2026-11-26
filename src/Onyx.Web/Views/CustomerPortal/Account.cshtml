@@ -1,0 +1,61 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    string Money(decimal value, string currency) => value.ToString("N2", CultureInfo.CurrentCulture) + " " + currency;
+}
+@model Onyx.Contracts.Customers.CustomerOverviewResponse
+<section class="customer-portal">
+    <h1>@T["Customer.Account.Welcome", Model.Profile.DisplayName]</h1>
+    <partial name="_CustomerNav" model="CustomerPages.Account" />
+    <partial name="_CustomerNotice" />
+    <div class="customer-grid">
+        <section class="customer-card">
+            <h2>@T["Customer.Nav.Subscriptions"]</h2>
+            @if (Model.Subscriptions.Count == 0)
+            {
+                <p class="empty-state">@T["Customer.Subscriptions.Empty"]</p>
+                <a class="link-arrow" href="@Routes.PathFor(CustomerPages.Products, lang)">@T["Customer.BrowseProducts"]</a>
+            }
+            else
+            {
+                <ul class="customer-list" role="list">
+                    @foreach (var subscription in Model.Subscriptions.Take(5))
+                    {
+                        <li><span>@subscription.ProductName</span> <span class="status-pill status-pill--@subscription.Status.ToLowerInvariant()">@T["Customer.Status." + subscription.Status]</span></li>
+                    }
+                </ul>
+                <a class="link-arrow" href="@Routes.PathFor(CustomerPages.Subscriptions, lang)">@T["Customer.ViewAll"]</a>
+            }
+        </section>
+        <section class="customer-card">
+            <h2>@T["Customer.Nav.Invoices"]</h2>
+            @if (Model.RecentInvoices.Count == 0)
+            {
+                <p class="empty-state">@T["Customer.Invoices.Empty"]</p>
+            }
+            else
+            {
+                <ul class="customer-list" role="list">
+                    @foreach (var invoice in Model.RecentInvoices)
+                    {
+                        <li><a href="@Routes.PathFor(CustomerPages.Invoices, lang, invoice.Id.ToString("D"))"><bdi dir="ltr">@invoice.Number</bdi></a> <bdi dir="ltr">@Money(invoice.Total, invoice.Currency)</bdi> <span class="status-pill status-pill--@invoice.Status.ToLowerInvariant()">@T["Customer.Invoice.Status." + invoice.Status]</span></li>
+                    }
+                </ul>
+            }
+        </section>
+        <section class="customer-card">
+            <h2>@T["Customer.Usage.Title"]</h2>
+            @if (Model.Usage.AiDemoAvailable)
+            {
+                <p>@T["Customer.Usage.DemoToday", Model.Usage.AiDemoRunsToday, Model.Usage.AiDemoDailyLimit]</p>
+                <p>@T["Customer.Usage.DemoMonth", Model.Usage.AiDemoRunsThisMonth]</p>
+            }
+            else
+            {
+                <p class="empty-state">@T["Customer.Usage.None"]</p>
+            }
+        </section>
+    </div>
+</section>

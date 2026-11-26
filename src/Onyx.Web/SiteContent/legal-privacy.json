@@ -1,0 +1,45 @@
+{
+  "key": "legal.privacy",
+  "type": "legal",
+  "draft": true,
+  "translations": {
+    "ar": {
+      "path": "سياسة-الخصوصية",
+      "nav": "سياسة الخصوصية",
+      "title": "سياسة الخصوصية",
+      "description": "كيف تجمع أونيكس فانغارد سوليوشنز البيانات الشخصية وتستخدمها وتحميها عند استخدامك لموقعها ونماذج التواصل فيه.",
+      "eyebrow": "الشؤون القانونية",
+      "h1": "سياسة الخصوصية",
+      "lead": "توضح هذه السياسة البيانات التي نجمعها عبر هذا الموقع، وكيف نستخدمها ونحميها، والخيارات المتاحة لك.",
+      "sections": [
+        { "kind": "prose", "id": "who-we-are", "heading": "من نحن", "paragraphs": ["هذا الموقع تديره أونيكس فانغارد سوليوشنز، ولها مكتبان في الرياض (حي غرناطة) بالمملكة العربية السعودية وفي عمّان بالأردن.", "تُشغَّل أونيكس فانغارد سوليوشنز من قِبل شركة Qowat Al Roeya Lil Barmajiat LLC، وهي شركة ذات مسؤولية محدودة مسجّلة قانونياً."] },
+        { "kind": "prose", "id": "data-we-collect", "heading": "البيانات التي نجمعها", "paragraphs": ["عند تعبئة نماذج التواصل أو بدء مشروع أو حجز استشارة: الاسم، والبريد الإلكتروني، ورقم الهاتف والشركة والدولة إن قدّمتها، ومحتوى رسالتك أو إجاباتك، وموعد الاستشارة الذي تختاره، وموافقاتك على التواصل والتسويق.", "بيانات تقنية لازمة لتشغيل الموقع وحمايته، مثل عنوان IP ونوع المتصفح، وبيانات مصدر الزيارة مثل الصفحة المرجعية ومعلمات الحملات. لا نجمع معرّف التحليلات إلا بعد موافقتك على ملفات تعريف الارتباط التحليلية."] },
+        { "kind": "prose", "id": "purposes", "heading": "كيف نستخدم البيانات", "paragraphs": ["للرد على استفساراتك وطلباتك، وتنظيم الاستشارات والتواصل بشأنها، وحماية الموقع من إساءة الاستخدام والطلبات الآلية، وتحسين الموقع عبر تحليلات مجمّعة عند موافقتك، وإرسال رسائل تسويقية فقط إذا وافقت عليها صراحةً.", "[يُستكمل الأساس النظامي لكل غرض بعد المراجعة القانونية، وفق الأنظمة المطبقة مثل نظام حماية البيانات الشخصية في المملكة العربية السعودية.]"] },
+        { "kind": "prose", "id": "sharing", "heading": "مشاركة البيانات", "paragraphs": ["لا نبيع بياناتك الشخصية. قد نستعين بمزودي خدمات يعالجون البيانات نيابةً عنا لتشغيل الموقع، مثل الاستضافة، وإرسال البريد الإلكتروني، والتحقق من الطلبات لمنع الإساءة، والتحليلات عند موافقتك. [تُستكمل قائمة الفئات والمزودين ومواقع المعالجة بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "retention", "heading": "مدة الاحتفاظ", "paragraphs": ["نحتفظ بالبيانات وفق سياسات احتفاظ محددة لكل فئة من البيانات، ثم نحذفها أو نجعلها مجهولة الهوية. [تُحدد المدد لكل فئة بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "your-rights", "heading": "حقوقك", "paragraphs": ["يمكنك طلب الاطلاع على بياناتك أو تصحيحها أو حذفها، وسحب موافقتك على التسويق أو التواصل في أي وقت، وتغيير تفضيلات ملفات تعريف الارتباط. لتقديم طلب، تواصل معنا عبر صفحة التواصل. [يُستكمل نطاق الحقوق وآلية التحقق ومدد الرد بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "security", "heading": "حماية البيانات", "paragraphs": ["نطبّق ضوابط تقنية وتنظيمية لحماية البيانات، منها التشفير أثناء النقل، وتقييد الوصول وفق الصلاحيات، وتسجيل العمليات المهمة. لا يمكن لأي نظام أن يضمن الأمان التام، لكننا نعمل على تقليل المخاطر باستمرار."] },
+        { "kind": "prose", "id": "changes", "heading": "التغييرات على هذه السياسة", "paragraphs": ["قد نحدّث هذه السياسة من وقت لآخر، وننشر النسخة المحدثة على هذه الصفحة. [يُضاف تاريخ النفاذ عند الاعتماد.]"] }
+      ]
+    },
+    "en": {
+      "path": "privacy-policy",
+      "nav": "Privacy Policy",
+      "title": "Privacy Policy",
+      "description": "How Onyx Vanguard Solutions collects, uses and protects personal data when you use its website and contact forms.",
+      "eyebrow": "Legal",
+      "h1": "Privacy Policy",
+      "lead": "This policy explains the data we collect through this website, how we use and protect it, and the choices available to you.",
+      "sections": [
+        { "kind": "prose", "id": "who-we-are", "heading": "Who we are", "paragraphs": ["This website is operated by Onyx Vanguard Solutions, with offices in Riyadh (Granada District), Saudi Arabia, and Amman, Jordan.", "ONYX Vanguard Solutions is operated by Qowat Al Roeya Lil Barmajiat LLC, a legally registered limited liability company."] },
+        { "kind": "prose", "id": "data-we-collect", "heading": "Data we collect", "paragraphs": ["When you complete a contact form, start a project or book a consultation: your name, email address, and your phone number, company and country if you provide them; the content of your message or answers; the consultation time you choose; and your contact and marketing consents.", "Technical data needed to operate and protect the website, such as IP address and browser type, and visit-source data such as the referring page and campaign parameters. We only collect an analytics identifier after you accept analytics cookies."] },
+        { "kind": "prose", "id": "purposes", "heading": "How we use data", "paragraphs": ["To respond to your enquiries and requests; to arrange and communicate about consultations; to protect the website against abuse and automated requests; to improve the website through aggregated analytics when you consent; and to send marketing messages only if you have explicitly agreed to receive them.", "[The legal basis for each purpose is to be completed after legal review, under applicable law such as Saudi Arabia's Personal Data Protection Law.]"] },
+        { "kind": "prose", "id": "sharing", "heading": "Sharing data", "paragraphs": ["We do not sell your personal data. We may use service providers that process data on our behalf to operate the website, such as hosting, email delivery, request verification to prevent abuse, and analytics when you consent. [The categories of providers and processing locations are to be completed after legal review.]"] },
+        { "kind": "prose", "id": "retention", "heading": "Retention", "paragraphs": ["We keep data according to defined retention policies for each category of data, after which it is deleted or anonymized. [Retention periods per category are to be set after legal review.]"] },
+        { "kind": "prose", "id": "your-rights", "heading": "Your rights", "paragraphs": ["You can ask to access, correct or delete your data, withdraw your marketing or contact consent at any time, and change your cookie preferences. To make a request, contact us through the contact page. [The scope of rights, verification process and response times are to be completed after legal review.]"] },
+        { "kind": "prose", "id": "security", "heading": "Protecting data", "paragraphs": ["We apply technical and organizational controls to protect data, including encryption in transit, permission-based access restrictions and logging of important operations. No system can guarantee complete security, but we work continuously to reduce risk."] },
+        { "kind": "prose", "id": "changes", "heading": "Changes to this policy", "paragraphs": ["We may update this policy from time to time and will publish the updated version on this page. [The effective date is to be added on approval.]"] }
+      ]
+    }
+  }
+}

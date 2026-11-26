@@ -1,0 +1,53 @@
+@using System.Globalization
+@using Onyx.Contracts.SiteContent
+@model (SiteContentDocumentResponse Document, string FormId, IReadOnlyDictionary<string, string> PreviewUrls, string ReturnUrl)
+@* Status and workflow actions shared by every site content editor: save draft (submits the editor form), preview, publish, discard. *@
+@{
+    var document = Model.Document;
+    var exists = document.Version != 0 || document.PublishedRevision > 0 || document.DraftJson is not null;
+}
+<div class="doc-bar">
+    <div class="doc-bar__status">
+        @if (document.DraftJson is not null)
+        {
+            <span class="status status--draft">@T["SiteContent.Status.Draft"]</span>
+            <span class="muted">@T["SiteContent.DraftSavedAt"] <time dir="ltr">@document.DraftUpdatedAtUtc?.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</time></span>
+        }
+        else if (document.PublishedRevision > 0)
+        {
+            <span class="status status--live">@string.Format(CultureInfo.InvariantCulture, T["SiteContent.Status.Published"].Value, document.PublishedRevision)</span>
+        }
+        else
+        {
+            <span class="status status--default">@T["SiteContent.Status.Default"]</span>
+        }
+        @if (document.PublishedAtUtc is { } published)
+        {
+            <span class="muted">@T["SiteContent.PublishedAt"] <time dir="ltr">@published.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</time></span>
+        }
+    </div>
+    <div class="doc-bar__actions">
+        <button type="submit" form="@Model.FormId" class="btn btn--primary">@T["SiteContent.SaveDraft"]</button>
+        @foreach (var (language, url) in Model.PreviewUrls)
+        {
+            <a class="btn" href="@url" target="_blank" rel="noopener">@T["SiteContent.Preview"] (@language.ToUpperInvariant())</a>
+        }
+        @if (document.DraftJson is not null)
+        {
+            <form method="post" asp-controller="SiteContent" asp-action="Publish" class="inline">
+                <input type="hidden" name="key" value="@document.Key">
+                <input type="hidden" name="version" value="@document.Version">
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                <button type="submit" class="btn btn--accent">@T["SiteContent.Publish"]</button>
+            </form>
+            <form method="post" asp-controller="SiteContent" asp-action="Discard" class="inline" data-confirm="@T["SiteContent.DiscardConfirm"]">
+                <input type="hidden" name="key" value="@document.Key">
+                <input type="hidden" name="version" value="@document.Version">
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                <button type="submit" class="btn btn--ghost">@T["SiteContent.Discard"]</button>
+            </form>
+        }
+    </div>
+</div>
+<input type="hidden" name="version" value="@document.Version" form="@Model.FormId">
+<input type="hidden" name="exists" value="@(exists ? "true" : "false")" form="@Model.FormId">

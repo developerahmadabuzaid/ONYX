@@ -1,0 +1,120 @@
+@* AI agents network — a static SVG illustration of an agent hub connected to surrounding nodes
+   (tools, data, applications and users). CSS-only pulse and data-flow animations (tokens.css + site.css);
+   no external assets; gracefully degrades to a static image when reduced motion is preferred.
+   Decorative: aria-hidden, not part of the page content. *@
+<svg class="agents-network" viewBox="0 0 600 600" width="600" height="600" role="img" aria-hidden="true" focusable="false">
+    <defs>
+        <radialGradient id="agents-hub-glow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="var(--pillar-agents)" stop-opacity="0.18" />
+            <stop offset="60%" stop-color="var(--pillar-agents)" stop-opacity="0.06" />
+            <stop offset="100%" stop-color="var(--pillar-agents)" stop-opacity="0" />
+        </radialGradient>
+        <linearGradient id="agents-link" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--pillar-agents)" stop-opacity="0.0" />
+            <stop offset="50%" stop-color="var(--pillar-agents)" stop-opacity="0.55" />
+            <stop offset="100%" stop-color="var(--pillar-agents)" stop-opacity="0.0" />
+        </linearGradient>
+        <linearGradient id="agents-link-soft" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="var(--line-strong)" stop-opacity="0" />
+            <stop offset="50%" stop-color="var(--line-strong)" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="var(--line-strong)" stop-opacity="0" />
+        </linearGradient>
+    </defs>
+
+    @* Soft glow behind the hub (renders under the lines) *@
+    <circle cx="300" cy="300" r="240" fill="url(#agents-hub-glow)" />
+
+    @* Connecting paths (curved, hub to surrounding nodes). Soft by default; the gradient stroke brightens them subtly. *@
+    <g class="agents-network__links" fill="none" stroke="var(--line-strong)" stroke-width="1.25">
+        <path d="M300 300 C 240 240 200 200 130 150" />
+        <path d="M300 300 C 360 240 400 200 470 150" />
+        <path d="M300 300 C 240 360 200 400 130 460" />
+        <path d="M300 300 C 360 360 400 400 470 460" />
+        <path d="M300 300 L 300 520" />
+    </g>
+
+    @* Travelling data particles along each link. Five short rays, each on its own path, staggered in time
+       so the network looks alive without flooding the canvas with motion. *@
+    <g class="agents-network__flow" stroke="url(#agents-link)" stroke-width="2.5" stroke-linecap="round" fill="none">
+        <path d="M300 300 C 240 240 200 200 130 150" class="agents-network__ray agents-network__ray--1" />
+        <path d="M300 300 C 360 240 400 200 470 150" class="agents-network__ray agents-network__ray--2" />
+        <path d="M300 300 C 240 360 200 400 130 460" class="agents-network__ray agents-network__ray--3" />
+        <path d="M300 300 C 360 360 400 400 470 460" class="agents-network__ray agents-network__ray--4" />
+        <path d="M300 300 L 300 520" class="agents-network__ray agents-network__ray--5" />
+    </g>
+
+    @* Surrounding nodes (tools, data, applications, users) *@
+    <g class="agents-network__nodes">
+        @* Tools (top-left, teal) *@
+        <g class="agents-node agents-node--tool" transform="translate(130 150)">
+            <circle r="34" fill="var(--paper)" stroke="var(--teal-2)" stroke-width="1.5" />
+            <circle r="34" fill="var(--teal-soft)" opacity="0.7" />
+            <g transform="translate(-9 -9)" stroke="var(--teal-3)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 3.5 a5.5 5.5 0 1 1-3.9 9.4" />
+                <path d="M9 9 v4.5" />
+                <path d="M9 14.5 h-4" />
+            </g>
+        </g>
+
+        @* Data (top-right, sky) *@
+        <g class="agents-node agents-node--data" transform="translate(470 150)">
+            <circle r="34" fill="var(--paper)" stroke="var(--sky-2)" stroke-width="1.5" />
+            <circle r="34" fill="var(--sky-soft)" opacity="0.7" />
+            <g transform="translate(-10 -7)" stroke="var(--sky-3)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <ellipse cx="10" cy="3" rx="8" ry="2.5" />
+                <path d="M2 3 v10 c0 1.4 3.6 2.5 8 2.5 s8-1.1 8-2.5 V3" />
+                <path d="M2 8 c0 1.4 3.6 2.5 8 2.5 s8-1.1 8-2.5" />
+            </g>
+        </g>
+
+        @* Application (bottom-left, green) *@
+        <g class="agents-node agents-node--app" transform="translate(130 460)">
+            <circle r="34" fill="var(--paper)" stroke="var(--green-2)" stroke-width="1.5" />
+            <circle r="34" fill="var(--green-soft)" opacity="0.7" />
+            <g transform="translate(-9 -9)" stroke="var(--green-2)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="3" width="16" height="13" rx="1.5" />
+                <path d="M2 7 h16" />
+                <circle cx="4.5" cy="5" r="0.6" fill="var(--green-2)" />
+                <circle cx="6.5" cy="5" r="0.6" fill="var(--green-2)" />
+            </g>
+        </g>
+
+        @* Cloud (bottom-right, violet) *@
+        <g class="agents-node agents-node--cloud" transform="translate(470 460)">
+            <circle r="34" fill="var(--paper)" stroke="var(--violet-2)" stroke-width="1.5" />
+            <circle r="34" fill="var(--violet-soft)" opacity="0.7" />
+            <g transform="translate(-9 -6)" stroke="var(--violet-2)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M5 12 a4.5 4.5 0 0 1 0.5-8.9 a5.5 5.5 0 0 1 10.7 1.2 a4 4 0 0 1-0.4 7.95" />
+            </g>
+        </g>
+
+        @* User (bottom, amber) *@
+        <g class="agents-node agents-node--user" transform="translate(300 520)">
+            <circle r="30" fill="var(--paper)" stroke="var(--amber-2)" stroke-width="1.5" />
+            <circle r="30" fill="var(--amber-soft)" opacity="0.7" />
+            <g transform="translate(-8 -9)" stroke="var(--amber-2)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="8" cy="6" r="3.5" />
+                <path d="M2 17 a6 6 0 0 1 12 0" />
+            </g>
+        </g>
+
+        @* Hub (center) — the orchestrator agent. Larger, with a soft glow ring and a small inner icon (a hub-and-spoke mark). *@
+        <g class="agents-node agents-node--hub" transform="translate(300 300)">
+            <circle r="78" class="agents-hub__ring" fill="none" stroke="var(--pillar-agents)" stroke-width="1.5" />
+            <circle r="60" class="agents-hub__ring agents-hub__ring--inner" fill="none" stroke="var(--pillar-agents)" stroke-width="1" opacity="0.5" />
+            <circle r="48" fill="var(--paper)" stroke="var(--pillar-agents-ink)" stroke-width="1.5" />
+            <circle r="48" fill="var(--pillar-agents-soft)" opacity="0.85" />
+            <g transform="translate(-18 -18)" stroke="var(--pillar-agents-ink)" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="18" r="4" fill="var(--pillar-agents)" stroke="none" />
+                <line x1="18" y1="6" x2="18" y2="13" />
+                <line x1="18" y1="23" x2="18" y2="30" />
+                <line x1="6" y1="18" x2="13" y2="18" />
+                <line x1="23" y1="18" x2="30" y2="18" />
+                <line x1="9.5" y1="9.5" x2="14.5" y2="14.5" />
+                <line x1="21.5" y1="21.5" x2="26.5" y2="26.5" />
+                <line x1="9.5" y1="26.5" x2="14.5" y2="21.5" />
+                <line x1="21.5" y1="14.5" x2="26.5" y2="9.5" />
+            </g>
+        </g>
+    </g>
+</svg>

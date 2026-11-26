@@ -1,0 +1,37 @@
+@using System.Globalization
+@model Onyx.Web.Areas.Admin.Delivery.KpiCard
+@* A KPI card: the number, what it means, a real change against the previous period when there is one, and a small trend line. *@
+@{
+    var changeTone = Model.ChangePercent switch
+    {
+        null => "flat",
+        0 => "flat",
+        > 0 => Model.ChangeIsGood switch { true => "good", false => "bad", _ => "neutral" },
+        _ => Model.ChangeIsGood switch { true => "bad", false => "good", _ => "neutral" },
+    };
+}
+<a class="kpi tone-@Model.Tone@(Model.Attention ? " is-attention" : string.Empty)" href="@(Model.Href ?? "#")">
+    <span class="kpi__top">
+        <span class="kpi__icon" aria-hidden="true"><partial name="_AdminIcon" model="Model.Icon" /></span>
+        <span class="kpi__label">@T[Model.LabelKey]</span>
+    </span>
+    <span class="kpi__value" dir="ltr">@Model.Value.ToString("N0", CultureInfo.InvariantCulture)</span>
+    <span class="kpi__meta">
+        @if (Model.ChangePercent is { } change)
+        {
+            <span class="trend trend--@changeTone">
+                <partial name="_AdminIcon" model='change >= 0 ? "trend-up" : "trend-down"' />
+                <span dir="ltr">@(change > 0 ? "+" : string.Empty)@change.ToString(CultureInfo.InvariantCulture)%</span>
+                <span class="visually-hidden">@T["Delivery.Ws.VsPrevious"]</span>
+            </span>
+        }
+        @if (Model.Note is not null)
+        {
+            <span class="kpi__note">@Model.Note</span>
+        }
+    </span>
+    @if (Model.Sparkline is not null)
+    {
+        <span class="kpi__spark">@Model.Sparkline</span>
+    }
+</a>

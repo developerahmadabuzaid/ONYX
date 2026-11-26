@@ -1,0 +1,32 @@
+@model (Guid Id, string Key, string Name, string Active)
+@* Project navigation: breadcrumb, title and the project's views (overview, board, backlog, sprints, timeline, calendar, issues). *@
+@{
+    var tabs = new (string Name, string Label, string Icon, string? Href)[]
+    {
+        ("Project", "Delivery.Tab.Overview", "grid", Url.Action("Project", "Delivery", new { id = Model.Id })),
+        ("Board", "Delivery.Tab.Board", "kanban", Url.Action("Board", "Delivery", new { id = Model.Id })),
+        ("Backlog", "Delivery.Tab.Backlog", "list", Url.Action("Backlog", "Delivery", new { id = Model.Id })),
+        ("Sprints", "Delivery.Tab.Sprints", "repeat", Url.Action("ProjectSprints", "DeliveryPlanning", new { id = Model.Id })),
+        ("Timeline", "Delivery.Tab.Timeline", "timeline", Url.Action("Timeline", "DeliveryPlanning", new { id = Model.Id })),
+        ("Calendar", "Delivery.Tab.Calendar", "calendar", Url.Action("Calendar", "DeliveryPlanning", new { projectId = Model.Id })),
+        ("Issues", "Delivery.Tab.Issues", "file", Url.Action("Issues", "Delivery", new { projectId = Model.Id })),
+    };
+}
+<nav class="d-crumbs" aria-label="@T["Delivery.Breadcrumbs"]">
+    <a asp-controller="Delivery" asp-action="Index">@T["Nav.DeliveryDashboard"]</a>
+    <span aria-hidden="true">/</span>
+    <a asp-controller="Delivery" asp-action="Projects">@T["Nav.DeliveryProjects"]</a>
+    <span aria-hidden="true">/</span>
+    <span>@Model.Name <span class="d-key" dir="ltr">@Model.Key</span></span>
+</nav>
+<div class="d-project-title">
+    <h1 dir="auto">@Model.Name</h1>
+    <a class="btn btn--primary btn--small" asp-controller="Delivery" asp-action="NewIssue" asp-route-projectId="@Model.Id"><partial name="_AdminIcon" model='"plus"' />@T["Delivery.CreateIssue"]</a>
+</div>
+<nav class="d-tabs" aria-label="@T["Delivery.ProjectSections"]">
+    @foreach (var tab in tabs)
+    {
+        var current = Model.Active == tab.Name;
+        <a href="@tab.Href" class="@(current ? "is-active" : null)" aria-current="@(current ? "page" : null)"><partial name="_AdminIcon" model="tab.Icon" />@T[tab.Label]</a>
+    }
+</nav>

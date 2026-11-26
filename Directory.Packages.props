@@ -13,6 +13,9 @@
 
   <ItemGroup Label="Infrastructure">
     <PackageVersion Include="MailKit" Version="4.18.1" />
+    <!-- Security pin (2026-10-19): MimeKit 4.18.1 pulls System.Security.Cryptography.Pkcs 10.0.0, affected by
+         CVE-2026-84008 (high) and CVE-2026-70162 (moderate); 10.0.13 is the first patched version. Remove once MimeKit ships it. -->
+    <PackageVersion Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.12" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.12" />
     <!-- Stage 11, owner-approved: RSS/Atom parsing behind INewsFeedReader, Onyx.Infrastructure only. -->

@@ -1,0 +1,79 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model ProjectSprintsPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.Tab.Sprints";
+    var project = Model.Project;
+    var rtl = DeliveryFormat.IsRtl;
+    var order = new Dictionary<string, int> { ["Active"] = 0, ["Planned"] = 1, ["Completed"] = 2, ["Cancelled"] = 3 };
+    var sprints = Model.Sprints.OrderBy(sprint => order.GetValueOrDefault(sprint.State, 4)).ThenByDescending(sprint => sprint.StartDate).ToList();
+    var average = Model.Velocity.Count == 0 ? 0 : Math.Round(Model.Velocity.Average(item => item.CompletedPoints), 1);
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+<partial name="_DeliveryTabs" model='(project.Id, project.Key, project.Name, "Sprints")' />
+<partial name="_CmsMessages" />
+
+<section class="widget" aria-labelledby="s-velocity">
+    <header class="widget__head">
+        <h2 id="s-velocity">@T["Delivery.Sprints.Velocity"]</h2>
+        @Chart.Legend([(T["Delivery.Committed"].Value, "slate", (string?)null), (T["Delivery.Completed"].Value, "teal", (string?)null)])
+    </header>
+    @if (Model.Velocity.Count == 0)
+    {
+        <p class="widget__empty">@T["Delivery.Sprints.NoVelocity"]</p>
+    }
+    else
+    {
+        <dl class="stat-row">
+            <div><dt>@T["Delivery.Sprints.AverageVelocity"]</dt><dd dir="ltr">@average.ToString(CultureInfo.InvariantCulture)</dd></div>
+            <div><dt>@T["Delivery.Sprints.ClosedSprints"]</dt><dd dir="ltr">@Model.Velocity.Count</dd></div>
+        </dl>
+        @Chart.Columns(Model.Velocity.Select(item => item.Name).ToList(),
+            [new ChartSeries(T["Delivery.Committed"], "slate", Model.Velocity.Select(item => (double?)item.CommittedPoints).ToList()),
+             new ChartSeries(T["Delivery.Completed"], "teal", Model.Velocity.Select(item => (double?)item.CompletedPoints).ToList())],
+            DeliveryFormat.IsRtl, T["Delivery.Sprints.Velocity"])
+        <p class="widget__foot">@T["Delivery.Sprints.VelocityNote"]</p>
+    }
+</section>
+
+<div class="d-head">
+    <h2>@T["Delivery.Tab.Sprints"]</h2>
+    @if (project.Can.ManageSprints)
+    {
+        <a class="btn btn--small" asp-controller="Delivery" asp-action="Backlog" asp-route-id="@project.Id">@T["Delivery.Sprints.PlanInBacklog"]</a>
+    }
+</div>
+@if (sprints.Count == 0)
+{
+    <partial name="_Empty" model='("Delivery.Sprints.EmptyTitle", "Delivery.Sprints.EmptyText", Url.Action("Backlog", "Delivery", new { id = project.Id }), "Delivery.Tab.Backlog")' />
+}
+else
+{
+    <ul class="sprint-cards" role="list">
+        @foreach (var sprint in sprints)
+        {
+            var ratio = sprint.Points == 0 ? (sprint.IssueCount == 0 ? 0 : (double)sprint.DoneIssueCount / sprint.IssueCount) : (double)sprint.DonePoints / sprint.Points;
+            <li class="sprint-card sprint-card--@sprint.State.ToLowerInvariant()">
+                <div class="sprint-card__head">
+                    <a class="sprint-card__name" asp-action="Sprint" asp-route-sprintId="@sprint.Id" dir="auto">@sprint.Name</a>
+                    <span class="d-sstate d-sstate--@sprint.State.ToLowerInvariant()">@T["Delivery.SprintState." + sprint.State]</span>
+                </div>
+                @if (sprint.Goal is not null)
+                {
+                    <p class="sprint-card__goal" dir="auto">@sprint.Goal</p>
+                }
+                <p class="sprint-card__dates">@(sprint.StartDate is { } start ? DeliveryFormat.Day(start) : "…") → @(sprint.EndDate is { } end ? DeliveryFormat.Day(end) : "…")</p>
+                @Chart.Progress(ratio, sprint.State == "Cancelled" ? "slate" : "teal", rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points))
+                <p class="sprint-card__meta">
+                    <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points)</span>
+                    <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"], sprint.DoneIssueCount, sprint.IssueCount)</span>
+                </p>
+                <a class="btn btn--small" asp-action="Sprint" asp-route-sprintId="@sprint.Id"><partial name="_AdminIcon" model='"chart"' />@T["Delivery.SprintReport"]</a>
+            </li>
+        }
+    </ul>
+}

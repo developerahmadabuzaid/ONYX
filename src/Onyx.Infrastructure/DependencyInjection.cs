@@ -100,6 +100,7 @@ public static class DependencyInjection
         AddLeads(services, configuration);
         AddNews(services, configuration);
         AddAnalytics(services, configuration);
+        AddCommerce(services, configuration);
 
         services.Configure<DomainEventRegistryOptions>(options => options.Assemblies.Add(typeof(IDomainEvent).Assembly));
         services.AddSingleton<DomainEventTypeRegistry>();
@@ -204,6 +205,36 @@ public static class DependencyInjection
     }
 
     /// <summary>
+    /// SaaS platform (docs/architecture.md §24.8): isolated customer identity, product catalogue, subscriptions, manual invoices
+    /// and the AI demo queue. The customer templates are rendered by the Worker like every other email.
+    /// </summary>
+    private static void AddCommerce(IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddOptions<Application.Customers.CustomerAccountOptions>()
+            .Bind(configuration.GetSection(Application.Customers.CustomerAccountOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton(provider => provider.GetRequiredService<IOptions<Application.Customers.CustomerAccountOptions>>().Value);
+        services.AddOptions<Application.Products.AiDemoOptions>()
+            .Bind(configuration.GetSection(Application.Products.AiDemoOptions.SectionName)).ValidateDataAnnotations().ValidateOnStart();
+        services.AddSingleton(provider => provider.GetRequiredService<IOptions<Application.Products.AiDemoOptions>>().Value);
+
+        services.AddSingleton<Microsoft.AspNetCore.Identity.IPasswordHasher<Domain.Customers.CustomerAccount>,
+            Microsoft.AspNetCore.Identity.PasswordHasher<Domain.Customers.CustomerAccount>>();
+        services.TryAddScoped<Application.Customers.ICurrentCustomer, Customers.NoCurrentCustomer>();
+        services.AddScoped<Application.Customers.ICustomerAuthService, Customers.CustomerAuthService>();
+        services.AddScoped<Application.Customers.ICustomerAccountRepository, CustomerAccountRepository>();
+        services.AddScoped<Application.Products.ISaasProductRepository, SaasProductRepository>();
+        services.AddScoped<Application.Products.IAiDemoRunRepository, AiDemoRunRepository>();
+        services.AddScoped<Application.Subscriptions.ICustomerSubscriptionRepository, CustomerSubscriptionRepository>();
+        services.AddScoped<Application.Billing.IInvoiceRepository, InvoiceRepository>();
+        services.AddScoped<Application.Commerce.ICommerceReadModel, CommerceReadModel>();
+
+        services.AddSingleton<IEmailTemplate, CustomerVerifyEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, CustomerAlreadyRegisteredEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, CustomerPasswordResetEmailTemplate>();
+        services.AddSingleton<IEmailTemplate, CustomerSubscriptionUpdatedEmailTemplate>();
+    }
+
+    /// <summary>
     /// Stage 11: News Hub repositories, the SSRF-safe outbound client (every admin-supplied URL goes through it), the feed reader
     /// and the news summary boundary. The summary service is the not-configured placeholder until Onyx's external AI Agent is
     /// integrated by registering an adapter for <see cref="Application.News.INewsSummaryService"/>; items stay held until then.
@@ -229,6 +260,11 @@ public static class DependencyInjection
         services.AddScoped<Application.News.INewsSourceRepository, NewsSourceRepository>();
         services.AddScoped<Application.News.INewsCategoryRepository, NewsCategoryRepository>();
         services.AddScoped<Application.News.INewsItemRepository, NewsItemRepository>();
+        services.AddScoped<Application.Delivery.IDeliveryProjectRepository, DeliveryProjectRepository>();
+        services.AddScoped<Application.Delivery.IIssueRepository, IssueRepository>();
+        services.AddScoped<Application.Delivery.ISprintRepository, SprintRepository>();
+        services.AddScoped<Application.Delivery.IDeliveryReadModel, DeliveryReadModel>();
+        services.AddScoped<Application.Delivery.ISavedIssueFilterRepository, SavedIssueFilterRepository>();
         services.AddScoped<Application.News.INewsFeedReader, News.SyndicationNewsFeedReader>();
         services.TryAddScoped<Application.News.INewsSummaryService, News.NotConfiguredNewsSummaryService>();
     }
@@ -291,6 +327,7 @@ public static class DependencyInjection
         services.AddScoped<Application.Content.IContentClusterRepository, ContentClusterRepository>();
         services.AddScoped<Application.Media.IMediaRepository, MediaRepository>();
         services.AddScoped<Application.Brand.IBrandKitRepository, BrandKitRepository>();
+        services.AddScoped<Application.SiteContent.ISiteContentRepository, SiteContentRepository>();
         services.AddScoped<Application.Knowledge.IKnowledgeRepository, KnowledgeRepository>();
         services.AddScoped<Application.Knowledge.IInformationRequestRepository, InformationRequestRepository>();
         services.AddScoped<Application.Intelligence.IKeywordTargetRepository, KeywordTargetRepository>();

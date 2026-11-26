@@ -1,15 +1,88 @@
+@using System.Globalization
+@using Onyx.Web.Content
 @using Onyx.Web.Leads
 @model InquiryFormModel
-@* Functional semantic template only: visual design is a later, separately approved stage. *@
+@inject LocalizedRouteTable Routes
+@inject Onyx.Web.Content.SitePages.SitePageCatalog SitePages
+@inject Onyx.Web.Content.SiteContent.SiteCopy Copy
+@inject Onyx.Web.Content.SiteContent.EffectiveSitePages EditedPages
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var links = SiteLinks.For(Routes, SitePages, lang);
+    var serviceKeys = new[] { "services.ai", "services.software", "services.cloud", "services.security", "services.growth" };
+    var settings = Copy.Settings;
+    // Website settings (Admin) first, then the owner-verified organization email; nothing is ever guessed.
+    var email = !string.IsNullOrWhiteSpace(settings?.ContactEmail) ? settings.ContactEmail : ViewData["VerifiedEmail"] as string;
+}
 <h1>@T["Lead.Contact.Title"]</h1>
 <p>@T["Lead.Contact.Intro"]</p>
-<form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true" novalidate>
-    <div asp-validation-summary="ModelOnly" role="alert"></div>
-    <p>
-        <label asp-for="Message">@T["Lead.Contact.Message"]</label>
-        <textarea asp-for="Message" rows="6" maxlength="4000" required></textarea>
-        <span asp-validation-for="Message"></span>
-    </p>
-    <partial name="_LeadContactFields" model="Model" />
-    <partial name="_LeadSubmit" model='(LeadPages.InquiryCaptchaAction, "Form.Send")' />
-</form>
+<div class="contact-layout">
+    <form method="post" action="@SitePaths.Encode(Context.Request.Path.Value!)" asp-antiforgery="true" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <fieldset>
+            <legend>@T["Lead.Contact.MessageLegend"]</legend>
+            <p>
+                <label asp-for="Message">@T["Lead.Contact.Message"]</label>
+                <textarea asp-for="Message" rows="6" maxlength="4000" required></textarea>
+                <span asp-validation-for="Message"></span>
+            </p>
+        </fieldset>
+        <partial name="_LeadContactFields" model="Model" />
+        <p class="note">@T["Lead.Contact.PrivacyNote"] @if (links.Page("legal.privacy") is { } privacy) { <a href="@privacy">@links.Label("legal.privacy")</a> }</p>
+        <partial name="_LeadSubmit" model='(LeadPages.InquiryCaptchaAction, "Form.Send")' />
+    </form>
+    <aside class="contact-aside" aria-label="@T["Lead.Contact.AsideLabel"]">
+        <div class="contact-card">
+            <h2>@T["Lead.Contact.OtherWays"]</h2>
+            <ul>
+                @if (links.StartProject is not null)
+                {
+                    <li><a class="link-arrow" href="@links.StartProject">@T["Public.Cta.StartProject"]</a></li>
+                }
+                @if (links.BookConsultation is not null)
+                {
+                    <li><a class="link-arrow" href="@links.BookConsultation">@T["Public.Cta.BookConsultation"]</a></li>
+                }
+            </ul>
+            <p>@T["Lead.Contact.OtherWaysNote"]</p>
+        </div>
+        <div class="contact-card">
+            <h2>@T["Public.Footer.Offices"]</h2>
+            <ul>
+                @if (settings?.Offices is { Count: > 0 } offices)
+                {
+                    foreach (var office in offices)
+                    {
+                        var officeAddress = Onyx.Web.Content.SiteContent.SiteCopy.Localized(office.Address);
+                        <li>@Onyx.Web.Content.SiteContent.SiteCopy.Localized(office.Name)@(officeAddress is not null ? " — " + officeAddress : string.Empty)</li>
+                    }
+                }
+                else
+                {
+                    <li>@T["Public.Footer.Office.Riyadh"]</li>
+                    <li>@T["Public.Footer.Office.Amman"]</li>
+                }
+                @foreach (var phone in settings?.Phones ?? [])
+                {
+                    <li><a href="tel:@(new string(phone.Number.Where(c => char.IsDigit(c) || c == '+').ToArray()))" dir="ltr">@phone.Number</a></li>
+                }
+                @if (email is not null)
+                {
+                    <li><a href="mailto:@email" dir="ltr">@email</a></li>
+                }
+            </ul>
+        </div>
+        <div class="contact-card">
+            <h2>@T["Public.Footer.Services"]</h2>
+            <ul>
+                @foreach (var key in serviceKeys)
+                {
+                    if (links.Page(key) is { } path)
+                    {
+                        <li><a href="@path">@(EditedPages.Label(key, lang) ?? links.Label(key))</a></li>
+                    }
+                }
+            </ul>
+        </div>
+    </aside>
+</div>

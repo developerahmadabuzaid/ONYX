@@ -188,4 +188,84 @@ public static class StructuredDataBuilder
         var document = new JsonObject { ["@context"] = "https://schema.org", ["@graph"] = graph };
         return document.ToJsonString(Options);
     }
+
+    /// <summary>
+    /// JSON-LD for a code-owned site page: a WebPage (AboutPage for the company page), its BreadcrumbList and, for service pages,
+    /// a Service whose offer catalog lists exactly the offerings shown on the page. <paramref name="crumbs"/> are
+    /// (name, encoded path) pairs from the homepage to the page itself.
+    /// </summary>
+    public static string BuildSitePage(
+        string languageCode,
+        string baseUrl,
+        string siteName,
+        string pageType,
+        string name,
+        string description,
+        string encodedPath,
+        IReadOnlyList<(string Name, string Path)> crumbs,
+        IReadOnlyList<string> offerings)
+    {
+        ArgumentNullException.ThrowIfNull(crumbs);
+        ArgumentNullException.ThrowIfNull(offerings);
+        var origin = (baseUrl ?? string.Empty).TrimEnd('/');
+        var url = SitePaths.Absolute(baseUrl ?? string.Empty, encodedPath);
+        var page = new JsonObject
+        {
+            ["@type"] = pageType == "about" ? "AboutPage" : "WebPage",
+            ["@id"] = url + "#webpage",
+            ["url"] = url,
+            ["name"] = name,
+            ["description"] = description,
+            ["inLanguage"] = languageCode,
+            ["isPartOf"] = new JsonObject { ["@id"] = origin + "/#website" },
+            ["breadcrumb"] = new JsonObject { ["@id"] = url + "#breadcrumb" },
+        };
+
+        var items = new JsonArray();
+        for (var index = 0; index < crumbs.Count; index++)
+        {
+            items.Add(new JsonObject
+            {
+                ["@type"] = "ListItem",
+                ["position"] = index + 1,
+                ["name"] = crumbs[index].Name,
+                ["item"] = SitePaths.Absolute(baseUrl ?? string.Empty, crumbs[index].Path),
+            });
+        }
+
+        var graph = new JsonArray
+        {
+            page,
+            new JsonObject { ["@type"] = "BreadcrumbList", ["@id"] = url + "#breadcrumb", ["itemListElement"] = items },
+        };
+
+        if (pageType == "service")
+        {
+            var service = new JsonObject
+            {
+                ["@type"] = "Service",
+                ["@id"] = url + "#service",
+                ["name"] = name,
+                ["description"] = description,
+                ["serviceType"] = name,
+                ["url"] = url,
+                ["provider"] = new JsonObject { ["@type"] = "Organization", ["name"] = siteName, ["url"] = origin + "/" },
+            };
+            if (offerings.Count > 0)
+            {
+                var offers = new JsonArray();
+                foreach (var offering in offerings)
+                {
+                    offers.Add(new JsonObject { ["@type"] = "Offer", ["itemOffered"] = new JsonObject { ["@type"] = "Service", ["name"] = offering } });
+                }
+
+                service["hasOfferCatalog"] = new JsonObject { ["@type"] = "OfferCatalog", ["name"] = name, ["itemListElement"] = offers };
+            }
+
+            page["mainEntity"] = new JsonObject { ["@id"] = url + "#service" };
+            graph.Add(service);
+        }
+
+        return new JsonObject { ["@context"] = "https://schema.org", ["@graph"] = graph }.ToJsonString(Options);
+    }
 }

@@ -1,0 +1,47 @@
+[
+  {
+    "Name": "Onyx (one application)",
+    "Projects": [
+      {
+        "Path": "src\\Onyx.Host\\Onyx.Host.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  },
+  {
+    "Name": "API + Web",
+    "Projects": [
+      {
+        "Path": "src\\Onyx.API\\Onyx.API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "src\\Onyx.Web\\Onyx.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      }
+    ]
+  },
+  {
+    "Name": "API + Web + Worker",
+    "Projects": [
+      {
+        "Path": "src\\Onyx.API\\Onyx.API.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "src\\Onyx.Web\\Onyx.Web.csproj",
+        "Action": "Start",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "src\\Onyx.Worker\\Onyx.Worker.csproj",
+        "Action": "Start",
+        "DebugTarget": "Onyx.Worker"
+      }
+    ]
+  }
+]

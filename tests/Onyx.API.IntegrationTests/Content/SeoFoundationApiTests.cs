@@ -24,14 +24,14 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
             $"{Admin}/{published.Id}/settings", new UpdateContentSettingsRequest(null, null, "Page", 5, null, null, published.Version), Token));
         var republished = await PublishAsync(owner, reordered);
         Assert.Equal(firstPublish, await LastModifiedAsync("en", "/en/about-us"));
-        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/من-نحن"));
+        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/صفحة-تعريفية"));
 
         // An English edit moves only the English lastmod.
         Time.Advance(TimeSpan.FromMinutes(3));
         var edited = await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync($"{Admin}/{published.Id}/translations/en", Translation("Updated page", "about-us", republished.Version), Token));
         await PublishAsync(owner, edited);
         Assert.Equal(Time.GetUtcNow(), await LastModifiedAsync("en", "/en/about-us"));
-        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/من-نحن"));
+        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/صفحة-تعريفية"));
         Assert.Equal(Time.GetUtcNow(), (await ResolveAsync("en", "about-us")).Content!.ModifiedAtUtc);
     }
 
@@ -54,7 +54,7 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
         var described = await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync($"{Admin}/{published.Id}/translations/en/seo", new UpdateContentSeoRequest(served, republished.Version), Token));
         await PublishAsync(owner, described);
         Assert.Equal(Time.GetUtcNow(), await LastModifiedAsync("en", "/en/about-us"));
-        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/من-نحن"));
+        Assert.Equal(firstPublish, await LastModifiedAsync("ar", "/ar/صفحة-تعريفية"));
     }
 
     [Fact]
@@ -68,7 +68,7 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
         await PublishAsync(owner, updated);
 
         var english = (await ResolveAsync("en", "about-us")).Content!;
-        var arabic = (await ResolveAsync("ar", "من-نحن")).Content!;
+        var arabic = (await ResolveAsync("ar", "صفحة-تعريفية")).Content!;
 
         Assert.Equal(["en"], english.Seo.Alternates.Keys);
         Assert.Null(english.Seo.XDefaultPath);
@@ -90,7 +90,7 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
             $"{Admin}/{page.Id}/translations/en/seo", new UpdateContentSeoRequest(noindex, page.Version), Token)));
 
         Assert.Empty((await ResolveAsync("en", "about-us")).Content!.Seo.Alternates);
-        Assert.Equal(["ar"], (await ResolveAsync("ar", "من-نحن")).Content!.Seo.Alternates.Keys);
+        Assert.Equal(["ar"], (await ResolveAsync("ar", "صفحة-تعريفية")).Content!.Seo.Alternates.Keys);
     }
 
     [Fact]
@@ -99,7 +99,7 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
         Fixture.RequireDatabase();
         var (_, owner) = await SignInSuperAdminAsync();
         var published = await PublishAsync(owner, await CreatePageAsync(owner));
-        Assert.Equal(["/ar/من-نحن", "/en/about-us"], (await AnnouncedAsync()).Single().Order(StringComparer.Ordinal));
+        Assert.Equal(["/ar/صفحة-تعريفية", "/en/about-us"], (await AnnouncedAsync()).Single().Order(StringComparer.Ordinal));
 
         // Identical content re-published: nothing to announce.
         var reordered = await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync(
@@ -114,7 +114,7 @@ public sealed class SeoFoundationApiTests(PostgresFixture fixture) : ContentApiT
 
         // Going offline announces the current URLs (now 410).
         await ReadAsync<ContentDetailResponse>(await owner.PostAsJsonAsync($"{Admin}/{published.Id}/unpublish", new TakeOfflineRequest("Gone", null, moved.Version), Token));
-        Assert.Equal(["/ar/من-نحن", "/en/about-onyx"], (await AnnouncedAsync())[2].Order(StringComparer.Ordinal));
+        Assert.Equal(["/ar/صفحة-تعريفية", "/en/about-onyx"], (await AnnouncedAsync())[2].Order(StringComparer.Ordinal));
 
         // Manual redirect rules announce their source URL when created and when removed.
         var rule = await ReadAsync<RedirectResponse>(await owner.PostAsJsonAsync("/api/v1/admin/redirects", new SaveRedirectRequest("en", "legacy", "Gone", null, null, null, true), Token));

@@ -1,0 +1,127 @@
+@using System.Globalization
+@using Onyx.Contracts.SiteContent
+@using Onyx.Web.Areas.Admin.SiteContent
+@model SettingsEditorModel
+@inject LanguageCatalog Languages
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.SiteSettings";
+    var current = Model.Current;
+    var returnUrl = Url.Action("Index")!;
+    var docBar = (Model.Document, "settings-editor", (IReadOnlyDictionary<string, string>)new Dictionary<string, string>(), returnUrl);
+    var revisions = (SiteContentKeys.Settings, Model.Document.Version, Model.Revisions, returnUrl);
+    static string Row(int index) => index.ToString(CultureInfo.InvariantCulture);
+}
+<header class="page-head">
+    <div>
+        <p class="eyebrow"><a asp-controller="SiteContent" asp-action="Index">@T["Nav.SitePages"]</a></p>
+        <h1>@T["Nav.SiteSettings"]</h1>
+        <p class="hint">@T["SiteSettings.Hint"]</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+<partial name="_DocumentBar" model="docBar" />
+
+<form method="post" asp-action="Save" id="settings-editor" class="editor">
+    <section class="panel">
+        <h2>@T["SiteSettings.Company"]</h2>
+        <div class="bi-row">
+            <div class="bi-row__label">@T["SiteSettings.CompanyName"]<span class="hint">@T["SiteSettings.CompanyNameHint"]</span></div>
+            @foreach (var code in Model.Languages)
+            {
+                <div class="bi-row__field" lang="@code" dir="@Languages.Direction(code)">
+                    <span class="bi-row__lang">@code.ToUpperInvariant()</span>
+                    <input name="companyName|@code" value="@SettingsEditorModel.Text(current.CompanyName, code)" maxlength="120" dir="@Languages.Direction(code)">
+                </div>
+            }
+        </div>
+        <div class="field">
+            <label for="contactEmail">@T["SiteSettings.ContactEmail"]</label>
+            <input id="contactEmail" name="contactEmail" type="email" value="@current.ContactEmail" maxlength="254" dir="ltr" autocomplete="off">
+            <p class="hint">@T["SiteSettings.ContactEmailHint"]</p>
+        </div>
+    </section>
+
+    <section class="panel">
+        <h2>@T["SiteSettings.Phones"]</h2>
+        <p class="hint">@T["SiteSettings.PhonesHint"]</p>
+        @for (var i = 0; i < SettingsEditorModel.PhoneRows; i++)
+        {
+            var phone = i < current.Phones.Count ? current.Phones[i] : null;
+            <fieldset class="row-group">
+                <legend>@T["SiteSettings.Phone"] @(i + 1)</legend>
+                <div class="field-grid">
+                    <div class="field">
+                        <label for="phone-@i">@T["SiteSettings.PhoneNumber"]</label>
+                        <input id="phone-@i" name="phone|@Row(i)|number" type="tel" value="@phone?.Number" maxlength="32" dir="ltr" placeholder="+966 …">
+                    </div>
+                    @foreach (var code in Model.Languages)
+                    {
+                        <div class="field" lang="@code" dir="@Languages.Direction(code)">
+                            <label>@T["SiteSettings.PhoneLabel"] (@code.ToUpperInvariant())</label>
+                            <input name="phone|@Row(i)|label|@code" value="@SettingsEditorModel.Text(phone?.Label, code)" maxlength="60">
+                        </div>
+                    }
+                </div>
+            </fieldset>
+        }
+    </section>
+
+    <section class="panel">
+        <h2>@T["SiteSettings.Offices"]</h2>
+        <p class="hint">@T["SiteSettings.OfficesHint"]</p>
+        @if (Model.OfficesFromCode)
+        {
+            <p class="notice">@T["SiteSettings.OfficesFromCode"]</p>
+        }
+        @for (var i = 0; i < SettingsEditorModel.OfficeRows; i++)
+        {
+            var office = i < Model.Offices.Count ? Model.Offices[i] : null;
+            <fieldset class="row-group">
+                <legend>@T["SiteSettings.Office"] @(i + 1)</legend>
+                @foreach (var code in Model.Languages)
+                {
+                    <div class="field-grid" lang="@code" dir="@Languages.Direction(code)">
+                        <div class="field">
+                            <label>@T["SiteSettings.OfficeName"] (@code.ToUpperInvariant())</label>
+                            <input name="office|@Row(i)|name|@code" value="@SettingsEditorModel.Text(office?.Name, code)" maxlength="120">
+                        </div>
+                        <div class="field">
+                            <label>@T["SiteSettings.OfficeAddress"] (@code.ToUpperInvariant())</label>
+                            <input name="office|@Row(i)|address|@code" value="@SettingsEditorModel.Text(office?.Address, code)" maxlength="240">
+                        </div>
+                    </div>
+                }
+            </fieldset>
+        }
+    </section>
+
+    <section class="panel">
+        <h2>@T["SiteSettings.Social"]</h2>
+        <p class="hint">@T["SiteSettings.SocialHint"]</p>
+        @for (var i = 0; i < SettingsEditorModel.SocialRows; i++)
+        {
+            var link = i < current.SocialLinks.Count ? current.SocialLinks[i] : null;
+            <div class="field-grid field-grid--social">
+                <div class="field">
+                    <label for="social-network-@i">@T["SiteSettings.Network"]</label>
+                    <select id="social-network-@i" name="social|@Row(i)|network">
+                        @foreach (var network in SiteSocialLink.Networks)
+                        {
+                            <option value="@network" selected="@(link?.Network == network)">@T["Social." + network]</option>
+                        }
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="social-url-@i">@T["SiteSettings.Url"]</label>
+                    <input id="social-url-@i" name="social|@Row(i)|url" type="url" value="@link?.Url" maxlength="300" dir="ltr" placeholder="https://">
+                </div>
+            </div>
+        }
+    </section>
+    <div class="editor-footer">
+        <button type="submit" class="btn btn--primary">@T["SiteContent.SaveDraft"]</button>
+    </div>
+</form>
+
+<partial name="_Revisions" model="revisions" />

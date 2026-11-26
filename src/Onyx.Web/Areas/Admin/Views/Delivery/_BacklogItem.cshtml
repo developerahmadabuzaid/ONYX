@@ -1,0 +1,32 @@
+@using Onyx.Contracts.Delivery
+@model (IssueListItemResponse Issue, List<SprintResponse> Sprints, bool CanEdit)
+@{ var issue = Model.Issue; }
+<li class="d-row" data-issue-id="@issue.Id" data-version="@issue.Version">
+    <partial name="_IssueTypeBadge" model="issue.Type" />
+    <a class="d-key" dir="ltr" asp-action="Issue" asp-route-id="@issue.Id">@issue.Key</a>
+    <a class="d-row__title" asp-action="Issue" asp-route-id="@issue.Id">@issue.Title</a>
+    @if (issue.EpicTitle is not null)
+    {
+        <span class="d-epic" dir="auto">@issue.EpicTitle</span>
+    }
+    <partial name="_StatusPill" model="issue" />
+    <partial name="_Priority" model="issue.Priority" />
+    <span class="d-avatar" title="@(issue.AssigneeName ?? T["Delivery.Unassigned"])">@(string.IsNullOrEmpty(issue.AssigneeName) ? "–" : issue.AssigneeName[..1])</span>
+    <span class="d-points" title="@T["Delivery.Field.StoryPoints"]">@issue.StoryPoints</span>
+    @if (Model.CanEdit)
+    {
+        <form method="post" asp-action="ScheduleIssue" asp-route-id="@issue.Id" class="d-inline-form d-row__move">
+            <input type="hidden" name="projectId" value="@issue.ProjectId">
+            <input type="hidden" name="version" value="@issue.Version">
+            <label class="visually-hidden" for="move-@issue.Id">@T["Delivery.MoveTo"]</label>
+            <select id="move-@issue.Id" name="sprintId">
+                <option value="" selected="@(issue.SprintId is null)">@T["Delivery.Backlog"]</option>
+                @foreach (var sprint in Model.Sprints)
+                {
+                    <option value="@sprint.Id" selected="@(issue.SprintId == sprint.Id)">@sprint.Name</option>
+                }
+            </select>
+            <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.Move"]</button>
+        </form>
+    }
+</li>

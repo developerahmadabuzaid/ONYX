@@ -1,0 +1,3 @@
+@model string
+@* Project health from the stated rule (see Delivery.Health.Rule). *@
+<span class="health health--@Model.ToLowerInvariant()">@T["Delivery.Health." + Model]</span>

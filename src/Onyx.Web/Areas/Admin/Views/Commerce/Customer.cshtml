@@ -1,0 +1,68 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model Onyx.Contracts.Commerce.AdminCustomerResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceCustomers";
+}
+<div class="d-head">
+    <h1 dir="auto">@Model.DisplayName <span class="badge">@T["Commerce.CustomerStatus." + Model.Status]</span></h1>
+    <a asp-action="Customers">@T["Commerce.Back"]</a>
+</div>
+<partial name="_CmsMessages" />
+<section class="d-panel">
+    <dl class="d-facts">
+        <dt>@T["Form.Email"]</dt><dd dir="ltr">@Model.Email</dd>
+        <dt>@T["Form.Company"]</dt><dd dir="auto">@(Model.Company ?? "—")</dd>
+        <dt>@T["Commerce.Customer.Language"]</dt><dd>@Model.Language</dd>
+        <dt>@T["Commerce.Customer.EmailVerified"]</dt><dd>@(Model.EmailVerified ? T["Commerce.Yes"] : T["Commerce.No"])</dd>
+        <dt>@T["Commerce.Customer.Marketing"]</dt><dd>@(Model.MarketingConsent ? T["Commerce.Yes"] : T["Commerce.No"])</dd>
+        <dt>@T["Commerce.Customers.Joined"]</dt><dd dir="ltr">@Model.CreatedAtUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</dd>
+        <dt>@T["Commerce.Customer.LastSignIn"]</dt><dd dir="ltr">@(Model.LastSignInAtUtc?.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture) ?? "—")</dd>
+    </dl>
+    @if (ViewData["CanManage"] is true && Model.Status is "Active" or "PendingVerification" or "Disabled")
+    {
+        <form method="post" asp-action="CustomerStatus" asp-route-id="@Model.Id" class="d-inline-form">
+            <input type="hidden" name="version" value="@Model.Version">
+            <input type="hidden" name="enabled" value="@(Model.Status == "Disabled" ? "true" : "false")">
+            <button class="btn" type="submit">@(Model.Status == "Disabled" ? T["Commerce.Customer.Enable"] : T["Commerce.Customer.Disable"])</button>
+        </form>
+        <p class="hint">@T["Commerce.Customer.DisableHint"]</p>
+    }
+</section>
+<section class="d-panel">
+    <h2>@T["Nav.CommerceSubscriptions"]</h2>
+    @if (Model.Subscriptions.Count == 0)
+    {
+        <p class="hint">@T["Commerce.Subscriptions.Empty"]</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var subscription in Model.Subscriptions)
+            {
+                <li>@subscription.ProductName @(subscription.PlanName is null ? "" : "· " + subscription.PlanName) — <span class="badge">@T["Customer.Status." + subscription.Status]</span></li>
+            }
+        </ul>
+    }
+</section>
+<section class="d-panel">
+    <h2>@T["Nav.CommerceInvoices"]</h2>
+    @if (ViewData["CanInvoice"] is true)
+    {
+        <p><a class="btn btn--primary" asp-action="NewInvoice" asp-route-customerId="@Model.Id">@T["Commerce.Invoice.New"]</a></p>
+    }
+    @if (Model.Invoices.Count == 0)
+    {
+        <p class="hint">@T["Commerce.Invoices.Empty"]</p>
+    }
+    else
+    {
+        <ul>
+            @foreach (var invoice in Model.Invoices)
+            {
+                <li><a asp-action="Invoice" asp-route-id="@invoice.Id" dir="ltr">@(invoice.Number ?? T["Commerce.InvoiceStatus.Draft"].Value)</a> — <bdi dir="ltr">@invoice.Total.ToString("N2", CultureInfo.InvariantCulture) @invoice.Currency</bdi> <span class="badge">@T["Commerce.InvoiceStatus." + invoice.Status]</span></li>
+            }
+        </ul>
+    }
+</section>

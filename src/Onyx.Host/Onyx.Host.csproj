@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <!--
+    One deployable application: the public website (Onyx.Web) and an internal copy of the API (Onyx.API) in the same process.
+    The API listens on loopback only; the website talks to it exactly as before, so both projects keep their boundaries.
+    Development user secrets are read per inner app (Onyx.API's), so this project has none of its own.
+  -->
+  <PropertyGroup>
+    <!-- The referenced apps' own appsettings files are dropped below; only this project's merged settings ship. -->
+    <ErrorOnDuplicatePublishOutputFiles>false</ErrorOnDuplicatePublishOutputFiles>
+    <!-- IIS starts Onyx.Host.exe as its own process (owner decision 2026-11-16). -->
+    <AspNetCoreHostingModel>OutOfProcess</AspNetCoreHostingModel>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Onyx.API\Onyx.API.csproj" />
+    <ProjectReference Include="..\Onyx.Web\Onyx.Web.csproj" />
+  </ItemGroup>
+
+  <Target Name="KeepOnlyHostAppSettings" AfterTargets="ComputeResolvedFilesToPublishList">
+    <ItemGroup>
+      <_ReferencedAppSettings Include="@(ResolvedFileToPublish)"
+                              Condition="$([System.String]::Copy('%(Filename)').StartsWith('appsettings')) And '%(Extension)' == '.json' And '%(RootDir)%(Directory)' != '$(MSBuildProjectDirectory)\'" />
+      <ResolvedFileToPublish Remove="@(_ReferencedAppSettings)" />
+    </ItemGroup>
+  </Target>
+</Project>

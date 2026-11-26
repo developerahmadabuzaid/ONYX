@@ -1,0 +1,103 @@
+@using Onyx.Contracts.Delivery
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model TimelinePage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.Tab.Timeline";
+    var timeline = Model.Timeline;
+    var zoom = Context.Request.Query["zoom"].ToString() == "week" ? "week" : "day";
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    static string Tone(TimelineItemView item) => item.Item.IsOverdue ? "rose" : item.Item.StatusCategory switch { "Done" => "green", "InProgress" => "sky", _ => "violet" };
+
+    // Epics first, each followed by its dated issues; then dated issues without an epic.
+    var items = timeline.Items;
+    var ordered = new List<TimelineItemView>();
+    foreach (var epic in items.Where(item => item.Type == "Epic"))
+    {
+        ordered.Add(new TimelineItemView(epic, 0));
+        ordered.AddRange(items.Where(item => item.EpicId == epic.Id && item.Type != "Epic").Select(item => new TimelineItemView(item, 1)));
+    }
+
+    ordered.AddRange(items.Where(item => item.Type != "Epic" && (item.EpicId is null || items.All(other => other.Id != item.EpicId))).Select(item => new TimelineItemView(item, 0)));
+    var index = ordered.Select((view, position) => (view.Item.Id, position)).ToDictionary(pair => pair.Id, pair => pair.position);
+    string Tip(TimelineItemResponse item) =>
+        $"{item.Key} · {item.Title} — {(item.StartDate is { } s ? DeliveryFormat.Day(s) : "…")} → {(item.DueDate is { } d ? DeliveryFormat.Day(d) : "…")} · {DeliveryDisplay.Status(T, null, item.StatusName)}";
+    var rows = ordered.Select(view => new GanttRow(
+        view.Item.Title,
+        view.Item.Key,
+        Url.Action("Issue", "Delivery", new { id = view.Item.Id }),
+        view.Item.StartDate,
+        view.Item.DueDate,
+        Tone(view),
+        view.Item.Type == "Epic" ? (view.Item.ChildCount == 0 ? null : (double)view.Item.DoneChildCount / view.Item.ChildCount) : (view.Item.StatusCategory == "Done" ? 1 : null),
+        view.Depth,
+        Tip(view.Item),
+        view.Item.AssigneeName)).ToList();
+    var dependencies = timeline.Dependencies
+        .Where(link => index.ContainsKey(link.BlockerId) && index.ContainsKey(link.BlockedId))
+        .Select(link => (index[link.BlockerId], index[link.BlockedId]))
+        .ToList();
+    var bands = timeline.Sprints.Select(sprint => new GanttBand(sprint.StartDate!.Value, sprint.EndDate!.Value, sprint.Name)).ToList();
+    var markers = new List<GanttMarker>();
+    if (timeline.StartDate is { } projectStart)
+    {
+        markers.Add(new GanttMarker(projectStart, $"{T["Delivery.Timeline.ProjectStart"]}: {DeliveryFormat.Day(projectStart)}", "teal"));
+    }
+
+    if (timeline.TargetDate is { } projectTarget)
+    {
+        markers.Add(new GanttMarker(projectTarget, $"{T["Delivery.Field.TargetDate"]}: {DeliveryFormat.Day(projectTarget)}", "amber"));
+    }
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+<partial name="_DeliveryTabs" model='(timeline.ProjectId, timeline.ProjectKey, timeline.ProjectName, "Timeline")' />
+<partial name="_CmsMessages" />
+
+<div class="cal-toolbar">
+    @Chart.Legend([
+        (T["Delivery.Ws.S.Pending"].Value, "violet", (string?)null),
+        (T["Delivery.Ws.S.InProgress"].Value, "sky", (string?)null),
+        (T["Delivery.Ws.S.Completed"].Value, "green", (string?)null),
+        (T["Delivery.Ws.S.Overdue"].Value, "rose", (string?)null),
+    ])
+    <nav class="seg" aria-label="@T["Delivery.Timeline.Zoom"]">
+        <a class="seg__item@(zoom == "day" ? " is-active" : string.Empty)" asp-action="Timeline" asp-route-id="@timeline.ProjectId" aria-current="@(zoom == "day" ? "true" : null)">@T["Delivery.Timeline.Days"]</a>
+        <a class="seg__item@(zoom == "week" ? " is-active" : string.Empty)" asp-action="Timeline" asp-route-id="@timeline.ProjectId" asp-route-zoom="week" aria-current="@(zoom == "week" ? "true" : null)">@T["Delivery.Timeline.Weeks"]</a>
+    </nav>
+</div>
+
+@if (rows.Count == 0)
+{
+    <partial name="_Empty" model='("Delivery.Timeline.EmptyTitle", "Delivery.Timeline.EmptyText", Url.Action("Backlog", "Delivery", new { id = timeline.ProjectId }), "Delivery.Tab.Backlog")' />
+}
+else
+{
+    @Gantt.Render(rows, dependencies, bands, markers, today, zoom == "week" ? 12 : 30, DeliveryFormat.IsRtl, DeliveryFormat.Culture(), T["Delivery.Tab.Timeline"], T["Delivery.Calendar.Today"])
+    <p class="hint">@T["Delivery.Timeline.Hint"]</p>
+    <details class="chart-data">
+        <summary>@T["Delivery.Ws.ShowData"]</summary>
+        <table class="data-table">
+            <thead><tr><th scope="col">@T["Delivery.Field.Key"]</th><th scope="col">@T["Delivery.Field.Title"]</th><th scope="col">@T["Delivery.Field.StartDate"]</th><th scope="col">@T["Delivery.Field.DueDate"]</th><th scope="col">@T["Delivery.Field.Status"]</th></tr></thead>
+            <tbody>
+                @foreach (var view in ordered)
+                {
+                    <tr>
+                        <td class="d-key" dir="ltr">@view.Item.Key</td>
+                        <td dir="auto">@view.Item.Title</td>
+                        <td>@(view.Item.StartDate is { } start ? DeliveryFormat.Day(start) : "—")</td>
+                        <td>@(view.Item.DueDate is { } due ? DeliveryFormat.Day(due) : "—")</td>
+                        <td>@DeliveryDisplay.Status(T, null, view.Item.StatusName)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </details>
+}
+@if (timeline.UnscheduledCount > 0)
+{
+    <p class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Timeline.Unscheduled"], timeline.UnscheduledCount) <a asp-controller="Delivery" asp-action="Backlog" asp-route-id="@timeline.ProjectId">@T["Delivery.Tab.Backlog"]</a></p>
+}

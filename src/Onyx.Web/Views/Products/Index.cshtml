@@ -1,0 +1,42 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.WebUtilities
+@using Onyx.Contracts.Customers
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model IReadOnlyList<Onyx.Contracts.Products.PublicProductListItemResponse>
+<section class="products">
+    <header class="products__header">
+        <h1>@T["Products.Title"]</h1>
+        <p>@T["Products.Intro"]</p>
+    </header>
+    @if (Model.Count == 0)
+    {
+        <p class="empty-state">@T["Products.Empty"]</p>
+    }
+    else
+    {
+        <ul class="product-grid" role="list">
+            @foreach (var product in Model)
+            {
+                <li class="product-card">
+                    <h2><a href="@Routes.PathFor(CustomerPages.Products, lang, product.Slug)">@product.Name</a></h2>
+                    <p>@product.Summary</p>
+                    <ul class="product-card__facts" role="list">
+                        @if (product.TrialDays is { } days)
+                        {
+                            <li class="chip">@T["Products.TrialDays", days]</li>
+                        }
+                        @if (product.DemoKind != "None")
+                        {
+                            <li class="chip">@T["Products.Demo." + product.DemoKind]</li>
+                        }
+                    </ul>
+                    <a class="link-arrow" href="@Routes.PathFor(CustomerPages.Products, lang, product.Slug)">@T["Products.Details"]</a>
+                </li>
+            }
+        </ul>
+    }
+</section>

@@ -1,0 +1,51 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model IReadOnlyList<Onyx.Contracts.Products.AdminProductListItemResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceProducts";
+}
+<div class="d-head">
+    <h1>@T["Nav.CommerceProducts"]</h1>
+</div>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Commerce.Products.Intro"]</p>
+@if (ViewData["CanEdit"] is true)
+{
+    <form method="post" asp-action="CreateProduct" class="d-form d-form--row">
+        <label>@T["Commerce.Product.Key"] <input name="key" required maxlength="40" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*"> <span class="hint">@T["Commerce.Product.KeyHint"]</span></label>
+        <div class="d-form__actions"><button class="btn btn--primary" type="submit">@T["Commerce.Product.Create"]</button></div>
+    </form>
+}
+@if (Model.Count == 0)
+{
+    <p class="hint">@T["Commerce.Products.Empty"]</p>
+}
+else
+{
+    <div class="d-table-wrap">
+        <table class="d-table">
+            <thead>
+                <tr>
+                    <th scope="col">@T["Commerce.Product.Name"]</th>
+                    <th scope="col">@T["Commerce.Product.Key"]</th>
+                    <th scope="col">@T["Commerce.Status"]</th>
+                    <th scope="col">@T["Commerce.Product.Verified"]</th>
+                    <th scope="col">@T["Commerce.Product.Plans"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var product in Model)
+                {
+                    <tr>
+                        <td><a asp-action="Product" asp-route-id="@product.Id">@product.Name</a></td>
+                        <td dir="ltr">@product.Key</td>
+                        <td><span class="badge">@T["Commerce.ProductStatus." + product.Status]</span></td>
+                        <td>@(product.IsVerified ? T["Commerce.Yes"] : T["Commerce.No"])</td>
+                        <td>@product.PlanCount</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

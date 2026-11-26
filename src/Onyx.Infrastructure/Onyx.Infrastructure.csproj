@@ -6,6 +6,8 @@
   <ItemGroup>
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="MailKit" />
+    <!-- Pins MimeKit's transitive System.Security.Cryptography.Pkcs to the patched version (see Directory.Packages.props). -->
+    <PackageReference Include="System.Security.Cryptography.Pkcs" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
     <!-- Feed parsing for the News Hub (owner-approved, Stage 11); used only by News.SyndicationNewsFeedReader. -->

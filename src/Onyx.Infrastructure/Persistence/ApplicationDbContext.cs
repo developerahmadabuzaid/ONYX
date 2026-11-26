@@ -11,6 +11,7 @@ using Onyx.Domain.Media;
 using Onyx.Domain.Messaging;
 using Onyx.Domain.Notifications;
 using Onyx.Domain.Providers;
+using Onyx.Domain.SiteContent;
 using Onyx.Infrastructure.BackgroundJobs;
 using Onyx.Infrastructure.Email;
 using Onyx.Infrastructure.Identity;
@@ -77,6 +78,10 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
 
     public DbSet<BrandKit> BrandKits => Set<BrandKit>();
 
+    public DbSet<SiteContentDocument> SiteContentDocuments => Set<SiteContentDocument>();
+
+    public DbSet<SiteContentRevision> SiteContentRevisions => Set<SiteContentRevision>();
+
     public DbSet<KnowledgeEntry> KnowledgeEntries => Set<KnowledgeEntry>();
 
     public DbSet<InformationRequest> InformationRequests => Set<InformationRequest>();
@@ -136,6 +141,54 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
     public DbSet<Domain.News.NewsItem> NewsItems => Set<Domain.News.NewsItem>();
 
     public DbSet<Domain.News.NewsItemTranslation> NewsItemTranslations => Set<Domain.News.NewsItemTranslation>();
+
+    public DbSet<Domain.Delivery.DeliveryProject> DeliveryProjects => Set<Domain.Delivery.DeliveryProject>();
+
+    public DbSet<Domain.Delivery.WorkflowStatus> DeliveryWorkflowStatuses => Set<Domain.Delivery.WorkflowStatus>();
+
+    public DbSet<Domain.Delivery.WorkflowTransition> DeliveryWorkflowTransitions => Set<Domain.Delivery.WorkflowTransition>();
+
+    public DbSet<Domain.Delivery.ProjectMember> DeliveryProjectMembers => Set<Domain.Delivery.ProjectMember>();
+
+    public DbSet<Domain.Delivery.Issue> DeliveryIssues => Set<Domain.Delivery.Issue>();
+
+    public DbSet<Domain.Delivery.IssueComment> DeliveryIssueComments => Set<Domain.Delivery.IssueComment>();
+
+    public DbSet<Domain.Delivery.IssueHistoryEntry> DeliveryIssueHistory => Set<Domain.Delivery.IssueHistoryEntry>();
+
+    public DbSet<Domain.Delivery.IssueLink> DeliveryIssueLinks => Set<Domain.Delivery.IssueLink>();
+
+    public DbSet<Domain.Delivery.IssueWatcher> DeliveryIssueWatchers => Set<Domain.Delivery.IssueWatcher>();
+
+    public DbSet<Domain.Delivery.Sprint> DeliverySprints => Set<Domain.Delivery.Sprint>();
+
+    public DbSet<Domain.Delivery.IssueAttachment> DeliveryIssueAttachments => Set<Domain.Delivery.IssueAttachment>();
+
+    public DbSet<Domain.Delivery.IssueWorkLog> DeliveryIssueWorkLogs => Set<Domain.Delivery.IssueWorkLog>();
+
+    public DbSet<Domain.Delivery.SavedIssueFilter> DeliverySavedIssueFilters => Set<Domain.Delivery.SavedIssueFilter>();
+
+    public DbSet<Domain.Customers.CustomerAccount> CustomerAccounts => Set<Domain.Customers.CustomerAccount>();
+
+    public DbSet<Domain.Customers.CustomerToken> CustomerTokens => Set<Domain.Customers.CustomerToken>();
+
+    public DbSet<Domain.Customers.CustomerSession> CustomerSessions => Set<Domain.Customers.CustomerSession>();
+
+    public DbSet<Domain.Products.SaasProduct> SaasProducts => Set<Domain.Products.SaasProduct>();
+
+    public DbSet<Domain.Products.ProductTranslation> SaasProductTranslations => Set<Domain.Products.ProductTranslation>();
+
+    public DbSet<Domain.Products.ProductPlan> SaasProductPlans => Set<Domain.Products.ProductPlan>();
+
+    public DbSet<Domain.Products.ProductPlanTranslation> SaasProductPlanTranslations => Set<Domain.Products.ProductPlanTranslation>();
+
+    public DbSet<Domain.Products.AiDemoRun> AiDemoRuns => Set<Domain.Products.AiDemoRun>();
+
+    public DbSet<Domain.Subscriptions.CustomerSubscription> CustomerSubscriptions => Set<Domain.Subscriptions.CustomerSubscription>();
+
+    public DbSet<Domain.Billing.Invoice> Invoices => Set<Domain.Billing.Invoice>();
+
+    public DbSet<Domain.Billing.InvoiceLine> InvoiceLines => Set<Domain.Billing.InvoiceLine>();
 
     public DbSet<Domain.Analytics.WebAnalyticsDailyMetric> WebAnalyticsDailyMetrics => Set<Domain.Analytics.WebAnalyticsDailyMetric>();
 
@@ -211,6 +264,7 @@ public sealed class ApplicationDbContext(DbContextOptions<ApplicationDbContext> 
         builder.ApplyConfigurationsFromAssembly(
             typeof(ApplicationDbContext).Assembly,
             type => type.Namespace?.StartsWith("Onyx.Infrastructure.Persistence.Configurations.Application", StringComparison.Ordinal) == true);
+        builder.HasSequence<long>(Configurations.Application.InvoiceConfiguration.NumberSequence).StartsAt(1).IncrementsBy(1);
 
         builder.ApplyOnyxConventions();
     }

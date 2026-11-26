@@ -4,6 +4,7 @@
     <Project Path="src/Onyx.Application/Onyx.Application.csproj" />
     <Project Path="src/Onyx.Contracts/Onyx.Contracts.csproj" />
     <Project Path="src/Onyx.Domain/Onyx.Domain.csproj" />
+    <Project Path="src/Onyx.Host/Onyx.Host.csproj" />
     <Project Path="src/Onyx.Infrastructure/Onyx.Infrastructure.csproj" />
     <Project Path="src/Onyx.Web/Onyx.Web.csproj" />
     <Project Path="src/Onyx.Worker/Onyx.Worker.csproj" />

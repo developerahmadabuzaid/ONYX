@@ -40,13 +40,13 @@ public sealed class ContentWorkflowApiTests(PostgresFixture fixture) : ContentAp
         Assert.True(published.IsLive);
 
         var english = await ResolveAsync("en", "about-us");
-        var arabic = await ResolveAsync("ar", "من-نحن");
+        var arabic = await ResolveAsync("ar", "صفحة-تعريفية");
         Assert.Equal("Content", english.Kind);
         Assert.Equal("Sample page", english.Content!.Title);
         Assert.Equal("صفحة تجريبية", arabic.Content!.Title);
-        Assert.Equal("/ar/من-نحن", arabic.Content.Seo.CanonicalPath);
+        Assert.Equal("/ar/صفحة-تعريفية", arabic.Content.Seo.CanonicalPath);
         Assert.Equal("/en/about-us", arabic.Content.Seo.Alternates["en"]);
-        Assert.Equal("/ar/من-نحن", arabic.Content.Seo.XDefaultPath);
+        Assert.Equal("/ar/صفحة-تعريفية", arabic.Content.Seo.XDefaultPath);
 
         var audit = await QueryAsync(db => db.AuditLogs.Where(log => log.EntityId == page.Id.ToString()).Select(log => log.Action));
         Assert.Contains(AuditAction.ContentSubmittedForReview, audit);
@@ -145,7 +145,7 @@ public sealed class ContentWorkflowApiTests(PostgresFixture fixture) : ContentAp
         var (_, owner) = await SignInSuperAdminAsync();
         var page = await PublishAsync(owner, await CreatePageAsync(owner));
         var sitemap = await ReadAsync<List<SitemapEntryResponse>>(await Client.GetAsync("/api/v1/content/sitemap?language=en", Token));
-        Assert.Contains(sitemap, entry => entry.Path == "/en/about-us" && entry.Alternates["ar"] == "/ar/من-نحن");
+        Assert.Contains(sitemap, entry => entry.Path == "/en/about-us" && entry.Alternates["ar"] == "/ar/صفحة-تعريفية");
 
         await ReadAsync<ContentDetailResponse>(await owner.PostAsJsonAsync($"{Admin}/{page.Id}/archive", new TakeOfflineRequest("Gone", null, page.Version), Token));
 

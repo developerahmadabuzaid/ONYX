@@ -1,7 +1,148 @@
+@using System.Globalization
+@using Onyx.Contracts.Authorization
+@using Onyx.Web.Areas.Admin.Navigation
+@model DashboardModel
+@inject TimeProvider Clock
 @{
     Layout = "_AdminLayout";
     ViewData["TitleKey"] = "Nav.Dashboard";
-    var shell = ViewData[AdminShellFilter.ViewDataKey] as AdminShellModel;
+
+    // Dates in the Gregorian calendar in both languages, so they match every other date in the Admin.
+    var culture = (CultureInfo)CultureInfo.CurrentUICulture.Clone();
+    if (culture.DateTimeFormat.Calendar is not GregorianCalendar && culture.OptionalCalendars.OfType<GregorianCalendar>().FirstOrDefault() is { } gregorian)
+    {
+        culture.DateTimeFormat.Calendar = gregorian;
+    }
+
+    // Shown in the business time zone (Asia/Riyadh, UTC+3, no daylight saving).
+    var today = Clock.GetUtcNow().ToOffset(TimeSpan.FromHours(3)).ToString(culture.TwoLetterISOLanguageName == "ar" ? "dddd، d MMMM yyyy" : "dddd, d MMMM yyyy", culture);
+
+    // Sections in a fixed, meaningful order; each one appears only when it has cards the user may see.
+    var order = new[] { AdminNavigation.Website, AdminNavigation.ContentGroup, AdminNavigation.NewsGroup, AdminNavigation.LeadsGroup, AdminNavigation.CommerceGroup, AdminNavigation.DeliveryGroup };
+    var groups = Model.Cards.GroupBy(card => card.Group).OrderBy(group => Array.IndexOf(order, group.Key) is var index and >= 0 ? index : order.Length).ToList();
+    string Tone(string group) => group switch
+    {
+        AdminNavigation.Website => "sky",
+        AdminNavigation.ContentGroup => "violet",
+        AdminNavigation.NewsGroup => "amber",
+        AdminNavigation.LeadsGroup => "teal",
+        AdminNavigation.CommerceGroup => "green",
+        AdminNavigation.DeliveryGroup => "rose",
+        _ => "teal",
+    };
+
+    var quick = new List<(string Label, string Controller, string Action, string Icon)>();
+    if (Model.Permissions.Contains(Permissions.Leads.View)) { quick.Add(("Dashboard.Quick.Leads", "Leads", "Index", "funnel")); }
+    if (Model.Permissions.Contains(Permissions.Content.View)) { quick.Add(("Dashboard.Quick.Content", "Content", "Index", "file")); }
+    if (Model.Permissions.Contains(Permissions.Subscriptions.View)) { quick.Add(("Dashboard.Quick.Subscriptions", "Commerce", "Subscriptions", "repeat")); }
+    if (Model.Permissions.Contains(Permissions.Delivery.Access)) { quick.Add(("Dashboard.Quick.MyWork", "Delivery", "MyWork", "check")); }
+    if (Model.Permissions.Contains(Permissions.News.View)) { quick.Add(("Dashboard.Quick.News", "NewsItems", "Index", "news")); }
+
+    var attention = Model.Cards.Count(card => card.Attention);
 }
-<h1>@T["Nav.Dashboard"]</h1>
-<p>@T["Dashboard.Welcome", shell?.DisplayName ?? string.Empty]</p>
+<section class="a-hero">
+    <div class="a-hero__text">
+        <p class="a-hero__date">@today</p>
+        <h1>@T["Dashboard.Welcome", Model.DisplayName]</h1>
+        <p class="a-hero__intro">@T["Dashboard.Intro"]</p>
+        @if (Model.Cards.Count > 0)
+        {
+            <p class="a-hero__status@(attention > 0 ? " a-hero__status--attention" : string.Empty)" role="status">
+                <partial name="_AdminIcon" model='attention > 0 ? "alert" : "check"' />
+                @(attention > 0 ? T["Dashboard.AttentionSummary", attention.ToString(CultureInfo.InvariantCulture)] : T["Dashboard.AllClear"])
+            </p>
+        }
+    </div>
+    @if (quick.Count > 0)
+    {
+        <nav class="a-hero__quick" aria-label="@T["Dashboard.QuickActions"]">
+            @foreach (var action in quick.Take(5))
+            {
+                <a class="a-hero__action" asp-controller="@action.Controller" asp-action="@action.Action"><span class="a-hero__action-icon"><partial name="_AdminIcon" model="action.Icon" /></span>@T[action.Label]</a>
+            }
+        </nav>
+    }
+</section>
+
+<partial name="_CmsMessages" />
+@if (Model.SomeUnavailable)
+{
+    <p class="errors" role="status">@T["Dashboard.SomeUnavailable"]</p>
+}
+
+@if (Model.Cards.Count == 0)
+{
+    <div class="a-empty">
+        <span class="a-empty__icon"><partial name="_AdminIcon" model='"grid"' /></span>
+        <p>@T["Dashboard.Empty"]</p>
+    </div>
+}
+else
+{
+    <div class="dash-board">
+        @foreach (var group in groups)
+        {
+            var headingId = $"dash-{Array.IndexOf(order, group.Key)}";
+            <section class="dash-panel dash-group--@Tone(group.Key)@(group.Count() >= 3 ? " dash-panel--wide" : string.Empty)" aria-labelledby="@headingId">
+                <header class="dash-panel__head">
+                    <span class="dash-panel__icon"><partial name="_AdminIcon" model="AdminIcons.For(group.Key)" /></span>
+                    <h2 id="@headingId">@T[group.Key]</h2>
+                </header>
+                <div class="dash-cards">
+                    @foreach (var card in group)
+                    {
+                        <a class="dash-card@(card.Attention ? " dash-card--attention" : string.Empty)" asp-controller="@card.Controller" asp-action="@card.Action" asp-all-route-data="@(card.Route?.ToDictionary(pair => pair.Key, pair => pair.Value) ?? new Dictionary<string, string>())">
+                            <span class="dash-card__top">
+                                <span class="dash-card__icon"><partial name="_AdminIcon" model="AdminIcons.For(card.TitleKey)" /></span>
+                                @if (card.Attention)
+                                {
+                                    <span class="dash-card__flag">@T["Dashboard.NeedsAttention"]</span>
+                                }
+                            </span>
+                            <span class="dash-card__value" dir="ltr">@card.Value.ToString("N0", CultureInfo.InvariantCulture)</span>
+                            <span class="dash-card__label">@T[card.TitleKey]</span>
+                        </a>
+                    }
+                </div>
+            </section>
+        }
+    </div>
+}
+
+@if (Model.RecentInquiries is { } inquiries)
+{
+    <section class="panel a-table-card">
+        <header class="a-table-card__head">
+            <h2>@T["Dashboard.RecentInquiries"]</h2>
+            <a class="btn btn--ghost btn--small" asp-controller="Inquiries" asp-action="Index">@T["Dashboard.ViewAll"]</a>
+        </header>
+        @if (inquiries.Count == 0)
+        {
+            <div class="a-empty a-empty--inline">
+                <span class="a-empty__icon"><partial name="_AdminIcon" model='"inbox"' /></span>
+                <p>@T["Dashboard.NoInquiries"]</p>
+            </div>
+        }
+        else
+        {
+            <div class="a-table-scroll">
+                <table class="data-table">
+                    <thead><tr><th scope="col">@T["Dashboard.Column.Name"]</th><th scope="col">@T["Dashboard.Column.Type"]</th><th scope="col">@T["Dashboard.Column.Language"]</th><th scope="col">@T["Dashboard.Column.Submitted"]</th><th scope="col"><span class="visually-hidden">@T["Dashboard.OpenLead"]</span></th></tr></thead>
+                    <tbody>
+                        @foreach (var inquiry in inquiries)
+                        {
+                            <tr>
+                                <td><strong dir="auto">@inquiry.Name</strong>@if (inquiry.Company is not null) { <span class="muted" dir="auto">@inquiry.Company</span> }</td>
+                                <td><span class="status status--default" dir="ltr">@inquiry.Type</span></td>
+                                <td><span class="a-lang" dir="ltr">@inquiry.LanguageCode.ToUpperInvariant()</span></td>
+                                <td class="a-nowrap" dir="ltr">@inquiry.SubmittedAtUtc.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</td>
+                                <td class="actions"><a class="btn btn--small" asp-controller="Leads" asp-action="Details" asp-route-id="@inquiry.LeadId">@T["Dashboard.OpenLead"]</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+}
+<p class="hint">@T["Dashboard.Source"]</p>

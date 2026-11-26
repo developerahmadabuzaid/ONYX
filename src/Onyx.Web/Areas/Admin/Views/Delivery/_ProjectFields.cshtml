@@ -1,0 +1,40 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model ProjectForm
+<label>@T["Delivery.Field.ProjectType"]
+    <select name="Type">
+        @foreach (var value in DeliveryDisplay.ProjectTypes)
+        {
+            <option value="@value" selected="@(Model.Type == value)">@T["Delivery.ProjectType." + value]</option>
+        }
+    </select>
+</label>
+<label>@T["Delivery.Field.Classification"]
+    <select name="Classification">
+        @foreach (var value in DeliveryDisplay.Classifications)
+        {
+            <option value="@value" selected="@(Model.Classification == value)">@T["Delivery.Classification." + value]</option>
+        }
+    </select>
+</label>
+<label>@T["Delivery.Field.ClientName"] <input name="ClientName" value="@Model.ClientName" maxlength="120" dir="auto"> <span class="hint">@T["Delivery.ClientNameHint"]</span></label>
+<label>@T["Delivery.Field.ProjectStatus"]
+    <select name="Status">
+        @foreach (var value in DeliveryDisplay.ProjectStatuses)
+        {
+            <option value="@value" selected="@(Model.Status == value)">@T["Delivery.ProjectStatus." + value]</option>
+        }
+    </select>
+</label>
+<label>@T["Delivery.Field.Priority"]
+    <select name="Priority">
+        @foreach (var value in DeliveryDisplay.Priorities)
+        {
+            <option value="@value" selected="@(Model.Priority == value)">@T["Delivery.Priority." + value]</option>
+        }
+    </select>
+</label>
+<label>@T["Delivery.Field.StartDate"] <input type="date" name="StartDate" value="@Model.StartDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)"></label>
+<label>@T["Delivery.Field.TargetDate"] <input type="date" name="TargetDate" value="@Model.TargetDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)"></label>
+<label>@T["Delivery.Field.RepositoryUrl"] <input type="url" name="RepositoryUrl" value="@Model.RepositoryUrl" maxlength="500" dir="ltr" placeholder="https://"></label>
+<label class="d-form__wide">@T["Delivery.Field.Description"] <textarea name="Description" rows="3" maxlength="4000" dir="auto">@Model.Description</textarea></label>

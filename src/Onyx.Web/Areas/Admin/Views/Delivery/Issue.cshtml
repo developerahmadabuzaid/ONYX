@@ -1,0 +1,356 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model IssuePage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryIssues";
+    var issue = Model.Issue;
+    var summary = issue.Summary;
+    var can = issue.Can;
+    var options = Model.Options;
+    var topComments = issue.Comments.Where(c => c.ParentCommentId is null).ToList();
+    string D(DateOnly? date) => date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? "–";
+    var attachments = issue.Attachments ?? [];
+    var workLogs = issue.WorkLogs ?? [];
+    var estimateMinutes = issue.EstimateHours is { } hours ? (int)Math.Round(hours * 60) : 0;
+    static string Size(long bytes) => bytes < 1024 ? $"{bytes} B" : bytes < 1024 * 1024 ? $"{bytes / 1024.0:0.#} KB" : $"{bytes / (1024.0 * 1024):0.#} MB";
+}
+<nav class="d-crumbs" aria-label="@T["Delivery.Breadcrumbs"]">
+    <a asp-action="Index">@T["Nav.DeliveryDashboard"]</a><span aria-hidden="true">/</span>
+    <a asp-action="Projects">@T["Nav.DeliveryProjects"]</a><span aria-hidden="true">/</span>
+    <a asp-action="Board" asp-route-id="@summary.ProjectId" dir="ltr">@summary.ProjectKey</a><span aria-hidden="true">/</span>
+    @if (issue.ParentKey is not null)
+    {
+        <a asp-action="Issue" asp-route-id="@summary.ParentId" dir="ltr">@issue.ParentKey</a><span aria-hidden="true">/</span>
+    }
+    <span dir="ltr">@summary.Key</span>
+</nav>
+<header class="d-issue-head">
+    <partial name="_IssueTypeBadge" model="summary.Type" />
+    <span class="d-key" dir="ltr">@summary.Key</span>
+    <h1 dir="auto">@summary.Title</h1>
+</header>
+<partial name="_CmsMessages" />
+
+<div class="d-issue">
+    <div class="d-issue__main">
+        <section class="d-panel" aria-labelledby="d-desc">
+            <h2 id="d-desc">@T["Delivery.Field.Description"]</h2>
+            @if (string.IsNullOrWhiteSpace(issue.Description))
+            {
+                <p class="hint">@T["Delivery.NoDescription"]</p>
+            }
+            else
+            {
+                <div class="d-pre" dir="auto">@issue.Description</div>
+            }
+        </section>
+
+        <section class="d-panel" id="attachments" aria-labelledby="d-attachments">
+            <h2 id="d-attachments"><partial name="_AdminIcon" model='"paperclip"' /> @T["Delivery.Attachment.Title"] <span class="d-count">@attachments.Count</span></h2>
+            @if (attachments.Count == 0)
+            {
+                <p class="hint">@T["Delivery.Attachment.None"]</p>
+            }
+            else
+            {
+                <ul class="files" role="list">
+                    @foreach (var file in attachments)
+                    {
+                        var url = Url.Action("Attachment", "DeliveryPlanning", new { id = summary.Id, attachmentId = file.Id });
+                        <li class="file">
+                            @if (file.IsImage)
+                            {
+                                <img class="file__thumb" src="@(url)?inline=true" alt="" loading="lazy" width="48" height="48">
+                            }
+                            else
+                            {
+                                <span class="file__icon" aria-hidden="true"><partial name="_AdminIcon" model='"file"' /></span>
+                            }
+                            <span class="file__text">
+                                <a class="file__name" href="@url" dir="auto"><partial name="_AdminIcon" model='"download"' />@file.FileName</a>
+                                <span class="file__meta"><span dir="ltr">@Size(file.SizeBytes)</span> · @file.UploadedByName · <partial name="_Utc" model="file.UploadedAtUtc" /></span>
+                            </span>
+                            @if (file.CanDelete)
+                            {
+                                <form method="post" asp-controller="DeliveryPlanning" asp-action="DeleteAttachment" asp-route-id="@summary.Id" asp-route-attachmentId="@file.Id" data-confirm="@T["Delivery.Attachment.ConfirmRemove"]">
+                                    <button type="submit" class="a-icon-btn" aria-label="@T["Delivery.Remove"]: @file.FileName"><partial name="_AdminIcon" model='"trash"' /></button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+            @if (can.Comment)
+            {
+                <form method="post" enctype="multipart/form-data" asp-controller="DeliveryPlanning" asp-action="Attach" asp-route-id="@summary.Id" class="d-form d-form--row file-upload">
+                    <label>@T["Delivery.Attachment.Choose"] <input type="file" name="file" required accept=".png,.jpg,.jpeg,.webp,.gif,.pdf,.txt,.csv,.log,.md"></label>
+                    <button type="submit" class="btn btn--small"><partial name="_AdminIcon" model='"paperclip"' />@T["Delivery.Attachment.Add"]</button>
+                </form>
+                <p class="hint">@T["Delivery.Attachment.Rules"]</p>
+            }
+        </section>
+
+        @if (!summary.Type.Equals("Subtask", StringComparison.Ordinal))
+        {
+            <section class="d-panel" aria-labelledby="d-children">
+                <h2 id="d-children">@T[summary.Type == "Epic" ? "Delivery.EpicIssues" : "Delivery.Subtasks"]</h2>
+                @if (issue.Children.Count == 0)
+                {
+                    <p class="hint">@T["Delivery.NoChildren"]</p>
+                }
+                else
+                {
+                    var done = issue.Children.Count(child => child.StatusCategory == "Done");
+                    <p class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"].Value, done, issue.Children.Count)</p>
+                    <partial name="_IssueTable" model="issue.Children" />
+                }
+                @if (can.CreateIssues && summary.Type != "Epic")
+                {
+                    <a class="btn btn--small" asp-action="NewIssue" asp-route-projectId="@summary.ProjectId" asp-route-parentId="@summary.Id">+ @T["Delivery.AddSubtask"]</a>
+                }
+                else if (can.CreateIssues)
+                {
+                    <a class="btn btn--small" asp-action="NewIssue" asp-route-projectId="@summary.ProjectId">+ @T["Delivery.CreateIssue"]</a>
+                }
+            </section>
+        }
+
+        <section class="d-panel" aria-labelledby="d-links">
+            <h2 id="d-links">@T["Delivery.Links"]</h2>
+            @if (issue.Links.Count == 0)
+            {
+                <p class="hint">@T["Delivery.NoLinks"]</p>
+            }
+            <ul class="d-links" role="list">
+                @foreach (var link in issue.Links)
+                {
+                    <li>
+                        <span class="hint">@T["Delivery.LinkType." + link.Type + "." + link.Direction]</span>
+                        <a asp-action="Issue" asp-route-id="@link.IssueId"><span class="d-key" dir="ltr">@link.IssueKey</span> @link.IssueTitle</a>
+                        <span class="d-status d-status--@link.StatusCategory.ToLowerInvariant()">@DeliveryDisplay.Value(T, "Category", link.StatusCategory)</span>
+                        @if (can.EditIssues)
+                        {
+                            <form method="post" asp-action="RemoveLink" asp-route-id="@summary.Id" asp-route-linkId="@link.Id" class="d-inline-form" data-confirm="@T["Delivery.ConfirmRemoveLink"]">
+                                <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.Remove"]</button>
+                            </form>
+                        }
+                    </li>
+                }
+            </ul>
+            @if (can.EditIssues)
+            {
+                <form method="post" asp-action="AddLink" asp-route-id="@summary.Id" class="d-form d-form--row">
+                    <label>@T["Delivery.LinkTypeLabel"]
+                        <select name="type">
+                            @foreach (var type in DeliveryDisplay.LinkTypes)
+                            {
+                                <option value="@type">@T["Delivery.LinkType." + type + ".outward"]</option>
+                            }
+                        </select>
+                    </label>
+                    <label>@T["Delivery.LinkTarget"] <input name="targetKey" required maxlength="20" dir="ltr" placeholder="@summary.ProjectKey-1" class="d-input-key"></label>
+                    <button type="submit" class="btn btn--small">@T["Delivery.AddLink"]</button>
+                </form>
+            }
+        </section>
+
+        <section class="d-panel" id="comments" aria-labelledby="d-comments">
+            <h2 id="d-comments">@T["Delivery.Comments"] <span class="d-count">@issue.Comments.Count(c => !c.IsDeleted)</span></h2>
+            @if (topComments.Count == 0)
+            {
+                <p class="hint">@T["Delivery.NoComments"]</p>
+            }
+            <ol class="d-comments" role="list">
+                @foreach (var comment in topComments)
+                {
+                    <li>
+                        <partial name="_Comment" model="(comment, summary.Id, can.Comment, can.ManageProject)" />
+                        @{ var replies = issue.Comments.Where(c => c.ParentCommentId == comment.Id).ToList(); }
+                        @if (replies.Count > 0)
+                        {
+                            <ol class="d-comments d-comments--replies" role="list">
+                                @foreach (var reply in replies)
+                                {
+                                    <li><partial name="_Comment" model="(reply, summary.Id, can.Comment, can.ManageProject)" /></li>
+                                }
+                            </ol>
+                        }
+                        @if (can.Comment && !comment.IsDeleted)
+                        {
+                            <details class="d-reply">
+                                <summary>@T["Delivery.Reply"]</summary>
+                                <form method="post" asp-action="AddComment" asp-route-id="@summary.Id" class="d-form">
+                                    <input type="hidden" name="parentCommentId" value="@comment.Id">
+                                    <label class="d-form__wide"><span class="visually-hidden">@T["Delivery.Reply"]</span><textarea name="body" rows="2" required maxlength="10000" dir="auto"></textarea></label>
+                                    <button type="submit" class="btn btn--small">@T["Delivery.Reply"]</button>
+                                </form>
+                            </details>
+                        }
+                    </li>
+                }
+            </ol>
+            @if (can.Comment)
+            {
+                <form method="post" asp-action="AddComment" asp-route-id="@summary.Id" class="d-form">
+                    <label class="d-form__wide">@T["Delivery.AddComment"] <textarea name="body" rows="3" required maxlength="10000" dir="auto"></textarea></label>
+                    <button type="submit" class="btn btn--primary btn--small">@T["Delivery.Comment"]</button>
+                </form>
+            }
+        </section>
+
+        @if (can.EditIssues && options is not null)
+        {
+            <details class="d-panel d-edit" id="edit">
+                <summary><h2 id="d-edit"><partial name="_AdminIcon" model='"pen"' /> @T["Delivery.EditIssue"]</h2></summary>
+                <form method="post" asp-action="UpdateIssue" asp-route-id="@summary.Id" class="d-form editor">
+                    <partial name="_IssueFields" model="(IssueForm.From(issue), options, false)" />
+                    <div class="d-form__actions"><button type="submit" class="btn btn--primary">@T["Cms.Save"]</button></div>
+                </form>
+            </details>
+        }
+
+        <section class="d-panel" aria-labelledby="d-history">
+            <h2 id="d-history">@T["Delivery.History"]</h2>
+            <ol class="d-history" role="list">
+                @foreach (var entry in issue.History)
+                {
+                    <li>
+                        <strong dir="auto">@(entry.ActorName ?? T["Delivery.System"])</strong>
+                        @T["Delivery.History." + entry.Field]
+                        @if (entry.Field is not ("created" or "comment" or "description"))
+                        {
+                            @* Each value is isolated so the arrow keeps pointing from the old value to the new one in both directions. *@
+                            <span><bdi>@DeliveryDisplay.HistoryValue(T, entry.Field, entry.OldValue, issue.AllowedStatuses)</bdi> @T["Delivery.HistoryArrow"] <bdi>@DeliveryDisplay.HistoryValue(T, entry.Field, entry.NewValue, issue.AllowedStatuses)</bdi></span>
+                        }
+                        <partial name="_Utc" model="entry.AtUtc" />
+                    </li>
+                }
+            </ol>
+        </section>
+    </div>
+
+    <aside class="d-issue__side" aria-label="@T["Delivery.Details"]">
+        <section class="d-panel">
+            <p><partial name="_StatusPill" model="summary" /></p>
+            @if (can.EditIssues && issue.AllowedStatuses.Count > 0)
+            {
+                <p class="hint">@T["Delivery.MoveToStatus"]</p>
+                <div class="d-transitions">
+                    @foreach (var status in issue.AllowedStatuses)
+                    {
+                        <form method="post" asp-action="TransitionIssue" asp-route-id="@summary.Id">
+                            <input type="hidden" name="statusId" value="@status.Id">
+                            <input type="hidden" name="version" value="@summary.Version">
+                            <button type="submit" class="btn btn--small">@DeliveryDisplay.Status(T, status)</button>
+                        </form>
+                    }
+                </div>
+            }
+            <dl class="d-facts">
+                <dt>@T["Delivery.Field.Assignee"]</dt><dd>@(summary.AssigneeName ?? T["Delivery.Unassigned"])</dd>
+                <dt>@T["Delivery.Field.Reporter"]</dt><dd>@issue.ReporterName</dd>
+                <dt>@T["Delivery.Field.Priority"]</dt><dd><partial name="_Priority" model="summary.Priority" /></dd>
+                <dt>@T["Delivery.Field.Sprint"]</dt><dd>@(issue.SprintName ?? T["Delivery.Backlog"])</dd>
+                @if (summary.EpicKey is not null)
+                {
+                    <dt>@T["Delivery.Field.Epic"]</dt><dd><a asp-action="Issue" asp-route-id="@summary.EpicId"><span class="d-key" dir="ltr">@summary.EpicKey</span> @summary.EpicTitle</a></dd>
+                }
+                <dt>@T["Delivery.Field.StoryPoints"]</dt><dd>@(summary.StoryPoints?.ToString(CultureInfo.InvariantCulture) ?? "–")</dd>
+                <dt>@T["Delivery.Field.Estimate"]</dt><dd>@(issue.EstimateHours?.ToString(CultureInfo.InvariantCulture) ?? "–")</dd>
+                <dt>@T["Delivery.Field.StartDate"]</dt><dd dir="ltr">@D(issue.StartDate)</dd>
+                <dt>@T["Delivery.Field.DueDate"]</dt><dd dir="ltr" class="@(summary.IsOverdue ? "d-overdue" : null)">@D(summary.DueDate)</dd>
+                @if (summary.Labels.Count > 0)
+                {
+                    <dt>@T["Delivery.Field.Labels"]</dt><dd>@foreach (var label in summary.Labels) { <span class="d-label" dir="auto">@label</span> }</dd>
+                }
+                @if (issue.Components.Count > 0)
+                {
+                    <dt>@T["Delivery.Field.Components"]</dt><dd>@string.Join(", ", issue.Components)</dd>
+                }
+                <dt>@T["Delivery.Created"]</dt><dd><partial name="_Utc" model="issue.CreatedAtUtc" /></dd>
+                <dt>@T["Delivery.Updated"]</dt><dd><partial name="_Utc" model="summary.UpdatedAtUtc" /></dd>
+                @if (issue.ResolvedAtUtc is { } resolved)
+                {
+                    <dt>@T["Delivery.Resolved"]</dt><dd><partial name="_Utc" model="resolved" /></dd>
+                }
+            </dl>
+            @if (issue.RepositoryUrl is not null || issue.BranchName is not null || issue.PullRequestUrl is not null || issue.CommitUrl is not null)
+            {
+                <h3 class="d-subhead">@T["Delivery.DevelopmentLinks"]</h3>
+                <ul class="d-devlinks" role="list" dir="ltr">
+                    @if (issue.RepositoryUrl is not null) { <li><a href="@issue.RepositoryUrl" rel="noopener noreferrer" target="_blank">@T["Delivery.Field.RepositoryUrl"]</a></li> }
+                    @if (issue.BranchName is not null) { <li><code>@issue.BranchName</code></li> }
+                    @if (issue.PullRequestUrl is not null) { <li><a href="@issue.PullRequestUrl" rel="noopener noreferrer" target="_blank">@T["Delivery.Field.PullRequestUrl"]</a></li> }
+                    @if (issue.CommitUrl is not null) { <li><a href="@issue.CommitUrl" rel="noopener noreferrer" target="_blank">@T["Delivery.Field.CommitUrl"]</a></li> }
+                </ul>
+                <p class="hint">@T["Delivery.ManualLinksNote"]</p>
+            }
+            <form method="post" asp-action="Watch" asp-route-id="@summary.Id" class="d-watch">
+                <input type="hidden" name="watching" value="@(issue.IsWatching ? "false" : "true")">
+                <button type="submit" class="btn btn--small" aria-pressed="@(issue.IsWatching ? "true" : "false")">@T[issue.IsWatching ? "Delivery.Unwatch" : "Delivery.Watch"]</button>
+                <span class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Watchers"].Value, issue.WatcherCount)</span>
+            </form>
+            @if (can.ManageProject)
+            {
+                <form method="post" asp-action="DeleteIssue" asp-route-id="@summary.Id" data-confirm="@T["Delivery.ConfirmDeleteIssue"]" class="d-danger">
+                    <input type="hidden" name="projectId" value="@summary.ProjectId">
+                    <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.DeleteIssue"]</button>
+                </form>
+            }
+        </section>
+
+        <section class="d-panel" id="time" aria-labelledby="d-time">
+            <h2 id="d-time"><partial name="_AdminIcon" model='"clock"' /> @T["Delivery.Time.Title"]</h2>
+            <p class="time-total"><strong>@DeliveryFormat.Duration(T, issue.TimeSpentMinutes)</strong> @T["Delivery.Time.Logged.Label"]
+                @if (estimateMinutes > 0)
+                {
+                    <span class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Time.OfEstimate"], DeliveryFormat.Duration(T, estimateMinutes))</span>
+                }
+            </p>
+            @if (estimateMinutes > 0)
+            {
+                @Onyx.Web.Areas.Admin.Charts.Chart.Progress((double)issue.TimeSpentMinutes / estimateMinutes, issue.TimeSpentMinutes > estimateMinutes ? "rose" : "teal", DeliveryFormat.IsRtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Time.OfEstimate"], DeliveryFormat.Duration(T, estimateMinutes)))
+                @if (issue.TimeSpentMinutes > estimateMinutes)
+                {
+                    <p class="hint d-overdue">@T["Delivery.Time.OverEstimate"]</p>
+                }
+            }
+            @if (can.Comment)
+            {
+                <form method="post" asp-controller="DeliveryPlanning" asp-action="LogWork" asp-route-id="@summary.Id" class="d-form time-form">
+                    <div class="time-form__row">
+                        <label>@T["Delivery.Time.Hours"] <input type="number" name="hours" min="0" max="24" step="1" inputmode="numeric" dir="ltr"></label>
+                        <label>@T["Delivery.Time.Minutes"] <input type="number" name="minutes" min="0" max="59" step="5" inputmode="numeric" dir="ltr"></label>
+                        <label>@T["Delivery.Time.Date"] <input type="date" name="workDate" value="@DateOnly.FromDateTime(DateTime.UtcNow).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr"></label>
+                    </div>
+                    <label>@T["Delivery.Time.Note"] <input type="text" name="note" maxlength="500" dir="auto"></label>
+                    <button type="submit" class="btn btn--small"><partial name="_AdminIcon" model='"clock"' />@T["Delivery.Time.Log"]</button>
+                </form>
+            }
+            @if (workLogs.Count > 0)
+            {
+                <ul class="time-log" role="list">
+                    @foreach (var log in workLogs)
+                    {
+                        <li>
+                            <span class="time-log__who"><partial name="_Avatar" model="((Guid?)log.UserId, (string?)log.UserName)" /> <span dir="auto">@log.UserName</span></span>
+                            <strong>@DeliveryFormat.Duration(T, log.Minutes)</strong>
+                            <span class="hint">@DeliveryFormat.Day(log.WorkDate)</span>
+                            @if (log.Note is not null)
+                            {
+                                <span class="time-log__note" dir="auto">@log.Note</span>
+                            }
+                            @if (log.CanDelete)
+                            {
+                                <form method="post" asp-controller="DeliveryPlanning" asp-action="DeleteWorkLog" asp-route-id="@summary.Id" asp-route-workLogId="@log.Id" data-confirm="@T["Delivery.Time.ConfirmRemove"]">
+                                    <button type="submit" class="a-icon-btn" aria-label="@T["Delivery.Remove"]"><partial name="_AdminIcon" model='"trash"' /></button>
+                                </form>
+                            }
+                        </li>
+                    }
+                </ul>
+            }
+        </section>
+    </aside>
+</div>

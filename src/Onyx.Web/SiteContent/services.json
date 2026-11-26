@@ -1,0 +1,245 @@
+{
+  "key": "services",
+  "type": "service-index",
+  "related": ["how-we-work", "technologies", "about", "services.ai-agents", "services.ai-as-service", "services.ai"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات",
+      "nav": "الخدمات",
+      "title": "خدماتنا: وكلاء ذكاء اصطناعي، برمجيات، سحابة، أمن سيبراني",
+      "description": "خدمات أونيكس التقنية للشركات: هندسة وكلاء الذكاء الاصطناعي، وكلاء كخدمة (AaaS)، حلول الذكاء الاصطناعي والأتمتة، تطوير البرمجيات، الاستضافة السحابية، والأمن السيبراني، مع خدمات للنمو الرقمي.",
+      "eyebrow": "خدماتنا",
+      "h1": "كل ما تحتاجه أعمالك تقنياً، في مكان واحد",
+      "lead": "نطوّر أنظمتك وتطبيقاتك، ونصمم وكلاء ذكاء اصطناعي ينفذون مهام محددة في عملك، ونشغّل كل ذلك على بنية مستقرة ومحمية. تخصصات أساسية تعمل معاً، ليبقى لديك شريك واحد مسؤول عن الصورة كاملة.",
+      "summary": "نظرة شاملة على تخصصاتنا الأساسية وخدماتنا المساندة.",
+      "sections": [
+        {
+          "kind": "pages",
+          "id": "core",
+          "eyebrow": "تخصصاتنا الأساسية",
+          "heading": "تخصصات تعمل معاً كفريق واحد",
+          "lead": "يمكنك الاستعانة بنا في تخصص واحد، أو في عدة تخصصات معاً. في الحالتين، نبني كل جزء ليتكامل مع بقية أنظمتك ويبقى سهل التطوير مستقبلاً.",
+          "items": [
+            {
+              "title": "هندسة وكلاء الذكاء الاصطناعي",
+              "page": "services.ai-agents",
+              "icon": "agents",
+              "text": "نصمم ونطور وكلاء ذكاء اصطناعي مخصصين ينفذون مهام محددة داخل أنظمتك، مع صلاحيات واضحة وضوابط صارمة ومسار تدقيق لكل عملية.",
+              "points": ["وكلاء ينفذون مهام متعددة الخطوات", "أنظمة الوكلاء المتعددين عند الحاجة", "ربط بالأنظمة وواجهات API والبيانات"]
+            },
+            {
+              "title": "وكلاء الذكاء الاصطناعي كخدمة (AaaS)",
+              "page": "services.ai-as-service",
+              "icon": "agents",
+              "text": "خدمة شاملة لتصميم الوكلاء ونشرهم وإدارتهم وصيانتهم، مع خيارات نشر تراعي متطلبات الخصوصية والامتثال، وبيانات تبقى تحت سيطرتك.",
+              "points": ["تصميم وتطوير الوكلاء", "نشر ودمج مع الأنظمة", "إدارة ومراقبة وصيانة مستمرة"]
+            },
+            {
+              "title": "الذكاء الاصطناعي والأتمتة",
+              "page": "services.ai",
+              "icon": "ai",
+              "text": "نساعدك على الاستفادة من الذكاء الاصطناعي في تسريع العمل اليومي وتحسين خدمة عملائك، بحلول تعمل على بياناتك وداخل أنظمتك.",
+              "points": ["مساعدون أذكياء لفريقك وعملائك", "بحث ذكي في مستندات شركتك", "أتمتة الإجراءات اليدوية المتكررة"]
+            },
+            {
+              "title": "هندسة البرمجيات والمنصات الرقمية",
+              "page": "services.software",
+              "icon": "software",
+              "text": "نطوّر أنظمة وتطبيقات تناسب طريقة عملك، من الأنظمة الإدارية إلى المنصات والتطبيقات المخصصة، ونحدّث أنظمتك القائمة دون تعطيل أعمالك.",
+              "points": ["أنظمة ERP وCRM وأنظمة إدارية", "منصات SaaS وتطبيقات ويب وجوال", "ربط الأنظمة وتحديث القديم منها"]
+            },
+            {
+              "title": "الاستضافة والسحابة والبنية التحتية",
+              "page": "services.cloud",
+              "icon": "cloud",
+              "text": "نوفر الاستضافة والبنية التحتية التي تُبقي مواقعك وأنظمتك تعمل باستقرار وأمان، مع مراقبة مستمرة ونسخ احتياطي وخيارات تنمو مع أعمالك.",
+              "points": ["استضافة المواقع والتطبيقات", "البنية السحابية والانتقال إليها", "النشر المؤتمت والمراقبة"]
+            },
+            {
+              "title": "الأمن السيبراني والحماية الرقمية",
+              "page": "services.security",
+              "icon": "shield",
+              "text": "نساعدك على حماية أنظمتك وبياناتك وتقليل المخاطر الرقمية، من تقييم وضعك الأمني إلى سد الثغرات وبناء الحماية في أنظمتك. أي اختبار يتم بتفويض مكتوب منك.",
+              "points": ["تقييم الثغرات واختبار الاختراق المصرّح به", "حماية التطبيقات والسحابة", "إدارة الهوية والصلاحيات"]
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "together",
+          "eyebrow": "لماذا شريك واحد؟",
+          "heading": "حين تعمل التخصصات معاً، تحصل على نتيجة أفضل",
+          "paragraphs": [
+            "المشروع التقني الحقيقي نادراً ما يقتصر على مجال واحد. نظام جديد لإدارة العملاء مثلاً يحتاج إلى استضافة يعمل عليها، وربط بأنظمتك الحالية، وحماية لبيانات عملائك، وقد يستفيد من وكيل ذكاء اصطناعي ينفّذ إجراءات محددة ويلخّص ما يحتاج فريق الخدمة إلى مراجعته.",
+            "عندما يتولى فريق واحد هذه الجوانب، تختفي الفجوات بين المزودين، ويصبح لديك جهة واحدة مسؤولة عن النتيجة. نبدأ بفهم عملك وأهدافك، ثم نحدد ما يحتاجه المشروع فعلاً، دون إضافات لا تخدمك.",
+            "مثال توضيحي: شركة توزيع تريد تقليل الوقت الذي تستغرقه معالجة طلبات الشراء. قد يجمع الحل بين استخراج البيانات من المستندات آلياً، وربطها بنظام ERP القائم، وتشغيل وكيل ذكاء اصطناعي يتابع الطلبات ويلخّص الحالات، ونشره على بيئة سحابية مراقَبة، وضبط صلاحيات الوصول إلى البيانات المالية. هذا مثال للتوضيح فقط، وليس مشروعاً منفّذاً."
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "more",
+          "eyebrow": "خدمات مساندة",
+          "heading": "خدمات إضافية ومسارات مخصصة",
+          "items": [
+            {
+              "title": "النمو الرقمي والإبداع",
+              "page": "services.growth",
+              "icon": "growth",
+              "text": "نساعدك على تطوير حضورك الرقمي والوصول إلى عملائك بفاعلية أكبر، عبر التخطيط وتحسين محركات البحث والتسويق الرقمي والهوية البصرية وتجربة المستخدم."
+            },
+            {
+              "title": "من الفكرة إلى منتج رقمي",
+              "page": "idea-to-product",
+              "icon": "integrated",
+              "text": "إن كانت لديك فكرة منتج رقمي، نرافقك من اختبار الفكرة وتحديد النسخة الأولى حتى الإطلاق والتوسع."
+            }
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "engage",
+          "eyebrow": "ابدأ معنا",
+          "heading": "اختر الطريقة الأنسب لك للبدء",
+          "items": [
+            {
+              "title": "ابدأ مشروعك",
+              "page": "lead.start-project",
+              "text": "صف لنا مشروعك واحتياجاتك في خطوات قصيرة، وسيتواصل معك فريقنا لمناقشة التفاصيل."
+            },
+            {
+              "title": "احجز استشارة",
+              "page": "lead.book-consultation",
+              "text": "اختر موعداً يناسبك لنناقش وضعك التقني الحالي والخيارات المتاحة أمامك."
+            },
+            {
+              "title": "تواصل معنا",
+              "page": "lead.contact",
+              "text": "لأي سؤال عن خدماتنا أو طريقة عملنا، يسعدنا الرد عليك."
+            }
+          ]
+        }
+      ],
+      "ctaTitle": "لست متأكداً من الخدمة المناسبة؟",
+      "ctaText": "حدّثنا عن التحدي الذي تواجهه، وسنساعدك على تحديد الخطوة الأولى الأنسب لشركتك."
+    },
+    "en": {
+      "path": "services",
+      "nav": "Services",
+      "title": "Our Services: AI Agents, AaaS, Software, Cloud and Security",
+      "description": "ONYX technology services for business: AI agent engineering, AI agents as a service (AaaS), AI and automation, software, cloud hosting and infrastructure, and cybersecurity, supported by digital growth services.",
+      "eyebrow": "Our services",
+      "h1": "The technology your business needs, from one partner",
+      "lead": "We build your systems and applications, design AI agents that run defined tasks in your business, and run everything on stable, protected infrastructure. Core disciplines working together, so you have one partner responsible for the whole picture.",
+      "summary": "An overview of our core disciplines and supporting services.",
+      "sections": [
+        {
+          "kind": "pages",
+          "id": "core",
+          "eyebrow": "Core disciplines",
+          "heading": "Disciplines working together as one team",
+          "lead": "You can work with us in a single discipline or several at once. Either way, we build each part to fit the rest of your systems and stay easy to develop further.",
+          "items": [
+            {
+              "title": "AI Agent Engineering",
+              "page": "services.ai-agents",
+              "icon": "agents",
+              "text": "We design and build custom AI agents that carry out defined tasks inside your systems, with clear permissions, strict guardrails and an audit trail for every action.",
+              "points": ["Agents that run multi-step tasks", "Multi-agent systems when needed", "Connection to systems, APIs and data"]
+            },
+            {
+              "title": "AI Agents as a Service (AaaS)",
+              "page": "services.ai-as-service",
+              "icon": "agents",
+              "text": "An end-to-end service for designing, deploying, managing and maintaining your AI agents, with deployment options that respect privacy and compliance, and your data staying under your control.",
+              "points": ["Design and build", "Deploy and integrate", "Manage, monitor and maintain"]
+            },
+            {
+              "title": "AI & Automation",
+              "page": "services.ai",
+              "icon": "ai",
+              "text": "Use AI to speed up everyday work and improve customer service, with solutions that run on your own data and inside your existing systems.",
+              "points": ["Intelligent assistants for your team and customers", "Smart search across your company documents", "Automation of repetitive manual tasks"]
+            },
+            {
+              "title": "Software Engineering & Digital Platforms",
+              "page": "services.software",
+              "icon": "software",
+              "text": "Systems and applications that fit the way you work — from business management systems to platforms and custom apps — and modernization of existing systems without disrupting your operations.",
+              "points": ["ERP, CRM and business management systems", "SaaS platforms, web and mobile apps", "System integration and legacy modernization"]
+            },
+            {
+              "title": "Hosting, Cloud & Infrastructure",
+              "page": "services.cloud",
+              "icon": "cloud",
+              "text": "Hosting and infrastructure that keep your websites and systems running reliably and securely, with continuous monitoring, backups and options that grow with your business.",
+              "points": ["Website and application hosting", "Cloud infrastructure and migration", "Automated deployment and monitoring"]
+            },
+            {
+              "title": "Cybersecurity & Digital Protection",
+              "page": "services.security",
+              "icon": "shield",
+              "text": "Protect your systems and data and reduce digital risk — from assessing your security posture to closing gaps and building protection into your systems. Any testing happens only with your written authorization.",
+              "points": ["Vulnerability assessment and authorized penetration testing", "Application and cloud security", "Identity and access management"]
+            }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "together",
+          "eyebrow": "Why one partner?",
+          "heading": "When the disciplines work together, the result is better",
+          "paragraphs": [
+            "Real technology projects rarely stay within one discipline. A new customer management system needs hosting to run on, integration with your current systems and protection for customer data — and it may benefit from an AI agent that runs defined actions and summarises what your service team needs to review.",
+            "When one team handles all of this, the gaps between suppliers disappear and one party is accountable for the result. We start by understanding your business and goals, then decide what the project actually needs, without extras that don't serve you.",
+            "Illustrative example: a distribution company wants to cut the time it takes to process purchase orders. The solution might combine automatic data extraction from documents, integration with the existing ERP, an AI agent that follows the orders and summarises cases, a monitored cloud environment for the service and controlled access to financial data. This example is for illustration only and does not describe a delivered project."
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "more",
+          "eyebrow": "Supporting services",
+          "heading": "Additional services and dedicated journeys",
+          "items": [
+            {
+              "title": "Digital Growth & Creative",
+              "page": "services.growth",
+              "icon": "growth",
+              "text": "Grow your digital presence and reach customers more effectively, through planning, search engine optimization, digital marketing, brand identity and user experience design."
+            },
+            {
+              "title": "From Idea to Digital Product",
+              "page": "idea-to-product",
+              "icon": "integrated",
+              "text": "Have an idea for a digital product? We'll take you from testing the idea and defining the first version through to launch and growth."
+            }
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "engage",
+          "eyebrow": "Get started",
+          "heading": "Choose how you'd like to start",
+          "items": [
+            {
+              "title": "Start a project",
+              "page": "lead.start-project",
+              "text": "Describe your project and needs in a few short steps, and our team will follow up to discuss the details."
+            },
+            {
+              "title": "Book a consultation",
+              "page": "lead.book-consultation",
+              "text": "Pick a time that suits you to talk through your current technology and the options open to you."
+            },
+            {
+              "title": "Contact us",
+              "page": "lead.contact",
+              "text": "Questions about our services or how we work? We're happy to help."
+            }
+          ]
+        }
+      ],
+      "ctaTitle": "Not sure which service you need?",
+      "ctaText": "Tell us about the challenge you're facing, and we'll help you find the right first step for your business."
+    }
+  }
+}

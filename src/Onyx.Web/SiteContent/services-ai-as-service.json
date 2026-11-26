@@ -1,0 +1,253 @@
+{
+  "key": "services.ai-as-service",
+  "parent": "services",
+  "type": "service",
+  "icon": "agents",
+  "pillar": "agents",
+  "related": ["services.ai-agents", "services.ai", "services.cloud", "services.security"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/وكلاء-الذكاء-الاصطناعي-كخدمة",
+      "nav": "وكلاء الذكاء الاصطناعي كخدمة",
+      "title": "وكلاء الذكاء الاصطناعي كخدمة (AaaS) لشركتك",
+      "description": "خدمة وكلاء ذكاء اصطناعي مصممة وفق احتياجات شركتك: تصميم وتطوير الوكلاء، ونشرهم، ودمجهم مع أنظمتك، وإدارة أدائهم، وصيانتهم، مع خيارات نشر تناسب متطلبات الخصوصية والامتثال.",
+      "eyebrow": "وكلاء الذكاء الاصطناعي كخدمة (AaaS)",
+      "h1": "وكلاء ذكاء اصطناعي كخدمة تديرها معك أو لحسابك",
+      "lead": "نقدّم وكلاء ذكاء اصطناعي كخدمة (AI Agents as a Service): نصممهم وفق احتياجاتك، وننشرهم ونديرهم ونحسّنهم، وأنت تستخدمهم داخل عملك دون أن تتحمل عبء التشغيل الكامل. نطاق الخدمة يتفق عليه حسب الحالة: من المساندة في التشغيل إلى الإدارة الكاملة.",
+      "summary": "تصميم، نشر، إدارة، وصيانة وكلاء ذكاء اصطناعي مخصصين لشركتك، مع خيارات نشر مرنة.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "ما معنى الوكلاء كخدمة في عملنا؟",
+          "paragraphs": [
+            "نقدّم الوكلاء كخدمة لا كمنتج جاهز. كل وكيل يبنى لمهمة محددة في شركتك، ويُسلّم في حزمة تشمل الوكيل نفسه، وقواعد الصلاحيات، وأدوات التشغيل، ولوحة المراقبة، والتوثيق، وخدمة المتابعة والتحسين.",
+            "نطاق الخدمة يتفق عليه صراحة قبل البدء: هل تحتاج المساندة في النشر فقط، أم الإدارة الكاملة للوكيل، أم تصميم وكيل جديد ينضم إلى قائمة وكلاء تديرهم معك. ولكل نطاق سعر ومسؤولية واضحين."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "what-is-included",
+          "eyebrow": "ما تشمله الخدمة",
+          "heading": "مكوّنات خدمة AaaS",
+          "items": [
+            {
+              "id": "design-and-build",
+              "title": "تصميم وتطوير الوكلاء",
+              "text": "نصمم الوكيل وفق المهمة، ونطوره، ونختبره، ونتفق معك على شكل مخرجاته وصلاحياته. وكل وكيل يوثق: ما يفعله، وكيف يقاس نجاحه، وما حدوده.",
+              "points": ["تصميم وفق المهمة", "تطوير واختبار", "توثيق شامل"]
+            },
+            {
+              "id": "deployment",
+              "title": "نشر الوكلاء ودمجهم مع أنظمتك",
+              "text": "ننشر الوكلاء في بيئة تناسب متطلباتك (سحاب عام، أو سحاب خاص، أو داخل بنيتك)، ونربطهم بأنظمتك وبياناتك وواجهاتك البرمجية، مع ضوابط واضحة على الصلاحيات والوصول.",
+              "points": ["نشر في بيئتك أو في بيئة خاصة", "ربط بأنظمتك وبياناتك", "ضوابط على الوصول والمخرجات"]
+            },
+            {
+              "id": "operations",
+              "title": "إدارة الوكلاء ومراقبة أدائهم",
+              "text": "نتابع الوكلاء أثناء التشغيل: الاستخدام، والأخطاء، والأداء، والتكلفة، وجودة المخرجات. لوحة متابعة تعرض المؤشرات، وتقارير دورية توضح ما يستحق التحسين.",
+              "points": ["مراقبة على مدار الساعة", "لوحة مؤشرات", "تقارير دورية"]
+            },
+            {
+              "id": "maintenance",
+              "title": "الصيانة والتحسين المستمر",
+              "text": "نحدّث مكونات الوكلاء (نماذج، أدوات، قواعد معرفية) بحسب ما يطرأ على بياناتك وأنظمتك. ونحسّن الضوابط والمخرجات بناءً على ملاحظات فريقك والمؤشرات الفعلية.",
+              "points": ["تحديثات دورية", "تحسين الضوابط والمخرجات", "تكييف مع تغير البيانات"]
+            },
+            {
+              "id": "usage-and-performance",
+              "title": "تحليل الاستخدام والأداء",
+              "text": "نحلل أنماط استخدام الوكلاء، ونحدد أين يضيفون أكبر قيمة، وأين يحتاجون إلى تعديل. ونطلعك على هذه التحليلات بصورة دورية تساعدك على توجيه الاستثمار في المراحل التالية.",
+              "points": ["تحليل أنماط الاستخدام", "تحديد فرص التطوير", "تقارير توجه القرار"]
+            },
+            {
+              "id": "deployment-options",
+              "eyebrow": "نطاقات الخدمة",
+              "title": "خيارات النشر حسب متطلباتك",
+              "text": "نقدّم ثلاثة نطاقات رئيسية للخدمة، يمكن دمجها بحسب احتياجك الفعلي وطبيعة بياناتك.",
+              "points": [
+                "نشر داخل بنيتك التقنية، لتبقى البيانات والوكلاء تحت سيطرتك الكاملة",
+                "نشر في سحاب خاص مُدار من طرفنا، بصلاحيات وصول محددة وتدقيق مستمر",
+                "نشر في سحاب عام، مع ضوابط صارمة على ما يُرسل إلى النماذج وما يُحفظ"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "engagement",
+          "eyebrow": "كيف نعمل معاً",
+          "heading": "مراحل تقديم خدمة AaaS",
+          "items": [
+            { "title": "تحديد المهمة", "text": "نحدد معك المهمة التي تريد تنفيذها، والنتائج المتوقعة، ومؤشرات النجاح، والبيانات والضوابط المتعلقة." },
+            { "title": "تصميم الوكيل", "text": "نصمم الوكيل وصلاحياته وبيئته، ونقدم عرضاً واضحاً يحدد النطاق والمخرجات والمسؤوليات." },
+            { "title": "التطوير والنشر", "text": "نطور الوكيل وننشره في البيئة المتفق عليها، ونربطه بأنظمتك، ونختبره على سيناريوهات حقيقية." },
+            { "title": "التشغيل والمتابعة", "text": "ندير الوكلاء بحسب النطاق المتفق عليه، ونصدر تقارير دورية عن الأداء والاستخدام." },
+            { "title": "التحسين والتوسيع", "text": "نحسّن الوكلاء بناءً على المؤشرات والملاحظات، ونوسّع نطاق الخدمة إلى مهام جديدة عند الحاجة." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "responsibilities",
+          "eyebrow": "توزيع المسؤوليات",
+          "heading": "ما الذي نتحمله، وما الذي يبقى معك",
+          "items": [
+            { "title": "التصميم والتطوير", "text": "نتحمل مسؤولية تصميم الوكلاء وتطويرهم وفقاً للمتطلبات المتفق عليها." },
+            { "title": "النشر والتشغيل", "text": "حسب النطاق المتفق عليه، ندير البنية والمراقبة والنسخ الاحتياطي والاستعادة." },
+            { "title": "الأمن والصلاحيات", "text": "نطبّق ضوابط الوصول، وتشفير البيانات، ومراجعة الصلاحيات، والتدقيق." },
+            { "title": "صحة بياناتك", "text": "تبقى معك مسؤولية جودة البيانات المُدخلة وصلاحيات الوصول إليها من جانب فريقك." },
+            { "title": "الموافقات والقرارات", "text": "تبقى معك مسؤولية اعتماد المخرجات الحساسة، وتحديد متى يحتاج الوكيل إلى موافقة بشرية." },
+            { "title": "متابعة الاستخدام", "text": "نتولى إعداد التقارير الدورية، وتبقى قرارات التطوير والتوسع معك." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "privacy",
+          "eyebrow": "الخصوصية والحوكمة",
+          "heading": "بياناتك تبقى تحت سيطرتك",
+          "paragraphs": [
+            "نحدد منذ البداية ما يجوز للوكيل رؤيته، وما لا يجوز، ونوثق ذلك في عقد الخدمة. وخيارات النشر تعكس متطلباتك: إن كانت بياناتك حساسة، ننشر الوكلاء داخل بنيتك أو في سحاب خاص، ولا نسمح لأي نموذج خارجي بالوصول إلى بيانات لم يصرّح بها فريقك.",
+            "كل ما يفعله الوكيل مسجّل: ما الطلب، وما البيانات التي قرأها، وما الأدوات التي استدعاها، وما النتيجة. ويمكنك مراجعة هذا السجل في أي وقت."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "what-you-get",
+          "eyebrow": "المخرجات",
+          "heading": "ما الذي تحصل عليه",
+          "items": [
+            { "title": "وكيل مخصص جاهز للعمل", "text": "مصمم لمهمتك، مختبر، موثق، ومنشور في البيئة المناسبة." },
+            { "title": "لوحة مراقبة", "text": "مؤشرات عن الاستخدام، والأداء، والأخطاء، والتكلفة، وجودة المخرجات." },
+            { "title": "وثائق تشغيلية وفنية", "text": "شرح بنية الوكيل، وطريقة تشغيله، وحدوده، وكيفية تطويره." },
+            { "title": "تقارير دورية", "text": "ملخصات عن الأداء والملاحظات وفرص التطوير." },
+            { "title": "دعم فني مستمر", "text": "معالجة المشكلات، تحديثات أمنية وتطويرية، وتحسينات بحسب تغير احتياجاتك." }
+          ]
+        }
+      ],
+      "ctaTitle": "تريد وكيل ذكاء اصطناعي يدير جزءاً من عملك؟",
+      "ctaText": "حدّثنا عن المهمة التي تريد تنفيذها، وسنقترح عليك نطاق خدمة مناسب، يحدد ما الذي نديره وما الذي يبقى معك، ومع خيارات نشر تراعي خصوصية بياناتك."
+    },
+    "en": {
+      "path": "services/ai-agents-as-a-service",
+      "nav": "AI Agents as a Service",
+      "title": "AI Agents as a Service (AaaS) for your business",
+      "description": "An AI agent service designed around your business: design and build, deploy, integrate with your systems, manage performance, and maintain, with deployment options that respect your privacy and compliance needs.",
+      "eyebrow": "AI Agents as a Service (AaaS)",
+      "h1": "AI agents as a service, managed with you or for you",
+      "lead": "We deliver AI agents as a service (AaaS): designed for your needs, deployed, integrated, managed and improved, so you can put them to work without taking on the full operating load. The scope is agreed up front per case, from deployment assistance to full managed operations.",
+      "summary": "Design, deployment, management and maintenance of custom AI agents, with flexible hosting options.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "What does agents-as-a-service mean for us?",
+          "paragraphs": [
+            "We deliver agents as a service, not as a one-size-fits-all product. Each agent is built for a defined task in your business and handed over as a package that includes the agent itself, permission rules, runbooks, a monitoring dashboard, documentation, and ongoing improvement.",
+            "The scope is agreed clearly before we start: do you need help with deployment only, full management of the agent, or the design of a new agent joining a portfolio you run yourself. Each scope has clear responsibilities and a clear price."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "what-is-included",
+          "eyebrow": "What is included",
+          "heading": "AaaS service components",
+          "items": [
+            {
+              "id": "design-and-build",
+              "title": "Agent design and build",
+              "text": "We design the agent around the task, build and test it, and agree with you on its outputs and permissions. Every agent is documented: what it does, how its success is measured, and what its limits are.",
+              "points": ["Designed around the task", "Built and tested", "Fully documented"]
+            },
+            {
+              "id": "deployment",
+              "title": "Deployment and integration with your systems",
+              "text": "We deploy the agent in the environment that fits your needs (public cloud, private cloud or your own infrastructure), and connect it to your systems, data and APIs, with clear controls on access and output.",
+              "points": ["Deployed in your environment or a private one", "Connected to your systems and data", "Controls on access and outputs"]
+            },
+            {
+              "id": "operations",
+              "title": "Agent management and performance monitoring",
+              "text": "We monitor the agents in production: usage, errors, performance, cost and output quality. A dashboard shows the metrics, and regular reports highlight what is worth improving.",
+              "points": ["Around-the-clock monitoring", "A metrics dashboard", "Regular reports"]
+            },
+            {
+              "id": "maintenance",
+              "title": "Maintenance and continuous improvement",
+              "text": "We update the agent's components (models, tools, knowledge base) as your data and systems change. We refine guardrails and outputs based on your team's feedback and real metrics.",
+              "points": ["Scheduled updates", "Guardrail and output refinement", "Adapts as your data changes"]
+            },
+            {
+              "id": "usage-and-performance",
+              "title": "Usage and performance analysis",
+              "text": "We analyse how the agents are actually used, identify where they add the most value and where they need adjustment, and share this analysis regularly to help you direct the next investment.",
+              "points": ["Usage pattern analysis", "Improvement opportunities surfaced", "Reports that guide decisions"]
+            },
+            {
+              "id": "deployment-options",
+              "title": "Deployment options for your requirements",
+              "text": "We offer three main deployment options, which can be combined based on your actual need and the nature of your data.",
+              "points": [
+                "Deployment inside your infrastructure, so data and agents stay fully under your control",
+                "Deployment in a private cloud we manage, with scoped access and continuous auditing",
+                "Deployment in a public cloud, with strict controls on what is sent to models and what is stored"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "engagement",
+          "eyebrow": "How we work together",
+          "heading": "Stages of the AaaS engagement",
+          "items": [
+            { "title": "Define the task", "text": "We agree the task to be done, the expected outcomes, the success metrics, and the related data and controls." },
+            { "title": "Design the agent", "text": "We design the agent, its permissions and its environment, and present a clear proposal that sets out scope, deliverables and responsibilities." },
+            { "title": "Build and deploy", "text": "We build the agent, deploy it in the agreed environment, connect it to your systems, and test it on real scenarios." },
+            { "title": "Operate and monitor", "text": "We manage the agents within the agreed scope and issue regular reports on performance and usage." },
+            { "title": "Improve and scale", "text": "We improve the agents based on metrics and feedback, and extend the service to new tasks when needed." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "responsibilities",
+          "eyebrow": "Responsibility split",
+          "heading": "What we own, and what stays with you",
+          "items": [
+            { "title": "Design and build", "text": "We own the design and build of the agents in line with the agreed requirements." },
+            { "title": "Deployment and operation", "text": "Within the agreed scope, we run the infrastructure, monitoring, backup and recovery." },
+            { "title": "Security and permissions", "text": "We apply access controls, data encryption, permission reviews and auditing." },
+            { "title": "Your data health", "text": "You keep responsibility for the quality of the data you put in and for the access your team grants." },
+            { "title": "Approvals and decisions", "text": "You stay responsible for approving sensitive outputs and defining when an agent needs human sign-off." },
+            { "title": "Usage oversight", "text": "We prepare the regular reports; the development and scaling decisions stay with you." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "privacy",
+          "eyebrow": "Privacy and governance",
+          "heading": "Your data stays under your control",
+          "paragraphs": [
+            "We agree from day one what the agent is allowed to see and what it is not, and document this in the service agreement. The deployment options reflect your requirements: when your data is sensitive, we deploy the agents inside your infrastructure or in a private cloud, and we do not let any external model access data your team has not approved.",
+            "Everything the agent does is recorded: the request, the data it read, the tools it called and the result. You can review this log at any time."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "what-you-get",
+          "eyebrow": "Deliverables",
+          "heading": "What you get",
+          "items": [
+            { "title": "A purpose-built agent", "text": "Designed for your task, tested, documented and deployed in the right environment." },
+            { "title": "A monitoring dashboard", "text": "Metrics on usage, performance, errors, cost and output quality." },
+            { "title": "Technical and operational docs", "text": "Architecture, how to run it, its limits, and how to extend it." },
+            { "title": "Regular reports", "text": "Summaries of performance, observations and improvement opportunities." },
+            { "title": "Ongoing support", "text": "Issue handling, security and feature updates, and improvements as your needs change." }
+          ]
+        }
+      ],
+      "ctaTitle": "Want an AI agent to run part of your work?",
+      "ctaText": "Tell us about the task you want done, and we'll propose a service scope that sets out what we manage and what stays with you, with deployment options that respect your data privacy."
+    }
+  }
+}

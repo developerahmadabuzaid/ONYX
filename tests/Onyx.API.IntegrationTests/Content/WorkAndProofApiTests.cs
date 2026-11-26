@@ -91,7 +91,7 @@ public sealed class WorkAndProofApiTests(PostgresFixture fixture) : ContentApiTe
     {
         Fixture.RequireDatabase();
         var (_, owner) = await SignInSuperAdminAsync();
-        var page = await CreatePageAsync(owner, "about-us", "من-نحن");
+        var page = await CreatePageAsync(owner, "about-us", "صفحة-تعريفية");
 
         Assert.Equal(HttpStatusCode.BadRequest, await StatusAsync(owner.PostAsJsonAsync(Admin, new CreateContentRequest("CaseStudy", null, null, null, 0), Token)));
         Assert.Equal(HttpStatusCode.BadRequest, await StatusAsync(owner.PostAsJsonAsync(Admin, new CreateContentRequest("CaseStudy", page.Id, null, null, 0), Token)));

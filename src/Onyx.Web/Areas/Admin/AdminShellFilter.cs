@@ -25,10 +25,12 @@ public sealed class AdminShellFilter(CurrentAdminContext currentAdmin, IAdminApi
 
         if (context.Controller is Microsoft.AspNetCore.Mvc.Controller controller)
         {
+            var permissions = me.Permissions.ToHashSet(StringComparer.Ordinal);
             controller.ViewData[ViewDataKey] = new AdminShellModel(
                 me.DisplayName,
-                AdminNavigation.VisibleTo(me.Permissions.ToHashSet(StringComparer.Ordinal)),
-                unread.IsSuccess ? unread.Value : 0);
+                AdminNavigation.VisibleTo(permissions),
+                unread.IsSuccess ? unread.Value : 0,
+                permissions);
         }
 
         await next().ConfigureAwait(false);

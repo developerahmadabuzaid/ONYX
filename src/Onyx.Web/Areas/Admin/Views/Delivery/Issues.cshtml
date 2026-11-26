@@ -1,0 +1,260 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model IssuesPage
+@{
+    Layout = "_AdminLayout";
+    var title = Model.Mine ? "Nav.DeliveryMyWork" : "Nav.DeliveryIssues";
+    ViewData["TitleKey"] = title;
+    var filter = Model.Filter;
+    var results = Model.Results;
+    var pages = (int)Math.Ceiling(results.TotalCount / (double)results.PageSize);
+    var project = filter.ProjectId is { } pid ? Model.Projects.FirstOrDefault(p => p.Id == pid) : null;
+    var saved = Model.SavedFilters ?? [];
+    var people = Model.People ?? [];
+    var currentQuery = filter.ToQuery();
+    var returnUrl = Context.Request.Path + Context.Request.QueryString;
+    var columns = new[] { ("type", "Delivery.Field.Type"), ("status", "Delivery.Field.Status"), ("priority", "Delivery.Field.Priority"), ("assignee", "Delivery.Field.Assignee"), ("due", "Delivery.Field.DueDate"), ("points", "Delivery.Field.StoryPointsShort"), ("project", "Delivery.Field.Project") };
+}
+@section Scripts {
+    <script src="~/js/delivery-workspace.js" asp-append-version="true" defer></script>
+}
+@if (project is not null && !Model.Mine)
+{
+    <partial name="_DeliveryTabs" model='(project.Id, project.Key, project.Name, "Issues")' />
+}
+else
+{
+    <header class="ws-head">
+        <div class="ws-head__text">
+            <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+            <h1>@T[title]</h1>
+        </div>
+        <div class="ws-head__tools">
+            <a class="btn btn--primary btn--small" asp-action="NewIssue"><partial name="_AdminIcon" model='"plus"' />@T["Delivery.CreateIssue"]</a>
+        </div>
+    </header>
+}
+<partial name="_CmsMessages" />
+
+@if (!Model.Mine && (saved.Count > 0 || !string.IsNullOrEmpty(currentQuery)))
+{
+    <div class="saved-filters">
+        <span class="saved-filters__label"><partial name="_AdminIcon" model='"bookmark"' />@T["Delivery.Filter.Saved.Title"]</span>
+        @foreach (var item in saved)
+        {
+            <span class="chip@(item.Query == currentQuery ? " is-active" : string.Empty)">
+                <a href="@Url.Action("Issues")?@item.Query" dir="auto">@item.Name</a>
+                <form method="post" asp-controller="DeliveryPlanning" asp-action="DeleteFilter" asp-route-id="@item.Id" data-confirm="@T["Delivery.Filter.ConfirmRemove"]">
+                    <button type="submit" class="chip__remove" aria-label="@T["Delivery.Remove"]: @item.Name">×</button>
+                </form>
+            </span>
+        }
+        @if (!string.IsNullOrEmpty(currentQuery) && saved.All(item => item.Query != currentQuery))
+        {
+            <details class="save-filter" data-menu>
+                <summary class="chip chip--add"><partial name="_AdminIcon" model='"plus"' />@T["Delivery.Filter.Save"]</summary>
+                <form method="post" asp-controller="DeliveryPlanning" asp-action="SaveFilter" class="save-filter__form">
+                    <input type="hidden" name="query" value="@currentQuery">
+                    <label>@T["Delivery.Field.Name"] <input name="name" required maxlength="80" dir="auto"></label>
+                    <button type="submit" class="btn btn--primary btn--small">@T["Cms.Save"]</button>
+                </form>
+            </details>
+        }
+    </div>
+}
+
+<form method="get" asp-action="@(Model.Mine ? "MyWork" : "Issues")" class="d-filters" role="search">
+    @if (filter.EpicId is { } epicId)
+    {
+        <input type="hidden" name="epicId" value="@epicId">
+    }
+    <label class="visually-hidden" for="f-text">@T["Delivery.Search"]</label>
+    <input id="f-text" type="search" name="text" value="@filter.Text" placeholder="@T["Delivery.SearchIssues"]" dir="auto">
+    <label class="visually-hidden" for="f-project">@T["Delivery.Field.Project"]</label>
+    <select id="f-project" name="projectId">
+        <option value="">@T["Delivery.AllProjects"]</option>
+        @foreach (var item in Model.Projects)
+        {
+            <option value="@item.Id" selected="@(filter.ProjectId == item.Id)">@item.Key · @item.Name</option>
+        }
+    </select>
+    @if (!Model.Mine && people.Count > 0)
+    {
+        <label class="visually-hidden" for="f-assignee">@T["Delivery.Field.Assignee"]</label>
+        <select id="f-assignee" name="assigneeId">
+            <option value="">@T["Delivery.AnyAssignee"]</option>
+            @foreach (var person in people)
+            {
+                <option value="@person.UserId" selected="@(filter.AssigneeId == person.UserId)">@person.DisplayName</option>
+            }
+        </select>
+    }
+    <label class="visually-hidden" for="f-status">@T["Delivery.Field.Status"]</label>
+    <select id="f-status" name="status">
+        <option value="">@T["Delivery.AnyStatus"]</option>
+        @foreach (var status in new[] { "Open", "ToDo", "InProgress", "Done" })
+        {
+            <option value="@status" selected="@(filter.Status == status)">@T["Delivery.Category." + status]</option>
+        }
+    </select>
+    <label class="visually-hidden" for="f-type">@T["Delivery.Field.Type"]</label>
+    <select id="f-type" name="type">
+        <option value="">@T["Delivery.AnyType"]</option>
+        @foreach (var type in DeliveryDisplay.IssueTypes)
+        {
+            <option value="@type" selected="@(filter.Type == type)">@T["Delivery.Type." + type]</option>
+        }
+    </select>
+    <label class="visually-hidden" for="f-priority">@T["Delivery.Field.Priority"]</label>
+    <select id="f-priority" name="priority">
+        <option value="">@T["Delivery.AnyPriority"]</option>
+        @foreach (var priority in DeliveryDisplay.Priorities)
+        {
+            <option value="@priority" selected="@(filter.Priority == priority)">@T["Delivery.Priority." + priority]</option>
+        }
+    </select>
+    <label class="visually-hidden" for="f-label">@T["Delivery.Field.Label"]</label>
+    <input id="f-label" name="label" value="@filter.Label" placeholder="@T["Delivery.Field.Label"]" dir="auto" class="d-input-small">
+    <label class="d-check"><input type="checkbox" name="overdue" value="true" checked="@filter.Overdue"> @T["Delivery.OverdueOnly"]</label>
+    <label class="visually-hidden" for="f-sort">@T["Delivery.Sort"]</label>
+    <select id="f-sort" name="sort">
+        @foreach (var sort in new[] { "updated", "created", "priority", "due", "key" })
+        {
+            <option value="@sort" selected="@((filter.Sort ?? "updated") == sort)">@T["Delivery.SortBy." + sort]</option>
+        }
+    </select>
+    <button type="submit" class="btn btn--small"><partial name="_AdminIcon" model='"funnel"' />@T["Delivery.Filter"]</button>
+    @if (!string.IsNullOrEmpty(currentQuery))
+    {
+        <a class="btn btn--ghost btn--small" asp-action="@(Model.Mine ? "MyWork" : "Issues")">@T["Delivery.ClearFilters"]</a>
+    }
+</form>
+
+<div class="list-tools">
+    <p class="hint" role="status">@string.Format(CultureInfo.CurrentCulture, T["Delivery.ResultCount"].Value, results.TotalCount)</p>
+    <details class="cols" data-columns-chooser data-menu hidden>
+        <summary class="btn btn--small"><partial name="_AdminIcon" model='"columns"' />@T["Delivery.Columns"]</summary>
+        <div class="a-menu cols__menu">
+            @foreach (var (column, label) in columns)
+            {
+                <label class="d-check"><input type="checkbox" data-col-toggle="@column" checked> @T[label]</label>
+            }
+        </div>
+    </details>
+</div>
+
+@if (results.Items.Count == 0)
+{
+    <partial name="_Empty" model='(Model.Mine ? "Delivery.Empty.NoWorkTitle" : "Delivery.Empty.NoMatchTitle", Model.Mine ? "Delivery.Empty.NoWorkText" : "Delivery.Empty.NoMatchText", (string?)null, (string?)null)' />
+}
+else
+{
+    <form method="post" asp-controller="DeliveryPlanning" asp-action="Bulk" data-bulk-form>
+        <input type="hidden" name="returnUrl" value="@returnUrl">
+        <div class="bulk-bar" data-bulk-bar>
+            <span class="bulk-bar__count"><strong data-bulk-count dir="ltr">0</strong> @T["Delivery.Bulk.Selected"]</span>
+            <label class="visually-hidden" for="bulk-action">@T["Delivery.Bulk.Action"]</label>
+            <select id="bulk-action" name="bulkAction" data-bulk-action>
+                <option value="Assign">@T["Delivery.Bulk.Assign"]</option>
+                <option value="Priority">@T["Delivery.Bulk.Priority"]</option>
+                <option value="AddLabel">@T["Delivery.Bulk.AddLabel"]</option>
+                <option value="Delete">@T["Delivery.Bulk.Delete"]</option>
+            </select>
+            <span data-bulk-field="Assign">
+                <label class="visually-hidden" for="bulk-assignee">@T["Delivery.Field.Assignee"]</label>
+                <select id="bulk-assignee" name="assigneeId">
+                    <option value="">@T["Delivery.Unassigned"]</option>
+                    @foreach (var person in people)
+                    {
+                        <option value="@person.UserId">@person.DisplayName</option>
+                    }
+                </select>
+            </span>
+            <span data-bulk-field="Priority">
+                <label class="visually-hidden" for="bulk-priority">@T["Delivery.Field.Priority"]</label>
+                <select id="bulk-priority" name="priority">
+                    @foreach (var priority in DeliveryDisplay.Priorities)
+                    {
+                        <option value="@priority">@T["Delivery.Priority." + priority]</option>
+                    }
+                </select>
+            </span>
+            <span data-bulk-field="AddLabel">
+                <label class="visually-hidden" for="bulk-label">@T["Delivery.Field.Label"]</label>
+                <input id="bulk-label" name="label" maxlength="40" placeholder="@T["Delivery.Field.Label"]" dir="auto">
+            </span>
+            <button type="submit" class="btn btn--primary btn--small" data-bulk-submit data-confirm-delete="@T["Delivery.Bulk.ConfirmDelete"]">@T["Delivery.Bulk.Apply"]</button>
+        </div>
+        <div class="d-table-wrap">
+            <table class="d-table issue-grid" data-columns-table>
+                <thead>
+                    <tr>
+                        <th scope="col" class="issue-grid__check"><input type="checkbox" data-bulk-all hidden aria-label="@T["Delivery.Bulk.SelectAll"]"></th>
+                        <th scope="col" data-col="type"><span class="visually-hidden">@T["Delivery.Field.Type"]</span></th>
+                        <th scope="col">@T["Delivery.Field.Key"]</th>
+                        <th scope="col">@T["Delivery.Field.Title"]</th>
+                        <th scope="col" data-col="status">@T["Delivery.Field.Status"]</th>
+                        <th scope="col" data-col="priority">@T["Delivery.Field.Priority"]</th>
+                        <th scope="col" data-col="assignee">@T["Delivery.Field.Assignee"]</th>
+                        <th scope="col" data-col="due">@T["Delivery.Field.DueDate"]</th>
+                        <th scope="col" data-col="points" class="d-num">@T["Delivery.Field.StoryPointsShort"]</th>
+                        <th scope="col" data-col="project">@T["Delivery.Field.Project"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var issue in results.Items)
+                    {
+                        <tr>
+                            <td class="issue-grid__check"><input type="checkbox" name="issueIds" value="@issue.Id" data-bulk-item aria-label="@T["Delivery.Bulk.Select"] @issue.Key"></td>
+                            <td data-col="type"><partial name="_IssueTypeBadge" model="issue.Type" /></td>
+                            <td class="d-nowrap"><a class="d-key" dir="ltr" asp-action="Issue" asp-route-id="@issue.Id">@issue.Key</a></td>
+                            <td><a class="d-title" asp-action="Issue" asp-route-id="@issue.Id" dir="auto">@issue.Title</a>
+                                @foreach (var label in issue.Labels)
+                                {
+                                    <span class="d-label" dir="auto">@label</span>
+                                }
+                                @if (issue.EpicKey is not null)
+                                {
+                                    <span class="d-epic" dir="auto">@issue.EpicTitle</span>
+                                }
+                            </td>
+                            <td data-col="status"><partial name="_StatusPill" model="issue" /></td>
+                            <td data-col="priority"><partial name="_Priority" model="issue.Priority" /></td>
+                            <td data-col="assignee" class="d-nowrap"><partial name="_Avatar" model="(issue.AssigneeId, issue.AssigneeName)" /> <span dir="auto">@(issue.AssigneeName ?? T["Delivery.Unassigned"])</span></td>
+                            <td data-col="due" class="d-nowrap @(issue.IsOverdue ? "d-overdue" : null)">
+                                @if (issue.DueDate is { } due)
+                                {
+                                    <time datetime="@DeliveryFormat.Iso(due)">@DeliveryFormat.Day(due)</time>
+                                    @if (issue.IsOverdue)
+                                    {
+                                        <span class="visually-hidden">@T["Delivery.Overdue"]</span>
+                                    }
+                                }
+                            </td>
+                            <td data-col="points" class="d-num" dir="ltr">@issue.StoryPoints</td>
+                            <td data-col="project"><span class="d-key" dir="ltr">@issue.ProjectKey</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </form>
+}
+@if (pages > 1)
+{
+    <nav class="d-pager" aria-label="@T["Delivery.Pages"]">
+        @for (var pageNumber = 1; pageNumber <= pages; pageNumber++)
+        {
+            if (pageNumber == results.Page)
+            {
+                <span aria-current="page">@pageNumber</span>
+            }
+            else
+            {
+                <a asp-action="@(Model.Mine ? "MyWork" : "Issues")" asp-route-page="@pageNumber" asp-route-projectId="@filter.ProjectId" asp-route-status="@filter.Status"
+                   asp-route-type="@filter.Type" asp-route-priority="@filter.Priority" asp-route-label="@filter.Label" asp-route-text="@filter.Text"
+                   asp-route-overdue="@(filter.Overdue ? "true" : null)" asp-route-sort="@filter.Sort" asp-route-epicId="@filter.EpicId" asp-route-assigneeId="@filter.AssigneeId">@pageNumber</a>
+            }
+        }
+    </nav>
+}

@@ -1,0 +1,9 @@
+@* One-time messages after a redirect (saved, cancelled, …) and API errors on redirects. *@
+@if (TempData[Onyx.Web.Customers.CustomerPageController.NoticeKey] is string notice)
+{
+    <p class="customer-notice" role="status">@T[notice]</p>
+}
+@if (TempData["onyx.customer.error"] is string error)
+{
+    <p class="customer-notice customer-notice--error" role="alert">@error</p>
+}

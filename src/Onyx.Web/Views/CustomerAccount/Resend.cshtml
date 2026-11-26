@@ -1,0 +1,21 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model EmailForm
+<section class="customer-auth">
+    <h1>@T["Customer.Resend.Title"]</h1>
+    <p>@T["Customer.Resend.Intro"]</p>
+    <form method="post" action="@Routes.PathFor(CustomerPages.VerifyEmail, lang, "resend")" asp-antiforgery="true" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <input type="hidden" asp-for="ReturnUrl">
+        <p>
+            <label asp-for="Email">@T["Form.Email"]</label>
+            <input asp-for="Email" type="email" autocomplete="email" dir="ltr" required maxlength="254">
+            <span asp-validation-for="Email"></span>
+        </p>
+        <partial name="_CustomerSubmit" model='(CustomerPages.RecoveryCaptchaAction, "Customer.Resend.Submit")' />
+    </form>
+</section>

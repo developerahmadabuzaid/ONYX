@@ -6,6 +6,7 @@ If a request conflicts with these rules, stop and raise the conflict instead of 
 > **Project status:** Architecture revision 4 (owner decisions of 2026-10-03). Implementation follows `docs/implementation-plan.md` **stage by stage**.
 > **Review checkpoints:** stop after **every** stage for owner review unless the owner explicitly authorizes several. Never start a stage the owner has not approved.
 > **Backend first:** backend, infrastructure, admin capabilities, integrations and core functionality come before any public UI/visual design. Stage 5 (design system + design approval) is deferred until after Stage 12. Until then, public pages are functional, unstyled semantic templates only. **Never implement public visual design before the owner approves it** (`docs/implementation-plan.md`).
+> **Current priority (2026-10-13):** the Admin area and the CMS-rendered public pages have been brought onto the shared design system (`tokens.css`, §16), and the public site has been re-skinned. Admin behaviour and CMS management are functionally complete; further work follows the open items in §29.
 > Full design: `docs/architecture.md`. Items marked **[OPEN]** there (§29) are content, credential or legal inputs. Ask about them; never guess them.
 >
 > **Phase 1 (launch) scope** includes the bilingual CMS site, Work, industries, insights, booking, leads + email, consent, retention, search, notifications, audit, the Worker, **the News Hub, and the Admin Analytics & Marketing dashboard (GA4 + Search Console)**. Phase 2: tools + AI Content Engine. Phase 3: AI Advisor, ad platforms, market pages (`docs/architecture.md` §28).
@@ -14,8 +15,9 @@ If a request conflicts with these rules, stop and raise the conflict instead of 
 
 ## 1. Product and positioning
 
-- **Onyx Vanguard Solutions** is a regional GCC technology company. **Saudi Arabia is the primary commercial and SEO market.** Jordan has an operating presence. UAE, Qatar, Kuwait, Bahrain and Oman are future markets.
-- Public offices: **Riyadh, Granada District (KSA)** and **Amman (Jordan)** only. Never imply any other office.
+- **Onyx Vanguard Solutions (brand: ONYX)** is a professional technology company with a broad corporate identity. Its general marketing and SEO copy is **not positioned around a country or region**: do not repeatedly target or mention Saudi Arabia, the GCC, the Gulf or any other geography in marketing copy, headings, CTAs, SEO titles or descriptions, and do not replace them with another region. (Owner decision of 2026-10-10.)
+- Public offices: **Riyadh, Granada District (KSA)** and **Amman (Jordan)** only. Never imply any other office. These verified locations stay in the footer, contact information and the About page's office details; legal text may name them where legally relevant.
+- **Branding:** always "ONYX" / "Onyx Vanguard Solutions" ("أونيكس" in Arabic copy). **Never use "ONYX LIFE".** Use only the official logo supplied by the owner; never generate a substitute.
 - Audience: SMEs, mid-market and enterprise. Never position Onyx exclusively for one segment.
 - **Five integrated pillars:** Software & IT · AI Solutions · Automation · Cybersecurity · Digital Growth & Creative. One connected offering, never five unrelated businesses.
 - **Core message:** Onyx understands the business, its processes and its problems first, then designs technology around it. Onyx works across industries and never implies a closed industry list.
@@ -45,14 +47,22 @@ clients, logos, testimonials, reviews, case studies, statistics, outcomes, metri
 - Claim an integration only when it is delivered or supported and verified. Never describe tool or platform functionality that doesn't exist.
 
 ### 2.4 Pricing and conversion
-- **No public pricing:** no fixed prices, packages, "starting from" or SEO prices, unless the owner explicitly approves it later.
+- **No public pricing for services:** no fixed prices, packages, "starting from" or SEO prices for services.
+- **SaaS product plans (owner decision 2026-10-27):** a plan's price may be shown publicly only when an admin enters a real price and marks it public. Prices are never seeded, guessed or shown as placeholders.
 - Conversion actions: Start a Project · Book a Consultation · Request Consultation · Contact / Talk to Onyx · Analyze Your Website · Check Your Security Posture · Discover AI/Automation Opportunities. (No WhatsApp at launch.)
 
 ### 2.5 SEO integrity
 - **No doorway or thin pages.** No country, city or industry page without genuinely differentiated, useful content. Market pages need real local content. Industry pages are indexable only when they meet the content minimum (§9 below). There are no service × industry × city combination pages.
 - Structured-data addresses: Riyadh (Granada District) and Amman only. `areaServed` may list served countries.
 
-### 2.6 Honest claims
+### 2.6 Copy quality and editorial standards
+- Website copy is professional, natural, persuasive and **customer-focused**: explain what the client gains, not only what is built. Avoid robotic phrasing, empty buzzwords ("cutting-edge", "advanced solutions", "digital transformation" as filler), repeated introductions and needless repetition of the brand name.
+- **Arabic and English are equally polished.** Arabic is clear, natural Modern Standard Arabic for business owners and executives (no slang, no literal translation); English is written independently, not translated word for word.
+- Technical expertise stays visible (services, offerings, technologies, methods) but is explained through business value, so non-technical visitors are not overwhelmed.
+- **Preserve content depth, service coverage and SEO quality.** Editorial work refines language; it never deletes services, sub-services, anchors or useful detail to make pages shorter.
+- Content should be manageable through the CMS wherever appropriate (see §9 "Site pages").
+
+### 2.7 Honest claims
 - Never say "unhackable", "fully secure" or "guaranteed", and never promise business results.
 - Tools give observations and recommendations. No fake precision, no fabricated finding counts.
 - **Never fabricate SEO metrics** (search volume, keyword difficulty, ranking probability, traffic forecasts). Quantitative metrics are shown only from an integrated real source, with that source and the date stated.
@@ -86,7 +96,8 @@ OnyxWebsite/
 │   ├── Onyx.Infrastructure/    # EF Core, Identity, repositories, interceptors, provider adapters, SafeOutboundHttp, engines.
 │   ├── Onyx.API/               # REST controllers, auth, rate limiting, Turnstile verification, OpenAPI, composition root.
 │   ├── Onyx.Web/               # Public site (/ar, /en) + Admin CMS area. HTTPS REST to Onyx.API only.
-│   └── Onyx.Worker/            # Phase 1 background host: outbox, email, scheduling, news, AI drafting, sync, retention, tools.
+│   ├── Onyx.Worker/            # Phase 1 background host: outbox, email, scheduling, news, AI drafting, sync, retention, tools.
+│   └── Onyx.Host/              # The single deployable app: runs Onyx.Web publicly and Onyx.API on loopback in one process (+ optional Worker jobs).
 ├── tests/  Onyx.Domain.Tests · Onyx.Application.Tests · Onyx.API.IntegrationTests · Onyx.Web.Tests · Onyx.ArchitectureTests
 └── docs/   architecture.md · product-research/ (internal)
 ```
@@ -102,11 +113,12 @@ OnyxWebsite/
 | Onyx.API | Application, Contracts, Infrastructure (**composition root only**) | Web, Worker |
 | Onyx.Worker | Application, Infrastructure (**composition root only**) | API, Web |
 | Onyx.Web | Contracts | Domain, Application, Infrastructure, API, Worker; EF Core; any database driver (Npgsql) |
+| Onyx.Host | API, Web (**composition only**) | — and nothing may reference Onyx.Host |
 
 - **Onyx.Web never touches the database.** The same applies to the Admin area.
 - Flow: `Controller → Application service → Repository interface → Repository implementation → DbContext → PostgreSQL`. Controllers never use DbContext or repositories.
 - Domain entities never cross the API boundary. All API I/O uses DTOs from Onyx.Contracts.
-- One modular monolith, two backend hosts (API, Worker). **No microservices.**
+- One modular monolith. **Deployment (owner decision 2026-11-16): one application** — `Onyx.Host` starts the API as an internal server on a loopback port (never public, no IIS integration) and the website as the public app in the same process; the website still reaches the API only through its typed HTTP clients, so every boundary above still holds. The Worker's jobs run inside it when `Host:RunWorker` is true, or as the separate Onyx.Worker host. Onyx.API and Onyx.Web remain runnable on their own for development and tests. **No microservices.**
 - Web and API requests never run long news, AI, integration or tool work synchronously. That work goes to Worker.
 
 ## 6. Layer responsibilities and conventions
@@ -165,6 +177,8 @@ OnyxWebsite/
 
 ## 9. Content systems
 
+- **Site pages (homepage, services, company and legal pages)** are code-owned in Onyx.Web (`SiteContent/*.json` + `SharedResource` resx) and own exact localized paths; every other path resolves through the CMS. Editors change them through the Admin **site content** module, which stores **published overrides** (`SiteContentDocument`, draft → publish, revisions) in the API database. The public site overlays published overrides on the code-owned content at render time: only text, visibility, order, selected images and SEO fields are overridable — **never paths, structure, anchors or link targets** — so routes, hreflang, sitemaps and structured data stay intact, and the code-owned content remains the fallback when the API is unavailable. Do not create a second source of truth.
+
 - **Industries:** broad, extensible taxonomy (`TaxonomyOnly` vs `Published`). An industry page is published and indexable only once it meets the content minimum (context, problems, Onyx approach, relevant services/use cases).
 - **AI Content Engine (Admin):** scheduled research → opportunity → proposal with reasoning → native Arabic draft + native English draft (not translations) → Pending Review → human edit/approve/reject/schedule → publish. **Never auto-publish AI-generated Onyx articles.** Proposals show reasoning, market, keywords, intent, pillar/service, title, slug, meta, internal links, brief and sources. Metrics only from integrated sources, with provenance.
 - **News Hub (public):** allowlisted sources → normalize → dedupe → classify → original concise summaries (ar/en) → attribution → auto-publish allowed for allowlisted sources.
@@ -206,7 +220,8 @@ OnyxWebsite/
 
 ## 12. Authentication, authorization, notifications
 
-- Identity in the API (hashing, lockout, email confirmation, TOTP 2FA mandatory for privileged roles). No public registration.
+- Identity in the API (hashing, lockout, email confirmation, TOTP 2FA mandatory for privileged roles). **No public staff registration:** staff accounts are invited or bootstrapped only.
+- **Customer accounts (owner decision 2026-10-27)** are a separate, isolated identity (`docs/architecture.md` §24.8): their own table, opaque server-side sessions, their own authentication scheme in both apps and their own cookie (`__Host-onyx.customer`). Public sign-up requires Turnstile, rate limits, versioned terms consent and email verification before sign-in. A customer can never hold a role or permission, reach `/admin` or any `api/v1/admin/*` endpoint, and staff tokens are never accepted on customer endpoints. Customer 2FA is optional.
   - **Privileged (2FA mandatory):** SuperAdmin, or anyone holding `Users.Manage`, `Roles.Manage`, `ProviderConnections.Manage`, `Privacy.Manage` or `Leads.Export`; or everyone if `IdentitySecurity:RequireTwoFactorForAllUsers` is set.
   - **Secure default:** every API endpoint requires authentication unless it explicitly declares `[AllowAnonymous]`. Admins can never grant or act on permissions they don't hold.
 - Short-lived JWT access tokens + rotating, hashed, revocable refresh tokens with reuse detection.
@@ -246,12 +261,23 @@ OnyxWebsite/
 
 - Production requires automated PostgreSQL backups (base backups + continuous WAL archiving for point-in-time recovery, plus periodic `pg_dump`), separate media/file backups, a secret-store recovery procedure, a Data Protection key ring backup, defined retention, **periodic restore tests** and a written recovery runbook (RPO/RTO). The implementation is finalized for the chosen host. No provider-specific backup code in the application.
 
-## 16. Design direction (design phase later; nothing designed yet)
+## 16. Design direction
 
-- **White-first**, premium, elegant, minimal, spacious; black/near-black typography; restrained neutrals; little or no accent color.
-- The real Onyx logo is the primary brand reference (geometric lowercase "onyx", faceted stone inside the "o"). The **Onyx stone is a restrained signature** (hero, subtle facet geometry, select transitions and interactions), **not repeated in every section**.
-- Avoid clutter, heavy gradients, "AI startup" visuals, robots, glowing brains, AI faces, cards everywhere and excessive animation.
-- Arabic typography and RTL quality are critical. WCAG 2.2 AA. LCP < 2.5s, INP < 200ms, CLS < 0.1. 3D/motion is lazy-loaded with static fallbacks and `prefers-reduced-motion` support.
+**Bright, light-themed, colourful — "Luminous Onyx".** This section describes the shipped system (`src/Onyx.Web/wwwroot/css/tokens.css`), approved by the owner on 2026-10-13.
+
+- **Canvas:** white, with cool tints (`--paper-2`, `--paper-3`) and one warm tint (`--paper-warm`) to separate sections and create depth. Never one flat white page.
+- **Type:** near-black cool ink (`--ink` #0b1320), `--muted` for secondary text. Self-hosted Geist (Latin) + Readex Pro (Arabic) as one family via `unicode-range`. No external font or CDN request (CSP `font-src 'self'`).
+- **Accents:** teal (`#0fb5a8`) is the brand primary; bright sky blue, soft violet/lilac, coral pink, sunny yellow and fresh green support it (owner direction 2026-10-14: energetic and optimistic, never flat). Colour is used deliberately, not decoratively: repeating sets (process steps, icons, chips, card edges) cycle the palette in DOM order, the five pillars each own a colour (`.pillar--*`), and state colour is reserved for publication state and validation. Section surfaces alternate white with cool, sky, warm and rainbow washes so the page breathes.
+- **Contrast discipline (WCAG 2.2 AA is a hard requirement).** The vivid steps (`--teal`, `--sky`, `--green`, `--amber`, `--violet`, `--rose`) are **graphics only** — fills, borders, icon discs, tints, decorative shapes. They sit below 4.5:1 on white and must never carry text. Anything with text uses the `-2`/`-3` step (`--teal-2` #0a7d76, `--sky-3` #155ea6, `--amber-2` #92400e, …). `--grad-cta` is contrast-checked across its whole ramp (white label, worst point 6.6:1). Focus rings use `--teal-2`, never `--teal`. **When a new colour is added, its contrast must be measured, not assumed.**
+- **Components:** modern cards (layered soft shadows, rounded corners, hairline borders), pill buttons with a directional hover sweep, badges and status pills, skeletons, empty states. Gradients are used selectively (hero, CTA, primary button) — never on every surface.
+- **The Onyx stone is a restrained signature** (hero only, `onyx-stone.js`, with a static `.webp` fallback for no-JS, reduced motion and slow devices), **not repeated in every section**.
+- **Motion:** subtle. Reveal-on-scroll via `IntersectionObserver`, short transitions, `prefers-reduced-motion` honoured globally. No `filter: blur()` on large elements (it works against the INP/LCP budget).
+- **RTL is non-negotiable:** CSS logical properties only, never `left`/`right` for anything that mirrors; `--start`/`--flip` drive direction-aware sweeps and arrows. Logos, media controls and numbers are never mirrored.
+- **Accessibility:** WCAG 2.2 AA, visible focus on every interactive element, accessible controls, `forced-colors` support.
+- **Performance:** LCP < 2.5s, INP < 200ms, CLS < 0.1. Self-hosted assets only. No frontend build step, no npm, no CSS framework — `tokens.css` + `site.css` + `admin.css` are hand-written and served directly, which is also what keeps CSP at `'self'`.
+- **Single source of truth:** all colour, spacing, radius, shadow and motion tokens live in `tokens.css`, linked by both the public site and the Admin, so the palette is changed in one place. Component styles never redefine a token.
+- **Admin dark theme (owner decision 2026-11-25).** The Admin only (never the public site) may switch to a dark theme: the dark token values live in `tokens.css` under `html[data-surface="admin"]` (explicit `data-theme="dark"`, or the device setting when the choice is `system`). Every dark text/surface pair was measured (lowest 6.5:1). White text sits only on the `--solid-*` fills or `--grad-cta`, which stay deep in both themes.
+- **Charts (owner decision 2026-11-25):** server-rendered SVG (`Areas/Admin/Charts`), no chart library; labels are HTML, every chart has a data-table fallback, and only real counts are drawn.
 
 ## 17. Coding standards
 

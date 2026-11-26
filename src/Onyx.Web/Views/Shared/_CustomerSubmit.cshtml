@@ -1,0 +1,7 @@
+@model (string Action, string LabelKey)
+@* Customer forms: the Turnstile challenge when configured (always in production), then the submit button. The API verifies. *@
+@if (ViewData["TurnstileSiteKey"] is string)
+{
+    <partial name="_Turnstile" model="Model.Action" />
+}
+<p><button class="button button--primary" type="submit">@T[Model.LabelKey]</button></p>

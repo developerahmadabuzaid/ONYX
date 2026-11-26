@@ -36,7 +36,7 @@ public sealed class SearchSignalsTests(PostgresFixture fixture) : AnalyticsApiTe
         Assert.Equal(("/en/declining-sample", 10d, 30d), (declining.Label, declining.Values[0]!.Value, declining.Values[1]!.Value));
         Assert.Equal(["near first page sample"], Section(signals, "signalQueryOpportunities").Rows.Select(row => row.Label));
         Assert.Empty(Section(signals, "signalClicksImproving").Rows);
-        Assert.Equal(["/ar/من-نحن", "/en/about-us"], Section(signals, "signalNoVisibility").Rows.Select(row => row.Label));
+        Assert.Equal(["/ar/صفحة-تعريفية", "/en/about-us"], Section(signals, "signalNoVisibility").Rows.Select(row => row.Label));
         Assert.Contains("Analytics.Note.Signals", signals.Notes);
     }
 }

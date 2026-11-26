@@ -1,0 +1,220 @@
+{
+  "key": "services.security",
+  "parent": "services",
+  "type": "service",
+  "icon": "shield",
+  "pillar": "cybersecurity",
+  "related": ["services.cloud", "services.software", "services.ai", "services.ai-agents", "how-we-work"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/الأمن-السيبراني",
+      "nav": "الأمن السيبراني والحماية الرقمية",
+      "title": "خدمات الأمن السيبراني وتقييم الثغرات واختبار الاختراق",
+      "description": "خدمات أمن سيبراني تحمي أنظمتك وبياناتك: استشارات وتقييمات أمنية، تقييم الثغرات، اختبار اختراق بتفويض، حماية التطبيقات والسحابة، وإدارة الهوية والصلاحيات — بما في ذلك ضوابط خاصة بحماية وكلاء الذكاء الاصطناعي وخدماتهم المُدارة.",
+      "eyebrow": "الأمن السيبراني والحماية الرقمية",
+      "h1": "حماية لأنظمتك وبياناتك تدعم استمرارية أعمالك",
+      "lead": "نساعدك على حماية أنظمتك وبياناتك وتقليل المخاطر الرقمية، من خلال حلول أمنية تدعم استمرارية أعمالك وتحافظ على موثوقية بيئتك التقنية. نُطبّق أيضاً ضوابط خاصة بحماية وكلاء الذكاء الاصطناعي: حدود الصلاحيات، تدقيق الإجراءات، حماية البيانات الحساسة من الوصول غير المقصود. ولا نُجري أي اختبار إلا بتفويض مكتوب منك ونطاق متفق عليه.",
+      "summary": "تقييم الثغرات واختبار الاختراق المصرّح به، حماية التطبيقات والسحابة، ضوابط أمن الوكلاء، وإدارة الهوية والصلاحيات.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "الأمن عمل مستمر، لا إجراء لمرة واحدة",
+          "paragraphs": [
+            "لا يوجد نظام آمن بالكامل، ولا يستطيع أحد أن يضمن ذلك بصدق. ما يمكن فعله هو تقليل المخاطر بشكل منظم: أن تعرف ما لديك وأين نقاط ضعفه، وأن تعالج الأهم أولاً، وأن تبني أكثر من طبقة حماية، وأن تكون مستعداً للتصرف إذا وقع حادث.",
+            "نجمع بين الخبرة في بناء الأنظمة والخبرة في حمايتها، فنعرف كيف تُبنى التطبيقات وكيف يحاول المهاجمون استغلالها. لهذا تأتي توصياتنا عملية وقابلة للتنفيذ داخل أنظمتك الفعلية، لا قوائم عامة."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "assess",
+          "eyebrow": "التقييم",
+          "heading": "فهم المخاطر قبل معالجتها",
+          "items": [
+            { "id": "consulting", "title": "استشارات الأمن السيبراني", "text": "نساعد الإدارة والفرق التقنية على تحديد الأولويات الأمنية، ووضع خطة واقعية تناسب حجم شركتك وطبيعة مخاطرها.", "points": ["تقييم الوضع الأمني الحالي", "خطة مرتبة حسب الأولوية", "مراجعة السياسات والإجراءات"] },
+            { "id": "security-assessments", "title": "التقييمات الأمنية", "text": "مراجعة شاملة لإعدادات أنظمتك وتطبيقاتك وبنيتك التحتية مقارنة بأفضل الممارسات، مع تقرير واضح بالملاحظات والتوصيات.", "points": ["مراجعة الإعدادات والضوابط", "تحديد الفجوات وأثرها", "توصيات قابلة للتنفيذ"] },
+            { "id": "vulnerability-assessments", "title": "تقييم الثغرات", "text": "فحص منظم للأنظمة والتطبيقات المتفق عليها لاكتشاف الثغرات المعروفة وتقدير خطورتها، بعد الحصول على تفويضك.", "points": ["فحص ضمن نطاق مصرّح به", "تصنيف الثغرات حسب خطورتها", "إرشادات واضحة للمعالجة"] },
+            { "id": "penetration-testing", "title": "اختبار الاختراق المصرّح به", "text": "محاكاة مضبوطة لأساليب المهاجمين على أنظمة محددة، لمعرفة ما يمكن أن يصل إليه مهاجم حقيقي. لا يتم إلا بتفويض مكتوب ونطاق وقواعد متفق عليها مسبقاً.", "points": ["تفويض مكتوب ونطاق محدد قبل البدء", "تنفيذ مضبوط يقلل التأثير على العمل", "تقرير بالنتائج وإعادة اختبار بعد المعالجة"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "protect",
+          "eyebrow": "الحماية",
+          "heading": "حماية التطبيقات والبنية التحتية",
+          "items": [
+            { "id": "web-application-security", "title": "أمن تطبيقات الويب", "text": "نراجع تطبيقاتك ضد الثغرات الشائعة مثل حقن الشيفرات وضعف التحقق من الهوية وثغرات الصلاحيات، ونعالجها في الشيفرة نفسها.", "points": ["مراجعة أمنية للشيفرة والإعدادات", "اختبار تسجيل الدخول والصلاحيات", "حماية الجلسات والبيانات"] },
+            { "id": "api-security", "title": "أمن الواجهات البرمجية", "text": "نتأكد من أن واجهاتك البرمجية لا تعطي أي مستخدم أكثر مما يحق له، وتتحقق من البيانات المرسلة إليها، وتحد من إساءة استخدامها.", "points": ["تحقق من الصلاحية في كل طلب", "التحقق من البيانات الداخلة والخارجة", "تحديد عدد الطلبات المسموح بها"] },
+            { "id": "cloud-security", "title": "أمن السحابة", "text": "نراجع إعدادات بيئتك السحابية وصلاحياتها ونعززها: الهوية، والشبكات، والتخزين، والتسجيل والمراقبة.", "points": ["مراجعة الصلاحيات والهوية", "عزل الشبكات والموارد", "تفعيل السجلات والتنبيهات"] },
+            { "id": "network-security", "title": "أمن الشبكات", "text": "نراجع تقسيم شبكتك وجدران الحماية وطرق الوصول عن بُعد، ونقلل الخدمات المكشوفة على الإنترنت.", "points": ["تقسيم الشبكات", "مراجعة قواعد جدران الحماية", "تأمين الوصول عن بُعد"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "architecture",
+          "eyebrow": "البنية",
+          "heading": "حماية مدمجة في التصميم",
+          "items": [
+            { "id": "security-architecture", "title": "تصميم البنية الأمنية", "text": "نُدخل الأمن في تصميم أنظمتك من البداية: تحليل التهديدات المحتملة، وطبقات الحماية، والفصل بين المكونات، وحفظ البيانات الحساسة بأمان.", "points": ["تحليل التهديدات", "حماية متعددة الطبقات", "قرارات أمنية موثقة"] },
+            { "id": "iam", "title": "إدارة الهوية والصلاحيات", "text": "نصمم طريقة تسجيل الدخول وتوزيع الصلاحيات بحيث يحصل كل مستخدم على ما يحتاجه فقط، مع التحقق متعدد العوامل ومراجعة دورية للصلاحيات.", "points": ["أقل صلاحية ممكنة لكل مستخدم", "التحقق متعدد العوامل", "مراجعة دورية للحسابات"] },
+            { "id": "data-protection", "title": "حماية البيانات", "text": "نصنّف بياناتك الحساسة ونحميها بالتشفير وضوابط الوصول وسياسات واضحة للاحتفاظ والحذف.", "points": ["تصنيف البيانات", "التشفير أثناء النقل والتخزين", "سياسات الاحتفاظ والحذف"] },
+            { "id": "hardening", "title": "التقوية الأمنية", "text": "نقلل نقاط الضعف في الخوادم والتطبيقات وقواعد البيانات: نوقف ما لا حاجة إليه، ونحدّث المكونات، ونطبّق إعدادات آمنة.", "points": ["إعدادات آمنة افتراضياً", "إدارة التحديثات", "إيقاف الخدمات غير الضرورية"] },
+            { "id": "agent-security", "title": "ضوابط أمن وكلاء الذكاء الاصطناعي", "text": "نُطبّق ضوابط خاصة بحماية عمل وكلاء الذكاء الاصطناعي داخل أنظمتك: حدود الصلاحيات لكل وكيل، سجل تدقيق لكل إجراء، حماية البيانات الحساسة من الوصول غير المقصود، ومراجعة دورية للضوابط.", "points": ["حدود صلاحيات لكل وكيل", "سجل تدقيق لكل إجراء", "حماية البيانات الحساسة", "مراجعة دورية للضوابط"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "detect-recover",
+          "eyebrow": "الرصد والتعافي",
+          "heading": "الرصد والاستجابة والتعافي",
+          "items": [
+            { "id": "security-monitoring", "title": "المراقبة الأمنية", "text": "نجمع السجلات الأمنية المهمة ونحللها، ونضبط تنبيهات للأنشطة المشبوهة في أنظمتك وبنيتك التحتية.", "points": ["جمع السجلات وتحليلها", "تنبيهات للأنشطة غير المعتادة", "مراجعة دورية للأحداث"] },
+            { "id": "incident-response", "title": "الاستعداد للحوادث الأمنية", "text": "نعدّ معك خطة واضحة لما يحدث عند وقوع حادث أمني: من يفعل ماذا، وكيف يُحتوى الحادث، وكيف يتم التواصل والتعافي، وما الدروس المستفادة.", "points": ["أدوار ومسؤوليات محددة", "إجراءات احتواء وتعافٍ", "تمارين على الخطة"] },
+            { "id": "backup-security", "title": "حماية النسخ الاحتياطية", "text": "نحمي نسخك الاحتياطية من الحذف أو التشفير الخبيث، ونفصلها عن البيئة الأساسية، ونختبر استعادتها بانتظام.", "points": ["نسخ معزولة ومحمية", "اختبار دوري للاستعادة", "صلاحيات صارمة للوصول إلى النسخ"] }
+          ]
+        },
+        {
+          "kind": "callout",
+          "id": "authorization",
+          "heading": "لا اختبار دون تفويض",
+          "paragraphs": [
+            "لا نفحص أو نختبر أي نظام دون تفويض مكتوب من مالكه، ونطاق محدد، وقواعد واضحة للتنفيذ. ولا نختبر أنظمة جهات أخرى، ولا نتجاوز النطاق المتفق عليه.",
+            "تعرض تقاريرنا الملاحظات والمخاطر والتوصيات كما وجدناها ضمن نطاق التقييم ووقته، ولا تعني أن النظام آمن بالكامل أو خالٍ من الثغرات."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "منهجيتنا",
+          "heading": "كيف ننفّذ التقييمات الأمنية",
+          "items": [
+            { "title": "النطاق والتفويض", "text": "نتفق على الأنظمة المشمولة وحدود الاختبار وتوقيته وجهات التواصل، ونستلم التفويض المكتوب." },
+            { "title": "التقييم", "text": "ننفّذ المراجعة أو الفحص أو الاختبار وفق المنهجية المتفق عليها، ونوثّق كل ملاحظة." },
+            { "title": "التقرير", "text": "نسلّمك تقريراً مرتباً حسب الخطورة، فيه ملخص للإدارة وتفاصيل فنية لفريقك." },
+            { "title": "المعالجة", "text": "نساعد فريقك على معالجة الملاحظات، أو نتولى المعالجة إن كانت ضمن نطاق عملنا." },
+            { "title": "التحقق", "text": "نعيد اختبار ما تمت معالجته للتأكد من إغلاقه." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "deliverables",
+          "eyebrow": "المخرجات",
+          "heading": "ما تحصل عليه من التقييم",
+          "items": [
+            { "title": "ملخص للإدارة", "text": "صورة واضحة لأهم المخاطر وأثرها على عملك." },
+            { "title": "تفاصيل فنية", "text": "وصف كل ملاحظة، وموضعها، وطريقة التحقق منها." },
+            { "title": "تصنيف الخطورة", "text": "ترتيب الملاحظات لتعرف بماذا تبدأ." },
+            { "title": "توصيات المعالجة", "text": "خطوات عملية لمعالجة كل ملاحظة." }
+          ]
+        }
+      ],
+      "ctaTitle": "تريد أن تعرف مستوى الأمان في أنظمتك؟",
+      "ctaText": "حدّثنا عن أنظمتك وما يقلقك أمنياً، وسنقترح نطاق التقييم المناسب ونوضح لك متطلبات التفويض."
+    },
+    "en": {
+      "path": "services/cybersecurity",
+      "nav": "Cybersecurity & Digital Protection",
+      "title": "Cybersecurity, Vulnerability Assessment and Pen Testing",
+      "description": "Cybersecurity services that protect your systems and data: consulting, vulnerability assessment, authorized pen testing, application and cloud security, identity and access — with controls for AI agents and AaaS.",
+      "eyebrow": "Cybersecurity & Digital Protection",
+      "h1": "Protect your systems and data, and keep your business running",
+      "lead": "We help you protect your systems and data and reduce digital risk, with security services that support business continuity and keep your technology environment trustworthy. We also apply dedicated controls for AI agents: scope of permissions, action auditing and protection of sensitive data from unintended access. We never test anything without your written authorization and an agreed scope.",
+      "summary": "Vulnerability assessment and authorized penetration testing, application and cloud security, agent security controls, identity and access.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "Security is ongoing work, not a one-off task",
+          "paragraphs": [
+            "No system is completely secure, and no one can honestly guarantee that one is. What you can do is reduce risk in an organized way: know what you have and where it's weak, fix what matters most first, build more than one layer of protection, and be ready to act if an incident happens.",
+            "We combine experience in building systems with experience in protecting them — we know how applications are built and how attackers try to exploit them. That keeps our recommendations practical and actionable inside your real systems, rather than generic checklists."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "assess",
+          "eyebrow": "Assess",
+          "heading": "Understanding the risk before you treat it",
+          "items": [
+            { "id": "consulting", "title": "Cybersecurity consulting", "text": "We help management and technical teams set security priorities and a realistic plan that fits your company's size and the risks it faces.", "points": ["Current security posture assessment", "A plan ordered by priority", "Policy and procedure review"] },
+            { "id": "security-assessments", "title": "Security assessments", "text": "A thorough review of how your systems, applications and infrastructure are configured against good practice, with a clear report of findings and recommendations.", "points": ["Configuration and control review", "Gaps and their impact", "Actionable recommendations"] },
+            { "id": "vulnerability-assessments", "title": "Vulnerability assessments", "text": "Organized scanning of the agreed systems and applications to find known vulnerabilities and rate how serious they are, once you've given authorization.", "points": ["Scanning within an authorized scope", "Vulnerabilities rated by severity", "Clear remediation guidance"] },
+            { "id": "penetration-testing", "title": "Authorized penetration testing", "text": "A controlled simulation of attacker techniques against defined systems, to see what a real attacker could reach. It only happens with written authorization and a scope and rules agreed in advance.", "points": ["Written authorization and defined scope first", "Controlled testing that limits business impact", "Findings report and retest after fixes"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "protect",
+          "eyebrow": "Protect",
+          "heading": "Protecting applications and infrastructure",
+          "items": [
+            { "id": "web-application-security", "title": "Web application security", "text": "We check your applications for common weaknesses such as injection, weak authentication and broken access control, and fix them in the code itself.", "points": ["Security review of code and configuration", "Login and permission testing", "Session and data protection"] },
+            { "id": "api-security", "title": "API security", "text": "We make sure your APIs never give anyone more than they're entitled to, check the data sent to them and limit abuse.", "points": ["Permission checks on every request", "Validation of data in and out", "Limits on request volume"] },
+            { "id": "cloud-security", "title": "Cloud security", "text": "We review and strengthen your cloud environment's settings and permissions: identity, networking, storage, logging and monitoring.", "points": ["Identity and permission review", "Network and resource isolation", "Logging and alerts switched on"] },
+            { "id": "network-security", "title": "Network security", "text": "We review how your network is segmented, your firewalls and remote access, and reduce the services exposed to the internet.", "points": ["Network segmentation", "Firewall rule review", "Secure remote access"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "architecture",
+          "eyebrow": "Architecture",
+          "heading": "Protection built into the design",
+          "items": [
+            { "id": "security-architecture", "title": "Security architecture", "text": "We build security into your systems from the start: analyzing likely threats, layering protection, separating components and storing sensitive data safely.", "points": ["Threat analysis", "Defense in depth", "Documented security decisions"] },
+            { "id": "iam", "title": "Identity and access management", "text": "We design how people sign in and how permissions are granted, so each user gets only what they need — with multi-factor authentication and regular access reviews.", "points": ["Least privilege for every user", "Multi-factor authentication", "Regular account reviews"] },
+            { "id": "data-protection", "title": "Data protection", "text": "We classify your sensitive data and protect it with encryption, access controls and clear retention and deletion policies.", "points": ["Data classification", "Encryption in transit and at rest", "Retention and deletion policies"] },
+            { "id": "hardening", "title": "Security hardening", "text": "We reduce weak points in servers, applications and databases: switching off what isn't needed, keeping components updated and applying secure settings.", "points": ["Secure defaults", "Update management", "Unneeded services removed"] },
+            { "id": "agent-security", "title": "AI agent security controls", "text": "We apply dedicated controls to keep AI agents safe inside your systems: per-agent permission scopes, an audit trail for every action, protection of sensitive data from unintended access, and periodic control reviews.", "points": ["Per-agent permission scopes", "An audit trail for every action", "Sensitive data protection", "Periodic control reviews"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "detect-recover",
+          "eyebrow": "Detect and recover",
+          "heading": "Monitoring, response and recovery",
+          "items": [
+            { "id": "security-monitoring", "title": "Security monitoring", "text": "We collect and analyze the security logs that matter and set up alerts for suspicious activity across your systems and infrastructure.", "points": ["Log collection and analysis", "Alerts for unusual activity", "Regular event review"] },
+            { "id": "incident-response", "title": "Incident response planning", "text": "We prepare with you a clear plan for a security incident: who does what, how it's contained, how you communicate and recover, and what you learn from it.", "points": ["Defined roles and responsibilities", "Containment and recovery procedures", "Exercises on the plan"] },
+            { "id": "backup-security", "title": "Protecting your backups", "text": "We protect your backups from deletion or malicious encryption, keep them separate from your main environment and test restoring them regularly.", "points": ["Isolated, protected copies", "Regular restore tests", "Strict access to backups"] }
+          ]
+        },
+        {
+          "kind": "callout",
+          "id": "authorization",
+          "heading": "No testing without authorization",
+          "paragraphs": [
+            "We never scan or test a system without its owner's written authorization, a defined scope and clear rules of engagement. We don't test other parties' systems, and we never go beyond the agreed scope.",
+            "Our reports present findings, risks and recommendations as we found them within the assessment's scope and time; they don't mean a system is completely secure or free of vulnerabilities."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "Our approach",
+          "heading": "How we run security assessments",
+          "items": [
+            { "title": "Scope and authorization", "text": "We agree the systems in scope, the limits and timing of testing and the points of contact, and receive written authorization." },
+            { "title": "Assessment", "text": "We carry out the review, scan or test using the agreed method and document every finding." },
+            { "title": "Report", "text": "You receive a report ordered by severity, with a summary for management and technical detail for your team." },
+            { "title": "Remediation", "text": "We help your team fix the findings, or handle the fixes ourselves where they're within our scope." },
+            { "title": "Verification", "text": "We retest what was fixed to confirm it's closed." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "deliverables",
+          "eyebrow": "Deliverables",
+          "heading": "What you get from an assessment",
+          "items": [
+            { "title": "A summary for management", "text": "A clear picture of the most important risks and their impact on your business." },
+            { "title": "Technical detail", "text": "What each finding is, where it is and how to verify it." },
+            { "title": "Severity ratings", "text": "Findings ranked so you know where to start." },
+            { "title": "Remediation guidance", "text": "Practical steps to fix each finding." }
+          ]
+        }
+      ],
+      "ctaTitle": "Want to know how secure your systems really are?",
+      "ctaText": "Tell us about your systems and what concerns you, and we'll suggest the right assessment scope and explain what authorization involves."
+    }
+  }
+}

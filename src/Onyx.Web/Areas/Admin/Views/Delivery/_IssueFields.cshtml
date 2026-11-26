@@ -1,0 +1,86 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model (IssueForm Form, IssueOptions Options, bool IsNew)
+@{
+    var form = Model.Form;
+    var options = Model.Options;
+    var isSubtask = form.Type == "Subtask";
+    var isEpic = form.Type == "Epic";
+    string D(DateOnly? date) => date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty;
+}
+<input type="hidden" name="ProjectId" value="@form.ProjectId">
+<input type="hidden" name="ParentId" value="@form.ParentId">
+@if (form.Version is { } version)
+{
+    <input type="hidden" name="Version" value="@version">
+}
+<label>@T["Delivery.Field.Type"]
+    <select name="Type" disabled="@(!Model.IsNew && (isSubtask || isEpic))">
+        @foreach (var type in Model.IsNew ? (isSubtask ? new[] { "Subtask" } : DeliveryDisplay.IssueTypes.Where(type => type != "Subtask").ToArray()) : (isSubtask || isEpic ? new[] { form.Type! } : DeliveryDisplay.StandardIssueTypes))
+        {
+            <option value="@type" selected="@(form.Type == type)">@T["Delivery.Type." + type]</option>
+        }
+    </select>
+</label>
+@if (!Model.IsNew && (isSubtask || isEpic))
+{
+    <input type="hidden" name="Type" value="@form.Type">
+}
+<label class="d-form__wide">@T["Delivery.Field.Title"] <input name="Title" value="@form.Title" required maxlength="255" dir="auto"></label>
+<label class="d-form__wide">@T["Delivery.Field.Description"] <textarea name="Description" rows="6" maxlength="20000" dir="auto">@form.Description</textarea>
+    <span class="hint">@T["Delivery.DescriptionHint"]</span></label>
+<label>@T["Delivery.Field.Priority"]
+    <select name="Priority">
+        @foreach (var priority in DeliveryDisplay.Priorities)
+        {
+            <option value="@priority" selected="@((form.Priority ?? "Medium") == priority)">@T["Delivery.Priority." + priority]</option>
+        }
+    </select>
+</label>
+<label>@T["Delivery.Field.Assignee"]
+    <select name="AssigneeId">
+        <option value="">@T["Delivery.Unassigned"]</option>
+        @foreach (var member in options.Project.Members)
+        {
+            <option value="@member.UserId" selected="@(form.AssigneeId == member.UserId)">@member.DisplayName</option>
+        }
+    </select>
+</label>
+@if (!isSubtask && !isEpic)
+{
+    <label>@T["Delivery.Field.Epic"]
+        <select name="EpicId">
+            <option value="">@T["Delivery.NoEpic"]</option>
+            @foreach (var epic in options.Epics)
+            {
+                <option value="@epic.Id" selected="@(form.EpicId == epic.Id)">@epic.Key · @epic.Title</option>
+            }
+        </select>
+    </label>
+}
+@if (!isEpic)
+{
+    <label>@T["Delivery.Field.Sprint"]
+        <select name="SprintId">
+            <option value="">@T["Delivery.Backlog"]</option>
+            @foreach (var sprint in options.Sprints)
+            {
+                <option value="@sprint.Id" selected="@(form.SprintId == sprint.Id)">@sprint.Name</option>
+            }
+        </select>
+    </label>
+}
+<label>@T["Delivery.Field.StoryPoints"] <input type="number" name="StoryPoints" min="0" max="100" value="@form.StoryPoints" class="d-input-small"></label>
+<label>@T["Delivery.Field.Estimate"] <input type="number" name="EstimateHours" min="0" max="1000" step="0.25" value="@form.EstimateHours?.ToString(CultureInfo.InvariantCulture)" class="d-input-small"></label>
+<label>@T["Delivery.Field.StartDate"] <input type="date" name="StartDate" value="@D(form.StartDate)"></label>
+<label>@T["Delivery.Field.DueDate"] <input type="date" name="DueDate" value="@D(form.DueDate)"></label>
+<label>@T["Delivery.Field.Labels"] <input name="Labels" value="@form.Labels" dir="auto" placeholder="@T["Delivery.LabelsPlaceholder"]"></label>
+<label>@T["Delivery.Field.Components"] <input name="Components" value="@form.Components" dir="auto"></label>
+<details class="d-form__wide d-dev-links" open="@(!string.IsNullOrEmpty(form.RepositoryUrl + form.BranchName + form.PullRequestUrl + form.CommitUrl))">
+    <summary>@T["Delivery.DevelopmentLinks"]</summary>
+    <p class="hint">@T["Delivery.DevelopmentLinksHint"]</p>
+    <label>@T["Delivery.Field.RepositoryUrl"] <input type="url" name="RepositoryUrl" value="@form.RepositoryUrl" maxlength="500" dir="ltr" placeholder="https://"></label>
+    <label>@T["Delivery.Field.Branch"] <input name="BranchName" value="@form.BranchName" maxlength="200" dir="ltr"></label>
+    <label>@T["Delivery.Field.PullRequestUrl"] <input type="url" name="PullRequestUrl" value="@form.PullRequestUrl" maxlength="500" dir="ltr" placeholder="https://"></label>
+    <label>@T["Delivery.Field.CommitUrl"] <input type="url" name="CommitUrl" value="@form.CommitUrl" maxlength="500" dir="ltr" placeholder="https://"></label>
+</details>

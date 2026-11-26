@@ -1,0 +1,19 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model InvoiceForm
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceInvoices";
+    var customer = ViewData["Customer"] as Onyx.Contracts.Commerce.AdminCustomerResponse;
+}
+<div class="d-head">
+    <h1>@T["Commerce.Invoice.New"]</h1>
+    <a asp-action="Customer" asp-route-id="@Model.CustomerId">@T["Commerce.Back"]</a>
+</div>
+<partial name="_CmsMessages" />
+<form method="post" asp-action="CreateInvoice" class="d-form d-panel">
+    <input type="hidden" name="CustomerId" value="@Model.CustomerId">
+    <p class="d-form__wide">@T["Commerce.Invoice.Customer"]: <strong dir="auto">@customer?.DisplayName</strong> <span dir="ltr">@customer?.Email</span></p>
+    <partial name="_InvoiceFields" model="(Model, customer?.Subscriptions)" />
+    <div class="d-form__actions"><button class="btn btn--primary" type="submit">@T["Commerce.Invoice.SaveDraft"]</button></div>
+</form>

@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Onyx.Application.Abstractions;
@@ -19,6 +20,7 @@ internal sealed partial class TurnstileCaptchaVerifier(
     IOptions<PublicSiteOptions> site,
     IOptions<Identity.IdentitySecurityOptions> identity,
     TimeProvider timeProvider,
+    IHostEnvironment environment,
     ILogger<TurnstileCaptchaVerifier> logger) : ICaptchaVerifier
 {
     public const int MaxTokenLength = 2_048;
@@ -77,6 +79,12 @@ internal sealed partial class TurnstileCaptchaVerifier(
 
         var recent = response.ChallengeTimestamp is { } issued && timeProvider.GetUtcNow() - issued <= TimeSpan.FromSeconds(settings.MaxTokenAgeSeconds);
         var hostnameOk = response.Hostname is { } hostname && hostnames.Contains(hostname);
+        if (TurnstileTestKeys.RelaxesActionAndHostname(environment.IsDevelopment(), settings.SecretKey))
+        {
+            // Local development with Cloudflare's always-pass test secret: the provider still verified the token.
+            return Result.Success();
+        }
+
         if (!string.Equals(response.Action, expectedAction, StringComparison.Ordinal) || !hostnameOk || !recent)
         {
             LogMismatch(logger, expectedAction);

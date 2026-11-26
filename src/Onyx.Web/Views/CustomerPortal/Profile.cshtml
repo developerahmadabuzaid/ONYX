@@ -1,0 +1,81 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model ProfilePage
+@{
+    var form = Model.Form;
+}
+<section class="customer-portal">
+    <h1>@T["Customer.Profile.Title"]</h1>
+    <partial name="_CustomerNav" model="CustomerPages.Profile" />
+    <partial name="_CustomerNotice" />
+    <div class="customer-grid customer-grid--wide">
+        <section class="customer-card">
+            <h2>@T["Customer.Profile.Details"]</h2>
+            <form method="post" action="@Routes.PathFor(CustomerPages.Profile, lang)" asp-antiforgery="true" novalidate>
+                @if (Model.Section == "profile") { <div asp-validation-summary="All" role="alert"></div> }
+                <input type="hidden" name="Command" value="profile">
+                <input type="hidden" name="Version" value="@form.Version">
+                <p><span class="label">@T["Form.Email"]</span> <bdi dir="ltr">@form.Email</bdi></p>
+                <p>
+                    <label for="DisplayName">@T["Form.Name"]</label>
+                    <input id="DisplayName" name="DisplayName" value="@form.DisplayName" autocomplete="name" required maxlength="100">
+                </p>
+                <p>
+                    <label for="Company">@T["Form.Company"] (@T["Form.Optional"])</label>
+                    <input id="Company" name="Company" value="@form.Company" autocomplete="organization" maxlength="150">
+                </p>
+                <p>
+                    <label for="Language">@T["Customer.Profile.Language"]</label>
+                    <select id="Language" name="Language">
+                        <option value="ar" selected="@(form.Language == "ar")">العربية</option>
+                        <option value="en" selected="@(form.Language == "en")">English</option>
+                    </select>
+                </p>
+                <p class="checkbox">
+                    <input id="MarketingConsent" name="MarketingConsent" type="checkbox" value="true" checked="@form.MarketingConsent">
+                    <label for="MarketingConsent">@T["Customer.Register.Marketing"]</label>
+                </p>
+                <p><button class="button button--primary" type="submit">@T["Customer.Profile.Save"]</button></p>
+            </form>
+        </section>
+        <section class="customer-card">
+            <h2>@T["Customer.Profile.ChangePassword"]</h2>
+            <form method="post" action="@Routes.PathFor(CustomerPages.Profile, lang)" asp-antiforgery="true" novalidate>
+                @if (Model.Section == "password") { <div asp-validation-summary="All" role="alert"></div> }
+                <input type="hidden" name="Command" value="password">
+                <p>
+                    <label for="CurrentPassword">@T["Customer.CurrentPassword"]</label>
+                    <input id="CurrentPassword" name="CurrentPassword" type="password" autocomplete="current-password" required maxlength="128">
+                </p>
+                <p>
+                    <label for="NewPassword">@T["Customer.NewPassword"]</label>
+                    <input id="NewPassword" name="NewPassword" type="password" autocomplete="new-password" required minlength="12" maxlength="128">
+                    <span class="note">@T["Customer.PasswordRule"]</span>
+                </p>
+                <p>
+                    <label for="ConfirmPassword">@T["Customer.ConfirmPassword"]</label>
+                    <input id="ConfirmPassword" name="ConfirmPassword" type="password" autocomplete="new-password" required maxlength="128">
+                </p>
+                <p class="note">@T["Customer.Profile.PasswordNote"]</p>
+                <p><button class="button" type="submit">@T["Customer.Profile.ChangePassword"]</button></p>
+            </form>
+        </section>
+        <section class="customer-card customer-card--danger">
+            <h2>@T["Customer.Profile.Delete"]</h2>
+            <p>@T["Customer.Profile.DeleteNote"]</p>
+            <form method="post" action="@Routes.PathFor(CustomerPages.Profile, lang)" asp-antiforgery="true" novalidate>
+                @if (Model.Section == "delete") { <div asp-validation-summary="All" role="alert"></div> }
+                <input type="hidden" name="Command" value="delete">
+                <p>
+                    <label for="DeletePassword">@T["Customer.Password"]</label>
+                    <input id="DeletePassword" name="DeletePassword" type="password" autocomplete="current-password" required maxlength="128">
+                </p>
+                <p><button class="button button--danger" type="submit">@T["Customer.Profile.DeleteSubmit"]</button></p>
+            </form>
+        </section>
+    </div>
+</section>

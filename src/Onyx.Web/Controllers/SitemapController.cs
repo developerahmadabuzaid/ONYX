@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using Onyx.Contracts.Content;
 using Onyx.Web.ApiClients;
 using Onyx.Web.Configuration;
+using Onyx.Web.Content.SitePages;
 using Onyx.Web.Localization;
 
 namespace Onyx.Web.Controllers;
@@ -13,7 +14,7 @@ namespace Onyx.Web.Controllers;
 /// <c>/sitemap.xml</c> (index) and <c>/sitemaps/{lang}.xml</c>: live, indexable, self-canonical pages only, with hreflang alternates.
 /// <c>/robots.txt</c> blocks everything until launch (<see cref="SiteOptions.AllowIndexing"/>).
 /// </summary>
-public sealed class SitemapController(IPublicContentApiClient api, IPublicNewsApiClient news, LanguageCatalog languages, IOptions<SiteOptions> site) : Controller
+public sealed class SitemapController(IPublicContentApiClient api, IPublicNewsApiClient news, SitePageCatalog sitePages, LanguageCatalog languages, IOptions<SiteOptions> site) : Controller
 {
     private const string SitemapNamespace = "http://www.sitemaps.org/schemas/sitemap/0.9";
     private const string XhtmlNamespace = "http://www.w3.org/1999/xhtml";
@@ -80,7 +81,16 @@ public sealed class SitemapController(IPublicContentApiClient api, IPublicNewsAp
         var home = new SitemapEntryResponse($"/{lang}/", null, languages.Languages.ToDictionary(language => language.Code, language => $"/{language.Code}/", StringComparer.Ordinal));
 
         // News: the hub and categories with published items, and only items an editor marked indexable (architecture.md §17.3).
-        var entries = new[] { home }.Concat(result.Value).Concat(newsResult.Value);
+        // Code-owned site pages (services, company pages); drafts such as unapproved legal wording are never listed.
+        var sitePageEntries = sitePages.Pages
+            .Where(page => !page.Draft && page.Translations.ContainsKey(lang))
+            .Select(page => new SitemapEntryResponse(
+                sitePages.UnencodedPathFor(page.Key, lang)!,
+                null,
+                languages.Languages
+                    .Where(language => page.Translations.ContainsKey(language.Code))
+                    .ToDictionary(language => language.Code, language => sitePages.UnencodedPathFor(page.Key, language.Code)!, StringComparer.Ordinal)));
+        var entries = new[] { home }.Concat(sitePageEntries).Concat(result.Value).Concat(newsResult.Value);
         var document = Write(writer =>
         {
             writer.WriteStartElement("urlset", SitemapNamespace);

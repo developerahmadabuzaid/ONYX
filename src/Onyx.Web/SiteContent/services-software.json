@@ -1,0 +1,176 @@
+{
+  "key": "services.software",
+  "parent": "services",
+  "type": "service",
+  "icon": "software",
+  "pillar": "software",
+  "related": ["services.cloud", "services.ai", "services.ai-agents", "idea-to-product"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/هندسة-البرمجيات",
+      "nav": "هندسة البرمجيات والمنصات الرقمية",
+      "title": "تطوير البرمجيات والأنظمة الإدارية والتطبيقات",
+      "description": "تطوير برمجيات مخصصة وأنظمة إدارية وERP وCRM ومنصات SaaS وتطبيقات ويب وجوال، مع ربط الأنظمة وتحديث القديم منها وتحسين أدائها، بما يناسب طريقة عمل شركتك. البنية التي نبنيها هي نفسها التي يستند إليها وكلاء الذكاء الاصطناعي.",
+      "eyebrow": "هندسة البرمجيات والمنصات الرقمية",
+      "h1": "أنظمة وتطبيقات مصممة حول طريقة عملك",
+      "lead": "نطوّر أنظمة وتطبيقات رقمية تناسب احتياجات أعمالك، من الأنظمة الإدارية والمنصات المتكاملة إلى التطبيقات المخصصة، مع التركيز على الأداء وسهولة الاستخدام وإمكانية التوسع. البنية التي نبنيها هنا هي نفسها التي يستند إليها وكلاء الذكاء الاصطناعي لقراءة بياناتك وتنفيذ إجراءاتهم.",
+      "summary": "أنظمة إدارية، ERP وCRM، منصات SaaS، تطبيقات ويب وجوال وتحديث الأنظمة.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "برمجيات تخدم أعمالك، لا العكس",
+          "paragraphs": [
+            "النظام الجيد يعكس طريقة عمل شركتك: موافقاتها، وصلاحياتها، وحساباتها، وارتباطها ببقية الأنظمة. لذلك نبدأ بفهم إجراءاتك قبل كتابة أي سطر برمجي، ونصمم النظام بما يناسب حجم شركتك اليوم ونموها غداً.",
+            "نبني أنظمة جديدة من الصفر، ونطوّر الأنظمة القائمة ونحدّثها. وفي الحالتين نعمل بانضباط هندسي واضح: مراجعة لكل تعديل، واختبارات مؤتمتة، وتوثيق، وحماية مدمجة في التصميم، لتحصل على نظام يمكن الاعتماد عليه وتطويره لسنوات."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "ما نقدمه",
+          "heading": "خدمات تطوير البرمجيات",
+          "items": [
+            { "id": "custom-software", "title": "تطوير البرمجيات المخصصة", "text": "عندما لا تناسبك الحلول الجاهزة، نبني نظاماً مصمماً لإجراءاتك تحديداً، مع الاتفاق مسبقاً على شروط ملكية الشيفرة والبيانات.", "points": ["تحليل المتطلبات وتصميم الحل", "تسليم على مراحل تراجعها أولاً بأول", "توثيق وتسليم منظم"] },
+            { "id": "enterprise-software", "title": "الأنظمة المؤسسية", "text": "أنظمة يستخدمها عدد كبير من الموظفين بأدوار مختلفة لإدارة عمليات حساسة، مع صلاحيات دقيقة وسجل لكل عملية مهمة وتقارير تساعد الإدارة.", "points": ["إدارة الأدوار والصلاحيات", "سجل تدقيق للعمليات المهمة", "تقارير ولوحات متابعة"] },
+            { "id": "erp", "title": "أنظمة تخطيط موارد المؤسسة (ERP)", "text": "نطوّر وحدات ERP مخصصة، أو نخصّص الأنظمة القائمة ونربطها، لتجمع المشتريات والمخزون والمالية والموارد في مكان واحد بدل التنقل بين أنظمة منفصلة.", "points": ["وحدات مصممة لإجراءات محددة", "ربط بالأنظمة المالية والتشغيلية", "نقل البيانات من الأنظمة السابقة"] },
+            { "id": "crm", "title": "أنظمة إدارة علاقات العملاء (CRM)", "text": "نظام يتابع عملاءك وفرص البيع والطلبات وخدمة ما بعد البيع، مصمم حول دورة البيع والخدمة الفعلية لديك لا حول نموذج عام.", "points": ["مراحل بيع قابلة للتخصيص", "سجل موحد لكل عميل", "ربط بالبريد والقنوات الرقمية"] },
+            { "id": "saas", "title": "تطوير منصات SaaS", "text": "منصات سحابية تقدّم خدماتها لعدة عملاء باشتراكات، مع فصل كامل لبيانات كل عميل، وإدارة للخطط والفوترة، وقدرة على استيعاب النمو.", "points": ["بنية تخدم عدة عملاء بأمان", "إدارة الاشتراكات والصلاحيات", "قابلية التوسع والمراقبة"] },
+            { "id": "web-applications", "title": "تطوير تطبيقات الويب", "text": "تطبيقات ويب سريعة وآمنة وسهلة الاستخدام على كل الأجهزة، من البوابات الداخلية إلى المنصات المفتوحة للعملاء، بدعم كامل للعربية والإنجليزية.", "points": ["واجهات متجاوبة وسهلة الوصول", "دعم كامل للعربية واتجاه الكتابة من اليمين", "أداء جيد يدعم الظهور في محركات البحث"] },
+            { "id": "mobile-applications", "title": "تطوير تطبيقات الجوال", "text": "تطبيقات لأجهزة iOS وAndroid مرتبطة بأنظمتك، تدعم الإشعارات وتعمل بكفاءة حتى مع ضعف الاتصال عند الحاجة.", "points": ["تطوير متعدد المنصات", "ربط بأنظمتك الخلفية", "تجربة استخدام عربية متقنة"] },
+            { "id": "apis", "title": "الواجهات البرمجية وربط الأنظمة", "text": "واجهات برمجية آمنة وموثقة تربط أنظمتك ببعضها وبشركائك والخدمات الخارجية، فتنتقل البيانات بينها دون عمل يدوي.", "points": ["تصميم REST API وتوثيقها", "تحقق من الهوية وتحكم في الوصول", "ربط بخدمات وأنظمة خارجية"] },
+            { "id": "legacy-modernization", "title": "تحديث الأنظمة القديمة", "text": "ننقل أنظمتك القديمة إلى تقنيات حديثة على مراحل، دون توقف العمل ودون المساس بسلامة البيانات خلال فترة الانتقال.", "points": ["تقييم النظام الحالي ومخاطره", "خطة تحديث تدريجية", "نقل البيانات والتحقق منها"] },
+            { "id": "architecture", "title": "تصميم بنية الأنظمة", "text": "نصمم بنية الأنظمة الجديدة أو نراجع القائمة: كيف تُقسَّم مكوناتها، وكيف تنتقل بياناتها، وكيف ترتبط بغيرها وتُحمى وتتوسع.", "points": ["قرارات تصميم موثقة", "مراجعة البنية القائمة", "خطة واضحة للتوسع"] },
+            { "id": "real-time", "title": "الأنظمة اللحظية", "text": "أنظمة تعرض البيانات وتحدّثها لحظة بلحظة، مثل لوحات المتابعة والإشعارات الفورية وتتبع العمليات، باستخدام تقنيات مثل SignalR.", "points": ["تحديثات فورية للمستخدمين", "لوحات متابعة حية", "تصميم يتحمل عدداً كبيراً من المستخدمين المتزامنين"] },
+            { "id": "database-design", "title": "تصميم قواعد البيانات", "text": "نماذج بيانات متينة تحافظ على دقة بياناتك وتدعم التقارير والسرعة، على PostgreSQL أو SQL Server بحسب بيئتك.", "points": ["تصميم البيانات وعلاقاتها", "فهرسة وتسريع الاستعلامات", "سياسات النسخ الاحتياطي والاحتفاظ"] },
+            { "id": "performance", "title": "تحسين أداء الأنظمة", "text": "إذا كان نظامك بطيئاً، نحدد السبب بالقياس لا بالتخمين، سواء كان في الاستعلامات أو الشبكة أو التخزين المؤقت أو البنية، ثم نعالجه من جذوره.", "points": ["قياس مواضع البطء وتحديدها", "تحسين الاستعلامات والتخزين المؤقت", "اختبارات تحميل قبل الإطلاق"] },
+            { "id": "maintenance", "title": "الصيانة والتطوير المستمر", "text": "نبقى معك بعد الإطلاق: نعالج الأعطال، ونحدّث مكونات النظام، ونطوّر مزايا جديدة حسب أولويات عملك.", "points": ["تحديثات أمنية منتظمة", "معالجة منظمة للأعطال", "خطة تطوير مستمرة"] },
+            { "id": "agent-ready-backends", "title": "أنظمة خلفية جاهزة لوكلاء الذكاء الاصطناعي", "text": "نبني أو نعدّل أنظمتك الخلفية لتكون آمنة وموثقة وقابلة للاستدعاء من وكلاء الذكاء الاصطناعي: واجهات برمجية واضحة، صلاحيات دقيقة، وبيانات منظّمة يستطيع الوكيل قراءتها دون أخطاء.", "points": ["تصميم واجهات قابلة للقراءة من الوكلاء", "ضوابط وصول لكل عملية", "توثيق للوكلاء والمطورين معاً"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "practices",
+          "eyebrow": "طريقة عملنا",
+          "heading": "معايير نلتزم بها في كل مشروع",
+          "items": [
+            { "title": "مراجعة كل تعديل", "text": "لا يُدمج أي تعديل قبل مراجعته، للحفاظ على جودة النظام واتساقه." },
+            { "title": "اختبارات مؤتمتة", "text": "اختبارات تحمي النظام من الأخطاء مع كل تحديث." },
+            { "title": "نشر مؤتمت", "text": "إصدارات منتظمة وآمنة يمكن التراجع عنها بسرعة عند الحاجة." },
+            { "title": "حماية من التصميم", "text": "التحقق من المدخلات والصلاحيات وحماية البيانات منذ البداية." },
+            { "title": "مراقبة مستمرة", "text": "سجلات ومؤشرات تكشف المشكلات قبل أن يلاحظها المستخدمون." },
+            { "title": "توثيق واضح", "text": "توثيق للبنية والواجهات البرمجية وطريقة التشغيل." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "build-or-buy",
+          "eyebrow": "قرار مدروس",
+          "heading": "نظام مخصص أم حل جاهز؟",
+          "paragraphs": [
+            "ليست كل حاجة تتطلب نظاماً مخصصاً. إذا كان الإجراء معتاداً ويوجد حل جاهز يغطيه جيداً، فقد يكون تخصيص هذا الحل وربطه بأنظمتك هو الخيار الأسرع والأوفر.",
+            "أما إذا كان الإجراء جزءاً مما يميز شركتك، أو يحتاج إلى ربط وصلاحيات لا تدعمها الحلول الجاهزة، فالنظام المخصص يمنحك المرونة والتحكم. نساعدك على اتخاذ هذا القرار بمقارنة صريحة للتكلفة والمخاطر والمرونة على المدى البعيد."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "منهجيتنا",
+          "heading": "كيف ننفّذ مشاريع البرمجيات",
+          "items": [
+            { "title": "فهم احتياجاتك", "text": "نتعرف على إجراءاتك ومستخدميك وأنظمتك الحالية، ونوثّق المتطلبات وأولوياتها." },
+            { "title": "التصميم", "text": "نصمم بنية النظام وبياناته وتجربة استخدامه، ونتفق معك على خطة الإصدارات." },
+            { "title": "التطوير على مراحل", "text": "نسلّمك أجزاء جاهزة للاستخدام على فترات قصيرة، لتراجعها وتشاركنا ملاحظاتك مبكراً." },
+            { "title": "الاختبار", "text": "اختبارات للوظائف والأمان والأداء قبل كل إطلاق." },
+            { "title": "الإطلاق والدعم", "text": "إطلاق منظم، ثم مراقبة ودعم وتطوير مستمر." }
+          ]
+        }
+      ],
+      "ctaTitle": "تخطط لنظام جديد أو لتطوير نظامك الحالي؟",
+      "ctaText": "حدّثنا عن أنظمتك الحالية وما تريد تحقيقه، وسنقترح عليك طريقة تنفيذ واقعية."
+    },
+    "en": {
+      "path": "services/software-engineering",
+      "nav": "Software Engineering & Digital Platforms",
+      "title": "Custom Software, Business Systems and App Development",
+      "description": "Custom software, business systems, ERP and CRM, SaaS platforms, web and mobile apps — plus system integration and modernization. The foundations we build here are also what your AI agents stand on.",
+      "eyebrow": "Software Engineering & Digital Platforms",
+      "h1": "Systems and applications built around how you work",
+      "lead": "We build digital systems and applications designed for your business needs — from business management systems and integrated platforms to custom apps — with a focus on performance, ease of use and room to grow. The architecture we put in place here is the same one your AI agents will rely on to read your data and carry out their actions.",
+      "summary": "Business systems, ERP and CRM, SaaS platforms, web and mobile apps and modernization.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "Software that serves your business, not the other way round",
+          "paragraphs": [
+            "A good system reflects how your company actually works: its approvals, permissions, calculations and connections to other systems. That's why we understand your processes before writing a line of code, and design the system to fit your size today and your growth tomorrow.",
+            "We build new systems from scratch and develop and modernize existing ones. Either way, we work with clear engineering discipline — every change reviewed, automated tests, documentation and security built into the design — so you get a system you can rely on and keep developing for years."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "What we deliver",
+          "heading": "Software development services",
+          "items": [
+            { "id": "custom-software", "title": "Custom software development", "text": "When off-the-shelf products don't fit, we build a system designed specifically around your processes, with ownership of the code and data agreed up front.", "points": ["Requirements analysis and solution design", "Delivery in stages you review as we go", "Documentation and structured handover"] },
+            { "id": "enterprise-software", "title": "Enterprise systems", "text": "Systems used by many employees in different roles to run sensitive operations, with precise permissions, a record of every important action and reports that help management.", "points": ["Role and permission management", "Audit trails for important actions", "Reports and dashboards"] },
+            { "id": "erp", "title": "ERP systems", "text": "We build custom ERP modules, or tailor and connect existing ERP platforms, so procurement, inventory, finance and resources live in one place instead of separate systems.", "points": ["Modules designed for specific processes", "Integration with finance and operations systems", "Data migration from previous systems"] },
+            { "id": "crm", "title": "CRM systems", "text": "A system that tracks your customers, sales opportunities, orders and after-sales service — designed around your actual sales and service cycle, not a generic template.", "points": ["Customizable sales stages", "One record per customer", "Email and digital channel integration"] },
+            { "id": "saas", "title": "SaaS platform development", "text": "Cloud platforms that serve many customers on subscription, with each customer's data fully separated, plan and billing management, and the capacity to grow.", "points": ["Architecture that serves many customers securely", "Subscription and permission management", "Scalability and monitoring"] },
+            { "id": "web-applications", "title": "Web application development", "text": "Fast, secure web applications that are easy to use on any device — from internal portals to customer-facing platforms — with full Arabic and English support.", "points": ["Responsive, accessible interfaces", "Full Arabic and right-to-left support", "Performance that supports search visibility"] },
+            { "id": "mobile-applications", "title": "Mobile app development", "text": "iOS and Android apps connected to your systems, with notifications and reliable performance even on weak connections where needed.", "points": ["Cross-platform development", "Connected to your back-end systems", "A polished Arabic user experience"] },
+            { "id": "apis", "title": "APIs and system integration", "text": "Secure, documented APIs that connect your systems to each other, to partners and to external services, so data moves between them without manual work.", "points": ["REST API design and documentation", "Authentication and access control", "Integration with external services and systems"] },
+            { "id": "legacy-modernization", "title": "Legacy system modernization", "text": "We move older systems to modern technology in stages, without stopping your operations and without putting your data at risk during the transition.", "points": ["Assessment of the current system and its risks", "A step-by-step modernization plan", "Data migration and verification"] },
+            { "id": "architecture", "title": "System architecture", "text": "We design the architecture of new systems or review existing ones: how components are divided, how data flows, and how the system connects, stays protected and scales.", "points": ["Documented design decisions", "Reviews of existing architecture", "A clear plan for growth"] },
+            { "id": "real-time", "title": "Real-time systems", "text": "Systems that show and update data as it happens — live dashboards, instant notifications, operations tracking — using technologies such as SignalR.", "points": ["Instant updates for users", "Live monitoring dashboards", "Designed for many simultaneous users"] },
+            { "id": "database-design", "title": "Database design", "text": "Solid data models that keep your data accurate and support reporting and speed, on PostgreSQL or SQL Server depending on your environment.", "points": ["Data and relationship design", "Indexing and faster queries", "Backup and retention policies"] },
+            { "id": "performance", "title": "System performance optimization", "text": "If your system is slow, we find out why by measuring, not guessing — whether it's queries, network, caching or architecture — and fix the root cause.", "points": ["Measuring and locating slowdowns", "Query and caching improvements", "Load testing before launch"] },
+            { "id": "maintenance", "title": "Maintenance and ongoing development", "text": "We stay with you after launch: fixing issues, keeping components up to date and building new features in line with your business priorities.", "points": ["Regular security updates", "Structured issue handling", "An ongoing development plan"] },
+            { "id": "agent-ready-backends", "title": "Backends ready for AI agents", "text": "We build or adapt your back-end systems to be safe, well documented and callable by AI agents: clear APIs, precise permissions and well-organised data that an agent can read without errors.", "points": ["APIs designed to be read by agents", "Per-action access controls", "Documentation for agents and developers"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "practices",
+          "eyebrow": "How we work",
+          "heading": "Standards we keep on every project",
+          "items": [
+            { "title": "Every change reviewed", "text": "Nothing is merged before it's reviewed, keeping the system consistent and reliable." },
+            { "title": "Automated tests", "text": "Tests that protect the system from errors with every update." },
+            { "title": "Automated deployment", "text": "Regular, safe releases that can be rolled back quickly if needed." },
+            { "title": "Security by design", "text": "Input checks, permissions and data protection from the start." },
+            { "title": "Continuous monitoring", "text": "Logs and metrics that reveal problems before users notice them." },
+            { "title": "Clear documentation", "text": "Documentation of the architecture, APIs and how to run the system." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "build-or-buy",
+          "eyebrow": "A considered decision",
+          "heading": "Custom system or ready-made product?",
+          "paragraphs": [
+            "Not every need calls for a custom system. If a process is standard and a ready-made product covers it well, configuring that product and connecting it to your systems may be the faster, more economical choice.",
+            "If the process is part of what sets your company apart, or needs integrations and permissions that ready-made products can't handle, a custom system gives you flexibility and control. We help you decide with an honest comparison of cost, risk and long-term flexibility."
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "Our approach",
+          "heading": "How we deliver software projects",
+          "items": [
+            { "title": "Understand your needs", "text": "We get to know your processes, users and current systems, and document the requirements and their priorities." },
+            { "title": "Design", "text": "We design the system's architecture, data and user experience, and agree a release plan with you." },
+            { "title": "Build in stages", "text": "We deliver usable parts in short cycles, so you can review them and give us feedback early." },
+            { "title": "Test", "text": "Functional, security and performance testing before every release." },
+            { "title": "Launch and support", "text": "A structured launch, followed by monitoring, support and ongoing development." }
+          ]
+        }
+      ],
+      "ctaTitle": "Planning a new system or improving the one you have?",
+      "ctaText": "Tell us about your current systems and what you want to achieve, and we'll suggest a realistic way to get there."
+    }
+  }
+}

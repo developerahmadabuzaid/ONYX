@@ -1,0 +1,81 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model SprintsOverviewPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliverySprints";
+    var rtl = DeliveryFormat.IsRtl;
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+}
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+        <h1>@T["Nav.DeliverySprints"]</h1>
+        <p class="ws-sub">@T["Delivery.Sprints.OverviewHint"]</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<section aria-labelledby="active-sprints">
+    <h2 id="active-sprints" class="section-title">@T["Delivery.Dashboard.ActiveSprints"]</h2>
+    @if (Model.ActiveSprints.Count == 0)
+    {
+        <p class="widget__empty">@T["Delivery.Dashboard.NoActiveSprints"]</p>
+    }
+    else
+    {
+        <ul class="sprint-cards" role="list">
+            @foreach (var active in Model.ActiveSprints)
+            {
+                var sprint = active.Sprint;
+                var ratio = sprint.Points == 0 ? (sprint.IssueCount == 0 ? 0 : (double)sprint.DoneIssueCount / sprint.IssueCount) : (double)sprint.DonePoints / sprint.Points;
+                var left = sprint.EndDate is { } end ? Math.Max(end.DayNumber - today.DayNumber, 0) : (int?)null;
+                <li class="sprint-card sprint-card--active">
+                    <div class="sprint-card__head">
+                        <a class="sprint-card__name" asp-action="Sprint" asp-route-sprintId="@sprint.Id"><span class="d-key" dir="ltr">@active.ProjectKey</span> <span dir="auto">@sprint.Name</span></a>
+                        @if (left is { } days)
+                        {
+                            <span class="health@(days <= 2 ? " health--atrisk" : string.Empty)">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Sprint.DaysLeftShort"], days)</span>
+                        }
+                    </div>
+                    @if (sprint.Goal is not null)
+                    {
+                        <p class="sprint-card__goal" dir="auto">@sprint.Goal</p>
+                    }
+                    @Chart.Progress(ratio, "teal", rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points))
+                    <p class="sprint-card__meta">
+                        <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points)</span>
+                        <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"], sprint.DoneIssueCount, sprint.IssueCount)</span>
+                    </p>
+                    <div class="sprint-card__actions">
+                        <a class="btn btn--small" asp-action="Sprint" asp-route-sprintId="@sprint.Id"><partial name="_AdminIcon" model='"chart"' />@T["Delivery.SprintReport"]</a>
+                        <a class="btn btn--small" asp-controller="Delivery" asp-action="Board" asp-route-id="@active.ProjectId"><partial name="_AdminIcon" model='"kanban"' />@T["Delivery.Tab.Board"]</a>
+                    </div>
+                </li>
+            }
+        </ul>
+    }
+</section>
+
+<section aria-labelledby="project-sprints">
+    <h2 id="project-sprints" class="section-title">@T["Delivery.Sprints.ByProject"]</h2>
+    @if (Model.Projects.Count == 0)
+    {
+        <p class="widget__empty">@T["Delivery.Dashboard.NoProjects"]</p>
+    }
+    else
+    {
+        <ul class="tile-list tile-list--grid" role="list">
+            @foreach (var project in Model.Projects.Where(project => project.Status != "Archived"))
+            {
+                <li>
+                    <a class="tile-list__link" asp-action="ProjectSprints" asp-route-id="@project.Id">
+                        <span class="tile-list__badge tone-@DeliveryFormat.Tone(project.Id)" aria-hidden="true" dir="ltr">@project.Key[..Math.Min(2, project.Key.Length)]</span>
+                        <span class="tile-list__text"><strong dir="auto">@project.Name</strong><span>@T["Delivery.Sprints.OpenSprints"]</span></span>
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+</section>

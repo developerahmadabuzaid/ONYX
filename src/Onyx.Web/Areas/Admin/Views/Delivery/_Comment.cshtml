@@ -1,0 +1,35 @@
+@using Onyx.Contracts.Delivery
+@model (IssueCommentResponse Comment, Guid IssueId, bool CanComment, bool CanModerate)
+@{ var comment = Model.Comment; }
+<article class="d-comment">
+    <header><strong>@comment.AuthorName</strong> <partial name="_Utc" model="comment.CreatedAtUtc" />
+        @if (comment.EditedAtUtc is not null && !comment.IsDeleted)
+        {
+            <span class="hint">@T["Delivery.Edited"]</span>
+        }
+    </header>
+    @if (comment.IsDeleted)
+    {
+        <p class="hint">@T["Delivery.CommentDeleted"]</p>
+    }
+    else
+    {
+        <div class="d-pre" dir="auto">@comment.Body</div>
+        @if (comment.CanEdit && Model.CanComment)
+        {
+            <details class="d-reply">
+                <summary>@T["Delivery.Edit"]</summary>
+                <form method="post" asp-action="EditComment" asp-route-id="@Model.IssueId" asp-route-commentId="@comment.Id" class="d-form">
+                    <label class="d-form__wide"><span class="visually-hidden">@T["Delivery.Edit"]</span><textarea name="body" rows="3" required maxlength="10000" dir="auto">@comment.Body</textarea></label>
+                    <button type="submit" class="btn btn--small">@T["Cms.Save"]</button>
+                </form>
+            </details>
+        }
+        @if ((comment.CanEdit && Model.CanComment) || Model.CanModerate)
+        {
+            <form method="post" asp-action="DeleteComment" asp-route-id="@Model.IssueId" asp-route-commentId="@comment.Id" class="d-inline-form" data-confirm="@T["Delivery.ConfirmDeleteComment"]">
+                <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.Delete"]</button>
+            </form>
+        }
+    }
+</article>

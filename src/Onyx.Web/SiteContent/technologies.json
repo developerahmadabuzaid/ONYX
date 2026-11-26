@@ -1,0 +1,99 @@
+{
+  "key": "technologies",
+  "type": "page",
+  "related": ["services.software", "services.cloud", "services.ai", "services.ai-agents"],
+  "translations": {
+    "ar": {
+      "path": "التقنيات",
+      "nav": "التقنيات والخبرات",
+      "title": "التقنيات الهندسية: وكلاء ذكاء اصطناعي، ذكاء اصطناعي، برمجيات",
+      "description": "التقنيات التي تعمل بها أونيكس في هندسة وكلاء الذكاء الاصطناعي والذكاء الاصطناعي والبرمجيات والسحابة والأمن: .NET وC# وReact وNext.js وFlutter وPostgreSQL وAzure وDocker وCI/CD وأطر عمل الوكلاء وأنظمة RAG.",
+      "eyebrow": "التقنيات",
+      "h1": "نختار التقنية التي تناسب مشروعك، لا الأكثر رواجاً",
+      "lead": "نعمل بتقنيات حديثة ومجرّبة في هندسة الوكلاء والذكاء الاصطناعي والبرمجيات والبيانات والسحابة والأمن، ونختار لكل مشروع ما يناسب متطلباته وفريقه والبيئة التي سيعمل فيها.",
+      "summary": "التقنيات التي نعمل بها، مرتبة حسب مجالات الهندسة.",
+      "sections": [
+        {
+          "kind": "stack",
+          "id": "stack",
+          "heading": "مجالات الخبرة التقنية",
+          "items": [
+            { "id": "backend", "title": "هندسة الأنظمة الخلفية", "text": "منطق الأعمال والواجهات البرمجية والخدمات.", "tags": [".NET / ASP.NET Core", "C#", "Node.js", "Python"] },
+            { "id": "frontend", "title": "هندسة الواجهات الأمامية", "text": "واجهات ويب سريعة ومتجاوبة وثنائية الاتجاه.", "tags": ["React", "Next.js"] },
+            { "id": "mobile", "title": "تطوير تطبيقات الجوال", "text": "تطبيقات متعددة المنصات لنظامي iOS وAndroid.", "tags": ["Flutter"] },
+            { "id": "databases", "title": "قواعد البيانات", "text": "تخزين علائقي وبحث دلالي.", "tags": ["PostgreSQL", "SQL Server", "قواعد البيانات المتجهية"] },
+            { "id": "cloud", "title": "السحابة والاستضافة", "text": "استضافة التطبيقات والبنية السحابية.", "tags": ["Microsoft Azure"], "pending": ["AWS"] },
+            { "id": "devops", "title": "DevOps والبنية التحتية", "text": "النشر المؤتمت والحاويات والبنية السحابية الأصلية.", "tags": ["Docker", "CI/CD", "البنية السحابية الأصلية"], "pending": ["Kubernetes"] },
+            { "id": "agents", "title": "هندسة وكلاء الذكاء الاصطناعي", "text": "تصميم وبناء وتشغيل الوكلاء على معمارية قابلة للتفكيك.", "tags": ["أطر عمل الوكلاء (Agent Frameworks)", "هندسة البراهين (Prompt Engineering)", "تصميم الأدوات وواجهات API", "هندسة الضوابط والحوكمة", "اختبار الوكلاء وتقييمهم"] },
+            { "id": "ai", "title": "الذكاء الاصطناعي", "text": "دمج النماذج اللغوية والبحث الدلالي.", "tags": ["تكامل نماذج اللغة الكبيرة (LLM)", "التوليد المعزّز بالاسترجاع (RAG)", "البحث الدلالي"] },
+            { "id": "security", "title": "هندسة الأمن", "text": "ممارسات أمنية مدمجة في التصميم والتشغيل.", "tags": ["إدارة الهوية والصلاحيات", "المصادقة متعددة العوامل", "التشفير وTLS", "مراجعة الشيفرة الآمنة", "فحص ثغرات الاعتماديات", "السجلات والمراقبة الأمنية"] },
+            { "id": "apis", "title": "الواجهات البرمجية والتكاملات", "text": "ربط الأنظمة ببعضها وبالخدمات الخارجية.", "tags": ["REST APIs", "SignalR والأنظمة اللحظية", "تكامل ERP وCRM"] }
+          ],
+          "note": "تُذكر هذه التقنيات بوصفها أدوات نستخدمها، ولا يعني ذكرها شراكة رسمية مع الجهات المالكة لها أو اعتماداً منها. العناصر المعلّمة «بانتظار التأكيد» تُعرض فقط بعد تأكيد القدرة عليها."
+        },
+        {
+          "kind": "checklist",
+          "id": "choosing",
+          "eyebrow": "اختيار التقنية",
+          "heading": "كيف نختار التقنية المناسبة",
+          "items": [
+            { "title": "متطلبات المشروع", "text": "الأداء والأمن والتكامل وحجم البيانات المتوقع." },
+            { "title": "بيئتك الحالية", "text": "الأنظمة والتقنيات التي يعمل بها فريقك وبنيتك التحتية." },
+            { "title": "النضج والدعم", "text": "تقنيات مستقرة بمجتمعات نشطة ودعم طويل الأمد." },
+            { "title": "تكلفة الملكية", "text": "التراخيص والتشغيل والصيانة على مدى عمر النظام." },
+            { "title": "قابلية الصيانة", "text": "سهولة إيجاد الخبرات وتطوير النظام مستقبلاً." },
+            { "title": "تجنّب الارتباط المفرط", "text": "نفضّل الحلول القابلة للنقل حيث يكون ذلك منطقياً." }
+          ]
+        }
+      ],
+      "ctaTitle": "تحتاج إلى رأي تقني في مشروعك؟",
+      "ctaText": "حدّثنا عن متطلباتك وبيئتك الحالية، وسنساعدك على اختيار التقنيات المناسبة."
+    },
+    "en": {
+      "path": "technologies",
+      "nav": "Technologies & Expertise",
+      "title": "Technologies: AI Agents, AI, Software and Cloud Engineering",
+      "description": "The technologies ONYX works with across AI agent engineering, AI, software, cloud and security: .NET, C#, React, Next.js, Flutter, PostgreSQL, Azure, Docker, CI/CD, agent frameworks and RAG systems.",
+      "eyebrow": "Technologies",
+      "h1": "Technology chosen to fit your project, not the trend",
+      "lead": "We work with a set of modern, mature technologies across AI agent engineering, AI, software, data, cloud and security, and choose for each project what fits its requirements, its team and its operating environment.",
+      "summary": "The technologies we work with, organized by engineering area.",
+      "sections": [
+        {
+          "kind": "stack",
+          "id": "stack",
+          "heading": "Areas of technical expertise",
+          "items": [
+            { "id": "backend", "title": "Backend engineering", "text": "Business logic, APIs and services.", "tags": [".NET / ASP.NET Core", "C#", "Node.js", "Python"] },
+            { "id": "frontend", "title": "Frontend engineering", "text": "Fast, responsive, bidirectional web interfaces.", "tags": ["React", "Next.js"] },
+            { "id": "mobile", "title": "Mobile development", "text": "Cross-platform apps for iOS and Android.", "tags": ["Flutter"] },
+            { "id": "databases", "title": "Databases", "text": "Relational storage and semantic search.", "tags": ["PostgreSQL", "SQL Server", "Vector databases"] },
+            { "id": "cloud", "title": "Cloud and hosting", "text": "Application hosting and cloud infrastructure.", "tags": ["Microsoft Azure"], "pending": ["AWS"] },
+            { "id": "devops", "title": "DevOps and infrastructure", "text": "Automated deployment, containers and cloud-native architecture.", "tags": ["Docker", "CI/CD", "Cloud-native architecture"], "pending": ["Kubernetes"] },
+            { "id": "agents", "title": "AI agent engineering", "text": "Designing, building and operating agents on a decomposable architecture.", "tags": ["Agent frameworks", "Prompt engineering", "Tool and API design", "Guardrails and governance", "Agent testing and evaluation"] },
+            { "id": "ai", "title": "Artificial intelligence", "text": "Language model integration and semantic search.", "tags": ["LLM integration", "Retrieval-augmented generation (RAG)", "Semantic search"] },
+            { "id": "security", "title": "Security engineering", "text": "Security practices built into design and operations.", "tags": ["Identity and access management", "Multi-factor authentication", "Encryption and TLS", "Secure code review", "Dependency vulnerability scanning", "Security logging and monitoring"] },
+            { "id": "apis", "title": "APIs and integrations", "text": "Connecting systems to each other and to external services.", "tags": ["REST APIs", "SignalR and real-time systems", "ERP and CRM integration"] }
+          ],
+          "note": "Technologies are listed as tools we use; listing them does not indicate an official partnership with, or certification from, their owners. Items marked “to be confirmed” are shown only once the capability is confirmed."
+        },
+        {
+          "kind": "checklist",
+          "id": "choosing",
+          "eyebrow": "Choosing technology",
+          "heading": "How we choose the right technology",
+          "items": [
+            { "title": "Project requirements", "text": "Performance, security, integration and expected data volume." },
+            { "title": "Your current environment", "text": "The systems and technologies your team and infrastructure already use." },
+            { "title": "Maturity and support", "text": "Stable technologies with active communities and long-term support." },
+            { "title": "Total cost of ownership", "text": "Licensing, operations and maintenance over the system's life." },
+            { "title": "Maintainability", "text": "How easily expertise can be found and the system evolved." },
+            { "title": "Avoiding excessive lock-in", "text": "We prefer portable solutions where that makes sense." }
+          ]
+        }
+      ],
+      "ctaTitle": "Need a technical opinion on your project?",
+      "ctaText": "Tell us about your requirements and current environment, and we will help you choose the right technologies."
+    }
+  }
+}

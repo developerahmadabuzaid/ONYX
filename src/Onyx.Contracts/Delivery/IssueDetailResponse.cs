@@ -1,0 +1,31 @@
+namespace Onyx.Contracts.Delivery;
+
+/// <summary>An issue with everything the details page needs. Ids are resolved to names on the server.</summary>
+public sealed record IssueDetailResponse(
+    IssueListItemResponse Summary,
+    string? Description,
+    string ReporterName,
+    Guid ReporterId,
+    decimal? EstimateHours,
+    DateOnly? StartDate,
+    IReadOnlyList<string> Components,
+    string? ParentKey,
+    string? ParentTitle,
+    string? SprintName,
+    string? RepositoryUrl,
+    string? BranchName,
+    string? PullRequestUrl,
+    string? CommitUrl,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset? ResolvedAtUtc,
+    IReadOnlyList<IssueListItemResponse> Children,
+    IReadOnlyList<IssueLinkResponse> Links,
+    IReadOnlyList<IssueCommentResponse> Comments,
+    IReadOnlyList<IssueHistoryResponse> History,
+    IReadOnlyList<WorkflowStatusResponse> AllowedStatuses,
+    int WatcherCount,
+    bool IsWatching,
+    DeliveryCapabilities Can,
+    IReadOnlyList<IssueAttachmentResponse>? Attachments = null,
+    IReadOnlyList<WorkLogResponse>? WorkLogs = null,
+    int TimeSpentMinutes = 0);

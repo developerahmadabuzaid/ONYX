@@ -27,7 +27,7 @@ public sealed class JobSchedulingTests(PostgresFixture fixture) : WorkerDatabase
             second.Get<JobScheduler>().SynchronizeDefinitionsAsync(Token));
 
         var definitions = await ReadAsync(db => db.JobDefinitions);
-        Assert.Equal(8, definitions.Count);
+        Assert.Equal(10, definitions.Count);
         var testJob = definitions.Single(job => job.Name == TestJob.JobName);
         Assert.Equal("every:10m", testJob.Schedule);
         Assert.True(testJob.IsEnabled);

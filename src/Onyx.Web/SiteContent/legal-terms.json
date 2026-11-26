@@ -1,0 +1,45 @@
+{
+  "key": "legal.terms",
+  "type": "legal",
+  "draft": true,
+  "translations": {
+    "ar": {
+      "path": "الشروط-والأحكام",
+      "nav": "الشروط والأحكام",
+      "title": "الشروط والأحكام",
+      "description": "شروط استخدام موقع أونيكس فانغارد سوليوشنز ومحتواه، بما في ذلك الاستخدام المقبول وحدود المسؤولية.",
+      "eyebrow": "الشؤون القانونية",
+      "h1": "الشروط والأحكام",
+      "lead": "تنظّم هذه الشروط استخدامك لهذا الموقع. باستخدامك للموقع فإنك توافق عليها.",
+      "sections": [
+        { "kind": "prose", "id": "use", "heading": "استخدام الموقع", "paragraphs": ["يقدّم هذا الموقع معلومات عامة عن أونيكس فانغارد سوليوشنز وخدماتها. يجوز لك استخدامه لأغراض مشروعة فقط، وبما لا يضر بالموقع أو بمستخدميه أو بأنظمتنا."] },
+        { "kind": "prose", "id": "information", "heading": "طبيعة المحتوى", "paragraphs": ["المحتوى المنشور للمعلومات العامة فقط، ولا يُعد استشارة مهنية لحالتك الخاصة. أي خدمات نقدمها تخضع لاتفاقيات مكتوبة منفصلة تحدد نطاقها وشروطها."] },
+        { "kind": "prose", "id": "intellectual-property", "heading": "الملكية الفكرية", "paragraphs": ["محتوى الموقع وتصميمه وعلامته التجارية مملوكة لأونيكس فانغارد سوليوشنز أو مرخصة لها، ولا يجوز نسخها أو إعادة استخدامها لأغراض تجارية دون إذن مكتوب. [يُراجع بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "acceptable-use", "heading": "الاستخدام المقبول", "paragraphs": ["يُحظر محاولة الوصول غير المصرّح به إلى الموقع أو أنظمتنا، أو فحصها أو اختبارها أمنياً دون تفويض مكتوب، أو إرسال طلبات آلية مفرطة، أو إدخال محتوى ضار عبر النماذج."] },
+        { "kind": "prose", "id": "third-party", "heading": "روابط لمواقع أخرى", "paragraphs": ["قد يحتوي الموقع على روابط لمواقع أخرى لا نتحكم فيها، ولسنا مسؤولين عن محتواها أو سياساتها."] },
+        { "kind": "prose", "id": "liability", "heading": "إخلاء المسؤولية وحدودها", "paragraphs": ["نسعى إلى أن يكون محتوى الموقع دقيقاً ومحدّثاً، لكنه يُقدَّم كما هو دون ضمانات. [تُصاغ حدود المسؤولية بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "law", "heading": "النظام المطبق", "paragraphs": ["[يُحدد النظام المطبق وجهة الاختصاص بعد المراجعة القانونية.]"] },
+        { "kind": "prose", "id": "changes", "heading": "التغييرات", "paragraphs": ["قد نحدّث هذه الشروط من وقت لآخر، وتسري النسخة المنشورة على هذه الصفحة. [يُضاف تاريخ النفاذ عند الاعتماد.]"] }
+      ]
+    },
+    "en": {
+      "path": "terms",
+      "nav": "Terms and Conditions",
+      "title": "Terms and Conditions",
+      "description": "Terms of use for the Onyx Vanguard Solutions website and its content.",
+      "eyebrow": "Legal",
+      "h1": "Terms and Conditions",
+      "lead": "These terms govern your use of this website. By using the website you agree to them.",
+      "sections": [
+        { "kind": "prose", "id": "use", "heading": "Use of the website", "paragraphs": ["This website provides general information about Onyx Vanguard Solutions and its services. You may use it for lawful purposes only, and in a way that does not harm the website, its users or our systems."] },
+        { "kind": "prose", "id": "information", "heading": "Nature of the content", "paragraphs": ["Published content is for general information only and is not professional advice for your specific situation. Any services we provide are governed by separate written agreements that define their scope and terms."] },
+        { "kind": "prose", "id": "intellectual-property", "heading": "Intellectual property", "paragraphs": ["The website's content, design and brand are owned by or licensed to Onyx Vanguard Solutions and may not be copied or reused for commercial purposes without written permission. [To be reviewed after legal review.]"] },
+        { "kind": "prose", "id": "acceptable-use", "heading": "Acceptable use", "paragraphs": ["You must not attempt unauthorized access to the website or our systems, scan or security-test them without written authorization, send excessive automated requests, or submit harmful content through the forms."] },
+        { "kind": "prose", "id": "third-party", "heading": "Links to other websites", "paragraphs": ["The website may link to other websites we do not control; we are not responsible for their content or policies."] },
+        { "kind": "prose", "id": "liability", "heading": "Disclaimer and limitation of liability", "paragraphs": ["We aim to keep the website's content accurate and current, but it is provided as is, without warranties. [Limitation of liability wording to be drafted after legal review.]"] },
+        { "kind": "prose", "id": "law", "heading": "Governing law", "paragraphs": ["[Governing law and jurisdiction to be set after legal review.]"] },
+        { "kind": "prose", "id": "changes", "heading": "Changes", "paragraphs": ["We may update these terms from time to time; the version published on this page applies. [The effective date is to be added on approval.]"] }
+      ]
+    }
+  }
+}

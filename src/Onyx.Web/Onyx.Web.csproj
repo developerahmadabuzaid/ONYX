@@ -1,4 +1,8 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <!-- Served from the site root also when Onyx.Host references this project (instead of /_content/Onyx.Web). -->
+    <StaticWebAssetBasePath>/</StaticWebAssetBasePath>
+  </PropertyGroup>
   <!-- Talks to Onyx.API over HTTPS only. Must never reference Domain, Application, Infrastructure, API, Worker, EF Core or a DB driver. -->
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Http.Resilience" />
@@ -9,5 +13,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Onyx.Contracts\Onyx.Contracts.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <!-- Code-owned public pages (services, company, legal): bilingual structured copy, see Content/SitePages. -->
+    <EmbeddedResource Include="SiteContent\*.json" LogicalName="Onyx.Web.SiteContent.%(Filename)%(Extension)" />
   </ItemGroup>
 </Project>

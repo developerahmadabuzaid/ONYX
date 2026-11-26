@@ -103,14 +103,18 @@ public sealed class NewsSiteTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task The_homepage_shows_latest_news_only_when_there_is_some()
+    public async Task The_homepage_news_agent_lists_only_real_items_and_otherwise_waits()
     {
+        // No published items: the monitoring agent panel shows its waiting state, never placeholder headlines.
         var without = await _browser.GetHtmlAsync("/en/");
-        Assert.DoesNotContain("latest-news-heading", without, StringComparison.Ordinal);
+        Assert.Contains("newsagent-title", without, StringComparison.Ordinal);
+        Assert.Contains("newsagent__empty", without, StringComparison.Ordinal);
+        Assert.DoesNotContain("newsagent__feed", without, StringComparison.Ordinal);
 
         _factory.Api.On(HttpMethod.Get, "api/v1/news/latest", _ => FakeOnyxApi.Json(new List<PublicNewsItemSummaryResponse> { Summary() }));
         var with = await _browser.GetHtmlAsync("/en/");
-        Assert.Contains("latest-news-heading", with, StringComparison.Ordinal);
+        Assert.Contains("newsagent__feed", with, StringComparison.Ordinal);
+        Assert.DoesNotContain("newsagent__empty", with, StringComparison.Ordinal);
         Assert.Contains("Summary by Onyx — reported by Sample Publisher", with, StringComparison.Ordinal);
         Assert.Contains("href=\"/en/news\"", with, StringComparison.Ordinal);
     }

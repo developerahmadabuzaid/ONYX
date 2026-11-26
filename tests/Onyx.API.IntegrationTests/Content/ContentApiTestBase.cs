@@ -42,7 +42,7 @@ public abstract class ContentApiTestBase(PostgresFixture fixture) : IdentityApiT
         return AuthorizedClient((await SignInAsync(email, StrongPassword)).AccessToken);
     }
 
-    protected static async Task<ContentDetailResponse> CreatePageAsync(HttpClient client, string enSlug = "about-us", string arSlug = "من-نحن", string type = "Page", Guid? parentId = null)
+    protected static async Task<ContentDetailResponse> CreatePageAsync(HttpClient client, string enSlug = "about-us", string arSlug = "صفحة-تعريفية", string type = "Page", Guid? parentId = null)
     {
         var created = await ReadAsync<ContentDetailResponse>(await client.PostAsJsonAsync(Admin, new CreateContentRequest(type, parentId, null, null, 0), Token));
         var withArabic = await ReadAsync<ContentDetailResponse>(await client.PutAsJsonAsync(

@@ -1,0 +1,138 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model ProductEditPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceProducts";
+    var product = Model.Product;
+    var form = Model.Form;
+    var demoKinds = new[] { "None", "Video", "GuidedTour", "Sandbox", "AiAssistant" };
+    var periods = new[] { "Monthly", "Yearly", "OneTime", "Custom" };
+}
+<div class="d-head">
+    <h1>@(form.NameEn ?? form.NameAr ?? product.Key) <span class="badge">@T["Commerce.ProductStatus." + product.Status]</span></h1>
+    <a asp-action="Products">@T["Commerce.Back"]</a>
+</div>
+<partial name="_CmsMessages" />
+<section class="d-panel">
+    <h2>@T["Commerce.Product.Details"]</h2>
+    <form method="post" asp-action="SaveProduct" asp-route-id="@product.Id" class="d-form">
+        <input type="hidden" name="Version" value="@form.Version">
+        <fieldset class="d-form__wide" disabled="@(!Model.CanEdit)">
+            <legend>العربية</legend>
+            <label>@T["Commerce.Product.Name"] <input name="NameAr" value="@form.NameAr" maxlength="120" dir="rtl" lang="ar"></label>
+            <label>@T["Commerce.Product.Slug"] <input name="SlugAr" value="@form.SlugAr" maxlength="80" dir="rtl" lang="ar"></label>
+            <label class="d-form__wide">@T["Commerce.Product.Summary"] <textarea name="SummaryAr" rows="2" maxlength="300" dir="rtl" lang="ar">@form.SummaryAr</textarea></label>
+            <label class="d-form__wide">@T["Commerce.Product.Description"] <textarea name="DescriptionAr" rows="6" maxlength="6000" dir="rtl" lang="ar">@form.DescriptionAr</textarea></label>
+        </fieldset>
+        <fieldset class="d-form__wide" disabled="@(!Model.CanEdit)">
+            <legend>English</legend>
+            <label>@T["Commerce.Product.Name"] <input name="NameEn" value="@form.NameEn" maxlength="120" dir="ltr" lang="en"></label>
+            <label>@T["Commerce.Product.Slug"] <input name="SlugEn" value="@form.SlugEn" maxlength="80" dir="ltr" lang="en"></label>
+            <label class="d-form__wide">@T["Commerce.Product.Summary"] <textarea name="SummaryEn" rows="2" maxlength="300" dir="ltr" lang="en">@form.SummaryEn</textarea></label>
+            <label class="d-form__wide">@T["Commerce.Product.Description"] <textarea name="DescriptionEn" rows="6" maxlength="6000" dir="ltr" lang="en">@form.DescriptionEn</textarea></label>
+        </fieldset>
+        <label>@T["Commerce.Product.TrialDays"] <input type="number" name="TrialDays" value="@form.TrialDays" min="1" max="90"> <span class="hint">@T["Commerce.Product.TrialHint"]</span></label>
+        <label>@T["Commerce.Product.DemoKind"]
+            <select name="DemoKind">
+                @foreach (var kind in demoKinds)
+                {
+                    <option value="@kind" selected="@(form.DemoKind == kind)">@T["Products.Demo." + kind]</option>
+                }
+            </select>
+        </label>
+        <label>@T["Commerce.Product.DemoUrl"] <input type="url" name="DemoUrl" value="@form.DemoUrl" maxlength="500" dir="ltr" placeholder="https://"></label>
+        <label>@T["Commerce.Product.SortOrder"] <input type="number" name="SortOrder" value="@form.SortOrder"></label>
+        @if (Model.CanEdit)
+        {
+            <div class="d-form__actions"><button class="btn btn--primary" type="submit">@T["Commerce.Save"]</button></div>
+        }
+    </form>
+</section>
+
+<section class="d-panel">
+    <h2>@T["Commerce.Product.Plans"]</h2>
+    <p class="hint">@T["Commerce.Plan.PriceRule"]</p>
+    @foreach (var plan in product.Plans)
+    {
+        var ar = plan.Translations.FirstOrDefault(t => t.Language == "ar");
+        var en = plan.Translations.FirstOrDefault(t => t.Language == "en");
+        <form method="post" asp-action="SavePlan" asp-route-id="@product.Id" class="d-form">
+            <input type="hidden" name="PlanId" value="@plan.Id">
+            <input type="hidden" name="Version" value="@product.Version">
+            <input type="hidden" name="Code" value="@plan.Code">
+            <p class="d-form__wide"><strong dir="ltr">@plan.Code</strong></p>
+            <label>@T["Commerce.Plan.NameAr"] <input name="NameAr" value="@ar?.Name" maxlength="80" dir="rtl" lang="ar"></label>
+            <label>@T["Commerce.Plan.NameEn"] <input name="NameEn" value="@en?.Name" maxlength="80" dir="ltr" lang="en"></label>
+            <label>@T["Commerce.Plan.DescriptionAr"] <input name="DescriptionAr" value="@ar?.Description" maxlength="1000" dir="rtl" lang="ar"></label>
+            <label>@T["Commerce.Plan.DescriptionEn"] <input name="DescriptionEn" value="@en?.Description" maxlength="1000" dir="ltr" lang="en"></label>
+            <label>@T["Commerce.Plan.Price"] <input name="Price" value="@plan.Price?.ToString(CultureInfo.InvariantCulture)" inputmode="decimal" dir="ltr"></label>
+            <label>@T["Commerce.Plan.Currency"] <input name="Currency" value="@plan.Currency" maxlength="3" dir="ltr"></label>
+            <label>@T["Commerce.Plan.Period"]
+                <select name="BillingPeriod">
+                    @foreach (var period in periods)
+                    {
+                        <option value="@period" selected="@(plan.BillingPeriod == period)">@T["Products.Period." + period]</option>
+                    }
+                </select>
+            </label>
+            <label>@T["Commerce.Product.SortOrder"] <input type="number" name="SortOrder" value="@plan.SortOrder"></label>
+            <label><input type="checkbox" name="IsPricePublic" value="true" checked="@plan.IsPricePublic"> @T["Commerce.Plan.PricePublic"]</label>
+            <label><input type="checkbox" name="IsActive" value="true" checked="@plan.IsActive"> @T["Commerce.Plan.Active"]</label>
+            <input type="hidden" name="IsActive" value="false">
+            @if (Model.CanEdit)
+            {
+                <div class="d-form__actions"><button class="btn" type="submit">@T["Commerce.Save"]</button></div>
+            }
+        </form>
+    }
+    @if (Model.CanEdit)
+    {
+        <form method="post" asp-action="SavePlan" asp-route-id="@product.Id" class="d-form">
+            <input type="hidden" name="Version" value="@product.Version">
+            <p class="d-form__wide"><strong>@T["Commerce.Plan.Add"]</strong></p>
+            <label>@T["Commerce.Plan.Code"] <input name="Code" required maxlength="40" dir="ltr" pattern="[a-z0-9]+(-[a-z0-9]+)*"></label>
+            <label>@T["Commerce.Plan.NameAr"] <input name="NameAr" required maxlength="80" dir="rtl" lang="ar"></label>
+            <label>@T["Commerce.Plan.NameEn"] <input name="NameEn" required maxlength="80" dir="ltr" lang="en"></label>
+            <label>@T["Commerce.Plan.Price"] <input name="Price" inputmode="decimal" dir="ltr"> <span class="hint">@T["Commerce.Plan.PriceHint"]</span></label>
+            <label>@T["Commerce.Plan.Currency"] <input name="Currency" maxlength="3" dir="ltr" placeholder="SAR"></label>
+            <label>@T["Commerce.Plan.Period"]
+                <select name="BillingPeriod">
+                    @foreach (var period in periods)
+                    {
+                        <option value="@period">@T["Products.Period." + period]</option>
+                    }
+                </select>
+            </label>
+            <label><input type="checkbox" name="IsPricePublic" value="true"> @T["Commerce.Plan.PricePublic"]</label>
+            <input type="hidden" name="IsActive" value="true">
+            <div class="d-form__actions"><button class="btn btn--primary" type="submit">@T["Commerce.Plan.Add"]</button></div>
+        </form>
+    }
+</section>
+
+<section class="d-panel">
+    <h2>@T["Commerce.Product.Verification"]</h2>
+    @if (product.VerifiedAtUtc is { } verifiedAt)
+    {
+        <p>@T["Commerce.Product.VerifiedBy", product.VerifiedByName ?? "—", verifiedAt.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)]</p>
+        <p class="hint" dir="auto">@product.VerificationSource</p>
+    }
+    else
+    {
+        <p class="hint">@T["Commerce.Product.NotVerified"]</p>
+    }
+    @if (Model.CanPublish)
+    {
+        <form method="post" asp-action="VerifyProduct" asp-route-id="@product.Id" class="d-form">
+            <input type="hidden" name="version" value="@product.Version">
+            <label class="d-form__wide">@T["Commerce.Product.VerificationSource"] <input name="source" required maxlength="300" dir="auto"></label>
+            <div class="d-form__actions"><button class="btn" type="submit">@T["Commerce.Product.RecordVerification"]</button></div>
+        </form>
+        <form method="post" asp-action="PublishProduct" asp-route-id="@product.Id" class="d-inline-form">
+            <input type="hidden" name="version" value="@product.Version">
+            <input type="hidden" name="publish" value="@(product.Status == "Published" ? "false" : "true")">
+            <button class="btn @(product.Status == "Published" ? string.Empty : "btn--primary")" type="submit">@(product.Status == "Published" ? T["Commerce.Product.Unpublish"] : T["Commerce.Product.Publish"])</button>
+        </form>
+    }
+</section>

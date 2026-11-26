@@ -52,5 +52,6 @@ public sealed class TurnstileOptions
     /// run without keys (public forms then fail closed; admin sign-in keeps rate limit, lockout and 2FA).
     /// </summary>
     public bool IsValidFor(bool isProduction, string? publicBaseUrl, string? adminPortalBaseUrl) =>
-        !isProduction || (IsConfigured && ResolveHostnames(publicBaseUrl, adminPortalBaseUrl).Count > 0);
+        !isProduction || (IsConfigured && ResolveHostnames(publicBaseUrl, adminPortalBaseUrl).Count > 0
+            && !string.Equals(SecretKey, TurnstileTestKeys.AlwaysPassesSecret, StringComparison.Ordinal));
 }

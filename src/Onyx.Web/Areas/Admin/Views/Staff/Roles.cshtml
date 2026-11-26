@@ -1,0 +1,25 @@
+@model IReadOnlyList<Onyx.Contracts.Administration.RoleResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.StaffRoles";
+}
+<header class="page-head">
+    <div>
+        <h1>@T["Nav.StaffRoles"]</h1>
+        <p class="hint">@T["Staff.Roles.Intro"]</p>
+    </div>
+    <a class="btn btn--primary" asp-action="NewRole"><partial name="_AdminIcon" model='"plus"' />@T["Staff.Roles.New"]</a>
+</header>
+<partial name="_CmsMessages" />
+<div class="staff-role-grid">
+    @foreach (var role in Model.OrderByDescending(role => role.IsSystem).ThenBy(role => role.Name, StringComparer.Ordinal))
+    {
+        <a class="staff-role" asp-action="Role" asp-route-id="@role.Id">
+            <span class="staff-role__top">
+                <strong><partial name="_RoleName" model="role.Name" /></strong>
+                @if (role.IsSystem) { <span class="badge">@T["Staff.Roles.BuiltIn"]</span> }
+            </span>
+            <span class="muted">@T["Staff.Roles.PermissionCount", role.Permissions.Count] · @T["Staff.Roles.UserCount", role.UserCount]</span>
+        </a>
+    }
+</div>

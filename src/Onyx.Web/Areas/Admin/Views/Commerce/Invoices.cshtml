@@ -1,0 +1,52 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model Onyx.Contracts.Common.PagedResult<Onyx.Contracts.Commerce.AdminInvoiceListItemResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceInvoices";
+    var current = ViewData["Status"] as string;
+    var statuses = new[] { "", "Draft", "Issued", "Paid", "Void" };
+}
+<div class="d-head">
+    <h1>@T["Nav.CommerceInvoices"]</h1>
+</div>
+<partial name="_CmsMessages" />
+<p class="hint">@T["Commerce.Invoices.Intro"]</p>
+<nav class="d-tabs" aria-label="@T["Commerce.Status"]">
+    @foreach (var status in statuses)
+    {
+        <a asp-action="Invoices" asp-route-status="@status" aria-current="@((current ?? "") == status ? "page" : null)">@(status == "" ? T["Commerce.All"] : T["Commerce.InvoiceStatus." + status])</a>
+    }
+</nav>
+@if (Model.Items.Count == 0)
+{
+    <p class="hint">@T["Commerce.Invoices.Empty"]</p>
+}
+else
+{
+    <div class="d-table-wrap">
+        <table class="d-table">
+            <thead>
+                <tr>
+                    <th scope="col">@T["Customer.Invoice.Number"]</th>
+                    <th scope="col">@T["Commerce.Invoice.Customer"]</th>
+                    <th scope="col">@T["Commerce.Status"]</th>
+                    <th scope="col">@T["Customer.Invoice.Total"]</th>
+                    <th scope="col">@T["Customer.Invoice.Due"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var invoice in Model.Items)
+                {
+                    <tr>
+                        <td><a asp-action="Invoice" asp-route-id="@invoice.Id" dir="ltr">@(invoice.Number ?? T["Commerce.InvoiceStatus.Draft"].Value)</a></td>
+                        <td><a asp-action="Customer" asp-route-id="@invoice.CustomerId" dir="auto">@invoice.CustomerName</a></td>
+                        <td><span class="badge">@T["Commerce.InvoiceStatus." + invoice.Status]</span></td>
+                        <td dir="ltr">@invoice.Total.ToString("N2", CultureInfo.InvariantCulture) @invoice.Currency</td>
+                        <td dir="ltr">@invoice.DueOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

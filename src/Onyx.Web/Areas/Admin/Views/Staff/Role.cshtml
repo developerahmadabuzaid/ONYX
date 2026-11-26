@@ -1,0 +1,62 @@
+@using Onyx.Web.Areas.Admin.Staff
+@model RolePage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.StaffRoles";
+    var role = Model.Role;
+    var isNew = role is null;
+    var isSuperAdmin = role is { IsSystem: true, Name: "SuperAdmin" };
+    var groups = Model.Permissions.GroupBy(permission => permission.Group).OrderBy(group => group.Key, StringComparer.Ordinal);
+}
+<header class="page-head">
+    <div>
+        <p class="eyebrow"><a asp-action="Roles">@T["Nav.StaffRoles"]</a></p>
+        <h1>@if (isNew) { @T["Staff.Roles.New"] } else { <partial name="_RoleName" model="role!.Name" /> }</h1>
+        @if (role is not null) { <p class="hint">@T["Staff.Roles.UserCount", role.UserCount]</p> }
+    </div>
+</header>
+<partial name="_CmsMessages" />
+@if (isSuperAdmin)
+{
+    <p class="notice">@T["Staff.Roles.SuperAdminNote"]</p>
+}
+<form method="post" action="@(isNew ? Url.Action("CreateRole") : Url.Action("UpdateRole", new { id = role!.Id }))" class="staff-form">
+    <section class="panel">
+        <div class="field">
+            <label for="role-name">@T["Staff.Roles.Name"]</label>
+            <input id="role-name" name="name" value="@Model.Name" required maxlength="50" dir="auto" readonly="@(role?.IsSystem == true)">
+            @if (role?.IsSystem == true) { <span class="hint">@T["Staff.Roles.BuiltInName"]</span> }
+        </div>
+    </section>
+    <section class="panel">
+        <h2>@T["Staff.Roles.Permissions"]</h2>
+        <p class="hint">@T["Staff.Roles.PermissionsHint"]</p>
+        <div class="staff-permissions">
+            @foreach (var group in groups)
+            {
+                var groupLabel = T["Permission.Group." + group.Key];
+                <fieldset class="staff-permissions__group">
+                    <legend>@(groupLabel.ResourceNotFound ? group.Key : groupLabel.Value)</legend>
+                    @foreach (var permission in group)
+                    {
+                        <label class="check" title="@permission.Name">
+                            <input type="checkbox" name="permissions" value="@permission.Name" checked="@Model.Selected.Contains(permission.Name)" disabled="@isSuperAdmin">
+                            <partial name="_PermissionLabel" model="permission.Name" />
+                        </label>
+                    }
+                </fieldset>
+            }
+        </div>
+    </section>
+    @if (!isSuperAdmin)
+    {
+        <p class="staff-form__actions"><button type="submit" class="btn btn--primary">@(isNew ? T["Staff.Roles.Create"] : T["Cms.Save"])</button></p>
+    }
+</form>
+@if (role is { IsSystem: false })
+{
+    <form method="post" asp-action="DeleteRole" asp-route-id="@role.Id" data-confirm="@T["Staff.Confirm.DeleteRole"]">
+        <button type="submit" class="btn btn--danger" disabled="@(role.UserCount > 0)">@T["Staff.Roles.Delete"]</button>
+        @if (role.UserCount > 0) { <span class="hint">@T["Staff.Roles.DeleteInUse"]</span> }
+    </form>
+}

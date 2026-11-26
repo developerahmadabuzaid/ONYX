@@ -285,6 +285,44 @@ public static class Permissions
         public const string View = "AuditLogs.View";
     }
 
+    /// <summary>
+    /// Internal delivery workspace (projects, issues, boards, sprints). <c>Access</c> opens the workspace and the projects the user
+    /// is a member of; per-project capability comes from the member's project role. <c>Administer</c> sees and manages every project.
+    /// </summary>
+    public static class Delivery
+    {
+        public const string Access = "Delivery.Access";
+        public const string Administer = "Delivery.Administer";
+    }
+
+    /// <summary>SaaS product catalogue: products, plans, prices, demos and their verification.</summary>
+    public static class Products
+    {
+        public const string View = "Products.View";
+        public const string Edit = "Products.Edit";
+        public const string Publish = "Products.Publish";
+    }
+
+    /// <summary>Customer accounts (separate from staff users). Manage disables or re-enables an account.</summary>
+    public static class Customers
+    {
+        public const string View = "Customers.View";
+        public const string Manage = "Customers.Manage";
+    }
+
+    public static class Subscriptions
+    {
+        public const string View = "Subscriptions.View";
+        public const string Manage = "Subscriptions.Manage";
+    }
+
+    /// <summary>Manual invoices (no payment provider yet).</summary>
+    public static class Invoices
+    {
+        public const string View = "Invoices.View";
+        public const string Manage = "Invoices.Manage";
+    }
+
     public static class Users
     {
         public const string Manage = "Users.Manage";

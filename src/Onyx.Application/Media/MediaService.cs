@@ -23,6 +23,7 @@ public sealed class MediaService(
     IImageInspector inspector,
     IContentRepository content,
     IBrandKitRepository brandKits,
+    SiteContent.ISiteContentRepository siteContent,
     IContentPreviewService previews,
     Seo.IOrganizationProfileService organization,
     MediaLimits limits,
@@ -156,6 +157,11 @@ public sealed class MediaService(
             return Error.Conflict("Media.BrandLogo", "This file is the official logo in the Brand Kit.");
         }
 
+        if (await siteContent.IsMediaReferencedAsync(id, includeDrafts: true, cancellationToken).ConfigureAwait(false))
+        {
+            return Error.Conflict("Media.InUse", "This file is used on a website page (published or in a draft). Remove it from that page first.");
+        }
+
         // The file is removed by the Worker from the outbox event committed together with this deletion: no distributed
         // transaction, and a failed file removal is retried instead of leaving an untracked file behind.
         asset.MarkDeleted();
@@ -175,6 +181,7 @@ public sealed class MediaService(
         }
 
         var allowed = await media.HasLiveUsageAsync(id, cancellationToken).ConfigureAwait(false)
+            || await siteContent.IsMediaReferencedAsync(id, includeDrafts: false, cancellationToken).ConfigureAwait(false)
             || (previewToken is not null && await previews.CanViewMediaAsync(previewToken, id, cancellationToken).ConfigureAwait(false))
             // The official logo is public only while verified Organization data references it.
             || (await organization.GetVerifiedAsync(cancellationToken).ConfigureAwait(false))?.LogoMediaId == id;

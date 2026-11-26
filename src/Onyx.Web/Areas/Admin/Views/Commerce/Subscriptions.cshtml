@@ -1,0 +1,55 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model Onyx.Contracts.Common.PagedResult<Onyx.Contracts.Commerce.AdminSubscriptionResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceSubscriptions";
+    var current = ViewData["Status"] as string;
+    var statuses = new[] { "Requested", "Trial", "Active", "Rejected", "Cancelled", "Expired" };
+}
+<div class="d-head">
+    <h1>@T["Nav.CommerceSubscriptions"]</h1>
+</div>
+<partial name="_CmsMessages" />
+<nav class="d-tabs" aria-label="@T["Commerce.Status"]">
+    @foreach (var status in statuses)
+    {
+        <a asp-action="Subscriptions" asp-route-status="@status" aria-current="@(current == status ? "page" : null)">@T["Customer.Status." + status]</a>
+    }
+</nav>
+@if (Model.Items.Count == 0)
+{
+    <p class="hint">@T["Commerce.Subscriptions.Empty"]</p>
+}
+else
+{
+    @foreach (var subscription in Model.Items)
+    {
+        <section class="d-panel">
+            <h2>@subscription.ProductName @(subscription.PlanName is null ? "" : "· " + subscription.PlanName) <span class="badge">@T["Customer.Status." + subscription.Status]</span></h2>
+            <p><a asp-action="Customer" asp-route-id="@subscription.CustomerId" dir="auto">@subscription.CustomerName</a> · <span dir="ltr">@subscription.CustomerEmail</span></p>
+            <p class="hint" dir="ltr">@subscription.RequestedAtUtc.ToString("yyyy-MM-dd HH:mm", CultureInfo.InvariantCulture)@(subscription.TrialEndsAtUtc is { } end ? " → " + end.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) : "")</p>
+            @if (subscription.CustomerNote is not null)
+            {
+                <p dir="auto">@subscription.CustomerNote</p>
+            }
+            @if (ViewData["CanManage"] is true && subscription.Status is "Requested" or "Trial" or "Active")
+            {
+                <form method="post" asp-action="DecideSubscription" asp-route-id="@subscription.Id" class="d-form d-form--row">
+                    <input type="hidden" name="version" value="@subscription.Version">
+                    <input type="hidden" name="status" value="@current">
+                    <label>@T["Commerce.Subscription.Decision"]
+                        <select name="decision">
+                            @if (subscription.Status is "Requested" or "Trial") { <option value="activate">@T["Commerce.Subscription.Activate"]</option> }
+                            @if (subscription.Status == "Requested") { <option value="reject">@T["Commerce.Subscription.Reject"]</option> }
+                            <option value="cancel">@T["Commerce.Subscription.Cancel"]</option>
+                        </select>
+                    </label>
+                    <label>@T["Commerce.Subscription.EndsOn"] <input type="date" name="endsOn"></label>
+                    <label>@T["Commerce.Subscription.Note"] <input name="note" maxlength="1000" dir="auto"></label>
+                    <div class="d-form__actions"><button class="btn btn--primary" type="submit">@T["Commerce.Apply"]</button></div>
+                </form>
+            }
+        </section>
+    }
+}

@@ -1,0 +1,59 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model Onyx.Contracts.Common.PagedResult<Onyx.Contracts.Commerce.AdminCustomerListItemResponse>
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceCustomers";
+    var statuses = new[] { "", "PendingVerification", "Active", "Disabled" };
+}
+<div class="d-head">
+    <h1>@T["Nav.CommerceCustomers"]</h1>
+</div>
+<partial name="_CmsMessages" />
+<form method="get" asp-action="Customers" class="d-form d-form--row">
+    <label>@T["Commerce.Search"] <input name="search" value="@ViewData["Search"]" maxlength="100"></label>
+    <label>@T["Commerce.Status"]
+        <select name="status">
+            @foreach (var status in statuses)
+            {
+                <option value="@status" selected="@((ViewData["Status"] as string ?? "") == status)">@(status == "" ? T["Commerce.All"] : T["Commerce.CustomerStatus." + status])</option>
+            }
+        </select>
+    </label>
+    <div class="d-form__actions"><button class="btn" type="submit">@T["Commerce.Filter"]</button></div>
+</form>
+@if (Model.Items.Count == 0)
+{
+    <p class="hint">@T["Commerce.Customers.Empty"]</p>
+}
+else
+{
+    <div class="d-table-wrap">
+        <table class="d-table">
+            <thead>
+                <tr>
+                    <th scope="col">@T["Form.Name"]</th>
+                    <th scope="col">@T["Form.Email"]</th>
+                    <th scope="col">@T["Form.Company"]</th>
+                    <th scope="col">@T["Commerce.Status"]</th>
+                    <th scope="col">@T["Commerce.Customers.Open"]</th>
+                    <th scope="col">@T["Commerce.Customers.Joined"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customer in Model.Items)
+                {
+                    <tr>
+                        <td><a asp-action="Customer" asp-route-id="@customer.Id" dir="auto">@customer.DisplayName</a></td>
+                        <td dir="ltr">@customer.Email</td>
+                        <td dir="auto">@customer.Company</td>
+                        <td><span class="badge">@T["Commerce.CustomerStatus." + customer.Status]</span></td>
+                        <td>@customer.OpenSubscriptions</td>
+                        <td dir="ltr">@customer.CreatedAtUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <p class="hint">@T["Commerce.Total", Model.TotalCount]</p>
+}

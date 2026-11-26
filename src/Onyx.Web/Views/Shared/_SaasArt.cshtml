@@ -1,0 +1,163 @@
+@model string
+@* Illustrated scene for one SaaS product card (owner request 2026-10-15: clearer, more expressive art).
+   Original inline SVG drawn in the brand palette: it shows what each system is for, never a real
+   screen, client, person or figure (CLAUDE.md §2.1, §2.7) — names and values are abstract bars.
+   Decorative: the parent is aria-hidden. Motion classes (.sa-*) are in site.css and freeze under
+   reduced motion. *@
+<svg class="saas-art" viewBox="0 0 320 180" preserveAspectRatio="xMidYMid meet" focusable="false" aria-hidden="true">
+    @switch (Model)
+    {
+        case "Clinics":
+            @* A clinic dashboard: the doctor, the day's appointments and a live heartbeat. *@
+            <rect x="34" y="18" width="252" height="150" rx="14" fill="#fff" stroke="rgba(15,40,70,.1)" />
+            <path d="M34 32a14 14 0 0 1 14-14h224a14 14 0 0 1 14 14v6H34z" fill="var(--sky-soft)" />
+            <circle cx="50" cy="29" r="3" fill="var(--sky)" /><circle cx="60" cy="29" r="3" fill="rgba(15,40,70,.15)" /><circle cx="70" cy="29" r="3" fill="rgba(15,40,70,.15)" />
+            @* Doctor card *@
+            <rect x="48" y="50" width="86" height="102" rx="10" fill="var(--sky-tint)" stroke="rgba(21,94,166,.15)" />
+            <circle cx="91" cy="78" r="17" fill="var(--sky-soft)" />
+            <circle cx="91" cy="73" r="7" fill="#fff" stroke="var(--sky-3)" stroke-width="2" />
+            <path d="M78 93c2-8 7-11 13-11s11 3 13 11" fill="#fff" stroke="var(--sky-3)" stroke-width="2" />
+            <path d="M85 84c0 6 3 9 6 9" fill="none" stroke="var(--sky-3)" stroke-width="1.6" /><circle cx="91" cy="94" r="2.2" fill="var(--sky)" />
+            <rect x="64" y="106" width="54" height="6" rx="3" fill="var(--sky-3)" opacity=".75" />
+            <rect x="70" y="117" width="42" height="5" rx="2.5" fill="rgba(15,40,70,.12)" />
+            <rect x="62" y="130" width="58" height="13" rx="6.5" fill="var(--sky-3)" />
+            <path d="M83 136.5h16" stroke="#fff" stroke-width="2.4" stroke-linecap="round" />
+            @* Appointments *@
+            <rect x="146" y="50" width="124" height="58" rx="10" fill="#fff" stroke="rgba(15,40,70,.08)" />
+            <g fill="rgba(15,40,70,.07)">
+                <rect x="156" y="60" width="22" height="16" rx="4" /><rect x="183" y="60" width="22" height="16" rx="4" /><rect x="237" y="60" width="22" height="16" rx="4" />
+                <rect x="156" y="82" width="22" height="16" rx="4" /><rect x="210" y="82" width="22" height="16" rx="4" /><rect x="237" y="82" width="22" height="16" rx="4" />
+            </g>
+            <rect class="sa-blink" x="210" y="60" width="22" height="16" rx="4" fill="var(--sky)" />
+            <path d="M215 68l4 4 7-7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            <rect class="sa-blink sa-blink--late" x="183" y="82" width="22" height="16" rx="4" fill="var(--sky-soft)" stroke="var(--sky)" />
+            @* Heartbeat *@
+            <rect x="146" y="116" width="124" height="36" rx="10" fill="var(--rose-soft)" />
+            <path class="sa-draw" pathLength="100" d="M154 135h22l6-12 8 22 7-16 5 6h58" fill="none" stroke="var(--rose)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            @* Medical badge *@
+            <g class="sa-float">
+                <circle cx="282" cy="40" r="20" fill="#fff" stroke="var(--sky)" stroke-width="2" />
+                <path d="M282 30v20M272 40h20" stroke="var(--rose)" stroke-width="5" stroke-linecap="round" />
+            </g>
+            break;
+
+        case "Support":
+            @* A support inbox: a customer asks, the AI-assisted agent answers, tickets resolve. *@
+            <rect x="24" y="18" width="186" height="150" rx="14" fill="#fff" stroke="rgba(15,40,70,.1)" />
+            <path d="M24 32a14 14 0 0 1 14-14h158a14 14 0 0 1 14 14v8H24z" fill="var(--violet-soft)" />
+            <circle cx="42" cy="29" r="7" fill="#fff" /><path d="M38.5 29.5a3.5 3.5 0 0 1 7 0v1.5" fill="none" stroke="var(--violet-2)" stroke-width="1.6" /><rect x="37" y="30" width="2.4" height="3.4" rx="1" fill="var(--violet-2)" /><rect x="44.6" y="30" width="2.4" height="3.4" rx="1" fill="var(--violet-2)" />
+            <rect x="56" y="25" width="48" height="5" rx="2.5" fill="var(--violet-2)" opacity=".7" /><circle cx="198" cy="29" r="3.5" fill="var(--green)" />
+            @* Customer bubble *@
+            <circle cx="44" cy="62" r="9" fill="var(--amber-soft)" /><circle cx="44" cy="59.5" r="3.5" fill="var(--amber)" /><path d="M37.5 68a6.5 6.5 0 0 1 13 0" fill="var(--amber)" />
+            <path d="M58 52h92a8 8 0 0 1 8 8v8a8 8 0 0 1-8 8H66l-8 6z" fill="rgba(15,40,70,.06)" />
+            <rect x="68" y="59" width="70" height="5" rx="2.5" fill="rgba(15,40,70,.2)" /><rect x="68" y="67" width="44" height="4" rx="2" fill="rgba(15,40,70,.14)" />
+            @* Agent reply *@
+            <path d="M190 92H88a8 8 0 0 0-8 8v12a8 8 0 0 0 8 8h94l8 6z" fill="var(--violet)" />
+            <rect x="92" y="100" width="80" height="5" rx="2.5" fill="#fff" opacity=".9" /><rect x="92" y="109" width="56" height="4" rx="2" fill="#fff" opacity=".7" />
+            <g class="sa-float"><circle cx="190" cy="90" r="9" fill="#fff" stroke="var(--violet)" stroke-width="1.8" /><path d="M190 84.5l1.6 3.9 3.9 1.6-3.9 1.6-1.6 3.9-1.6-3.9-3.9-1.6 3.9-1.6z" fill="var(--violet)" /></g>
+            @* Typing *@
+            <rect x="34" y="138" width="40" height="18" rx="9" fill="rgba(15,40,70,.06)" />
+            <circle class="sa-dot" cx="45" cy="147" r="3" fill="var(--violet-2)" /><circle class="sa-dot sa-dot--2" cx="54" cy="147" r="3" fill="var(--violet-2)" /><circle class="sa-dot sa-dot--3" cx="63" cy="147" r="3" fill="var(--violet-2)" />
+            @* Tickets *@
+            <g>
+                <rect x="222" y="30" width="78" height="38" rx="9" fill="#fff" stroke="rgba(15,40,70,.1)" />
+                <circle cx="236" cy="49" r="6" fill="var(--green-soft)" /><path d="M233 49l2.2 2.2 4-4.2" fill="none" stroke="var(--green-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="248" y="42" width="42" height="5" rx="2.5" fill="rgba(15,40,70,.18)" /><rect x="248" y="51" width="28" height="4" rx="2" fill="rgba(15,40,70,.1)" />
+                <rect x="222" y="76" width="78" height="38" rx="9" fill="#fff" stroke="rgba(15,40,70,.1)" />
+                <circle cx="236" cy="95" r="6" fill="var(--green-soft)" /><path d="M233 95l2.2 2.2 4-4.2" fill="none" stroke="var(--green-2)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <rect x="248" y="88" width="38" height="5" rx="2.5" fill="rgba(15,40,70,.18)" /><rect x="248" y="97" width="30" height="4" rx="2" fill="rgba(15,40,70,.1)" />
+                <rect class="sa-blink" x="222" y="122" width="78" height="38" rx="9" fill="var(--violet-soft)" stroke="var(--violet)" />
+                <circle cx="236" cy="141" r="6" fill="#fff" stroke="var(--violet)" stroke-width="1.6" />
+                <rect x="248" y="134" width="40" height="5" rx="2.5" fill="var(--violet-2)" opacity=".6" /><rect x="248" y="143" width="24" height="4" rx="2" fill="var(--violet-2)" opacity=".35" />
+            </g>
+            break;
+
+        case "Talent":
+            @* Creative profiles: portfolio cards fanned out, with a camera and a connect action. *@
+            <g transform="rotate(-8 92 100)">
+                <rect x="40" y="34" width="96" height="124" rx="12" fill="#fff" stroke="rgba(15,40,70,.1)" />
+                <rect x="48" y="42" width="80" height="62" rx="8" fill="var(--sky-soft)" />
+                <circle cx="110" cy="56" r="7" fill="var(--sun)" /><path d="M48 96l22-24 16 16 12-10 30 22v4H48z" fill="var(--sky)" opacity=".75" />
+                <rect x="52" y="114" width="56" height="6" rx="3" fill="rgba(15,40,70,.2)" /><rect x="52" y="126" width="38" height="5" rx="2.5" fill="rgba(15,40,70,.12)" />
+            </g>
+            <g transform="rotate(8 228 100)">
+                <rect x="184" y="34" width="96" height="124" rx="12" fill="#fff" stroke="rgba(15,40,70,.1)" />
+                <rect x="192" y="42" width="80" height="62" rx="8" fill="var(--violet-soft)" />
+                <circle cx="232" cy="66" r="12" fill="var(--violet)" opacity=".55" /><path d="M210 104c4-14 12-20 22-20s18 6 22 20z" fill="var(--violet)" opacity=".55" />
+                <rect x="196" y="114" width="56" height="6" rx="3" fill="rgba(15,40,70,.2)" /><rect x="196" y="126" width="40" height="5" rx="2.5" fill="rgba(15,40,70,.12)" />
+            </g>
+            <g class="sa-float">
+                <rect x="110" y="24" width="100" height="140" rx="13" fill="#fff" stroke="var(--coral)" stroke-width="1.6" />
+                <rect x="118" y="32" width="84" height="70" rx="9" fill="var(--coral-soft)" />
+                <circle cx="160" cy="58" r="13" fill="var(--coral)" opacity=".7" /><path d="M136 102c5-17 14-24 24-24s19 7 24 24z" fill="var(--coral)" opacity=".7" />
+                <rect x="124" y="110" width="62" height="6" rx="3" fill="var(--coral-2)" opacity=".75" /><rect x="124" y="121" width="44" height="5" rx="2.5" fill="rgba(15,40,70,.14)" />
+                <rect x="124" y="136" width="72" height="18" rx="9" fill="var(--coral-2)" />
+                <path d="M152 145h16m-5-4.5 5 4.5-5 4.5" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+            </g>
+            @* Camera *@
+            <g transform="translate(250 128)">
+                <circle r="22" fill="#fff" stroke="rgba(15,40,70,.1)" />
+                <rect x="-13" y="-7" width="26" height="17" rx="4" fill="var(--coral-soft)" stroke="var(--coral-2)" stroke-width="1.8" />
+                <path d="M-5-7l2.5-4h5l2.5 4" fill="none" stroke="var(--coral-2)" stroke-width="1.8" stroke-linejoin="round" />
+                <circle cy="1.5" r="4.5" fill="#fff" stroke="var(--coral-2)" stroke-width="1.8" />
+            </g>
+            break;
+
+        case "Erp":
+            @* An ERP core joining finance, inventory, people and sales, with data flowing between them. *@
+            <g fill="none" stroke="var(--teal)" stroke-width="2" stroke-dasharray="4 5" opacity=".55">
+                <path d="M160 92L76 48M160 92L244 48M160 92L76 140M160 92L244 140" />
+            </g>
+            <g fill="none" stroke="var(--teal-2)" stroke-width="3" stroke-linecap="round">
+                <path class="sa-flow" pathLength="100" d="M160 92L76 48" /><path class="sa-flow sa-flow--2" pathLength="100" d="M160 92L244 48" />
+                <path class="sa-flow sa-flow--3" pathLength="100" d="M160 92L76 140" /><path class="sa-flow sa-flow--4" pathLength="100" d="M160 92L244 140" />
+            </g>
+            @* Core *@
+            <circle class="sa-ring" cx="160" cy="92" r="36" fill="none" stroke="var(--teal)" stroke-width="1.5" />
+            <circle cx="160" cy="92" r="30" fill="#fff" stroke="var(--teal-2)" stroke-width="2.4" />
+            <g fill="var(--teal-soft)" stroke="var(--teal-2)" stroke-width="1.8"><rect x="146" y="78" width="12" height="12" rx="3" /><rect x="162" y="78" width="12" height="12" rx="3" /><rect x="146" y="94" width="12" height="12" rx="3" /></g>
+            <rect x="162" y="94" width="12" height="12" rx="6" fill="var(--teal)" />
+            @* Finance *@
+            <g transform="translate(76 48)"><rect x="-34" y="-24" width="68" height="48" rx="11" fill="#fff" stroke="rgba(15,40,70,.1)" /><circle cy="-4" r="11" fill="var(--sun-soft)" stroke="var(--amber)" stroke-width="2" /><path d="M-3-8h5a2.5 2.5 0 0 1 0 5h-4a2.5 2.5 0 0 0 0 5h5M0-11v2M0 2v2" fill="none" stroke="var(--amber-2)" stroke-width="1.6" stroke-linecap="round" /><rect x="-18" y="11" width="36" height="5" rx="2.5" fill="rgba(15,40,70,.14)" /></g>
+            @* Inventory *@
+            <g transform="translate(244 48)"><rect x="-34" y="-24" width="68" height="48" rx="11" fill="#fff" stroke="rgba(15,40,70,.1)" /><path d="M-12-6l12-6 12 6v11L0 11-12 5z" fill="var(--sky-soft)" stroke="var(--sky-3)" stroke-width="1.8" stroke-linejoin="round" /><path d="M-12-6L0 0l12-6M0 0v11" fill="none" stroke="var(--sky-3)" stroke-width="1.6" /><rect x="-18" y="14" width="36" height="5" rx="2.5" fill="rgba(15,40,70,.14)" /></g>
+            @* People *@
+            <g transform="translate(76 140)"><rect x="-34" y="-24" width="68" height="48" rx="11" fill="#fff" stroke="rgba(15,40,70,.1)" /><circle cx="-6" cy="-8" r="5" fill="var(--violet-soft)" stroke="var(--violet-2)" stroke-width="1.6" /><circle cx="7" cy="-6" r="4" fill="var(--violet-soft)" stroke="var(--violet-2)" stroke-width="1.6" /><path d="M-15 6a9 9 0 0 1 18 0M1 6a7 7 0 0 1 13-2" fill="none" stroke="var(--violet-2)" stroke-width="1.6" /><rect x="-18" y="12" width="36" height="5" rx="2.5" fill="rgba(15,40,70,.14)" /></g>
+            @* Sales *@
+            <g transform="translate(244 140)"><rect x="-34" y="-24" width="68" height="48" rx="11" fill="#fff" stroke="rgba(15,40,70,.1)" /><g fill="var(--green)"><rect x="-14" y="-2" width="6" height="10" rx="1.5" /><rect x="-4" y="-8" width="6" height="16" rx="1.5" /><rect x="6" y="-14" width="6" height="22" rx="1.5" /></g><rect x="-18" y="12" width="36" height="5" rx="2.5" fill="rgba(15,40,70,.14)" /></g>
+            break;
+
+        default:
+            @* Restaurant & retail: a point-of-sale screen with menu items, an order and a receipt. *@
+            <rect x="30" y="22" width="190" height="128" rx="14" fill="#fff" stroke="rgba(15,40,70,.1)" />
+            <path d="M30 36a14 14 0 0 1 14-14h162a14 14 0 0 1 14 14v6H30z" fill="var(--amber-soft)" />
+            <rect x="44" y="28" width="40" height="6" rx="3" fill="var(--amber-2)" opacity=".6" />
+            @* Menu tiles: burger, drink, bag, pizza slice *@
+            <g>
+                <rect x="42" y="52" width="50" height="40" rx="9" fill="var(--amber-tint)" stroke="rgba(146,64,14,.15)" />
+                <path d="M57 70a10 7 0 0 1 20 0z" fill="var(--amber)" /><rect x="56" y="72" width="22" height="3" rx="1.5" fill="var(--green)" /><path d="M57 77h20a0 0 0 0 1 0 0 4 4 0 0 1-4 4H61a4 4 0 0 1-4-4z" fill="var(--amber-2)" opacity=".75" />
+                <rect x="100" y="52" width="50" height="40" rx="9" fill="var(--amber-tint)" stroke="rgba(146,64,14,.15)" />
+                <path d="M117 62h16l-2.5 22h-11z" fill="#fff" stroke="var(--sky-3)" stroke-width="1.8" stroke-linejoin="round" /><path d="M118 68h14" stroke="var(--sky)" stroke-width="5" /><path d="M128 62l3-6" stroke="var(--rose)" stroke-width="1.8" stroke-linecap="round" />
+                <rect x="158" y="52" width="50" height="40" rx="9" fill="var(--amber-tint)" stroke="rgba(146,64,14,.15)" />
+                <path d="M172 66h22l-2 18h-18z" fill="var(--coral-soft)" stroke="var(--coral-2)" stroke-width="1.8" stroke-linejoin="round" /><path d="M178 66v-3a5 5 0 0 1 10 0v3" fill="none" stroke="var(--coral-2)" stroke-width="1.8" />
+            </g>
+            @* Order list *@
+            <rect x="42" y="102" width="166" height="38" rx="9" fill="rgba(15,40,70,.04)" />
+            <rect x="52" y="111" width="70" height="5" rx="2.5" fill="rgba(15,40,70,.2)" /><rect x="52" y="122" width="50" height="5" rx="2.5" fill="rgba(15,40,70,.12)" />
+            <rect class="sa-blink" x="152" y="110" width="46" height="20" rx="10" fill="var(--green)" />
+            <path d="M168 120l4 4 8-8" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            @* Stand *@
+            <path d="M110 150h30l6 14h-42z" fill="rgba(15,40,70,.08)" />
+            @* Receipt *@
+            <g class="sa-float">
+                <path d="M236 30h56v118l-7-5-7 5-7-5-7 5-7-5-7 5-7-5-7 5z" fill="#fff" stroke="rgba(15,40,70,.12)" stroke-linejoin="round" />
+                <rect x="246" y="42" width="36" height="6" rx="3" fill="var(--amber-2)" opacity=".7" />
+                <g fill="rgba(15,40,70,.14)"><rect x="246" y="58" width="28" height="4" rx="2" /><rect x="246" y="68" width="34" height="4" rx="2" /><rect x="246" y="78" width="24" height="4" rx="2" /><rect x="246" y="88" width="30" height="4" rx="2" /></g>
+                <path d="M246 102h36" stroke="rgba(15,40,70,.15)" stroke-dasharray="3 3" />
+                <rect x="246" y="110" width="36" height="7" rx="3.5" fill="var(--amber)" />
+            </g>
+            @* Contactless payment *@
+            <g transform="translate(226 152)"><circle r="14" fill="var(--amber)" /><path d="M-4-6a8 8 0 0 1 0 12M0-9a12 12 0 0 1 0 18M-8-3a4 4 0 0 1 0 6" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" /></g>
+            break;
+    }
+</svg>

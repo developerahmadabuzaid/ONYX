@@ -1,0 +1,9 @@
+@model (string Title, string Text, string? ActionUrl, string? ActionLabel)
+<div class="d-empty">
+    <p class="d-empty__title">@T[Model.Title]</p>
+    <p class="hint">@T[Model.Text]</p>
+    @if (Model.ActionUrl is not null)
+    {
+        <a class="btn btn--primary btn--small" href="@Model.ActionUrl">@T[Model.ActionLabel!]</a>
+    }
+</div>

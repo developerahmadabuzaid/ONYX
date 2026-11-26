@@ -1,0 +1,30 @@
+namespace Onyx.Contracts.Delivery;
+
+/// <summary>An issue in lists, boards and the backlog.</summary>
+public sealed record IssueListItemResponse(
+    Guid Id,
+    string Key,
+    Guid ProjectId,
+    string ProjectKey,
+    string Type,
+    string Title,
+    Guid StatusId,
+    string StatusName,
+    string? StatusKey,
+    string StatusCategory,
+    string Priority,
+    Guid? AssigneeId,
+    string? AssigneeName,
+    int? StoryPoints,
+    DateOnly? DueDate,
+    IReadOnlyList<string> Labels,
+    Guid? EpicId,
+    string? EpicKey,
+    string? EpicTitle,
+    Guid? ParentId,
+    Guid? SprintId,
+    long Rank,
+    bool IsOverdue,
+    DateTimeOffset UpdatedAtUtc,
+    uint Version,
+    DateOnly? StartDate = null);

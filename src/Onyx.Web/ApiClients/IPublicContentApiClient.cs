@@ -26,4 +26,7 @@ public interface IPublicContentApiClient
 
     /// <summary>The homepage's featured projects; empty when there are none or the API is unreachable.</summary>
     Task<IReadOnlyList<ListingItemResponse>> GetFeaturedProjectsAsync(string languageCode, CancellationToken cancellationToken);
+
+    /// <summary>The homepage's newest published insights (at most <paramref name="count"/>); empty when there are none or the API is unreachable.</summary>
+    Task<IReadOnlyList<ListingItemResponse>> GetLatestInsightsAsync(string languageCode, int count, CancellationToken cancellationToken);
 }

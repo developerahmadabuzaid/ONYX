@@ -1,0 +1,264 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model ProjectPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryProjects";
+    var project = Model.Project;
+    var form = new ProjectForm
+    {
+        Name = project.Name, Description = project.Description, Type = project.Type, Classification = project.Classification, ClientName = project.ClientName,
+        Status = project.Status, Priority = project.Priority, StartDate = project.StartDate, TargetDate = project.TargetDate, RepositoryUrl = project.RepositoryUrl,
+    };
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+<partial name="_DeliveryTabs" model='(project.Id, project.Key, project.Name, "Project")' />
+<partial name="_CmsMessages" />
+@{
+    var analytics = Model.Analytics;
+    var percent = DeliveryDisplay.Percent(project.DoneIssues, project.TotalIssues);
+    var health = analytics?.Projects.FirstOrDefault(item => item.Id == project.Id)?.Health;
+}
+<section class="p-overview" aria-label="@T["Delivery.Tab.Overview"]">
+    <div class="p-overview__main widget">
+        <div class="p-overview__badges">
+            <span class="d-pstatus d-pstatus--@project.Status.ToLowerInvariant()">@DeliveryDisplay.Value(T, "ProjectStatus", project.Status)</span>
+            @if (health is not null)
+            {
+                <partial name="_Health" model="health" />
+            }
+            <partial name="_Priority" model="project.Priority" />
+            <span class="badge">@DeliveryDisplay.Value(T, "ProjectType", project.Type)</span>
+            <span class="badge">@DeliveryDisplay.Value(T, "Classification", project.Classification)</span>
+        </div>
+        @if (!string.IsNullOrWhiteSpace(project.Description))
+        {
+            <p class="p-overview__desc d-pre" dir="auto">@project.Description</p>
+        }
+        <dl class="p-overview__facts">
+            <div><dt>@T["Delivery.Field.Owner"]</dt><dd><partial name="_Avatar" model="((Guid?)project.OwnerId, (string?)project.OwnerName)" /> @project.OwnerName</dd></div>
+            <div><dt>@T["Delivery.Field.StartDate"]</dt><dd>@(project.StartDate is { } start ? DeliveryFormat.Day(start) : "—")</dd></div>
+            <div><dt>@T["Delivery.Field.TargetDate"]</dt><dd>@(project.TargetDate is { } target ? DeliveryFormat.Day(target) : "—")</dd></div>
+            @if (project.ClientName is not null)
+            {
+                <div><dt>@T["Delivery.Field.ClientName"]</dt><dd dir="auto">@project.ClientName</dd></div>
+            }
+            <div><dt>@T["Delivery.Members"]</dt><dd>
+                <span class="avatar-stack">
+                    @foreach (var member in project.Members.Take(6))
+                    {
+                        <partial name="_Avatar" model="((Guid?)member.UserId, (string?)member.DisplayName)" />
+                    }
+                </span>
+                <span dir="ltr">@project.Members.Count</span>
+            </dd></div>
+        </dl>
+    </div>
+    <div class="p-overview__progress widget">
+        <h2 class="widget__title">@T["Delivery.Field.Progress"]</h2>
+        @if (analytics is not null && analytics.Kpis.TotalIssues > 0)
+        {
+            @Chart.Donut(
+                [
+                    new ChartSlice(T["Delivery.Ws.S.Completed"], analytics.Status.Completed, "green"),
+                    new ChartSlice(T["Delivery.Ws.S.InProgress"], analytics.Status.InProgress, "sky"),
+                    new ChartSlice(T["Delivery.Ws.S.Pending"], analytics.Status.Pending, "violet"),
+                    new ChartSlice(T["Delivery.Ws.S.Overdue"], analytics.Status.Overdue, "rose"),
+                ],
+                percent.ToString(CultureInfo.InvariantCulture) + "%", T["Delivery.Ws.S.Completed"], T["Delivery.Field.Progress"])
+            @Chart.Legend([
+                (T["Delivery.Ws.S.Completed"].Value, "green", analytics.Status.Completed.ToString(CultureInfo.InvariantCulture)),
+                (T["Delivery.Ws.S.InProgress"].Value, "sky", analytics.Status.InProgress.ToString(CultureInfo.InvariantCulture)),
+                (T["Delivery.Ws.S.Pending"].Value, "violet", analytics.Status.Pending.ToString(CultureInfo.InvariantCulture)),
+                (T["Delivery.Ws.S.Overdue"].Value, "rose", analytics.Status.Overdue.ToString(CultureInfo.InvariantCulture)),
+            ])
+        }
+        else
+        {
+            <p class="widget__empty">@T["Delivery.Ws.NoTasks"]</p>
+        }
+    </div>
+</section>
+
+@if (analytics is not null)
+{
+    <div class="p-columns">
+        <section class="widget" aria-labelledby="p-team">
+            <header class="widget__head"><h2 id="p-team">@T["Delivery.Dashboard.Workload"]</h2></header>
+            @if (analytics.Team.Count == 0)
+            {
+                <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+            }
+            else
+            {
+                @Chart.Bars(analytics.Team.Select(member => member.DisplayName).ToList(),
+                    [new ChartSeries(T["Delivery.Ws.S.Pending"], "violet", analytics.Team.Select(member => (double?)member.ToDo).ToList()),
+                     new ChartSeries(T["Delivery.Ws.S.InProgress"], "sky", analytics.Team.Select(member => (double?)member.InProgress).ToList()),
+                     new ChartSeries(T["Delivery.Ws.S.Overdue"], "rose", analytics.Team.Select(member => (double?)member.Overdue).ToList())],
+                    stacked: true, DeliveryFormat.IsRtl, T["Delivery.Dashboard.Workload"])
+                @Chart.Legend([(T["Delivery.Ws.S.Pending"].Value, "violet", (string?)null), (T["Delivery.Ws.S.InProgress"].Value, "sky", (string?)null), (T["Delivery.Ws.S.Overdue"].Value, "rose", (string?)null)])
+            }
+        </section>
+        <section class="widget" aria-labelledby="p-activity">
+            <header class="widget__head"><h2 id="p-activity">@T["Delivery.Ws.ProjectActivity"]</h2></header>
+            @if (analytics.RecentActivity.Count == 0)
+            {
+                <p class="widget__empty">@T["Delivery.Dashboard.NoActivity"]</p>
+            }
+            else
+            {
+                <ol class="feed" role="list">
+                    @foreach (var entry in analytics.RecentActivity)
+                    {
+                        <li class="feed__item">
+                            <span class="feed__dot" aria-hidden="true"></span>
+                            <p class="feed__text"><strong dir="auto">@(entry.ActorName ?? T["Delivery.System"])</strong> @T["Delivery.History." + entry.Field] <span aria-hidden="true">·</span> <a asp-action="Issue" asp-route-id="@entry.IssueId"><span class="d-key" dir="ltr">@entry.IssueKey</span> <bdi>@entry.IssueTitle</bdi></a></p>
+                            <partial name="_Utc" model="entry.AtUtc" />
+                        </li>
+                    }
+                </ol>
+            }
+        </section>
+    </div>
+}
+
+<div class="d-grid d-grid--wide">
+    <section class="d-panel" aria-labelledby="d-details">
+        <h2 id="d-details">@T["Delivery.ProjectDetails"]</h2>
+        <dl class="d-facts">
+            <dt>@T["Delivery.Field.Owner"]</dt><dd>@project.OwnerName</dd>
+            <dt>@T["Delivery.Field.MyRole"]</dt><dd>@(project.MyRole is null ? T["Delivery.Role.WorkspaceAdmin"] : DeliveryDisplay.Value(T, "Role", project.MyRole))</dd>
+            <dt>@T["Delivery.Field.Progress"]</dt><dd>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"].Value, project.DoneIssues, project.TotalIssues)</dd>
+            @if (project.RepositoryUrl is not null)
+            {
+                <dt>@T["Delivery.Field.RepositoryUrl"]</dt><dd><a href="@project.RepositoryUrl" rel="noopener noreferrer" target="_blank" dir="ltr">@project.RepositoryUrl</a></dd>
+            }
+        </dl>
+        @if (project.Can.ManageProject)
+        {
+            <form method="post" asp-action="UpdateProject" asp-route-id="@project.Id" class="d-form editor">
+                <input type="hidden" name="version" value="@project.Version">
+                <label>@T["Delivery.Field.Name"] <input name="Name" value="@project.Name" required maxlength="120" dir="auto"></label>
+                <partial name="_ProjectFields" model="form" />
+                <button type="submit" class="btn btn--primary">@T["Cms.Save"]</button>
+            </form>
+        }
+        else
+        {
+            <p class="d-pre" dir="auto">@project.Description</p>
+        }
+    </section>
+
+    <section class="d-panel" aria-labelledby="d-members">
+        <h2 id="d-members">@T["Delivery.Members"]</h2>
+        <p class="hint">@T["Delivery.MembersHint"]</p>
+        <table class="d-table">
+            <thead><tr><th scope="col">@T["Delivery.Field.Name"]</th><th scope="col">@T["Delivery.Field.Role"]</th>@if (project.Can.ManageProject) { <th scope="col"><span class="visually-hidden">@T["Delivery.Actions"]</span></th> }</tr></thead>
+            <tbody>
+                @foreach (var member in project.Members)
+                {
+                    <tr>
+                        <td>@member.DisplayName</td>
+                        <td>
+                            @if (project.Can.ManageProject)
+                            {
+                                <form method="post" asp-action="SaveMember" asp-route-id="@project.Id" class="d-inline-form">
+                                    <input type="hidden" name="userId" value="@member.UserId">
+                                    <input type="hidden" name="version" value="@project.Version">
+                                    <label class="visually-hidden" for="role-@member.UserId">@T["Delivery.Field.Role"]</label>
+                                    <select id="role-@member.UserId" name="role">
+                                        @foreach (var role in DeliveryDisplay.Roles)
+                                        {
+                                            <option value="@role" selected="@(member.Role == role)">@T["Delivery.Role." + role]</option>
+                                        }
+                                    </select>
+                                    <button type="submit" class="btn btn--small">@T["Cms.Save"]</button>
+                                </form>
+                            }
+                            else
+                            {
+                                @DeliveryDisplay.Value(T, "Role", member.Role)
+                            }
+                        </td>
+                        @if (project.Can.ManageProject)
+                        {
+                            <td>
+                                <form method="post" asp-action="RemoveMember" asp-route-id="@project.Id" asp-route-userId="@member.UserId" data-confirm="@T["Delivery.ConfirmRemoveMember"]">
+                                    <input type="hidden" name="version" value="@project.Version">
+                                    <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.Remove"]</button>
+                                </form>
+                            </td>
+                        }
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @if (project.Can.ManageProject)
+        {
+            @if (Model.EligibleUsers.Count == 0)
+            {
+                <p class="hint">@T["Delivery.NoEligibleUsers"]</p>
+            }
+            else
+            {
+                <form method="post" asp-action="SaveMember" asp-route-id="@project.Id" class="d-form d-form--row">
+                    <input type="hidden" name="version" value="@project.Version">
+                    <label>@T["Delivery.AddMember"]
+                        <select name="userId" required>
+                            @foreach (var user in Model.EligibleUsers)
+                            {
+                                <option value="@user.UserId">@user.DisplayName</option>
+                            }
+                        </select>
+                    </label>
+                    <label>@T["Delivery.Field.Role"]
+                        <select name="role">
+                            @foreach (var role in DeliveryDisplay.Roles)
+                            {
+                                <option value="@role" selected="@(role == "Developer")">@T["Delivery.Role." + role]</option>
+                            }
+                        </select>
+                    </label>
+                    <button type="submit" class="btn btn--primary btn--small">@T["Delivery.Add"]</button>
+                </form>
+            }
+        }
+    </section>
+
+    <section class="d-panel" aria-labelledby="d-workflow">
+        <h2 id="d-workflow">@T["Delivery.Workflow"]</h2>
+        <p class="hint">@T["Delivery.WorkflowHint"]</p>
+        <table class="d-table">
+            <thead><tr><th scope="col">@T["Delivery.Field.Status"]</th><th scope="col">@T["Delivery.Field.Category"]</th><th scope="col">@T["Delivery.AllowedNext"]</th><th scope="col">@T["Delivery.WipLimit"]</th></tr></thead>
+            <tbody>
+                @foreach (var status in project.Statuses)
+                {
+                    var next = project.Transitions.Where(t => t.FromStatusId == status.Id).Select(t => project.Statuses.First(s => s.Id == t.ToStatusId)).OrderBy(s => s.Order);
+                    <tr>
+                        <td><span class="d-status d-status--@status.Category.ToLowerInvariant()">@DeliveryDisplay.Status(T, status)</span></td>
+                        <td>@DeliveryDisplay.Value(T, "Category", status.Category)</td>
+                        <td>@string.Join(CultureInfo.CurrentCulture.TextInfo.ListSeparator + " ", next.Select(s => DeliveryDisplay.Status(T, s)))</td>
+                        <td>
+                            @if (project.Can.ManageProject)
+                            {
+                                <form method="post" asp-action="SetWipLimit" asp-route-id="@project.Id" asp-route-statusId="@status.Id" class="d-inline-form">
+                                    <input type="hidden" name="version" value="@project.Version">
+                                    <label class="visually-hidden" for="wip-@status.Id">@T["Delivery.WipLimit"]</label>
+                                    <input id="wip-@status.Id" type="number" name="wipLimit" min="1" max="500" value="@status.WipLimit" class="d-input-small">
+                                    <button type="submit" class="btn btn--small">@T["Cms.Save"]</button>
+                                </form>
+                            }
+                            else
+                            {
+                                @status.WipLimit
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+</div>

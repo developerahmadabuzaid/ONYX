@@ -52,7 +52,7 @@ public sealed class AnalyticsSyncTests(PostgresFixture fixture) : AnalyticsApiTe
             [
                 new(day, "/en/about-us?utm_source=sample", "google", "organic", "(not set)", "Saudi Arabia", "mobile", 6, 3, 10),
                 new(day, "/en/about-us", "google", "organic", "(not set)", "Saudi Arabia", "mobile", 4, 2, 5),
-                new(day, "/ar/%D9%85%D9%86-%D9%86%D8%AD%D9%86", "newsletter", "email", "spring-sample", "Jordan", "desktop", 7, 5, 9),
+                new(day, "/ar/%D8%B5%D9%81%D8%AD%D8%A9-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D9%8A%D8%A9", "newsletter", "email", "spring-sample", "Jordan", "desktop", 7, 5, 9),
             ],
             [new(day, ConversionEvents.InquirySubmitted, 3), new(day, "page_view", 999)],
             false));
@@ -67,7 +67,7 @@ public sealed class AnalyticsSyncTests(PostgresFixture fixture) : AnalyticsApiTe
         var rows = await QueryAsync(db => db.WebAnalyticsDailyMetrics.OrderBy(metric => metric.Kind).ThenBy(metric => metric.LandingPage));
         Assert.Equal(5, rows.Count);                                                                      // 2 totals, 2 acquisition (merged), 1 event
         var english = rows.Single(row => row.LandingPage == "/en/about-us");
-        var arabic = rows.Single(row => row.LandingPage == "/ar/من-نحن");
+        var arabic = rows.Single(row => row.LandingPage == "/ar/صفحة-تعريفية");
         Assert.Equal(10, english.Sessions);                                                               // query string dropped, rows merged
         Assert.Equal(("en", page.Id), (english.LanguageCode, english.ContentItemId!.Value));
         Assert.Equal(("ar", page.Id), (arabic.LanguageCode, arabic.ContentItemId!.Value));
@@ -99,7 +99,7 @@ public sealed class AnalyticsSyncTests(PostgresFixture fixture) : AnalyticsApiTe
             [new(day, null, null, null, null, 9, 400, 0.0225, 8.5)],
             [
                 new(day, "https://onyx.test/en/about-us", null, null, null, 6, 300, 0.02, 7.2),
-                new(day, "https://onyx.test/ar/%D9%85%D9%86-%D9%86%D8%AD%D9%86", null, null, null, 3, 100, 0.03, 12.4),
+                new(day, "https://onyx.test/ar/%D8%B5%D9%81%D8%AD%D8%A9-%D8%AA%D8%B9%D8%B1%D9%8A%D9%81%D9%8A%D8%A9", null, null, null, 3, 100, 0.03, 12.4),
             ],
             [new(day, null, "onyx sample query", null, null, 2, 150, 0.0133, 11)],
             [new(day, null, null, "sau", "MOBILE", 9, 400, 0.0225, 8.5)],

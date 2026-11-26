@@ -1,0 +1,367 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model WorkspacePage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryDashboard";
+    var a = Model.Analytics;
+    var k = a.Kpis;
+    var rtl = DeliveryFormat.IsRtl;
+    var created = a.Timeline.Select(point => (double)point.Created).ToList();
+    var completed = a.Timeline.Select(point => (double)point.Completed).ToList();
+    string Note(string key, params object[] values) => string.Format(CultureInfo.CurrentCulture, T[key], values);
+    var period = T["Delivery.Ws.Range." + a.RangeDays.ToString(CultureInfo.InvariantCulture)].Value;
+    static string Added(int count) => count > 0 ? "+" + count.ToString(CultureInfo.InvariantCulture) : "0";
+    var kpis = new List<KpiCard>
+    {
+        new("Delivery.Ws.Kpi.Projects", k.TotalProjects, "folder", "teal", Note("Delivery.Ws.Kpi.NewInPeriod", Added(k.ProjectsCreatedInRange), period), null, null, null, Url.Action("Projects", "Delivery")),
+        new("Delivery.Ws.Kpi.Active", k.ActiveProjects, "activity", "sky", Note("Delivery.Ws.Kpi.OfProjects", k.TotalProjects), null, null, null, Url.Action("Projects", "Delivery")),
+        new("Delivery.Ws.Kpi.Tasks", k.TotalIssues, "layers", "violet", Note("Delivery.Ws.Kpi.CreatedInPeriod", Added(k.CreatedInRange), period), DeliveryFormat.ChangePercent(k.CreatedInRange, k.CreatedPreviousRange), null, Chart.Sparkline(created, "violet", rtl), Url.Action("Issues", "Delivery")),
+        new("Delivery.Ws.Kpi.Completed", k.CompletedIssues, "check", "green", Note("Delivery.Ws.Kpi.DoneShare", DeliveryDisplay.Percent(k.CompletedIssues, k.TotalIssues)), null, null, null, Url.Action("Issues", "Delivery", new { status = "Done" })),
+        new("Delivery.Ws.Kpi.Pending", k.PendingIssues, "clock", "amber", Note("Delivery.Ws.Kpi.InProgressNow", k.InProgressIssues), null, null, null, Url.Action("Issues", "Delivery", new { status = "ToDo" })),
+        new("Delivery.Ws.Kpi.Overdue", k.OverdueIssues, "alert", "rose", k.OverdueIssues > 0 ? T["Delivery.Ws.Kpi.NeedsAttention"] : T["Delivery.Ws.Kpi.NothingOverdue"], null, null, null, Url.Action("Issues", "Delivery", new { overdue = true }), k.OverdueIssues > 0),
+        new("Delivery.Ws.Kpi.Mine", k.AssignedToMe, "user", "sky", T["Delivery.Ws.Kpi.OpenForYou"], null, null, null, Url.Action("MyWork", "Delivery")),
+        new("Delivery.Ws.Kpi.Throughput", k.CompletedInRange, "gauge", "teal", Note("Delivery.Ws.Kpi.CompletedInPeriod", period), DeliveryFormat.ChangePercent(k.CompletedInRange, k.CompletedPreviousRange), true, Chart.Sparkline(completed, "teal", rtl), Url.Action("Reports", "DeliveryPlanning", new { range = a.RangeDays })),
+    };
+    var totalTasks = a.Status.Completed + a.Status.InProgress + a.Status.Pending + a.Status.Overdue;
+    var healthCounts = a.Projects.GroupBy(project => project.Health).ToDictionary(group => group.Key, group => group.Count());
+    int Health(string key) => healthCounts.GetValueOrDefault(key);
+    var points = a.Timeline.Select(point => a.Bucket == "week" ? $"{DeliveryFormat.Day(point.Start)} – {DeliveryFormat.Day(point.End)}" : DeliveryFormat.Day(point.Start)).ToList();
+    var tips = a.Timeline.Select((point, index) => string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.TrendTip"], points[index], point.Created, point.Completed)).ToList();
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+    <script src="~/js/delivery-workspace.js" asp-append-version="true" defer></script>
+}
+
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+        <h1>@T["Delivery.Ws.Title"]</h1>
+        <p class="ws-sub">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.Subtitle"], DeliveryFormat.DayLong(a.From), DeliveryFormat.DayLong(a.To))</p>
+    </div>
+    <div class="ws-head__tools">
+        <nav class="seg" aria-label="@T["Delivery.Ws.Period"]">
+            @foreach (var range in new[] { 7, 30, 90 })
+            {
+                <a class="seg__item@(a.RangeDays == range ? " is-active" : string.Empty)" asp-action="Index" asp-route-range="@range" aria-current="@(a.RangeDays == range ? "true" : null)">@T["Delivery.Ws.Range." + range.ToString(CultureInfo.InvariantCulture)]</a>
+            }
+        </nav>
+        <button type="button" class="btn btn--small" data-customize-open hidden><partial name="_AdminIcon" model='"sliders"' />@T["Delivery.Ws.Customize"]</button>
+        <a class="btn btn--primary btn--small" asp-action="NewIssue"><partial name="_AdminIcon" model='"plus"' />@T["Delivery.CreateIssue"]</a>
+    </div>
+</header>
+
+<partial name="_CmsMessages" />
+
+<section class="kpis" aria-label="@T["Delivery.Ws.KeyFigures"]">
+    @foreach (var card in kpis)
+    {
+        <partial name="_Kpi" model="card" />
+    }
+</section>
+
+<div class="ws-grid" data-widgets>
+    <section class="widget" data-widget="status" aria-labelledby="w-status">
+        <header class="widget__head"><h2 id="w-status">@T["Delivery.Ws.W.Status"]</h2></header>
+        @if (totalTasks == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Ws.NoTasks"]</p>
+        }
+        else
+        {
+            <div class="donut-block">
+                @Chart.Donut(
+                    [
+                        new ChartSlice(T["Delivery.Ws.S.Completed"], a.Status.Completed, "green"),
+                        new ChartSlice(T["Delivery.Ws.S.InProgress"], a.Status.InProgress, "sky"),
+                        new ChartSlice(T["Delivery.Ws.S.Pending"], a.Status.Pending, "violet"),
+                        new ChartSlice(T["Delivery.Ws.S.Overdue"], a.Status.Overdue, "rose"),
+                    ],
+                    totalTasks.ToString("N0", CultureInfo.InvariantCulture), T["Delivery.Ws.Tasks"], T["Delivery.Ws.W.Status"])
+                @Chart.Legend([
+                    (T["Delivery.Ws.S.Completed"].Value, "green", $"{a.Status.Completed} · {DeliveryDisplay.Percent(a.Status.Completed, totalTasks)}%"),
+                    (T["Delivery.Ws.S.InProgress"].Value, "sky", $"{a.Status.InProgress} · {DeliveryDisplay.Percent(a.Status.InProgress, totalTasks)}%"),
+                    (T["Delivery.Ws.S.Pending"].Value, "violet", $"{a.Status.Pending} · {DeliveryDisplay.Percent(a.Status.Pending, totalTasks)}%"),
+                    (T["Delivery.Ws.S.Overdue"].Value, "rose", $"{a.Status.Overdue} · {DeliveryDisplay.Percent(a.Status.Overdue, totalTasks)}%"),
+                ])
+            </div>
+        }
+    </section>
+
+    <section class="widget widget--wide" data-widget="trend" aria-labelledby="w-trend">
+        <header class="widget__head">
+            <h2 id="w-trend">@T["Delivery.Ws.W.Trend"]</h2>
+            @Chart.Legend([(T["Delivery.Ws.Created"].Value, "sky", (string?)null), (T["Delivery.Ws.Completed"].Value, "teal", (string?)null)])
+        </header>
+        @Chart.Line(points, [new ChartSeries(T["Delivery.Ws.Created"], "sky", created.Select(value => (double?)value).ToList()), new ChartSeries(T["Delivery.Ws.Completed"], "teal", completed.Select(value => (double?)value).ToList(), Area: true)], tips, rtl, T["Delivery.Ws.W.Trend"])
+        <details class="chart-data">
+            <summary>@T["Delivery.Ws.ShowData"]</summary>
+            <table class="data-table">
+                <thead><tr><th scope="col">@T["Delivery.Ws.Period"]</th><th scope="col">@T["Delivery.Ws.Created"]</th><th scope="col">@T["Delivery.Ws.Completed"]</th></tr></thead>
+                <tbody>
+                    @for (var index = 0; index < a.Timeline.Count; index++)
+                    {
+                        <tr><td>@points[index]</td><td dir="ltr">@a.Timeline[index].Created</td><td dir="ltr">@a.Timeline[index].Completed</td></tr>
+                    }
+                </tbody>
+            </table>
+        </details>
+    </section>
+
+    <section class="widget widget--wide" data-widget="progress" aria-labelledby="w-progress">
+        <header class="widget__head"><h2 id="w-progress">@T["Delivery.Dashboard.ProjectProgress"]</h2><a class="widget__more" asp-action="Projects">@T["Delivery.Ws.ViewAll"]</a></header>
+        @if (a.Projects.Count == 0)
+        {
+            <partial name="_Empty" model='("Delivery.Dashboard.NoProjects", "Delivery.Ws.NoProjectsHint", Model.CanCreateProjects ? Url.Action("Projects") + "#new-project" : null, Model.CanCreateProjects ? "Delivery.CreateProject" : null)' />
+        }
+        else
+        {
+            <ul class="progress-list" role="list">
+                @foreach (var project in a.Projects.Where(project => project.Health != "Completed").Take(6))
+                {
+                    var percent = DeliveryDisplay.Percent(project.DoneIssues, project.TotalIssues);
+                    <li class="progress-list__row">
+                        <div class="progress-list__name">
+                            <a asp-action="Project" asp-route-id="@project.Id" dir="auto"><span class="d-key" dir="ltr">@project.Key</span> @project.Name</a>
+                            <partial name="_Health" model="project.Health" />
+                        </div>
+                        @Chart.Progress(project.TotalIssues == 0 ? 0 : (double)project.DoneIssues / project.TotalIssues, project.Health switch { "Delayed" => "rose", "AtRisk" => "amber", _ => "teal" }, rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.ProgressLabel"], percent))
+                        <div class="progress-list__meta">
+                            <span dir="ltr">@percent%</span>
+                            <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"], project.DoneIssues, project.TotalIssues)</span>
+                            @if (project.TargetDate is { } target)
+                            {
+                                <span><partial name="_AdminIcon" model='"flag"' />@DeliveryFormat.Day(target)</span>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section class="widget" data-widget="health" aria-labelledby="w-health">
+        <header class="widget__head"><h2 id="w-health">@T["Delivery.Ws.W.Health"]</h2></header>
+        @if (a.Projects.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoProjects"]</p>
+        }
+        else
+        {
+            <div class="donut-block">
+                @Chart.Donut(
+                    [
+                        new ChartSlice(T["Delivery.Health.OnTrack"], Health("OnTrack"), "green"),
+                        new ChartSlice(T["Delivery.Health.AtRisk"], Health("AtRisk"), "amber"),
+                        new ChartSlice(T["Delivery.Health.Delayed"], Health("Delayed"), "rose"),
+                        new ChartSlice(T["Delivery.Health.OnHold"], Health("OnHold"), "slate"),
+                        new ChartSlice(T["Delivery.Health.Completed"], Health("Completed"), "teal"),
+                    ],
+                    a.Projects.Count.ToString(CultureInfo.InvariantCulture), T["Delivery.Ws.Projects"], T["Delivery.Ws.W.Health"])
+                @Chart.Legend([
+                    (T["Delivery.Health.OnTrack"].Value, "green", Health("OnTrack").ToString(CultureInfo.InvariantCulture)),
+                    (T["Delivery.Health.AtRisk"].Value, "amber", Health("AtRisk").ToString(CultureInfo.InvariantCulture)),
+                    (T["Delivery.Health.Delayed"].Value, "rose", Health("Delayed").ToString(CultureInfo.InvariantCulture)),
+                    (T["Delivery.Health.OnHold"].Value, "slate", Health("OnHold").ToString(CultureInfo.InvariantCulture)),
+                    (T["Delivery.Health.Completed"].Value, "teal", Health("Completed").ToString(CultureInfo.InvariantCulture)),
+                ])
+            </div>
+            <p class="widget__foot">@T["Delivery.Health.Rule"]</p>
+        }
+    </section>
+
+    <section class="widget" data-widget="team" aria-labelledby="w-team">
+        <header class="widget__head">
+            <h2 id="w-team">@T["Delivery.Ws.W.Team"]</h2>
+            @Chart.Legend([(T["Delivery.Ws.OpenNow"].Value, "sky", (string?)null), (T["Delivery.Ws.CompletedPeriod"].Value, "teal", (string?)null)])
+        </header>
+        @if (a.Team.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+        }
+        else
+        {
+            @Chart.Bars(a.Team.Select(member => member.DisplayName).ToList(),
+                [new ChartSeries(T["Delivery.Ws.OpenNow"], "sky", a.Team.Select(member => (double?)(member.ToDo + member.InProgress + member.Overdue)).ToList()),
+                 new ChartSeries(T["Delivery.Ws.CompletedPeriod"], "teal", a.Team.Select(member => (double?)member.CompletedInRange).ToList())],
+                stacked: false, rtl, T["Delivery.Ws.W.Team"])
+            <p class="widget__foot">@T["Delivery.Ws.TeamNote"]</p>
+        }
+    </section>
+
+    <section class="widget" data-widget="workload" aria-labelledby="w-workload">
+        <header class="widget__head">
+            <h2 id="w-workload">@T["Delivery.Dashboard.Workload"]</h2>
+            @Chart.Legend([(T["Delivery.Ws.S.Pending"].Value, "violet", (string?)null), (T["Delivery.Ws.S.InProgress"].Value, "sky", (string?)null), (T["Delivery.Ws.S.Overdue"].Value, "rose", (string?)null)])
+        </header>
+        @if (a.Team.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+        }
+        else
+        {
+            @Chart.Bars(a.Team.Select(member => member.DisplayName).ToList(),
+                [new ChartSeries(T["Delivery.Ws.S.Pending"], "violet", a.Team.Select(member => (double?)member.ToDo).ToList()),
+                 new ChartSeries(T["Delivery.Ws.S.InProgress"], "sky", a.Team.Select(member => (double?)member.InProgress).ToList()),
+                 new ChartSeries(T["Delivery.Ws.S.Overdue"], "rose", a.Team.Select(member => (double?)member.Overdue).ToList())],
+                stacked: true, rtl, T["Delivery.Dashboard.Workload"])
+        }
+    </section>
+
+    <section class="widget" data-widget="mine" aria-labelledby="w-mine">
+        <header class="widget__head"><h2 id="w-mine">@T["Delivery.Ws.W.MyTasks"]</h2><a class="widget__more" asp-action="MyWork">@T["Delivery.Ws.ViewAll"]</a></header>
+        @if (a.MyOpenIssues.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Ws.NoMyTasks"]</p>
+        }
+        else
+        {
+            <ul class="mini-list" role="list">@foreach (var issue in a.MyOpenIssues) { <partial name="_IssueMini" model="issue" /> }</ul>
+        }
+    </section>
+
+    <section class="widget" data-widget="deadlines" aria-labelledby="w-deadlines">
+        <header class="widget__head"><h2 id="w-deadlines">@T["Delivery.Dashboard.UpcomingDeadlines"]</h2><a class="widget__more" asp-controller="DeliveryPlanning" asp-action="Calendar">@T["Nav.DeliveryCalendar"]</a></header>
+        @if (a.UpcomingDeadlines.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoDeadlines"]</p>
+        }
+        else
+        {
+            <ul class="mini-list" role="list">@foreach (var issue in a.UpcomingDeadlines) { <partial name="_IssueMini" model="issue" /> }</ul>
+        }
+    </section>
+
+    <section class="widget" data-widget="sprints" aria-labelledby="w-sprints">
+        <header class="widget__head"><h2 id="w-sprints">@T["Delivery.Dashboard.ActiveSprints"]</h2><a class="widget__more" asp-controller="DeliveryPlanning" asp-action="Sprints">@T["Delivery.Ws.ViewAll"]</a></header>
+        @if (a.ActiveSprints.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoActiveSprints"]</p>
+        }
+        else
+        {
+            <ul class="sprint-list" role="list">
+                @foreach (var active in a.ActiveSprints)
+                {
+                    var sprint = active.Sprint;
+                    <li>
+                        <a class="sprint-list__name" asp-controller="DeliveryPlanning" asp-action="Sprint" asp-route-sprintId="@sprint.Id" dir="auto"><span class="d-key" dir="ltr">@active.ProjectKey</span> @sprint.Name</a>
+                        @Chart.Progress(sprint.Points == 0 ? (sprint.IssueCount == 0 ? 0 : (double)sprint.DoneIssueCount / sprint.IssueCount) : (double)sprint.DonePoints / sprint.Points, "teal", rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points))
+                        <span class="sprint-list__meta">
+                            <span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.PointsOf"], sprint.DonePoints, sprint.Points)</span>
+                            @if (sprint.EndDate is { } end)
+                            {
+                                <span><partial name="_AdminIcon" model='"flag"' />@DeliveryFormat.Day(end)</span>
+                            }
+                        </span>
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section class="widget" data-widget="projects" aria-labelledby="w-projects">
+        <header class="widget__head"><h2 id="w-projects">@T["Delivery.Ws.W.RecentProjects"]</h2><a class="widget__more" asp-action="Projects">@T["Delivery.Ws.ViewAll"]</a></header>
+        @if (a.Projects.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoProjects"]</p>
+        }
+        else
+        {
+            <ul class="tile-list" role="list">
+                @foreach (var project in a.Projects.Take(5))
+                {
+                    <li>
+                        <a asp-action="Project" asp-route-id="@project.Id" class="tile-list__link">
+                            <span class="tile-list__badge tone-@DeliveryFormat.Tone(project.Id)" aria-hidden="true" dir="ltr">@project.Key[..Math.Min(2, project.Key.Length)]</span>
+                            <span class="tile-list__text"><strong dir="auto">@project.Name</strong><span>@string.Format(CultureInfo.CurrentCulture, T["Delivery.Dashboard.IssuesOf"], project.DoneIssues, project.TotalIssues)</span></span>
+                        </a>
+                        <partial name="_Health" model="project.Health" />
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section class="widget widget--wide" data-widget="updated" aria-labelledby="w-updated">
+        <header class="widget__head"><h2 id="w-updated">@T["Delivery.Dashboard.RecentlyUpdated"]</h2><a class="widget__more" asp-action="Issues">@T["Delivery.Ws.ViewAll"]</a></header>
+        @if (a.RecentlyUpdated.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Ws.NoTasks"]</p>
+        }
+        else
+        {
+            <ul class="mini-list" role="list">@foreach (var issue in a.RecentlyUpdated) { <partial name="_IssueMini" model="issue" /> }</ul>
+        }
+    </section>
+
+    <section class="widget widget--tall" data-widget="activity" aria-labelledby="w-activity">
+        <header class="widget__head"><h2 id="w-activity">@T["Delivery.Dashboard.RecentActivity"]</h2></header>
+        @if (a.RecentActivity.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoActivity"]</p>
+        }
+        else
+        {
+            <ol class="feed" role="list">
+                @foreach (var entry in a.RecentActivity)
+                {
+                    <li class="feed__item">
+                        <span class="feed__dot" aria-hidden="true"></span>
+                        <p class="feed__text"><strong dir="auto">@(entry.ActorName ?? T["Delivery.System"])</strong> @T["Delivery.History." + entry.Field] <span aria-hidden="true">·</span> <a asp-action="Issue" asp-route-id="@entry.IssueId"><span class="d-key" dir="ltr">@entry.IssueKey</span></a></p>
+                        <partial name="_Utc" model="entry.AtUtc" />
+                    </li>
+                }
+            </ol>
+        }
+    </section>
+
+    <section class="widget" data-widget="people" aria-labelledby="w-people">
+        <header class="widget__head"><h2 id="w-people">@T["Delivery.Ws.W.People"]</h2><a class="widget__more" asp-controller="DeliveryPlanning" asp-action="Reports" asp-fragment="team">@T["Nav.DeliveryReports"]</a></header>
+        @if (a.Team.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+        }
+        else
+        {
+            <ul class="people-list" role="list">
+                @foreach (var member in a.Team.Take(6))
+                {
+                    <li>
+                        <partial name="_Avatar" model="((Guid?)member.UserId, (string?)member.DisplayName)" />
+                        <span class="people-list__name" dir="auto">@member.DisplayName</span>
+                        <span class="people-list__meta">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.PersonLoad"], member.ToDo + member.InProgress + member.Overdue, member.OpenPoints)</span>
+                        @if (member.Overdue > 0)
+                        {
+                            <span class="health health--delayed">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.OverdueCount"], member.Overdue)</span>
+                        }
+                    </li>
+                }
+            </ul>
+        }
+    </section>
+
+    <section class="widget" data-widget="notifications" aria-labelledby="w-notifications">
+        <header class="widget__head"><h2 id="w-notifications">@T["Nav.Notifications"]</h2></header>
+        <div class="notice-tile">
+            <span class="notice-tile__icon" aria-hidden="true"><partial name="_AdminIcon" model='"bell"' /></span>
+            <p>@T["Delivery.Ws.Unread"] <strong dir="ltr">@Model.UnreadNotifications</strong></p>
+            <a class="btn btn--small" asp-controller="Notifications" asp-action="Index">@T["Delivery.Ws.OpenNotifications"]</a>
+        </div>
+    </section>
+</div>
+
+<dialog class="customize" data-customize aria-labelledby="customize-title" data-up="@T["Delivery.Ws.MoveUp"]" data-down="@T["Delivery.Ws.MoveDown"]">
+    <form method="dialog">
+        <h2 id="customize-title">@T["Delivery.Ws.Customize"]</h2>
+        <p class="hint">@T["Delivery.Ws.CustomizeHint"]</p>
+        <ul class="customize__list" role="list" data-customize-list></ul>
+        <div class="customize__actions">
+            <button type="button" class="btn btn--small" data-customize-reset>@T["Delivery.Ws.Reset"]</button>
+            <button type="submit" class="btn btn--primary btn--small">@T["Delivery.Ws.Done"]</button>
+        </div>
+    </form>
+</dialog>
+<p class="hint ws-foot">@T["Delivery.Ws.Source"]</p>

@@ -18,6 +18,7 @@ namespace Onyx.Web.Controllers;
 /// </summary>
 public sealed class LeadFormsController(
     ILeadsApiClient api,
+    IPublicContentApiClient content,
     LocalizedRouteTable routes,
     LanguageCatalog languages,
     SeoContext seo,
@@ -29,7 +30,7 @@ public sealed class LeadFormsController(
     public const string SentSlug = "sent";
 
     [HttpGet]
-    public IActionResult StartProject(string lang, string? slug, [FromQuery] Guid? service, [FromQuery] Guid? cta)
+    public IActionResult StartProject(string lang, string? slug, [FromQuery] Guid? service, [FromQuery] Guid? cta, [FromQuery] string? pillar)
     {
         if (slug == SentSlug)
         {
@@ -42,7 +43,9 @@ public sealed class LeadFormsController(
         }
 
         Describe(LeadPages.StartProject, lang, "Lead.StartProject.Title", noIndex: false);
-        return View(new StartProjectFormModel { ServiceId = service, CtaId = cta, Context = CapturePageContext() });
+        // A service page preselects its pillar (?pillar=ai); unknown values are ignored.
+        var preselected = pillar is not null && StartProjectFormModel.PillarOptions.Contains(pillar) ? new List<string> { pillar } : [];
+        return View(new StartProjectFormModel { ServiceId = service, CtaId = cta, Pillars = preselected, Context = CapturePageContext() });
     }
 
     [HttpPost]
@@ -102,7 +105,7 @@ public sealed class LeadFormsController(
     }
 
     [HttpGet]
-    public IActionResult Contact(string lang, string? slug, [FromQuery] Guid? service, [FromQuery] Guid? project, [FromQuery] Guid? cta)
+    public async Task<IActionResult> Contact(string lang, string? slug, [FromQuery] Guid? service, [FromQuery] Guid? project, [FromQuery] Guid? cta, CancellationToken cancellationToken)
     {
         if (slug == SentSlug)
         {
@@ -115,6 +118,7 @@ public sealed class LeadFormsController(
         }
 
         Describe(LeadPages.Contact, lang, "Lead.Contact.Title", noIndex: service is not null || project is not null || cta is not null);
+        await DescribeContactDetailsAsync(cancellationToken);
         return View(new InquiryFormModel { ServiceId = service, ProjectId = project, CtaId = cta, Context = CapturePageContext() });
     }
 
@@ -123,6 +127,7 @@ public sealed class LeadFormsController(
     {
         ArgumentNullException.ThrowIfNull(form);
         Describe(LeadPages.Contact, lang, "Lead.Contact.Title", noIndex: true);
+        await DescribeContactDetailsAsync(cancellationToken);
         if (slug is not null)
         {
             return NotFound();
@@ -160,5 +165,13 @@ public sealed class LeadFormsController(
         // The conversion event travels once from the successful POST: a refresh of this page never sends it again.
         ViewData[Analytics.AnalyticsTag.ConversionKey] = TempData[Analytics.AnalyticsTag.ConversionKey] as string;
         return View("Sent", TempData[ReferenceKey] as string);
+    }
+
+    /// <summary>Contact details shown beside the form: only owner-verified facts from the API (organization email), never guessed.</summary>
+    private async Task DescribeContactDetailsAsync(CancellationToken cancellationToken)
+    {
+        ViewData["Nav"] = "contact";
+        var organization = await content.GetOrganizationAsync(cancellationToken);
+        ViewData["VerifiedEmail"] = string.IsNullOrWhiteSpace(organization?.Email) ? null : organization.Email;
     }
 }

@@ -26,6 +26,22 @@ public static class DependencyInjection
         services.AddScoped<Search.SearchIndexer>();
         services.AddScoped<Search.SiteSearchQueryService>();
         AddNews(services);
+        services.AddScoped<Delivery.DeliveryAccess>();
+        services.AddScoped<Delivery.DeliveryProjectService>();
+        services.AddScoped<Delivery.IssueService>();
+        services.AddScoped<Delivery.SprintService>();
+        services.AddScoped<Delivery.DeliveryQueryService>();
+        services.AddScoped<Delivery.IssueAccessLoader>();
+        services.AddScoped<Delivery.IssueAttachmentService>();
+        services.AddScoped<Delivery.IssueWorkLogService>();
+        services.AddScoped<Delivery.SavedIssueFilterService>();
+        services.AddScoped<Customers.CustomerPortalService>();
+        services.AddScoped<Customers.CustomerAdministrationService>();
+        services.AddScoped<Products.ProductCatalogService>();
+        services.AddScoped<Products.ProductAdministrationService>();
+        services.AddScoped<Products.AiDemoService>();
+        services.AddScoped<Subscriptions.SubscriptionAdministrationService>();
+        services.AddScoped<Billing.InvoiceAdministrationService>();
         services.AddScoped<Analytics.AnalyticsSyncService>();
         services.AddScoped<Analytics.AnalyticsReportService>();
         services.AddScoped<Analytics.AnalyticsIntegrationService>();
@@ -64,6 +80,7 @@ public static class DependencyInjection
 
         services.AddScoped<Media.IMediaService, Media.MediaService>();
         services.AddScoped<Brand.IBrandKitService, Brand.BrandKitService>();
+        services.AddScoped<SiteContent.ISiteContentService, SiteContent.SiteContentService>();
         services.AddScoped<Knowledge.IKnowledgeService, Knowledge.KnowledgeService>();
         services.AddScoped<Knowledge.CompanyKnowledgeSource>();
 

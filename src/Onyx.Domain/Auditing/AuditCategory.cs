@@ -10,4 +10,7 @@ public enum AuditCategory
     Integrations = 4,
     Privacy = 5,
     System = 6,
+    Delivery = 7,
+    Customers = 8,
+    Commerce = 9,
 }

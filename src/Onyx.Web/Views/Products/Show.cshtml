@@ -1,0 +1,66 @@
+@using System.Globalization
+@using Microsoft.AspNetCore.WebUtilities
+@using Onyx.Contracts.Customers
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model Onyx.Contracts.Products.PublicProductResponse
+@{
+    var subscribe = Routes.PathFor(CustomerPages.Subscribe, lang)!;
+    string IntentLink(string intent) => QueryHelpers.AddQueryString(subscribe, new Dictionary<string, string?> { ["product"] = Model.Slug, ["intent"] = intent });
+}
+<article class="product">
+    <p><a href="@Routes.PathFor(CustomerPages.Products, lang)">@T["Products.Back"]</a></p>
+    <h1>@Model.Name</h1>
+    <p class="product__summary">@Model.Summary</p>
+    <div class="product__actions">
+        @if (Model.TrialDays is { } days)
+        {
+            <a class="button button--primary" href="@IntentLink(CustomerIntents.Trial)">@T["Products.StartTrial", days]</a>
+        }
+        <a class="button" href="@IntentLink(CustomerIntents.Subscribe)">@T["Products.Subscribe"]</a>
+        @if (Model.DemoKind == "AiAssistant")
+        {
+            <a class="button" href="@Routes.PathFor(CustomerPages.AiDemo, lang, Model.Slug)">@T["Products.TryAiDemo"]</a>
+        }
+        else if (Model.DemoUrl is not null)
+        {
+            <a class="button" href="@Model.DemoUrl" rel="noopener noreferrer" target="_blank">@T["Products.Demo." + Model.DemoKind]</a>
+        }
+    </div>
+    <div class="product__description">
+        @foreach (var paragraph in Model.Description.Split("\n\n", StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries))
+        {
+            <p>@paragraph</p>
+        }
+    </div>
+    @if (Model.Plans.Count > 0)
+    {
+        <section class="plans" aria-labelledby="plans-title">
+            <h2 id="plans-title">@T["Products.Plans"]</h2>
+            <ul class="plan-grid" role="list">
+                @foreach (var plan in Model.Plans)
+                {
+                    <li class="plan-card">
+                        <h3>@plan.Name</h3>
+                        @if (plan.Price is { } price && plan.Currency is { } currency)
+                        {
+                            <p class="plan-card__price"><bdi dir="ltr">@price.ToString("N2", CultureInfo.CurrentCulture) @currency</bdi> <span>@T["Products.Period." + plan.BillingPeriod]</span></p>
+                        }
+                        else
+                        {
+                            <p class="plan-card__price plan-card__price--quote">@T["Products.PriceOnRequest"]</p>
+                        }
+                        @if (plan.Description is not null)
+                        {
+                            <p>@plan.Description</p>
+                        }
+                    </li>
+                }
+            </ul>
+        </section>
+    }
+    <p class="note">@T["Products.AccountNote"]</p>
+</article>

@@ -1,0 +1,244 @@
+{
+  "key": "services.cloud",
+  "parent": "services",
+  "type": "service",
+  "icon": "cloud",
+  "pillar": "software",
+  "related": ["services.security", "services.software", "services.ai-agents", "services.ai-as-service", "technologies"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/الاستضافة-والسحابة",
+      "nav": "الاستضافة والسحابة والبنية التحتية",
+      "title": "الاستضافة السحابية واستضافة المواقع والبنية التحتية",
+      "description": "استضافة مواقع وتطبيقات، بنية تحتية سحابية وخوادم افتراضية ومخصصة، نشر مؤتمت وDevOps، مع مراقبة مستمرة ونسخ احتياطي وخطط للتعافي من الأعطال. كما نوفر بيئات نشر مناسبة لتشغيل وكلاء الذكاء الاصطناعي وخدمتهم المُدارة.",
+      "eyebrow": "الاستضافة والسحابة والبنية التحتية",
+      "h1": "استضافة وبنية تحتية تُبقي أنظمتك تعمل باستقرار",
+      "lead": "نوفر حلول استضافة وبنية تحتية تساعدك على تشغيل مواقعك وأنظمتك باستقرار وكفاءة، مع خيارات مرنة تناسب احتياجات أعمالك وتطورها، ومراقبة ونسخ احتياطي يحميان عملك من المفاجآت. نوفر أيضاً بيئات نشر مناسبة لتشغيل وكلاء الذكاء الاصطناعي وخدمتهم المُدارة (AaaS)، بخيارات تحترم خصوصية بياناتك.",
+      "summary": "استضافة المواقع والتطبيقات، البنية السحابية، بيئات تشغيل الوكلاء، النشر المؤتمت والمراقبة والنسخ الاحتياطي.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "الاستضافة الجيدة جزء من نجاح النظام",
+          "paragraphs": [
+            "أفضل تطبيق يفقد قيمته إذا كان بطيئاً أو يتوقف أو يتعرض للاختراق. لذلك نتعامل مع الاستضافة والبنية التحتية كجزء أساسي من النظام، لا كخدمة تُضاف في النهاية.",
+            "نختار لكل حالة البيئة التي تناسبها، ونوثّق إعداداتها، ونؤتمت نشر التحديثات عليها، ونراقبها باستمرار، ونجهّز النسخ الاحتياطي وخطة الاستعادة قبل أن تحتاج إليهما."
+          ]
+        },
+        {
+          "kind": "compare",
+          "id": "differences",
+          "eyebrow": "مفاهيم أساسية",
+          "heading": "الاستضافة والسحابة والتشغيل المُدار والنشر: ما الفرق؟",
+          "lead": "أربعة مصطلحات متقاربة يكثر الخلط بينها. هذا شرح مبسط يساعدك على تحديد ما تحتاجه فعلاً.",
+          "items": [
+            { "icon": "monitor", "title": "الاستضافة", "text": "المكان الذي يعمل عليه موقعك أو تطبيقك ويصل إليه المستخدمون عبر الإنترنت: خادم مشترك أو افتراضي أو مخصص، مع النطاق وشهادة الأمان SSL.", "points": ["تناسب المواقع والتطبيقات ذات الاحتياجات الواضحة", "تكلفة وإدارة أبسط"] },
+            { "icon": "cloud", "title": "البنية التحتية السحابية", "text": "موارد حوسبة وتخزين وشبكات على منصات سحابية، تُصمَّم كبنية متكاملة يمكن توسيعها أو تقليصها بحسب الحاجة.", "points": ["تناسب الأنظمة التي تنمو وتتغير", "مرونة واستمرارية أعلى"] },
+            { "icon": "integrated", "title": "التشغيل المُدار", "text": "إدارة يومية للبيئة بعد تجهيزها: مراقبة وتحديثات ونسخ احتياطي واستجابة للمشكلات، وفق نطاق ومسؤوليات نتفق عليها معك.", "points": ["يناسب الشركات التي ليس لديها فريق تشغيل داخلي", "مسؤوليات واضحة ومكتوبة"] },
+            { "icon": "deploy", "title": "خدمات النشر", "text": "طريقة إيصال التحديثات من فريق التطوير إلى بيئة التشغيل: مسارات نشر مؤتمتة، وحاويات، وبيئات اختبار، وتراجع آمن عند الحاجة.", "points": ["تناسب الفرق التي تطلق تحديثات متكررة", "إصدارات أسرع ومخاطر أقل"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "hosting",
+          "eyebrow": "الاستضافة",
+          "heading": "خدمات الاستضافة",
+          "items": [
+            { "id": "website-hosting", "title": "استضافة المواقع", "text": "استضافة سريعة وآمنة للمواقع التعريفية والمؤسسية، مع شهادات SSL وتحديثات أمنية ونسخ احتياطي منتظم.", "points": ["إعداد آمن وأداء سريع", "نسخ احتياطي منتظم", "مراقبة مستمرة لعمل الموقع"] },
+            { "id": "application-hosting", "title": "استضافة تطبيقات الويب", "text": "بيئات تشغيل لتطبيقات الويب والواجهات البرمجية وقواعد البيانات، مجهزة بحسب احتياجات كل تطبيق.", "points": ["بيئات منفصلة للتشغيل والاختبار", "قواعد بيانات مُدارة أو مستضافة", "سجلات ومراقبة للتطبيق"] },
+            { "id": "vps-dedicated", "title": "الخوادم الافتراضية والمخصصة", "text": "خوادم افتراضية (VPS) أو مخصصة عندما تحتاج إلى تحكم كامل أو موارد ثابتة، مع إعدادها وتأمينها وإدارتها.", "points": ["اختيار الحجم والموقع المناسبين", "تأمين الخادم وتقويته", "إدارة وتحديثات دورية"] },
+            { "id": "domains-dns-ssl", "title": "النطاقات وDNS وشهادات SSL", "text": "إعداد النطاقات وسجلات DNS وشهادات SSL وتجديدها تلقائياً، بما في ذلك سجلات حماية البريد مثل SPF وDMARC.", "points": ["إدارة سجلات DNS", "تجديد تلقائي للشهادات", "حماية البريد الإلكتروني من الانتحال"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "cloud",
+          "eyebrow": "السحابة",
+          "heading": "البنية التحتية السحابية",
+          "items": [
+            { "id": "cloud-infrastructure", "title": "تصميم البنية السحابية", "text": "نصمم بيئتك السحابية من شبكات وخوادم وتخزين وقواعد بيانات وصلاحيات، بتوازن مدروس بين الأداء والتكلفة والأمان.", "points": ["بنية موثقة يمكن إعادة إنشائها", "فصل البيئات والصلاحيات", "مراجعة دورية للتكلفة"] },
+            { "id": "cloud-deployment", "title": "تشغيل التطبيقات على السحابة", "text": "نجهز تطبيقاتك للعمل على المنصات السحابية وننشرها، مع حفظ الإعدادات وكلمات المرور الحساسة بطريقة آمنة.", "points": ["إدارة آمنة للإعدادات والأسرار", "بيئات للاختبار وأخرى للتشغيل", "توثيق خطوات النشر"] },
+            { "id": "azure", "title": "حلول على Microsoft Azure", "text": "نصمم ونشغّل حلولاً على Azure، من استضافة التطبيقات وقواعد البيانات إلى الشبكات والهوية والمراقبة.", "points": ["خدمات التطبيقات وقواعد البيانات", "الشبكات والهوية", "المراقبة والتنبيهات"] },
+            { "id": "aws", "title": "حلول على AWS", "text": "نصمم وننشر حلولاً على منصة AWS عندما تكون الخيار الأنسب لبيئتك أو متطلباتك.", "points": ["الحوسبة والتخزين", "الشبكات والأمان", "النشر والمراقبة"], "flag": "verify" },
+            { "id": "cloud-migration", "title": "الانتقال إلى السحابة", "text": "ننقل أنظمتك من خوادمها الحالية إلى السحابة بخطة مرحلية تحدد ما يُنقل كما هو وما يُعاد تصميمه، مع اختبار كامل قبل التحويل النهائي.", "points": ["تقييم الأنظمة وما تعتمد عليه", "خطة انتقال على مراحل", "اختبار وخطة للتراجع"] },
+            { "id": "high-availability", "title": "التوسع والاستمرارية العالية", "text": "نصمم أنظمتك لتتحمل ازدياد الاستخدام وتستمر في العمل حتى عند تعطل أحد مكوناتها، بالقدر الذي تتطلبه أهمية النظام.", "points": ["توزيع الضغط على عدة خوادم", "توسع تلقائي حيث يناسب", "إزالة نقاط التعطل المنفردة"] },
+            { "id": "agent-hosting", "title": "بيئات تشغيل وكلاء الذكاء الاصطناعي", "text": "نوفر بيئات نشر مناسبة لتشغيل وكلاء الذكاء الاصطناعي وخدمتهم المُدارة (AaaS)، مع خيارات تناسب متطلبات الخصوصية والامتثال: داخل بنيتك، أو في سحاب خاص مُدار، أو في سحاب عام بضوابط صارمة.", "points": ["نشر داخل بنيتك", "سحاب خاص مُدار بصلاحيات محددة", "سحاب عام بضوابط على البيانات"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "devops",
+          "eyebrow": "DevOps",
+          "heading": "النشر المؤتمت وDevOps",
+          "items": [
+            { "id": "containers", "title": "النشر بالحاويات", "text": "نغلّف التطبيقات في حاويات لتعمل بالطريقة نفسها في كل بيئة، فيصبح النشر والتوسع أسهل وأكثر موثوقية.", "points": ["بيئات متطابقة من التطوير إلى التشغيل", "نشر وتوسع أسهل", "فصل أفضل بين الخدمات"] },
+            { "id": "docker", "title": "Docker", "text": "نجهز صور Docker آمنة وخفيفة، وننظم تشغيلها في بيئات التطوير والاختبار والتشغيل.", "points": ["صور آمنة وصغيرة الحجم", "إعدادات تشغيل موحدة", "فحص الصور قبل النشر"] },
+            { "id": "kubernetes", "title": "Kubernetes", "text": "نشغّل الحاويات على Kubernetes للأنظمة التي تحتاج إلى توسع وتعافٍ تلقائي عبر عدة خدمات.", "points": ["إدارة الحاويات على نطاق واسع", "تعافٍ وتوسع تلقائي", "إطلاق تدريجي للتحديثات"], "flag": "verify" },
+            { "id": "ci-cd", "title": "مسارات النشر المؤتمتة (CI/CD)", "text": "مسارات تبني الشيفرة وتختبرها وتنشرها تلقائياً، مع مراجعة واعتماد قبل أن يصل أي تحديث إلى بيئة التشغيل.", "points": ["بناء واختبار تلقائي", "اعتماد قبل النشر", "تراجع سريع عند الحاجة"] },
+            { "id": "devops-practices", "title": "ممارسات DevOps", "text": "نقرّب بين التطوير والتشغيل عبر الأتمتة وتوصيف البنية التحتية كشيفرة والقياس المستمر، لتطلق تحديثاتك أسرع دون التضحية بالاستقرار.", "points": ["البنية التحتية كشيفرة", "أتمتة المهام المتكررة", "قياس مستمر للأداء والاستقرار"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "operations",
+          "eyebrow": "التشغيل",
+          "heading": "التشغيل والاستمرارية",
+          "items": [
+            { "id": "server-management", "title": "إعداد الخوادم وإدارتها", "text": "نجهز خوادمك ونؤمّنها ونحدّثها، وندير صلاحيات الوصول إليها وفق إجراءات موثقة.", "points": ["إعداد وتأمين", "تحديثات منتظمة", "إدارة صلاحيات الوصول"] },
+            { "id": "monitoring", "title": "مراقبة البنية التحتية", "text": "نراقب عمل أنظمتك وأداءها ومواردها وسجلاتها، مع تنبيهات تصل إلى الشخص المناسب في الوقت المناسب.", "points": ["مراقبة التوفر والأداء", "تنبيهات وفق حدود واضحة", "لوحات متابعة"] },
+            { "id": "backup-dr", "title": "النسخ الاحتياطي والتعافي من الكوارث", "text": "نخطط للنسخ الاحتياطي وإجراءات الاستعادة وأهداف التعافي، ونختبر الاستعادة دورياً للتأكد من أنها تعمل فعلاً.", "points": ["سياسات نسخ احتياطي موثقة", "اختبار دوري للاستعادة", "خطة تعافٍ مكتوبة"] },
+            { "id": "infrastructure-performance", "title": "تحسين أداء البنية التحتية", "text": "نحلل استهلاك الموارد ومواضع الاختناق وإعدادات التخزين المؤقت والشبكة، لتصبح أنظمتك أسرع وتكاليفها أوضح.", "points": ["تحليل الاستهلاك والتكلفة", "تخزين مؤقت وشبكات توزيع المحتوى", "ضبط الموارد"] },
+            { "id": "infrastructure-security", "title": "أمن البنية التحتية", "text": "نؤمّن الخوادم والشبكات، ونضبط جدران الحماية والوصول، وندير التشفير وكلمات المرور الحساسة، بالتنسيق مع خدماتنا في الأمن السيبراني.", "points": ["تقليل نقاط الضعف المكشوفة", "تشفير البيانات أثناء النقل والتخزين", "إدارة آمنة للأسرار"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "agreed",
+          "eyebrow": "وضوح المسؤوليات",
+          "heading": "ما نتفق عليه قبل التشغيل",
+          "items": [
+            { "title": "نطاق الخدمة", "text": "الأنظمة والبيئات المشمولة بالخدمة بدقة." },
+            { "title": "توزيع المسؤوليات", "text": "ما نتولاه نحن، وما يبقى لدى فريقك أو مزودين آخرين." },
+            { "title": "المراقبة", "text": "ما يُراقَب، ومتى يُرسَل التنبيه، ومن يتلقاه." },
+            { "title": "النسخ الاحتياطي", "text": "ما يُنسخ، وكم مرة، وأين يُحفظ، وكيف تُختبر الاستعادة." },
+            { "title": "التصعيد", "text": "طريقة الإبلاغ عن المشكلات والتواصل أثناء الأعطال." },
+            { "title": "التقارير", "text": "ما نشاركه معك دورياً عن حالة البيئة والتغييرات عليها." }
+          ],
+          "note": "لا نذكر نسب توفر أو أوقات استجابة إلا بعد الاتفاق عليها كتابياً ضمن نطاق الخدمة."
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "منهجيتنا",
+          "heading": "كيف ننفّذ مشاريع البنية التحتية",
+          "items": [
+            { "title": "التقييم", "text": "نراجع بيئتك الحالية وتطبيقاتك وحجم الاستخدام والمخاطر والتكلفة." },
+            { "title": "التصميم", "text": "نصمم البنية المناسبة ونوثّق القرارات والبدائل." },
+            { "title": "التجهيز أو الانتقال", "text": "نجهز البيئة الجديدة، أو ننقل الأنظمة على مراحل مع خطة للتراجع." },
+            { "title": "التشغيل", "text": "نفعّل المراقبة والنسخ الاحتياطي والتنبيهات وإجراءات الاستجابة." },
+            { "title": "التحسين المستمر", "text": "نراجع الأداء والتكلفة والأمان دورياً ونطوّر البيئة." }
+          ]
+        }
+      ],
+      "ctaTitle": "تحتاج إلى استضافة موثوقة أو انتقال إلى السحابة؟",
+      "ctaText": "حدّثنا عن أنظمتك وبيئتك الحالية، وسنقترح عليك البنية الأنسب لاحتياجاتك."
+    },
+    "en": {
+      "path": "services/hosting-cloud-infrastructure",
+      "nav": "Hosting, Cloud & Infrastructure",
+      "title": "Cloud Hosting, Website Hosting and Infrastructure",
+      "description": "Website and application hosting, cloud infrastructure, VPS and dedicated servers, automated deployment and DevOps — with monitoring, backups and recovery. We also provide deployment environments for AI agents and AaaS.",
+      "eyebrow": "Hosting, Cloud & Infrastructure",
+      "h1": "Hosting and infrastructure that keep your systems running",
+      "lead": "We provide hosting and infrastructure that keep your websites and systems running reliably and efficiently, with flexible options that fit your business as it grows — and monitoring and backups that protect you from surprises. We also provide deployment environments for AI agents and their managed service (AaaS), with options that respect your data privacy.",
+      "summary": "Website and application hosting, cloud infrastructure, agent deployment environments, automated deployment, monitoring and backup.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "Good hosting is part of a successful system",
+          "paragraphs": [
+            "The best application loses its value if it's slow, goes down or gets breached. That's why we treat hosting and infrastructure as a core part of the system, not something added at the end.",
+            "For each case we choose the environment that suits it, document its setup, automate how updates reach it, monitor it continuously, and prepare backups and a recovery plan before you ever need them."
+          ]
+        },
+        {
+          "kind": "compare",
+          "id": "differences",
+          "eyebrow": "Key concepts",
+          "heading": "Hosting, cloud, managed operations and deployment: what's the difference?",
+          "lead": "Four related terms that are easy to mix up. Here's a simple explanation to help you decide what you actually need.",
+          "items": [
+            { "icon": "monitor", "title": "Hosting", "text": "Where your website or application runs and is reached by users over the internet: a shared, virtual or dedicated server, together with the domain and SSL certificate.", "points": ["Suits websites and applications with clear needs", "Simpler cost and administration"] },
+            { "icon": "cloud", "title": "Cloud infrastructure", "text": "Compute, storage and networking on cloud platforms, designed as a complete environment that can grow or shrink as needed.", "points": ["Suits systems that grow and change", "More flexibility and resilience"] },
+            { "icon": "integrated", "title": "Managed operations", "text": "Day-to-day management of the environment once it's set up: monitoring, updates, backups and incident response, within a scope and responsibilities we agree with you.", "points": ["Suits companies without an in-house operations team", "Clear, written responsibilities"] },
+            { "icon": "deploy", "title": "Deployment services", "text": "How updates get from your development team to production: automated pipelines, containers, test environments and safe rollback when needed.", "points": ["Suits teams that release frequently", "Faster releases, lower risk"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "hosting",
+          "eyebrow": "Hosting",
+          "heading": "Hosting services",
+          "items": [
+            { "id": "website-hosting", "title": "Website hosting", "text": "Fast, secure hosting for corporate and marketing websites, with SSL certificates, security updates and regular backups.", "points": ["Secure setup and fast performance", "Regular backups", "Continuous uptime monitoring"] },
+            { "id": "application-hosting", "title": "Web application hosting", "text": "Runtime environments for web applications, APIs and databases, set up for each application's needs.", "points": ["Separate production and test environments", "Managed or hosted databases", "Application logs and monitoring"] },
+            { "id": "vps-dedicated", "title": "VPS and dedicated servers", "text": "Virtual private servers or dedicated servers when you need full control or fixed resources, with setup, hardening and administration included.", "points": ["The right size and location", "Server security hardening", "Administration and regular updates"] },
+            { "id": "domains-dns-ssl", "title": "Domains, DNS and SSL", "text": "Setting up domains, DNS records and SSL certificates with automatic renewal, including email protection records such as SPF and DMARC.", "points": ["DNS record management", "Automatic certificate renewal", "Protection against email spoofing"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "cloud",
+          "eyebrow": "Cloud",
+          "heading": "Cloud infrastructure",
+          "items": [
+            { "id": "cloud-infrastructure", "title": "Cloud infrastructure design", "text": "We design your cloud environment — networking, servers, storage, databases and permissions — with a careful balance of performance, cost and security.", "points": ["Documented, reproducible architecture", "Separated environments and permissions", "Regular cost reviews"] },
+            { "id": "cloud-deployment", "title": "Running applications in the cloud", "text": "We prepare your applications to run on cloud platforms and deploy them, keeping configuration and sensitive credentials secure.", "points": ["Secure configuration and secrets management", "Separate test and production environments", "Documented deployment steps"] },
+            { "id": "azure", "title": "Microsoft Azure solutions", "text": "We design and operate solutions on Azure, from application and database hosting to networking, identity and monitoring.", "points": ["App and database services", "Networking and identity", "Monitoring and alerts"] },
+            { "id": "aws", "title": "AWS solutions", "text": "We design and deploy solutions on AWS when it's the best fit for your environment or requirements.", "points": ["Compute and storage", "Networking and security", "Deployment and monitoring"], "flag": "verify" },
+            { "id": "cloud-migration", "title": "Cloud migration", "text": "We move your systems from their current servers to the cloud with a phased plan that decides what moves as-is and what gets redesigned, fully tested before the final switch.", "points": ["Assessment of systems and their dependencies", "A phased migration plan", "Testing and a rollback plan"] },
+            { "id": "high-availability", "title": "Scalability and high availability", "text": "We design your systems to handle growing use and keep running even if one component fails, to the degree each system's importance requires.", "points": ["Load spread across servers", "Autoscaling where it fits", "No single points of failure"] },
+            { "id": "agent-hosting", "title": "Deployment environments for AI agents", "text": "We provide deployment environments for running AI agents and their managed service (AaaS), with options that match your privacy and compliance requirements: inside your infrastructure, in a managed private cloud, or in a public cloud with strict controls.", "points": ["In your infrastructure", "Managed private cloud with scoped access", "Public cloud with strict data controls"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "devops",
+          "eyebrow": "DevOps",
+          "heading": "Automated deployment and DevOps",
+          "items": [
+            { "id": "containers", "title": "Containerized deployment", "text": "We package applications in containers so they run the same way everywhere, making deployment and scaling easier and more reliable.", "points": ["Identical environments from development to production", "Easier deployment and scaling", "Better separation between services"] },
+            { "id": "docker", "title": "Docker", "text": "We build secure, lightweight Docker images and organize how they run across development, test and production.", "points": ["Small, secure images", "Consistent runtime settings", "Image scanning before deployment"] },
+            { "id": "kubernetes", "title": "Kubernetes", "text": "We run containers on Kubernetes for systems that need automatic scaling and recovery across several services.", "points": ["Container management at scale", "Automatic recovery and scaling", "Gradual rollout of updates"], "flag": "verify" },
+            { "id": "ci-cd", "title": "Automated pipelines (CI/CD)", "text": "Pipelines that build, test and deploy code automatically, with review and approval before any update reaches production.", "points": ["Automatic build and test", "Approval before deployment", "Fast rollback when needed"] },
+            { "id": "devops-practices", "title": "DevOps practices", "text": "We bring development and operations closer through automation, infrastructure as code and continuous measurement, so you release faster without giving up stability.", "points": ["Infrastructure as code", "Automation of repetitive tasks", "Continuous measurement of performance and stability"] }
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "operations",
+          "eyebrow": "Operations",
+          "heading": "Operations and continuity",
+          "items": [
+            { "id": "server-management", "title": "Server setup and management", "text": "We set up, secure and update your servers, and manage who can access them through documented procedures.", "points": ["Setup and hardening", "Regular updates", "Access management"] },
+            { "id": "monitoring", "title": "Infrastructure monitoring", "text": "We monitor your systems' availability, performance, resources and logs, with alerts that reach the right person at the right time.", "points": ["Availability and performance monitoring", "Alerts based on clear thresholds", "Monitoring dashboards"] },
+            { "id": "backup-dr", "title": "Backup and disaster recovery", "text": "We plan backups, restore procedures and recovery targets, and test restores regularly to make sure they actually work.", "points": ["Documented backup policies", "Regular restore tests", "A written recovery plan"] },
+            { "id": "infrastructure-performance", "title": "Infrastructure performance", "text": "We analyze resource use, bottlenecks, caching and network setup so your systems run faster and their costs are easier to understand.", "points": ["Usage and cost analysis", "Caching and content delivery networks", "Resource tuning"] },
+            { "id": "infrastructure-security", "title": "Infrastructure security", "text": "We secure servers and networks, configure firewalls and access, and manage encryption and sensitive credentials — together with our cybersecurity services.", "points": ["Fewer exposed weak points", "Encryption in transit and at rest", "Secure secrets management"] }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "agreed",
+          "eyebrow": "Clear responsibilities",
+          "heading": "What we agree before go-live",
+          "items": [
+            { "title": "Scope", "text": "Exactly which systems and environments the service covers." },
+            { "title": "Responsibilities", "text": "What we handle, and what stays with your team or other providers." },
+            { "title": "Monitoring", "text": "What is monitored, when alerts are sent and who receives them." },
+            { "title": "Backups", "text": "What is backed up, how often, where it's kept and how restores are tested." },
+            { "title": "Escalation", "text": "How issues are reported and how we communicate during incidents." },
+            { "title": "Reporting", "text": "What we share with you regularly about the environment and changes to it." }
+          ],
+          "note": "We only state availability figures or response times once they've been agreed in writing as part of the service scope."
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "Our approach",
+          "heading": "How we deliver infrastructure projects",
+          "items": [
+            { "title": "Assess", "text": "We review your current environment, applications, usage, risks and costs." },
+            { "title": "Design", "text": "We design the right architecture and document the decisions and alternatives." },
+            { "title": "Build or migrate", "text": "We set up the new environment, or move systems in phases with a rollback plan." },
+            { "title": "Operate", "text": "We switch on monitoring, backups, alerts and response procedures." },
+            { "title": "Keep improving", "text": "We review performance, cost and security regularly and improve the environment." }
+          ]
+        }
+      ],
+      "ctaTitle": "Need reliable hosting or a move to the cloud?",
+      "ctaText": "Tell us about your systems and current setup, and we'll recommend the infrastructure that fits your needs."
+    }
+  }
+}

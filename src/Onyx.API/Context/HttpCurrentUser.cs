@@ -6,8 +6,12 @@ namespace Onyx.API.Context;
 /// <summary>Reads the authenticated admin from the request principal (JWT bearer authentication arrives in Stage 3).</summary>
 public sealed class HttpCurrentUser(IHttpContextAccessor httpContextAccessor) : ICurrentUser
 {
+    // A customer principal (customer endpoints) is never a staff user.
     private ClaimsPrincipal? AuthenticatedPrincipal =>
-        httpContextAccessor.HttpContext?.User is { Identity.IsAuthenticated: true } principal ? principal : null;
+        httpContextAccessor.HttpContext?.User is { Identity.IsAuthenticated: true } principal
+        && principal.Identity.AuthenticationType != Authentication.CustomerAuthentication.Scheme
+            ? principal
+            : null;
 
     public bool IsAuthenticated => AuthenticatedPrincipal is not null;
 

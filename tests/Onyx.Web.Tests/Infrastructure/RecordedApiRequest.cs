@@ -9,7 +9,8 @@ public sealed record RecordedApiRequest(
     string? BearerToken,
     string? ForwardedFor,
     string AcceptLanguage,
-    string? Body)
+    string? Body,
+    string? AuthorizationScheme = null)
 {
     private static readonly JsonSerializerOptions Web = new(JsonSerializerDefaults.Web);
 

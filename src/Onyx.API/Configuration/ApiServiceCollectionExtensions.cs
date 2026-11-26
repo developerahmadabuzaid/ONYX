@@ -3,7 +3,10 @@ using System.Globalization;
 using System.Net;
 using System.Threading.RateLimiting;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Onyx.API.Authentication;
 using Onyx.API.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -64,8 +67,21 @@ public static class ApiServiceCollectionExtensions
         AddRateLimiting(services);
 
         // Secure default: every endpoint requires an authenticated admin unless it explicitly opts out with [AllowAnonymous].
+        // Staff policies authenticate only the staff JWT scheme; the customer policy only the customer scheme (§24.8), so neither
+        // credential is ever accepted by the other side.
+        services.AddScoped<Application.Customers.ICurrentCustomer, HttpCurrentCustomer>();
+        services.AddAuthentication()
+            .AddScheme<AuthenticationSchemeOptions, CustomerSessionAuthenticationHandler>(CustomerAuthentication.Scheme, configureOptions: null);
         services.AddAuthorization(options =>
-            options.FallbackPolicy = new AuthorizationPolicyBuilder().AddRequirements(new AuthenticatedEndpointRequirement()).Build());
+        {
+            options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme).RequireAuthenticatedUser().Build();
+            options.FallbackPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+                .AddRequirements(new AuthenticatedEndpointRequirement()).Build();
+            options.AddPolicy(CustomerAuthentication.Policy, policy => policy
+                .AddAuthenticationSchemes(CustomerAuthentication.Scheme)
+                .RequireAuthenticatedUser()
+                .RequireClaim(CustomerAuthentication.CustomerIdClaim));
+        });
         services.AddSingleton<IAuthorizationPolicyProvider, PermissionPolicyProvider>();
         services.AddScoped<IAuthorizationHandler, PermissionAuthorizationHandler>();
 

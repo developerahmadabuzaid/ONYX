@@ -70,7 +70,7 @@ public sealed class AdminAuthenticationTests : IAsyncLifetime
 
         var html = await _browser.GetHtmlAsync("/admin");
 
-        Assert.Contains("<html lang=\"ar\" dir=\"rtl\">", html, StringComparison.Ordinal);
+        Assert.Contains("<html lang=\"ar\" dir=\"rtl\" data-surface=\"admin\"", html, StringComparison.Ordinal);
     }
 
     [Fact]

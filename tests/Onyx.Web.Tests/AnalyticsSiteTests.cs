@@ -62,7 +62,8 @@ public sealed class AnalyticsSiteTests : IAsyncLifetime
 
         Assert.Contains($"src=\"https://www.googletagmanager.com/gtag/js?id={MeasurementId}\"", html, StringComparison.Ordinal);
         var nonce = csp.Split("'nonce-")[1].Split('\'')[0];
-        Assert.Contains($"<script nonce=\"{nonce}\">", html, StringComparison.Ordinal);
+        // The nonce is base64; Razor attribute-encodes "+" (&#x2B;), which browsers decode before the CSP check.
+        Assert.Contains($"<script nonce=\"{nonce}\">", System.Net.WebUtility.HtmlDecode(html), StringComparison.Ordinal);
         Assert.Contains("script-src 'self' 'nonce-", csp, StringComparison.Ordinal);
         Assert.Contains(AnalyticsTag.ScriptOrigin, csp, StringComparison.Ordinal);
         Assert.Contains("https://*.google-analytics.com", csp, StringComparison.Ordinal);

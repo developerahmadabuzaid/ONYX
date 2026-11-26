@@ -4,7 +4,8 @@ namespace Onyx.Application.Identity;
 
 /// <summary>
 /// Seeded roles (docs/architecture.md §23). Only <see cref="SuperAdmin"/> is fixed: it always holds every permission and
-/// cannot be edited or deleted. The other roles are default bundles that administrators may change later.
+/// cannot be edited or deleted. The other roles are default bundles that administrators may change later. Every built-in role
+/// can use the delivery workspace (Delivery.Access); a project still shows only to its members unless they hold Delivery.Administer.
 /// </summary>
 public static class SystemRoles
 {
@@ -19,7 +20,7 @@ public static class SystemRoles
             "Pillars", "Services", "Industries", "Projects", "CaseStudies", "Testimonials", "Integrations", "Insights",
             "ContentEngine", "News", "NewsSources", "Glossary", "Pages", "Ctas", "Media", "Seo", "Redirects", "Offices", "EmailTemplates", "Content", "Competitors")
             .Where(permission => permission != Permissions.Content.DeletePermanent)
-            .Concat([Permissions.Markets.View, Permissions.BrandKit.View, Permissions.Knowledge.View, Permissions.Knowledge.Edit])
+            .Concat([Permissions.Markets.View, Permissions.BrandKit.View, Permissions.Knowledge.View, Permissions.Knowledge.Edit, Permissions.Delivery.Access])
             .ToList(),
         [Marketing] =
         [
@@ -47,6 +48,7 @@ public static class SystemRoles
             Permissions.BrandKit.View,
             Permissions.Knowledge.View,
             Permissions.Competitors.View,
+            Permissions.Delivery.Access,
         ],
         [Sales] =
         [
@@ -56,6 +58,7 @@ public static class SystemRoles
             Permissions.Bookings.View,
             Permissions.Bookings.Manage,
             Permissions.Availability.Manage,
+            Permissions.Delivery.Access,
         ],
     };
 

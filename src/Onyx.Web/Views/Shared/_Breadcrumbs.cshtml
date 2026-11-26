@@ -1,0 +1,20 @@
+@model IReadOnlyList<(string Title, string Path)>
+@* Visual trail matching the BreadcrumbList JSON-LD; the last item is the current page. *@
+@if (Model.Count > 1)
+{
+    <nav class="breadcrumbs container" aria-label="@T["Content.Breadcrumbs"]">
+        <ol role="list">
+            @for (var index = 0; index < Model.Count; index++)
+            {
+                if (index == Model.Count - 1)
+                {
+                    <li aria-current="page">@Model[index].Title</li>
+                }
+                else
+                {
+                    <li><a href="@Model[index].Path">@Model[index].Title</a></li>
+                }
+            }
+        </ol>
+    </nav>
+}

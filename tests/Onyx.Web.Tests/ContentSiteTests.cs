@@ -43,7 +43,7 @@ public sealed class ContentSiteTests : IAsyncLifetime
         Assert.Contains($"<link rel=\"canonical\" href=\"{OnyxWebFactory.PublicBaseUrl}{encoded}\">", html, StringComparison.Ordinal);
         Assert.Contains($"hreflang=\"en\" href=\"{OnyxWebFactory.PublicBaseUrl}/en/services/ai-solutions\"", html, StringComparison.Ordinal);
         Assert.Contains($"hreflang=\"x-default\" href=\"{OnyxWebFactory.PublicBaseUrl}{encoded}\"", html, StringComparison.Ordinal);
-        Assert.Contains("<h1>حلول الذكاء الاصطناعي</h1>", html, StringComparison.Ordinal);
+        Assert.Contains("<h1 class=\"page-title\">حلول الذكاء الاصطناعي</h1>", html, StringComparison.Ordinal);
         Assert.Contains("&lt;script&gt;alert(1)&lt;/script&gt;", html, StringComparison.Ordinal);
         Assert.DoesNotContain("<script>alert(1)</script>", html, StringComparison.Ordinal);
         Assert.Contains("<meta name=\"robots\" content=\"noindex, nofollow\">", html, StringComparison.Ordinal);

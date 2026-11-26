@@ -1,0 +1,6 @@
+@model string
+@* Built-in roles have a translated name; custom roles show the name staff gave them. *@
+@{
+    var label = T["Staff.RoleName." + Model];
+}
+@(label.ResourceNotFound ? Model : label.Value)

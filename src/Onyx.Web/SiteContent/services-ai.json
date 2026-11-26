@@ -1,0 +1,314 @@
+{
+  "key": "services.ai",
+  "parent": "services",
+  "type": "service",
+  "icon": "ai",
+  "pillar": "ai",
+  "related": ["services.ai-agents", "services.ai-as-service", "services.software", "services.cloud", "services.security"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/حلول-الذكاء-الاصطناعي-والأتمتة",
+      "nav": "حلول الذكاء الاصطناعي والأتمتة",
+      "title": "حلول الذكاء الاصطناعي والأتمتة: RAG و LLM وأتمتة العمليات",
+      "description": "حلول ذكاء اصطناعي وأتمتة تعمل داخل أنظمتك: تكامل نماذج اللغة الكبيرة (LLM) بشكل آمن، البحث الذكي في مستندات شركتك عبر RAG، معالجة آلية للمستندات، وأتمتة الإجراءات والتكامل مع ERP وCRM.",
+      "eyebrow": "حلول الذكاء الاصطناعي والأتمتة",
+      "h1": "ذكاء اصطناعي وأتمتة ذكية يسهّلان عملك اليومي",
+      "lead": "نساعدك على الاستفادة من الذكاء الاصطناعي لتسهيل أعمالك، وتسريع العمليات اليومية، وتحسين تجربة عملائك. نغطي البحث الذكي في مستنداتك، وربط نماذج اللغة الكبيرة بأنظمتك، ومعالجة المستندات، وأتمتة سير العمل — وكل ذلك ضمن ضوابط واضحة على الصلاحيات والبيانات.",
+      "summary": "تكامل LLM، بحث ذكي عبر RAG، معالجة مستندات، وأتمتة إجراءات داخل أنظمتك.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "من فكرة واعدة إلى أداة يستخدمها فريقك كل يوم",
+          "paragraphs": [
+            "جرّبت شركات كثيرة أدوات الذكاء الاصطناعي، لكن الفائدة الحقيقية تظهر حين يصبح جزءاً من العمل اليومي: يجيب عن أسئلة فريقك من مستندات الشركة نفسها، ويختصر الإجراءات المتكررة، وينفّذ مهام محددة داخل أنظمتك، تحت ضوابط واضحة.",
+            "نغطي هنا حلول الذكاء الاصطناعي والأتمتة المدمجة في أنظمتك: تكامل نماذج اللغة الكبيرة (LLM)، البحث الذكي عبر مستنداتك باستخدام التوليد المعزّز بالاسترجاع (RAG)، معالجة المستندات تلقائياً، وأتمتة سير العمل. لمهندسة الوكلاء كحلول مستقلة قائمة بذاتها، راجع صفحة هندسة وكلاء الذكاء الاصطناعي، وللحصول على خدمة مُدارة (AaaS) راجع صفحة وكلاء الذكاء الاصطناعي كخدمة.",
+            "نبدأ من المشكلة لا من التقنية. نختار حالات استخدام يمكن قياس أثرها، ونبني الحل على بياناتك وصلاحياتك، ونُبقي القرار المهم بيد الإنسان، ثم نتابع جودة النتائج بعد الإطلاق."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "ما نقدمه",
+          "heading": "خدمات الذكاء الاصطناعي والأتمتة",
+          "items": [
+            {
+              "id": "customer-support",
+              "title": "خدمة العملاء بالذكاء الاصطناعي",
+              "text": "مساعد يرد على الأسئلة المتكررة من محتوى شركتك المعتمد، ويجمع تفاصيل الطلب، ثم يحوّل العميل إلى أحد موظفيك عند الحاجة مع ملخص كامل للمحادثة.",
+              "points": ["إجابات من محتوى معتمد فقط", "تحويل سلس إلى فريقك", "محادثة بالعربية والإنجليزية"]
+            },
+            {
+              "id": "knowledge-assistants",
+              "title": "مساعد المعرفة الداخلية",
+              "text": "بدل البحث الطويل في الملفات، يسأل الموظف مباشرة عن السياسات والإجراءات والوثائق الفنية، ويحصل على إجابة مع الإشارة إلى مصدرها.",
+              "points": ["إجابات موثقة بمصادرها", "احترام صلاحيات الوصول الحالية", "تحديث تلقائي مع تحديث الوثائق"]
+            },
+            {
+              "id": "rag",
+              "title": "إجابات مبنية على مستنداتك (RAG)",
+              "text": "تقنية التوليد المعزّز بالاسترجاع تجعل النظام يبحث في مستنداتك أولاً ثم يصوغ الإجابة منها، فتأتي الإجابات أدق ومرتبطة بمعرفة شركتك لا بمعلومات عامة.",
+              "points": ["تجهيز المستندات وفهرستها", "بحث يجمع بين المعنى والكلمات", "اختبار دقة الإجابات قبل الإطلاق"]
+            },
+            {
+              "id": "semantic-search",
+              "title": "البحث الذكي وقواعد البيانات المتجهية",
+              "text": "بحث يفهم ما تقصده لا الكلمات فقط، فيجد المحتوى المطلوب حتى لو اختلفت الصياغة، ويتعامل مع العربية والإنجليزية بكفاءة.",
+              "points": ["فهارس مصممة للبحث بالمعنى", "معالجة خاصة للنص العربي", "ترتيب النتائج حسب صلتها بالسؤال"]
+            },
+            {
+              "id": "llm-integration",
+              "title": "ربط نماذج اللغة الكبيرة بتطبيقاتك",
+              "text": "نربط نماذج اللغة الكبيرة (LLM) بتطبيقاتك بطريقة آمنة، مع ضوابط على ما يدخل إليها وما يخرج منها، ومتابعة للتكلفة والأداء.",
+              "points": ["تصميم التعليمات والضوابط", "حماية البيانات الحساسة", "متابعة الاستخدام والتكلفة"]
+            },
+            {
+              "id": "document-processing",
+              "title": "المعالجة الذكية للمستندات",
+              "text": "نستخرج البيانات من الفواتير والعقود والنماذج والمستندات الممسوحة، ونتحقق منها، وندخلها في أنظمتك، مع مراجعة بشرية للحالات غير الواضحة.",
+              "points": ["استخراج البيانات وتصنيف المستندات", "قواعد تحقق قبل الإدخال", "مسار مراجعة للحالات الاستثنائية"]
+            },
+            {
+              "id": "process-automation",
+              "title": "أتمتة الإجراءات التشغيلية",
+              "text": "نراجع الإجراءات اليدوية المتكررة ونبسّطها، ثم نؤتمت ما يمكن أتمتته، ونُبقي الموافقات البشرية في المواضع التي تحتاجها.",
+              "points": ["تحليل الإجراءات وتحديد فرص الأتمتة", "موافقات وإشعارات تلقائية", "إدخال يدوي أقل وأخطاء أقل"]
+            },
+            {
+              "id": "workflow-automation",
+              "title": "أتمتة سير العمل بين الأنظمة",
+              "text": "نربط أنظمتك ببعضها لتنتقل البيانات والمهام تلقائياً، من نموذج الطلب إلى نظام المحاسبة ثم إلى إشعار الفريق المختص، دون نسخ أو إعادة إدخال.",
+              "points": ["ربط الأنظمة عبر الواجهات البرمجية", "معالجة الأخطاء وإعادة المحاولة", "متابعة حالة كل عملية"]
+            },
+            {
+              "id": "ai-analytics",
+              "title": "تحليلات تدعم قراراتك",
+              "text": "نحوّل بياناتك التشغيلية إلى مؤشرات وتنبيهات وملخصات واضحة تساعد الإدارة على اتخاذ القرار، مع بيان مصدر كل رقم.",
+              "points": ["لوحات مؤشرات وتنبيهات", "ملخصات دورية تُعدّ تلقائياً", "رصد الأنماط والحالات غير المعتادة"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "integrations",
+          "eyebrow": "التكامل",
+          "heading": "يعمل مع الأنظمة التي تستخدمها اليوم",
+          "lead": "لا نطلب منك تغيير أنظمتك. نربط حلول الذكاء الاصطناعي بها عبر الواجهات البرمجية ونقاط التكامل المتاحة في كل نظام.",
+          "items": [
+            { "title": "أنظمة تخطيط الموارد (ERP)", "text": "قراءة البيانات وإنشاء المستندات والطلبات ضمن صلاحيات محددة." },
+            { "title": "أنظمة إدارة العملاء (CRM)", "text": "تلخيص سجل العميل واقتراح الخطوة التالية وتحديث بياناته." },
+            { "title": "أنظمة الدعم والتذاكر", "text": "تصنيف التذاكر وتوجيهها واقتراح الردود لفريقك." },
+            { "title": "إدارة المستندات", "text": "إتاحة مستنداتك للبحث الذكي والمساعدين." },
+            { "title": "قواعد البيانات الداخلية", "text": "استعلامات مضبوطة على بياناتك التشغيلية دون فتح الوصول للجميع." },
+            { "title": "قنوات التواصل", "text": "تشغيل المساعدين على موقعك وتطبيقاتك وقنوات المراسلة التي تعتمدها." }
+          ],
+          "note": "نؤكد إمكانية الربط مع كل نظام بعد مراجعة واجهاته البرمجية وإصداره وصلاحيات الوصول المتاحة."
+        },
+        {
+          "kind": "checklist",
+          "id": "challenges",
+          "eyebrow": "التحديات",
+          "heading": "مشكلات يومية نساعدك على حلها",
+          "items": [
+            { "title": "معلومات يصعب الوصول إليها", "text": "وثائق وسياسات موزعة في أماكن كثيرة، ووقت طويل يضيع في البحث عنها." },
+            { "title": "عمل يدوي متكرر", "text": "إدخال بيانات ونسخ بين الأنظمة يستهلك وقت الفريق ويزيد احتمال الخطأ." },
+            { "title": "ضغط على فريق خدمة العملاء", "text": "أسئلة متكررة تؤخر الرد على الحالات التي تحتاج فعلاً إلى موظف." },
+            { "title": "بيانات كثيرة ورؤية قليلة", "text": "بيانات تشغيلية متراكمة لا تتحول إلى معلومات تساعد على القرار." },
+            { "title": "تجارب لا تصل إلى الاستخدام الفعلي", "text": "نماذج أولية واعدة تتوقف قبل أن تُربط بأنظمة الشركة." },
+            { "title": "القلق على خصوصية البيانات", "text": "الحاجة إلى التأكد من أن البيانات الحساسة تبقى تحت السيطرة." }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "منهجيتنا",
+          "heading": "كيف ننفّذ مشاريع الذكاء الاصطناعي",
+          "items": [
+            { "title": "فهم المشكلة", "text": "نحدد معك المشكلة والمستخدمين والبيانات المتاحة، ونتفق على طريقة قياس النجاح قبل اختيار أي تقنية." },
+            { "title": "تقييم البيانات والأنظمة", "text": "نراجع جودة بياناتك ومصادرها وصلاحياتها، والأنظمة التي سيرتبط بها الحل." },
+            { "title": "نموذج أولي واختبار", "text": "نبني نموذجاً أولياً محدود النطاق ونجرّبه على حالات حقيقية، لنتأكد من دقته وفائدته قبل التوسع." },
+            { "title": "الربط والإطلاق", "text": "ندمج الحل في أنظمتك وسير عملك، مع الصلاحيات والضوابط ومسارات المراجعة البشرية." },
+            { "title": "المتابعة والتحسين", "text": "نتابع جودة النتائج والاستخدام والتكلفة، ونطوّر الحل مع تغيّر بياناتك واحتياجاتك." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "responsible-ai",
+          "eyebrow": "الحوكمة",
+          "heading": "بياناتك تبقى تحت سيطرتك",
+          "paragraphs": [
+            "نصمم الحلول لتعمل ضمن صلاحيات كل مستخدم، فلا يصل أي مساعد إلى بيانات لا يحق لصاحبها الاطلاع عليها. ونحدد بوضوح ما يجوز إرساله إلى النماذج، ونخفي البيانات الحساسة أو نستبعدها عند الحاجة.",
+            "نتعامل مع مخرجات الذكاء الاصطناعي كمقترحات تحتاج إلى ضوابط: التحقق من الصيغة، والاستناد إلى المصادر، والمراجعة البشرية للقرارات المهمة. ونوضح لمستخدمي كل حل حدوده بصراحة."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "benefits",
+          "eyebrow": "القيمة",
+          "heading": "ما الذي تكسبه شركتك؟",
+          "items": [
+            { "title": "وقت أقل في المهام المتكررة", "text": "يتفرغ فريقك للعمل الذي يحتاج إلى خبرة وتقدير بشري." },
+            { "title": "وصول أسرع إلى المعلومة", "text": "إجابات من مصادر شركتك خلال ثوانٍ بدل البحث اليدوي." },
+            { "title": "خدمة أكثر اتساقاً", "text": "إجابات وإجراءات متوافقة مع سياساتك المعتمدة في كل مرة." },
+            { "title": "قرارات مبنية على بيانات", "text": "رؤية أوضح لمؤشرات العمل والتغيرات المهمة." }
+          ],
+          "note": "تعتمد النتائج على جودة البيانات وطبيعة الإجراءات ومدى استخدام الفريق للحل، لذلك نتفق معك على معايير القياس مسبقاً ولا نعد بنتائج محددة."
+        }
+      ],
+      "ctaTitle": "لديك فكرة لاستخدام الذكاء الاصطناعي في عملك؟",
+      "ctaText": "حدّثنا عن الإجراء أو المشكلة التي تريد معالجتها، وسنساعدك على تقييم جدواها واختيار أفضل طريقة لتنفيذها."
+    },
+    "en": {
+      "path": "services/ai-and-automation-solutions",
+      "nav": "AI & Automation Solutions",
+      "title": "AI and Automation: RAG, LLM Integration, Process Automation",
+      "description": "AI and automation that work inside your systems: secure LLM integration, smart search across your company documents with RAG, automated document processing, and workflow automation with ERP and CRM integration.",
+      "eyebrow": "AI & Automation Solutions",
+      "h1": "AI and intelligent automation that make everyday work easier",
+      "lead": "We help you put AI to work to simplify your operations, speed up daily work and improve your customers' experience. We cover smart search across your documents, secure LLM integration with your systems, document processing, and workflow automation — all under clear controls on permissions and data.",
+      "summary": "LLM integration, RAG-powered search, document processing and process automation inside your systems.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "From promising idea to a tool your team uses every day",
+          "paragraphs": [
+            "Many companies have tried AI tools. The real benefit appears when AI becomes part of everyday work: answering your team's questions from your own documents, cutting out repetitive steps and carrying out defined tasks inside your systems, under clear controls.",
+            "This page covers AI and automation solutions integrated with your systems: secure LLM integration, smart search across your documents with retrieval-augmented generation (RAG), automated document processing, and workflow automation. For engineering dedicated AI agents, see the AI Agent Engineering page; for a managed service, see AI Agents as a Service.",
+            "That is why we start with the problem, not the technology. We choose use cases whose impact can be measured, build on your data and permissions, keep important decisions with people, and keep track of the quality of results after launch."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "What we deliver",
+          "heading": "AI and automation services",
+          "items": [
+            {
+              "id": "customer-support",
+              "title": "AI-powered customer service",
+              "text": "An assistant that answers recurring questions from your approved content, collects the details of each request and passes the customer to one of your staff when needed, with a full summary of the conversation.",
+              "points": ["Answers from approved content only", "Smooth handover to your team", "Conversations in Arabic and English"]
+            },
+            {
+              "id": "knowledge-assistants",
+              "title": "Internal knowledge assistant",
+              "text": "Instead of digging through folders, employees ask directly about policies, procedures and technical documentation, and get an answer that shows where it came from.",
+              "points": ["Answers with their sources", "Existing access permissions respected", "Stays current as documents change"]
+            },
+            {
+              "id": "rag",
+              "title": "Answers grounded in your documents (RAG)",
+              "text": "Retrieval-augmented generation makes the system search your documents first and build its answer from them, so responses are more accurate and based on your company's knowledge rather than general information.",
+              "points": ["Document preparation and indexing", "Search that combines meaning and keywords", "Accuracy testing before launch"]
+            },
+            {
+              "id": "semantic-search",
+              "title": "Smart search and vector databases",
+              "text": "Search that understands what you mean, not just the words you type — finding the right content even when it is phrased differently, in Arabic and English.",
+              "points": ["Indexes designed for meaning-based search", "Dedicated handling of Arabic text", "Results ranked by relevance"]
+            },
+            {
+              "id": "llm-integration",
+              "title": "Connecting large language models to your applications",
+              "text": "We connect large language models (LLMs) to your applications securely, with controls on what goes in and what comes out, and visibility over cost and performance.",
+              "points": ["Prompt and guardrail design", "Protection of sensitive data", "Usage and cost tracking"]
+            },
+            {
+              "id": "document-processing",
+              "title": "Intelligent document processing",
+              "text": "We extract data from invoices, contracts, forms and scanned documents, check it and enter it into your systems, with a person reviewing anything unclear.",
+              "points": ["Data extraction and document classification", "Validation rules before entry", "A review path for exceptions"]
+            },
+            {
+              "id": "process-automation",
+              "title": "Business process automation",
+              "text": "We review repetitive manual processes and simplify them, then automate what can be automated — keeping human approvals where they matter.",
+              "points": ["Process review and automation opportunities", "Automatic approvals and notifications", "Less manual entry, fewer errors"]
+            },
+            {
+              "id": "workflow-automation",
+              "title": "Workflow automation across systems",
+              "text": "We connect your systems so data and tasks move between them automatically — from a request form to the accounting system to the right team's inbox — with no copying or re-keying.",
+              "points": ["System integration through APIs", "Error handling and retries", "Status tracking for every run"]
+            },
+            {
+              "id": "ai-analytics",
+              "title": "Analytics that support your decisions",
+              "text": "We turn your operational data into clear indicators, alerts and summaries that help management decide — with the source of every figure shown.",
+              "points": ["Dashboards and alerts", "Automatically prepared periodic summaries", "Spotting patterns and unusual activity"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "integrations",
+          "eyebrow": "Integration",
+          "heading": "Works with the systems you use today",
+          "lead": "You don't need to replace your systems. We connect AI solutions to them through the APIs and integration points each system offers.",
+          "items": [
+            { "title": "ERP systems", "text": "Reading data and creating documents and requests within defined permissions." },
+            { "title": "CRM systems", "text": "Summarizing customer history, suggesting next steps and updating records." },
+            { "title": "Helpdesk and ticketing", "text": "Classifying and routing tickets and drafting replies for your team." },
+            { "title": "Document management", "text": "Making your documents available to smart search and assistants." },
+            { "title": "Internal databases", "text": "Controlled queries on operational data without opening access to everyone." },
+            { "title": "Communication channels", "text": "Assistants on your website, apps and the messaging channels you use." }
+          ],
+          "note": "We confirm integration with each system after reviewing its APIs, version and the access available."
+        },
+        {
+          "kind": "checklist",
+          "id": "challenges",
+          "eyebrow": "Challenges",
+          "heading": "Everyday problems we help you solve",
+          "items": [
+            { "title": "Information that's hard to find", "text": "Documents and policies spread across many places, and time lost searching for them." },
+            { "title": "Repetitive manual work", "text": "Data entry and copying between systems that eats into your team's time and invites errors." },
+            { "title": "A stretched customer service team", "text": "Recurring questions that delay the cases that genuinely need a person." },
+            { "title": "Lots of data, little insight", "text": "Operational data that piles up without turning into information you can act on." },
+            { "title": "Pilots that never go live", "text": "Promising prototypes that stall before they're connected to company systems." },
+            { "title": "Concerns about data privacy", "text": "The need to be sure sensitive data stays under control." }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "Our approach",
+          "heading": "How we deliver AI projects",
+          "items": [
+            { "title": "Understand the problem", "text": "We define the problem, the users and the data available with you, and agree how success will be measured before choosing any technology." },
+            { "title": "Assess data and systems", "text": "We review the quality, sources and permissions of your data, and the systems the solution will connect to." },
+            { "title": "Prototype and test", "text": "We build a narrowly scoped prototype and try it on real cases, to confirm it is accurate and useful before scaling up." },
+            { "title": "Integrate and launch", "text": "We build the solution into your systems and workflows, with permissions, controls and human review paths." },
+            { "title": "Monitor and improve", "text": "We track result quality, usage and cost, and develop the solution as your data and needs change." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "responsible-ai",
+          "eyebrow": "Governance",
+          "heading": "Your data stays under your control",
+          "paragraphs": [
+            "We design solutions to work within each user's permissions, so no assistant can reach data its user isn't allowed to see. We define clearly what may be sent to AI models, and mask or exclude sensitive data where needed.",
+            "We treat AI output as a suggestion that needs checks: format validation, grounding in sources and human review for important decisions. And we tell the users of every solution plainly what its limits are."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "benefits",
+          "eyebrow": "Value",
+          "heading": "What your business gains",
+          "items": [
+            { "title": "Less time on repetitive tasks", "text": "Your team is free for work that needs human expertise and judgment." },
+            { "title": "Faster access to information", "text": "Answers from your own sources in seconds instead of manual searching." },
+            { "title": "More consistent service", "text": "Answers and actions that follow your approved policies every time." },
+            { "title": "Decisions based on data", "text": "A clearer view of business indicators and meaningful changes." }
+          ],
+          "note": "Results depend on data quality, the nature of your processes and how your team uses the solution, so we agree how to measure them with you up front and don't promise specific outcomes."
+        }
+      ],
+      "ctaTitle": "Have an idea for using AI in your business?",
+      "ctaText": "Tell us about the process or problem you want to tackle, and we'll help you assess whether it's worth doing and the best way to do it."
+    }
+  }
+}

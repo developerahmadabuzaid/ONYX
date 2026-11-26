@@ -1,0 +1,29 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model Onyx.Contracts.Delivery.IssueListItemResponse
+<tr>
+    <td><partial name="_IssueTypeBadge" model="Model.Type" /></td>
+    <td class="d-nowrap"><a class="d-key" dir="ltr" asp-action="Issue" asp-route-id="@Model.Id">@Model.Key</a></td>
+    <td><a class="d-title" asp-action="Issue" asp-route-id="@Model.Id">@Model.Title</a>
+        @foreach (var label in Model.Labels)
+        {
+            <span class="d-label" dir="auto">@label</span>
+        }
+        @if (Model.EpicKey is not null)
+        {
+            <span class="d-epic" dir="auto">@Model.EpicTitle</span>
+        }
+    </td>
+    <td><partial name="_StatusPill" model="Model" /></td>
+    <td><partial name="_Priority" model="Model.Priority" /></td>
+    <td>@(Model.AssigneeName ?? T["Delivery.Unassigned"])</td>
+    <td class="d-nowrap @(Model.IsOverdue ? "d-overdue" : null)">@if (Model.DueDate is { } due)
+        {
+            <time datetime="@due.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@due.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</time>
+            @if (Model.IsOverdue)
+            {
+                <span class="visually-hidden">@T["Delivery.Overdue"]</span>
+            }
+        }</td>
+    <td class="d-num">@Model.StoryPoints</td>
+</tr>

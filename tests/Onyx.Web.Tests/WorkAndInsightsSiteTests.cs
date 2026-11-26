@@ -41,10 +41,10 @@ public sealed class WorkAndInsightsSiteTests : IAsyncLifetime
         var arabic = await _browser.GetHtmlAsync("/ar/أعمالنا");
 
         Assert.Contains("section=work", _factory.Api.RequestsTo("api/v1/content/listing")[0].Query, StringComparison.Ordinal);
-        Assert.Contains("<h1>Our work</h1>", english, StringComparison.Ordinal);
+        Assert.Contains("<h1 class=\"page-title\">Our work</h1>", english, StringComparison.Ordinal);
         Assert.Contains("href=\"/en/work/sample-project\"", english, StringComparison.Ordinal);
         Assert.Contains($"hreflang=\"ar\" href=\"{OnyxWebFactory.PublicBaseUrl}/ar/{Uri.EscapeDataString("أعمالنا")}\"", english, StringComparison.Ordinal);
-        Assert.Contains("<h1>أعمالنا</h1>", arabic, StringComparison.Ordinal);
+        Assert.Contains("<h1 class=\"page-title\">أعمالنا</h1>", arabic, StringComparison.Ordinal);
         Assert.Empty(_factory.Api.RequestsTo("api/v1/content/resolve"));
     }
 
@@ -135,6 +135,31 @@ public sealed class WorkAndInsightsSiteTests : IAsyncLifetime
 
         Assert.Contains("Featured work", html, StringComparison.Ordinal);
         Assert.Contains("href=\"/en/work/sample-project\"", html, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task The_homepage_shows_the_latest_insights_only_when_there_are_some()
+    {
+        Assert.DoesNotContain("insights-title", await _browser.GetHtmlAsync("/en/"), StringComparison.Ordinal);
+
+        _factory.Api.On(HttpMethod.Get, "api/v1/content/listing", _ => FakeOnyxApi.Json(new PagedResult<ListingItemResponse>(
+            [new ListingItemResponse(ItemId, "Insight", "Sample insight", "Summary", "/en/insights/sample-insight", Published, null)], 1, 20, 1)));
+        var html = await _browser.GetHtmlAsync("/en/");
+
+        Assert.Contains("insights-title", html, StringComparison.Ordinal);
+        Assert.Contains("href=\"/en/insights/sample-insight\"", html, StringComparison.Ordinal);
+        Assert.Contains("section=insights", _factory.Api.RequestsTo("api/v1/content/listing").Last().Query, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task The_homepage_renders_without_insights_when_the_api_is_unreachable()
+    {
+        _factory.Api.On(HttpMethod.Get, "api/v1/content/listing", _ => throw new HttpRequestException("unreachable"));
+
+        using var response = await _browser.GetAsync(new Uri("/en/", UriKind.Relative), TestContext.Current.CancellationToken);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.DoesNotContain("insights-title", await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken), StringComparison.Ordinal);
     }
 
     [Fact]

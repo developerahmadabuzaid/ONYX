@@ -1,0 +1,50 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    string Date(DateTimeOffset value) => value.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
+    string Money(decimal value, string currency) => value.ToString("N2", CultureInfo.CurrentCulture) + " " + currency;
+}
+@model Onyx.Contracts.Customers.CustomerInvoiceResponse
+<section class="customer-portal">
+    <p><a href="@Routes.PathFor(CustomerPages.Invoices, lang)">@T["Customer.Invoices.Back"]</a></p>
+    <h1>@T["Customer.Invoice.Heading"] <bdi dir="ltr">@Model.Number</bdi></h1>
+    <p>
+        <span class="status-pill status-pill--@Model.Status.ToLowerInvariant()">@T["Customer.Invoice.Status." + Model.Status]</span>
+        @T["Customer.Invoice.Issued"]: @Date(Model.IssuedAtUtc) · @T["Customer.Invoice.Due"]: @Model.DueOn.ToString("d", CultureInfo.CurrentCulture)
+        @if (Model.PaidAtUtc is { } paid) { <span>· @T["Customer.Invoice.PaidOn", Date(paid)]</span> }
+    </p>
+    <table class="customer-table">
+        <thead>
+            <tr>
+                <th scope="col">@T["Customer.Invoice.Description"]</th>
+                <th scope="col">@T["Customer.Invoice.Quantity"]</th>
+                <th scope="col">@T["Customer.Invoice.UnitPrice"]</th>
+                <th scope="col">@T["Customer.Invoice.Amount"]</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var line in Model.Lines)
+            {
+                <tr>
+                    <td>@line.Description</td>
+                    <td><bdi dir="ltr">@line.Quantity.ToString("0.##", CultureInfo.CurrentCulture)</bdi></td>
+                    <td><bdi dir="ltr">@Money(line.UnitPrice, Model.Currency)</bdi></td>
+                    <td><bdi dir="ltr">@Money(line.Amount, Model.Currency)</bdi></td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <th scope="row" colspan="3">@T["Customer.Invoice.Total"]</th>
+                <td><strong><bdi dir="ltr">@Money(Model.Total, Model.Currency)</bdi></strong></td>
+            </tr>
+        </tfoot>
+    </table>
+    @if (Model.Notes is not null)
+    {
+        <p class="note">@Model.Notes</p>
+    }
+    <p class="note">@T["Customer.Invoice.PaymentNote"]</p>
+</section>

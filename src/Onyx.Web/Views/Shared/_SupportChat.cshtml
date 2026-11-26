@@ -1,0 +1,104 @@
+@using System.Globalization
+@using System.Text.Json
+@model (string? ContactPath, string? StartProjectPath, string? BookPath, string? ServicesPath, string? WorkPath, string ReturnPath)
+@* Customer-service chat launcher and panel.
+
+   Deliberately NOT a conversational AI: there is no LLM provider behind this site (CLAUDE.md §8 puts the
+   AI Advisor in a later stage, and it must never invent prices, capabilities or results). This is a
+   rule-based concierge: it replays fixed, bilingual strings and offers quick replies that route to pages
+   that really exist. Every chip is a plain link.
+
+   Built on <details>, so the panel opens with no JavaScript at all — the script only adds the staggered
+   greeting, the reply bubbles and the Escape key. Rules honoured: it never opens by itself, it is
+   labelled as an automated assistant rather than a human, it creates no inquiry and stores nothing, and
+   it is suppressed on the page it would link to. *@
+@{
+    var here = Model.ReturnPath.TrimEnd('/');
+    bool IsThis(string? path) =>
+        path is not null
+        && string.Equals(here, Uri.UnescapeDataString(path).TrimEnd('/'), StringComparison.OrdinalIgnoreCase);
+
+    // Destinations come from the real routes; a missing one simply drops that chip, and the chip for the
+    // page the visitor is already on is dropped so it never links to itself.
+    var chips = new List<(string Key, string? Path)>
+    {
+        ("Support.Chip.Book", Model.BookPath),
+        ("Support.Chip.Project", Model.StartProjectPath),
+        ("Support.Chip.Services", Model.ServicesPath),
+        ("Support.Chip.Work", Model.WorkPath),
+        ("Support.Chip.Contact", Model.ContactPath),
+    }.Where(chip => chip.Path is not null && !IsThis(chip.Path)).ToList();
+    // Canned answers for the quick replies, handed to the script as data so the markup stays the
+    // single source of truth for the copy. A missing reply simply falls back to the chip label.
+    var replies = chips.ToDictionary(chip => chip.Key, chip => T["Support.Reply." + chip.Key.Split('.').Last()].Value, StringComparer.Ordinal);
+    var repliesJson = JsonSerializer.Serialize(replies);
+}
+@if (chips.Count > 0)
+{
+    <details class="support-chat" data-support-chat data-replies="@repliesJson">
+        <summary class="support-chat__launcher">
+            @* The invitation: a small cloud above the bot. It is part of the summary, so it floats with the
+               launcher, opens the chat like the launcher does, and leaves once the panel is open. Real text,
+               announced with the rest of the launcher. *@
+            <span class="support-chat__hint">@T["Support.Hint"]</span>
+            <span class="support-chat__launcher-avatar" aria-hidden="true">
+                <svg viewBox="0 0 64 64" width="56" height="56" focusable="false">
+                    <circle cx="32" cy="34" r="26" fill="var(--teal-soft)" class="support-chat__halo" />
+                    <line x1="32" y1="6" x2="32" y2="13" stroke="var(--teal-2)" stroke-width="2.5" stroke-linecap="round" />
+                    <circle cx="32" cy="6" r="3.2" fill="var(--pillar-agents)" class="support-chat__antenna" />
+                    <rect x="13" y="13" width="38" height="32" rx="11" fill="var(--paper)" stroke="var(--teal-2)" stroke-width="2.5" />
+                    <rect x="19" y="21" width="26" height="15" rx="6" fill="var(--pillar-agents-soft)" />
+                    <circle cx="26.5" cy="28.5" r="2.9" fill="var(--pillar-agents-ink)" class="support-chat__eye" />
+                    <circle cx="37.5" cy="28.5" r="2.9" fill="var(--pillar-agents-ink)" class="support-chat__eye" />
+                    <path d="M27 45 q5 4 10 0" fill="none" stroke="var(--teal-2)" stroke-width="2.5" stroke-linecap="round" />
+                </svg>
+            </span>
+            <span class="support-chat__launcher-label">@T["Public.Support.TalkToUs"]</span>
+        </summary>
+
+        <section class="support-chat__panel" aria-labelledby="support-chat-title">
+            <header class="support-chat__head">
+                <span class="support-chat__head-avatar" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" width="40" height="40" focusable="false">
+                        <rect x="13" y="13" width="38" height="32" rx="11" fill="var(--paper)" stroke="var(--teal-2)" stroke-width="2.5" />
+                        <rect x="19" y="21" width="26" height="15" rx="6" fill="var(--pillar-agents-soft)" />
+                        <circle cx="26.5" cy="28.5" r="2.9" fill="var(--pillar-agents-ink)" />
+                        <circle cx="37.5" cy="28.5" r="2.9" fill="var(--pillar-agents-ink)" />
+                        <path d="M27 45 q5 4 10 0" fill="none" stroke="var(--teal-2)" stroke-width="2.5" stroke-linecap="round" />
+                    </svg>
+                </span>
+                <div class="support-chat__headings">
+                    <h2 class="support-chat__title" id="support-chat-title">@T["Support.Title"]</h2>
+                    <p class="support-chat__status">@T["Support.AssistantLabel"]</p>
+                </div>
+            </header>
+
+            @* aria-live so a screen reader announces the greeting and replies without stealing focus. *@
+            <div class="support-chat__log" role="log" aria-live="polite" aria-relevant="additions" data-support-chat-log>
+                <ol class="support-chat__messages" data-support-chat-messages>
+                    <li class="support-chat__message support-chat__message--bot" data-support-greeting>@T["Support.Greeting1"]</li>
+                    <li class="support-chat__message support-chat__message--bot" data-support-greeting>@T["Support.Greeting2"]</li>
+                    <li class="support-chat__message support-chat__message--bot" data-support-greeting>@T["Support.Greeting3"]</li>
+                </ol>
+                <p class="support-chat__typing" data-support-typing hidden><span class="support-chat__dot"></span><span class="support-chat__dot"></span><span class="support-chat__dot"></span></p>
+            </div>
+
+            <div class="support-chat__actions">
+                <p class="support-chat__prompt" id="support-chat-prompt">@T["Support.Prompt"]</p>
+                <ul class="support-chat__chips" aria-labelledby="support-chat-prompt">
+                    @foreach (var chip in chips)
+                    {
+                        <li>
+                            <a class="support-chat__chip" href="@chip.Path" data-support-chip data-reply-key="@chip.Key">
+                                <span>@T[chip.Key]</span>
+                            </a>
+                        </li>
+                    }
+                </ul>
+            </div>
+
+            @* Honesty line: this is an automated assistant, not a person, and it does not store anything. *@
+            <p class="support-chat__disclaimer">@T["Support.Disclaimer"]</p>
+        </section>
+    </details>
+}

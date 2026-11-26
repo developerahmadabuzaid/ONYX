@@ -1,0 +1,315 @@
+/* ONYX design tokens — the single source of truth for colour, spacing, radius, shadow and motion.
+   Loaded by both the public site (site.css) and the Admin area (admin.css). Component styles live in
+   those two files; only the tokens are shared, so the palette is changed in exactly one place.
+
+   Contrast discipline (WCAG 2.2 AA, verified against the white canvas):
+   - The vivid steps (--teal, --sky, --green, --amber, --violet, --rose) are for FILLS, borders, icon
+     discs, tints and decorative shapes only. Several of them sit below 4.5:1 on white and must never
+     carry text.
+   - The -2 / -3 steps are the text-safe variants: they clear 4.5:1 on white and on their own tint.
+   - --grad-cta is checked across its whole ramp: white label text stays at 6.6:1 or better. */
+
+:root {
+    /* ---- Canvas and surfaces ------------------------------------------------------- */
+    --paper: #ffffff;
+    --paper-2: #f7f9fc;          /* cool mist — alternate section background */
+    --paper-3: #f1f5fb;          /* soft sky — deeper section background */
+    --paper-warm: #fffaf2;       /* warm — editorial and callout sections */
+    --mist: #f1f5fb;             /* hover surfaces */
+    --haze: #f7f9fc;             /* card gradients */
+
+    /* ---- Type colour ---------------------------------------------------------------- */
+    --ink: #0b1320;              /* 18.6:1 on white */
+    --ink-2: #3a4555;            /* 9.4:1  on white */
+    --ink-soft: #6b7686;
+    --muted: #5b6675;            /* 5.8:1  on white — the lightest text colour allowed on the canvas */
+
+    /* ---- Lines ---------------------------------------------------------------------- */
+    --line: #e6ebf2;
+    --line-strong: #cfd6e0;
+    --line-bright: #f0f3f8;
+
+    /* ---- Teal (primary brand) ------------------------------------------------------
+       Vivid for graphics; -2 for text on white (5.0:1); -3 for text on teal-soft (6.3:1)
+       and as the dark end of --grad-cta. */
+    --teal: #0fb5a8;             /* graphics only — 2.6:1 on white, never text */
+    --teal-2: #0a7d76;           /* text on white  */
+    --teal-3: #066560;           /* text on tints, gradient start */
+    --teal-soft: #e6f7f5;
+    --teal-tint: #f0faf8;
+    --teal-tint-2: #f7fcfb;
+
+    /* ---- Sky --------------------------------------------------------------------- */
+    --sky: #3aa0ff;              /* graphics only */
+    --sky-2: #1e7fd6;            /* large text and UI borders (4.2:1) */
+    --sky-3: #155ea6;            /* body text on white (6.6:1), gradient end */
+    --sky-soft: #e8f3ff;
+    --sky-tint: #f0f6ff;
+
+    /* ---- Green ------------------------------------------------------------------- */
+    --green: #1f9d6b;            /* graphics only */
+    --green-2: #157d54;          /* text (5.1:1) */
+    --green-soft: #e7f5ee;
+    --green-tint: #f0faf5;
+
+    /* ---- Amber -------------------------------------------------------------------
+       The vivid amber is far too light for text (2.2:1), so --amber-2 is a deep bronze that
+       reads as the same hue and clears 7:1. */
+    --amber: #f59e0b;            /* graphics only — 2.2:1 on white */
+    --amber-2: #92400e;          /* text on white and on amber-soft (7.1:1 / 6.5:1) */
+    --amber-soft: #fff4e0;
+    --amber-tint: #fffaf2;
+
+    /* ---- Violet and rose --------------------------------------------------------- */
+    --violet: #7c4dff;
+    --violet-2: #5e2ee6;         /* text (7.0:1) */
+    --violet-soft: #f1ebff;
+    --violet-tint: #f6f2ff;
+
+    --rose: #e0446a;
+    --rose-2: #b73256;           /* text (5.8:1) */
+    --rose-soft: #fdecef;
+
+    /* ---- Coral (cheerful pink-orange) ------------------------------------------------
+       Vivid for graphics; -2 for text (5.7:1 on white, 5.1:1 on coral-soft). */
+    --coral: #ff6f61;            /* graphics only */
+    --coral-2: #c2255c;          /* text */
+    --coral-soft: #ffeef1;
+    --coral-tint: #fff5f6;
+
+    /* ---- Sun (sunny yellow) ------------------------------------------------------------
+       The vivid yellow is far too light for text (1.9:1), so --sun-2 is a deep bronze-gold
+       (5.9:1 on white, 5.5:1 on sun-soft). */
+    --sun: #ffc531;              /* graphics only — 1.9:1 on white */
+    --sun-2: #8a5a00;            /* text */
+    --sun-soft: #fff6dc;
+    --sun-tint: #fffaf0;
+
+    /* ---- Lilac (soft purple) -----------------------------------------------------------
+       Vivid for graphics (2.7:1, never text); -2 for text (5.6:1 on white). Tints are shared
+       with violet to avoid near-duplicate tokens. */
+    --lilac: #a78bfa;            /* graphics only */
+    --lilac-2: #7048e8;          /* text */
+    --lilac-soft: var(--violet-soft);
+    --lilac-tint: var(--violet-tint);
+
+    /* ---- Bright blue -------------------------------------------------------------------
+       A saturated sky for graphics and glows; text keeps using --sky-3 (6.6:1). */
+    --sky-bright: #4aa8ff;       /* graphics only — 2.5:1 on white */
+    --teal-bright: #14d3c4;      /* graphics only */
+
+    /* ---- Pillar identity ----------------------------------------------------------
+       One per brand pillar, used by service cards and icon discs. The plain value is the
+       graphic colour; --pillar-*-ink is its text-safe counterpart. */
+    --pillar-ai: #7c4dff;        --pillar-ai-ink: #5e2ee6;        --pillar-ai-soft: #f1ebff;        --pillar-ai-tint: #f6f2ff;
+    --pillar-software: #0fb5a8;  --pillar-software-ink: #0a7d76;   --pillar-software-soft: #e6f7f5;  --pillar-software-tint: #f0faf8;
+    --pillar-cloud: #3aa0ff;     --pillar-cloud-ink: #155ea6;      --pillar-cloud-soft: #e8f3ff;     --pillar-cloud-tint: #f0f6ff;
+    --pillar-security: #1f9d6b;  --pillar-security-ink: #157d54;    --pillar-security-soft: #e7f5ee;  --pillar-security-tint: #f0faf5;
+    --pillar-growth: #f59e0b;    --pillar-growth-ink: #92400e;      --pillar-growth-soft: #fff4e0;    --pillar-growth-tint: #fffaf2;
+    /* AI Agents pillar (Stage 2): a slightly cooler violet that reads as the same family as --pillar-ai but
+       stands apart on the homepage and the mega menu, with its own text-safe ink and tinted surfaces. */
+    --pillar-agents: #4f6dff;    --pillar-agents-ink: #2f4ac9;    --pillar-agents-soft: #e9eeff;  --pillar-agents-tint: #f1f4ff;
+
+    /* ---- Solid fills behind white text --------------------------------------------
+       Badges, type markers and counters put white text on a colour. These stay deep in both themes
+       (white on each: teal 6.9, sky 6.6, green 5.1, amber 7.1, violet 7.0, rose 5.8, slate 9.7:1), so
+       the -2/-3 text steps are free to lighten in the Admin dark theme. */
+    --solid-teal: #066560;
+    --solid-sky: #155ea6;
+    --solid-green: #157d54;
+    --solid-amber: #92400e;
+    --solid-violet: #5e2ee6;
+    --solid-rose: #b73256;
+    --solid-ink: #0b1320;
+    --solid-slate: #3a4555;
+
+    /* ---- State -------------------------------------------------------------------- */
+    --state-error: #b73256;      --state-error-soft: #fdecef;
+    --state-success: #157d54;    --state-success-soft: #e7f5ee;
+    --state-warning: #92400e;    --state-warning-soft: #fff4e0;
+    --state-info: #155ea6;       --state-info-soft: #e8f3ff;
+
+    /* ---- Shadows (cool, teal-tinted) ---------------------------------------------- */
+    --shadow-sm: 0 1px 2px rgba(15, 30, 50, 0.04), 0 2px 8px rgba(15, 30, 50, 0.05);
+    --shadow-md: 0 2px 4px rgba(15, 30, 50, 0.04), 0 18px 36px -14px rgba(15, 80, 100, 0.16);
+    --shadow-lg: 0 4px 12px rgba(15, 30, 50, 0.06), 0 30px 60px -20px rgba(15, 100, 120, 0.22);
+    --shadow-glow-teal: 0 0 0 1px rgba(15, 181, 168, 0.18), 0 12px 40px -8px rgba(15, 181, 168, 0.32);
+    --shadow-glow-sky: 0 0 0 1px rgba(58, 160, 255, 0.20), 0 12px 40px -8px rgba(58, 160, 255, 0.34);
+    --shadow-glow-amber: 0 0 0 1px rgba(245, 158, 11, 0.22), 0 12px 40px -8px rgba(245, 158, 11, 0.34);
+    --shadow-glow-coral: 0 0 0 1px rgba(255, 111, 97, 0.22), 0 12px 40px -8px rgba(255, 111, 97, 0.38);
+    --shadow-glow-violet: 0 0 0 1px rgba(124, 77, 255, 0.20), 0 12px 40px -8px rgba(124, 77, 255, 0.36);
+    --shadow-glow-sun: 0 0 0 1px rgba(255, 197, 49, 0.28), 0 12px 40px -8px rgba(255, 197, 49, 0.40);
+
+    /* Focus ring: one teal ring that stays visible on white, on tinted panels and on coloured fills. */
+    --shadow-focus: 0 0 0 3px rgba(10, 125, 118, 0.28);
+    --shadow-focus-sky: 0 0 0 3px rgba(21, 94, 166, 0.26);
+
+    /* ---- Gradients (used selectively) ---------------------------------------------
+       --grad-cta carries white label text, so its whole ramp is checked: worst point 6.6:1. */
+    --grad-cta: linear-gradient(135deg, #066560 0%, #155ea6 100%);
+    --grad-cta-hover: linear-gradient(135deg, #054f4c 0%, #0f4a85 100%);
+    /* Success/publish action. White label on --green-2 is 5.1:1, so this also clears AA. */
+    --grad-success: linear-gradient(135deg, #157d54 0%, #0f7350 100%);
+    --grad-success-hover: linear-gradient(135deg, #0f6846 0%, #0a5c3f 100%);
+    --grad-hero: linear-gradient(135deg, #e6f7f5 0%, #e8f3ff 50%, #fff4e0 100%);
+    --grad-rainbow-soft: linear-gradient(120deg, #e2f7f4 0%, #e3efff 28%, #efeaff 52%, #ffe9ef 74%, #fff3d4 100%);
+    --grad-spectrum: linear-gradient(90deg, #0fb5a8 0%, #4aa8ff 25%, #7c4dff 50%, #ff6f61 75%, #ffc531 100%);
+    --grad-hero-soft: radial-gradient(60% 70% at 30% 40%, rgba(15, 181, 168, 0.10) 0%, rgba(58, 160, 255, 0.06) 40%, rgba(255, 255, 255, 0) 70%);
+    --grad-cta-soft: linear-gradient(135deg, #e6f7f5 0%, #e8f3ff 100%);
+    --grad-card: linear-gradient(180deg, #ffffff 0%, #f7f9fc 100%);
+    --grad-card-warm: linear-gradient(180deg, #ffffff 0%, #fffaf2 100%);
+    --grad-panel: linear-gradient(180deg, #ffffff 0%, #fbfcfe 100%);
+    --grad-text: linear-gradient(135deg, #0a7d76 0%, #155ea6 55%, #5e2ee6 100%);
+    --grad-text-soft: linear-gradient(135deg, #066560 0%, #155ea6 100%);
+    --grad-glow-teal: radial-gradient(circle at center, rgba(15, 181, 168, 0.20) 0%, rgba(15, 181, 168, 0) 70%);
+    --grad-glow-sky: radial-gradient(circle at center, rgba(58, 160, 255, 0.20) 0%, rgba(58, 160, 255, 0) 70%);
+    --grad-glow-amber: radial-gradient(circle at center, rgba(245, 158, 11, 0.18) 0%, rgba(245, 158, 11, 0) 70%);
+    --grad-glow-coral: radial-gradient(circle at center, rgba(255, 111, 97, 0.20) 0%, rgba(255, 111, 97, 0) 70%);
+    --grad-glow-sun: radial-gradient(circle at center, rgba(255, 197, 49, 0.22) 0%, rgba(255, 197, 49, 0) 70%);
+    --grad-glow-lilac: radial-gradient(circle at center, rgba(167, 139, 250, 0.22) 0%, rgba(167, 139, 250, 0) 70%);
+
+    /* ---- Glass frames ---------------------------------------------------------------
+       Translucent white panels that let the living agent field show through. They lighten what is
+       behind them, so text on a frame always has at least the contrast of the bare canvas. No
+       backdrop blur: blurring full-width sections is too expensive for the INP/LCP budget. */
+    --glass: linear-gradient(180deg, rgba(255, 255, 255, 0.74) 0%, rgba(255, 255, 255, 0.56) 100%);
+    --glass-soft: linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.34) 100%);
+    --glass-card: rgba(255, 255, 255, 0.72);
+    --glass-card-hover: rgba(255, 255, 255, 0.9);
+    --glass-edge: rgba(255, 255, 255, 0.9);
+    --glass-line: rgba(15, 40, 70, 0.09);
+    --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 1px 2px rgba(15, 30, 50, 0.04), 0 24px 60px -32px rgba(15, 70, 110, 0.28);
+    --frame-gap: clamp(1rem, 2.4vw, 1.75rem);
+    --frame-inset: clamp(0.75rem, 2.5vw, 2rem);
+
+    /* ---- Radii --------------------------------------------------------------------- */
+    --radius: 0.875rem;
+    --radius-sm: 0.625rem;
+    --radius-lg: 1.25rem;
+    --radius-pill: 999px;
+
+    /* ---- Spacing ------------------------------------------------------------------- */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.5rem;
+    --space-6: 2rem;
+    --space-7: 3rem;
+    --space-8: 4rem;
+
+    /* ---- Motion -------------------------------------------------------------------- */
+    --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+    --fast: 180ms;
+    --base: 320ms;
+    --slow: 680ms;
+
+    /* ---- Direction-aware helpers ----------------------------------------------------
+       Sweeps grow from the reading start; arrows point in the reading direction. Never use
+       left/right for anything that mirrors. */
+    --start: left;
+    --flip: 1;
+
+    color-scheme: light;
+}
+
+[dir="rtl"] { --start: right; --flip: -1; }
+
+/* ---- Admin state aliases ---------------------------------------------------------------
+   The Admin area loaded its own neutral palette before the public design system existed. Its
+   three publication states keep these semantic names, aliased onto the shared palette above, so a
+   palette change lands in one place for the public site and the Admin together. */
+:root {
+    --live: var(--green-2);      --live-bg: var(--green-soft);
+    --draft: var(--amber-2);     --draft-bg: var(--amber-soft);
+    --warn: var(--rose-2);       --warn-bg: var(--rose-soft);
+}
+
+/* ---- Admin dark theme ----------------------------------------------------------------------
+   Owner decision 2026-11-25: the Admin may switch to a dark theme (the public site stays light). It
+   applies only under html[data-surface="admin"]: chosen explicitly (data-theme="dark"), or following the
+   system when nothing was chosen. Measured on the dark canvas (WCAG 2.2 AA): ink 15.0:1, ink-2 11.1:1,
+   muted 7.8:1, ink-soft 7.1:1 on --paper; every -2 text step at least 8.0:1 on --paper and 7.2:1 on its
+   own -soft tint; the teal focus ring 10.0:1. White text keeps the --solid-* fills and --grad-cta. */
+@media (prefers-color-scheme: dark) {
+    html[data-surface="admin"]:not([data-theme="light"]) {
+        --paper: #111a26;
+        --paper-2: #0b121c;
+        --paper-3: #172232;
+        --paper-warm: #1a1812;
+        --mist: #172232;
+        --haze: #111a26;
+        --ink: #e8eef6;
+        --ink-2: #c5cfdb;
+        --ink-soft: #9aa6b5;
+        --muted: #a3aebd;
+        --line: #233144;
+        --line-strong: #3a4c64;
+        --line-bright: #1a2636;
+        --teal: #14d3c4;     --teal-2: #4fd8cb;   --teal-3: #7ee6dc;   --teal-soft: #0f2e2f;   --teal-tint: #0f2426;  --teal-tint-2: #0e1d22;
+        --sky: #4aa8ff;      --sky-2: #6cb8ff;    --sky-3: #8cc8ff;    --sky-soft: #13263d;    --sky-tint: #111f31;
+        --green: #2ec486;    --green-2: #5fd6a3;  --green-soft: #10291f;   --green-tint: #0f221b;
+        --amber: #f5a524;    --amber-2: #fbbf5a;  --amber-soft: #2b2112;   --amber-tint: #221b10;
+        --violet: #9b7bff;   --violet-2: #b9a2ff; --violet-soft: #221b3d;  --violet-tint: #1b1631;
+        --rose: #f06a8b;     --rose-2: #ff8fab;   --rose-soft: #2e1620;
+        --coral: #ff8a7e;    --coral-2: #ff9fb8;  --coral-soft: #2f1a1d;   --coral-tint: #24161a;
+        --sun: #ffd04f;      --sun-2: #ffd77a;    --sun-soft: #2a2410;     --sun-tint: #221d0e;
+        --lilac: #b9a2ff;    --lilac-2: #c8b6ff;
+        --state-error: #ff8fab;   --state-error-soft: #2e1620;
+        --state-success: #5fd6a3; --state-success-soft: #10291f;
+        --state-warning: #fbbf5a; --state-warning-soft: #2b2112;
+        --state-info: #8cc8ff;    --state-info-soft: #13263d;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+        --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 36px -14px rgba(0, 0, 0, 0.55);
+        --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.35), 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+        --shadow-focus: 0 0 0 3px rgba(79, 216, 203, 0.35);
+        --grad-hero: linear-gradient(135deg, #0f2e2f 0%, #13263d 50%, #2b2112 100%);
+        --grad-rainbow-soft: linear-gradient(120deg, #0f2e2f 0%, #13263d 28%, #221b3d 52%, #2e1620 74%, #2a2410 100%);
+        --grad-cta-soft: linear-gradient(135deg, #0f2e2f 0%, #13263d 100%);
+        --grad-card: linear-gradient(180deg, #111a26 0%, #0e1621 100%);
+        --grad-card-warm: linear-gradient(180deg, #111a26 0%, #1a1812 100%);
+        --grad-panel: linear-gradient(180deg, #111a26 0%, #0f1722 100%);
+        color-scheme: dark;
+    }
+}
+
+html[data-surface="admin"][data-theme="dark"] {
+    --paper: #111a26;
+    --paper-2: #0b121c;
+    --paper-3: #172232;
+    --paper-warm: #1a1812;
+    --mist: #172232;
+    --haze: #111a26;
+    --ink: #e8eef6;
+    --ink-2: #c5cfdb;
+    --ink-soft: #9aa6b5;
+    --muted: #a3aebd;
+    --line: #233144;
+    --line-strong: #3a4c64;
+    --line-bright: #1a2636;
+    --teal: #14d3c4;     --teal-2: #4fd8cb;   --teal-3: #7ee6dc;   --teal-soft: #0f2e2f;   --teal-tint: #0f2426;  --teal-tint-2: #0e1d22;
+    --sky: #4aa8ff;      --sky-2: #6cb8ff;    --sky-3: #8cc8ff;    --sky-soft: #13263d;    --sky-tint: #111f31;
+    --green: #2ec486;    --green-2: #5fd6a3;  --green-soft: #10291f;   --green-tint: #0f221b;
+    --amber: #f5a524;    --amber-2: #fbbf5a;  --amber-soft: #2b2112;   --amber-tint: #221b10;
+    --violet: #9b7bff;   --violet-2: #b9a2ff; --violet-soft: #221b3d;  --violet-tint: #1b1631;
+    --rose: #f06a8b;     --rose-2: #ff8fab;   --rose-soft: #2e1620;
+    --coral: #ff8a7e;    --coral-2: #ff9fb8;  --coral-soft: #2f1a1d;   --coral-tint: #24161a;
+    --sun: #ffd04f;      --sun-2: #ffd77a;    --sun-soft: #2a2410;     --sun-tint: #221d0e;
+    --lilac: #b9a2ff;    --lilac-2: #c8b6ff;
+    --state-error: #ff8fab;   --state-error-soft: #2e1620;
+    --state-success: #5fd6a3; --state-success-soft: #10291f;
+    --state-warning: #fbbf5a; --state-warning-soft: #2b2112;
+    --state-info: #8cc8ff;    --state-info-soft: #13263d;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+    --shadow-md: 0 2px 4px rgba(0, 0, 0, 0.3), 0 18px 36px -14px rgba(0, 0, 0, 0.55);
+    --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.35), 0 30px 60px -20px rgba(0, 0, 0, 0.6);
+    --shadow-focus: 0 0 0 3px rgba(79, 216, 203, 0.35);
+    --grad-hero: linear-gradient(135deg, #0f2e2f 0%, #13263d 50%, #2b2112 100%);
+    --grad-rainbow-soft: linear-gradient(120deg, #0f2e2f 0%, #13263d 28%, #221b3d 52%, #2e1620 74%, #2a2410 100%);
+    --grad-cta-soft: linear-gradient(135deg, #0f2e2f 0%, #13263d 100%);
+    --grad-card: linear-gradient(180deg, #111a26 0%, #0e1621 100%);
+    --grad-card-warm: linear-gradient(180deg, #111a26 0%, #1a1812 100%);
+    --grad-panel: linear-gradient(180deg, #111a26 0%, #0f1722 100%);
+    color-scheme: dark;
+}

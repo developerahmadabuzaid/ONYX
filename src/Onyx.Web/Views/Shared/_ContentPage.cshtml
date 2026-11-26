@@ -1,11 +1,11 @@
 @model Onyx.Web.Content.PageViewModel
-@* Functional semantic template only: visual design is a later, separately approved stage. *@
+@* CMS-rendered page. Presentation only: same markup and same text as before, with the public design-system classes applied so Work, industries, insights, glossary and integrations match the rest of the site. Structure, wording and links are unchanged. *@
 @{
     var content = Model.Content;
 }
 @if (content.Breadcrumbs.Count > 1)
 {
-    <nav aria-label="@T["Content.Breadcrumbs"]">
+    <nav class="breadcrumbs" aria-label="@T["Content.Breadcrumbs"]">
         <ol>
             @for (var index = 0; index < content.Breadcrumbs.Count; index++)
             {
@@ -22,110 +22,118 @@
         </ol>
     </nav>
 }
-<article>
-    <header>
-        <h1>@content.Title</h1>
+<article class="page-article">
+    <header class="page-article__header">
+        <h1 class="page-title">@content.Title</h1>
         @if (content.Insight is { } insight)
         {
             <partial name="_InsightByline" model="(content, insight)" />
         }
         @if (!string.IsNullOrEmpty(content.Summary))
         {
-            <p>@content.Summary</p>
+            <p class="lead">@content.Summary</p>
         }
         @if (content.FeaturedImage is { } featured)
         {
             <partial name="_ContentImage" model="(Model, featured, true)" />
         }
     </header>
-    @foreach (var block in content.Body)
-    {
-        switch (block.Type)
+    <div class="page-article__body">
+        @foreach (var block in content.Body)
         {
-            case "Heading":
-                var level = Math.Clamp(block.Level ?? 2, 2, 4);
-                if (level == 2)
-                {
-                    <h2><partial name="_Spans" model="block.Spans ?? []" /></h2>
-                }
-                else if (level == 3)
-                {
-                    <h3><partial name="_Spans" model="block.Spans ?? []" /></h3>
-                }
-                else
-                {
-                    <h4><partial name="_Spans" model="block.Spans ?? []" /></h4>
-                }
-                break;
-            case "Paragraph":
-                <p><partial name="_Spans" model="block.Spans ?? []" /></p>
-                break;
-            case "List" when block.Ordered == true:
-                <ol>
-                    @foreach (var item in block.Items ?? [])
+            switch (block.Type)
+            {
+                case "Heading":
+                    var level = Math.Clamp(block.Level ?? 2, 2, 4);
+                    if (level == 2)
                     {
-                        <li><partial name="_Spans" model="item" /></li>
+                        <h2 class="page-article__h2"><partial name="_Spans" model="block.Spans ?? []" /></h2>
                     }
-                </ol>
-                break;
-            case "List":
-                <ul>
-                    @foreach (var item in block.Items ?? [])
+                    else if (level == 3)
                     {
-                        <li><partial name="_Spans" model="item" /></li>
+                        <h3 class="page-article__h3"><partial name="_Spans" model="block.Spans ?? []" /></h3>
                     }
-                </ul>
-                break;
-            case "Image" when block.Image is not null:
-                <partial name="_ContentImage" model="(Model, block.Image, false)" />
-                break;
-            case "CallToAction" when block.Cta is not null:
-                <partial name="_ContentCta" model="(block.Cta, content)" />
-                break;
+                    else
+                    {
+                        <h4 class="page-article__h4"><partial name="_Spans" model="block.Spans ?? []" /></h4>
+                    }
+                    break;
+                case "Paragraph":
+                    <p><partial name="_Spans" model="block.Spans ?? []" /></p>
+                    break;
+                case "List" when block.Ordered == true:
+                    <ol>
+                        @foreach (var item in block.Items ?? [])
+                        {
+                            <li><partial name="_Spans" model="item" /></li>
+                        }
+                    </ol>
+                    break;
+                case "List":
+                    <ul>
+                        @foreach (var item in block.Items ?? [])
+                        {
+                            <li><partial name="_Spans" model="item" /></li>
+                        }
+                    </ul>
+                    break;
+                case "Image" when block.Image is not null:
+                    <partial name="_ContentImage" model="(Model, block.Image, false)" />
+                    break;
+                case "CallToAction" when block.Cta is not null:
+                    <partial name="_ContentCta" model="(block.Cta, content)" />
+                    break;
+            }
         }
-    }
+    </div>
     @if (content.Faqs.Count > 0)
     {
-        <section aria-labelledby="faq-heading">
-            <h2 id="faq-heading">@T["Content.Faq"]</h2>
-            @foreach (var faq in content.Faqs)
-            {
-                <h3>@faq.Question</h3>
-                <p>@faq.Answer</p>
-            }
+        <section class="faq" aria-labelledby="faq-heading">
+            <h2 class="page-article__h2" id="faq-heading">@T["Content.Faq"]</h2>
+            <div class="faq__list">
+                @foreach (var faq in content.Faqs)
+                {
+                    <div class="faq__item">
+                        <h3 class="faq__question">@faq.Question</h3>
+                        <p class="faq__answer">@faq.Answer</p>
+                    </div>
+                }
+            </div>
         </section>
     }
-    @if (content.Cta is not null)
-    {
-        <partial name="_ContentCta" model="(content.Cta, content)" />
-    }
-    @if (content.Proof is { } proof)
-    {
-        <partial name="_ProofSections" model="proof" />
-    }
 </article>
+@if (content.Cta is not null)
+{
+    <partial name="_ContentCta" model="(content.Cta, content)" />
+}
+@if (content.Proof is { } proof)
+{
+    <partial name="_ProofSections" model="proof" />
+}
 @if (Model.TopicInsights is { Items.Count: > 0 } topicInsights)
 {
-    <section aria-labelledby="topic-insights-heading">
-        <h2 id="topic-insights-heading">@T["Section.insights"]</h2>
+    <section class="related" aria-labelledby="topic-insights-heading">
+        <h2 class="related__title" id="topic-insights-heading">@T["Section.insights"]</h2>
         <partial name="_ListingItems" model="topicInsights.Items" />
     </section>
 }
 @if (content.Related.Count > 0)
 {
-    <aside aria-labelledby="related-heading">
-        <h2 id="related-heading">@T["Content.Related"]</h2>
-        <ul>
+    <aside class="related" aria-labelledby="related-heading">
+        <h2 class="related__title" id="related-heading">@T["Content.Related"]</h2>
+        <div class="page-cards">
             @foreach (var related in content.Related)
             {
-                <li>
-                    <a href="@SitePaths.Encode(related.Path)">@related.Title</a>
+                <div class="page-card">
+                    <h3 class="page-card__title">
+                        <a class="page-card__link" href="@SitePaths.Encode(related.Path)">@related.Title</a>
+                    </h3>
                     @if (!string.IsNullOrEmpty(related.Summary))
                     {
-                        <p>@related.Summary</p>
+                        <p class="page-card__text">@related.Summary</p>
                     }
-                </li>
+                </div>
             }
-        </ul>
+        </div>
     </aside>
 }

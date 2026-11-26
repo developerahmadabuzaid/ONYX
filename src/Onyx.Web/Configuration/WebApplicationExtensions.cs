@@ -29,6 +29,17 @@ public static class WebApplicationExtensions
         app.UseAuthorization();
         app.UseMiddleware<Attribution.AttributionMiddleware>();
 
+        // Public pages read editor overrides from an in-memory snapshot; keep it fresh without blocking page views.
+        app.Use(async (context, next) =>
+        {
+            if (!context.Request.Path.StartsWithSegments("/admin", StringComparison.OrdinalIgnoreCase))
+            {
+                await context.RequestServices.GetRequiredService<Content.SiteContent.SiteContentProvider>().EnsureFreshAsync(context.RequestAborted);
+            }
+
+            await next(context);
+        });
+
         app.MapControllers();
         app.MapDynamicControllerRoute<LocalizedRouteTransformer>($"{{lang:{LanguageRouteConstraint.Name}}}/{{**path}}");
         return app;

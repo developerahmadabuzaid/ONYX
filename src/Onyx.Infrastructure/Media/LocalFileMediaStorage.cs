@@ -71,6 +71,7 @@ internal sealed partial class LocalFileMediaStorage(IOptions<MediaOptions> optio
         return full;
     }
 
-    [GeneratedRegex("^[0-9]{4}/[0-9]{2}/[0-9a-f]{32}\\.(jpg|png|webp|gif)$", RegexOptions.CultureInvariant)]
+    // Media library images live at yyyy/MM/<random>.<ext>; delivery issue attachments under delivery/yyyy/MM/ (also PDF and text).
+    [GeneratedRegex("^(delivery/)?[0-9]{4}/[0-9]{2}/[0-9a-f]{32}\\.(jpg|png|webp|gif|pdf|txt|csv)$", RegexOptions.CultureInvariant)]
     private static partial Regex KeyPattern();
 }

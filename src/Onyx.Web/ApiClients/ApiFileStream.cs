@@ -13,6 +13,9 @@ public sealed class ApiFileStream(HttpResponseMessage response, Stream content) 
 
     public string? ETag => response.Headers.ETag?.ToString();
 
+    /// <summary>The file name the API offered (Content-Disposition), if any.</summary>
+    public string? FileName => response.Content.Headers.ContentDisposition?.FileNameStar ?? response.Content.Headers.ContentDisposition?.FileName?.Trim('"');
+
     public async ValueTask DisposeAsync()
     {
         await Content.DisposeAsync().ConfigureAwait(false);

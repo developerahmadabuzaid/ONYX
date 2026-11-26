@@ -1,0 +1,187 @@
+{
+  "key": "how-we-work",
+  "type": "page",
+  "related": ["about", "services", "technologies", "services.ai-agents"],
+  "translations": {
+    "ar": {
+      "path": "كيف-نعمل",
+      "nav": "كيف نعمل",
+      "title": "كيف نعمل: منهجية تنفيذ المشاريع التقنية",
+      "description": "منهجية أونيكس لتنفيذ المشاريع التقنية، بما فيها مشاريع وكلاء الذكاء الاصطناعي: الاكتشاف والتقييم، المتطلبات، تصميم البنية، التطوير والتكامل، الجودة والأمن، الإطلاق، المراقبة والدعم، والتحسين المستمر.",
+      "eyebrow": "منهجيتنا",
+      "h1": "خطوات واضحة من أول لقاء حتى التحسين المستمر",
+      "lead": "نعمل على مراحل محددة، لكل منها مخرجات واضحة ودور معروف لفريقك. هكذا تعرف دائماً أين وصل المشروع، وما الخطوة التالية، وما المطلوب منك. وتنطبق هذه المنهجية على مشاريع هندسة البرمجيات والسحابة والأمن، وعلى مشاريع وكلاء الذكاء الاصطناعي وخدماتهم المُدارة.",
+      "summary": "ثماني مراحل بمخرجات واضحة ودور محدد لفريقك، تنطبق على البرمجيات والسحابة والوكلاء.",
+      "sections": [
+        {
+          "kind": "steps",
+          "id": "stages",
+          "heading": "مراحل العمل",
+          "lead": "قد تُدمج بعض المراحل أو تُختصر في المشاريع الصغيرة، لكن المنطق نفسه يبقى في كل مشروع.",
+          "items": [
+            {
+              "id": "discovery",
+              "title": "الاكتشاف والتقييم",
+              "text": "نفهم المؤسسة وأهدافها، ونراجع الأنظمة والعمليات الحالية، ونحدد التحديات والفرص والقيود قبل الحديث عن أي حل.",
+              "deliverables": ["ملخص للوضع الحالي", "الأهداف ومعايير النجاح", "المخاطر والقيود الأولية"],
+              "involvement": ["جلسات مع أصحاب المصلحة", "الوصول إلى الوثائق والأنظمة ذات الصلة"]
+            },
+            {
+              "id": "requirements",
+              "title": "متطلبات العمل والمتطلبات الفنية",
+              "text": "نحوّل الأهداف إلى متطلبات مفصلة: ما الذي يجب أن يفعله النظام، ومن سيستخدمه، وما متطلبات الأداء والأمن والتكامل.",
+              "deliverables": ["وثيقة متطلبات مرتبة حسب الأولوية", "قصص المستخدمين ومعايير القبول", "متطلبات غير وظيفية (أداء، أمن، توافر)"],
+              "involvement": ["مراجعة المتطلبات واعتمادها", "تحديد الأولويات مع فريقنا"]
+            },
+            {
+              "id": "architecture",
+              "title": "تصميم البنية والحل",
+              "text": "نصمم بنية النظام ونموذج البيانات والتكاملات وتجربة الاستخدام، ونوثّق القرارات المهمة والبدائل التي درسناها.",
+              "deliverables": ["مخطط البنية والقرارات المعمارية", "نموذج البيانات وخطة التكامل", "تصاميم الواجهات أو النماذج الأولية", "خطة الإصدارات"],
+              "involvement": ["مراجعة التصاميم والقرارات الأساسية", "اعتماد خطة الإصدارات"]
+            },
+            {
+              "id": "development",
+              "title": "التطوير والتكامل",
+              "text": "نطوّر النظام على مراحل قصيرة، ونربطه بالأنظمة الأخرى، ونعرض أجزاء عاملة بانتظام لتراجعها وتوجّه العمل.",
+              "deliverables": ["إصدارات عاملة على فترات منتظمة", "تكاملات مختبرة مع الأنظمة الأخرى", "شيفرة مراجعة وموثقة"],
+              "involvement": ["حضور العروض الدورية", "ملاحظات سريعة على ما يُسلَّم"]
+            },
+            {
+              "id": "quality-security",
+              "title": "ضمان الجودة والأمن",
+              "text": "نختبر الوظائف والأداء والأمن بشكل مستمر أثناء التطوير، ثم بشكل شامل قبل الإطلاق.",
+              "deliverables": ["نتائج الاختبارات المؤتمتة واليدوية", "مراجعة أمنية للنظام", "اختبارات الأداء حيث يلزم"],
+              "involvement": ["اختبار القبول من المستخدمين", "اعتماد الجاهزية للإطلاق"]
+            },
+            {
+              "id": "launch",
+              "title": "النشر والإطلاق",
+              "text": "ننقل النظام إلى بيئة التشغيل بخطة إطلاق واضحة، تشمل ترحيل البيانات والتدريب وخطة التراجع عند الحاجة.",
+              "deliverables": ["خطة إطلاق وترحيل بيانات", "بيئة تشغيل مراقبة", "توثيق التشغيل وتدريب المستخدمين"],
+              "involvement": ["تنسيق موعد الإطلاق داخلياً", "تجهيز المستخدمين والتواصل معهم"]
+            },
+            {
+              "id": "support",
+              "title": "المراقبة والدعم",
+              "text": "نراقب النظام بعد الإطلاق، ونعالج الملاحظات والأعطال، ونتابع الاستخدام والأداء.",
+              "deliverables": ["مراقبة وتنبيهات فعّالة", "معالجة منظمة للبلاغات", "تقارير دورية عن حالة النظام"],
+              "involvement": ["الإبلاغ عن الملاحظات", "مراجعة التقارير الدورية"]
+            },
+            {
+              "id": "optimization",
+              "title": "التحسين المستمر",
+              "text": "نحلل الاستخدام والأداء وملاحظات المستخدمين، ونخطط معك للتحسينات والمزايا التالية حسب أولويات العمل.",
+              "deliverables": ["خارطة تحسينات مرتبة حسب الأولوية", "تحسينات أداء وتجربة استخدام", "تحديثات أمنية للمكونات"],
+              "involvement": ["تحديد الأولويات التالية", "مشاركة التغيرات في احتياجات العمل"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "principles",
+          "eyebrow": "مبادئ ثابتة",
+          "heading": "مبادئ نلتزم بها في كل مرحلة",
+          "items": [
+            { "title": "تواصل منتظم", "text": "تحديثات دورية واضحة عن التقدم والمخاطر والقرارات المطلوبة." },
+            { "title": "قرارات موثقة", "text": "كل قرار مهم مكتوب مع أسبابه وبدائله." },
+            { "title": "أمن في كل مرحلة", "text": "الأمن جزء من التصميم والتطوير والاختبار والتشغيل." },
+            { "title": "تسليم واضح", "text": "نتفق مسبقاً على ما يُسلَّم من شيفرة ووثائق وبيانات وكيفية تسليمه." }
+          ]
+        }
+      ],
+      "ctaTitle": "جاهز لبدء المرحلة الأولى؟",
+      "ctaText": "نبدأ عادةً بجلسة اكتشاف قصيرة لفهم وضعك وأهدافك، ثم نقترح خطة واضحة للخطوات التالية."
+    },
+    "en": {
+      "path": "how-we-work",
+      "nav": "How We Work",
+      "title": "How We Work: Our Technology Delivery Methodology",
+      "description": "ONYX's eight-stage methodology for technology projects — including AI agent projects: discovery, requirements, architecture, development, quality and security, launch, monitoring, and continuous improvement.",
+      "eyebrow": "Our methodology",
+      "h1": "A clear path from first conversation to continuous improvement",
+      "lead": "We work in defined stages, each with clear deliverables and a known role for your team. So you always know where the project stands, what comes next and what is needed from you. The same methodology applies to software, cloud and security projects, and to AI agent and managed service projects.",
+      "summary": "Eight stages with clear deliverables and a defined role for your team — for software, cloud and AI agents alike.",
+      "sections": [
+        {
+          "kind": "steps",
+          "id": "stages",
+          "heading": "The stages",
+          "lead": "Some stages are combined or shortened on smaller projects, but the same logic applies to every engagement.",
+          "items": [
+            {
+              "id": "discovery",
+              "title": "Discovery and assessment",
+              "text": "We understand the organization and its goals, review current systems and processes, and identify challenges, opportunities and constraints before talking about any solution.",
+              "deliverables": ["A summary of the current state", "Goals and success criteria", "Initial risks and constraints"],
+              "involvement": ["Sessions with stakeholders", "Access to relevant documents and systems"]
+            },
+            {
+              "id": "requirements",
+              "title": "Business and technical requirements",
+              "text": "We turn goals into detailed requirements: what the system must do, who will use it, and its performance, security and integration needs.",
+              "deliverables": ["A prioritized requirements document", "User stories and acceptance criteria", "Non-functional requirements (performance, security, availability)"],
+              "involvement": ["Reviewing and approving requirements", "Setting priorities with our team"]
+            },
+            {
+              "id": "architecture",
+              "title": "Solution architecture",
+              "text": "We design the system architecture, data model, integrations and user experience, and document the important decisions and the alternatives considered.",
+              "deliverables": ["Architecture diagram and decisions", "Data model and integration plan", "Interface designs or prototypes", "A release plan"],
+              "involvement": ["Reviewing designs and key decisions", "Approving the release plan"]
+            },
+            {
+              "id": "development",
+              "title": "Development and integration",
+              "text": "We build the system in short cycles, connect it to other systems and regularly demonstrate working parts so you can review and steer the work.",
+              "deliverables": ["Working releases at regular intervals", "Tested integrations with other systems", "Reviewed, documented code"],
+              "involvement": ["Attending regular demos", "Prompt feedback on what is delivered"]
+            },
+            {
+              "id": "quality-security",
+              "title": "Quality assurance and security",
+              "text": "We test functionality, performance and security continuously during development, then comprehensively before launch.",
+              "deliverables": ["Automated and manual test results", "A security review of the system", "Performance testing where needed"],
+              "involvement": ["User acceptance testing", "Sign-off on launch readiness"]
+            },
+            {
+              "id": "launch",
+              "title": "Deployment and launch",
+              "text": "We move the system to production with a clear launch plan covering data migration, training and a rollback plan if needed.",
+              "deliverables": ["Launch and data migration plan", "A monitored production environment", "Operations documentation and user training"],
+              "involvement": ["Coordinating the launch date internally", "Preparing and informing users"]
+            },
+            {
+              "id": "support",
+              "title": "Monitoring and support",
+              "text": "We monitor the system after launch, handle feedback and defects, and track usage and performance.",
+              "deliverables": ["Active monitoring and alerts", "Structured issue handling", "Regular system health reports"],
+              "involvement": ["Reporting feedback", "Reviewing periodic reports"]
+            },
+            {
+              "id": "optimization",
+              "title": "Continuous optimization",
+              "text": "We analyze usage, performance and user feedback, and plan the next improvements and features with you according to business priorities.",
+              "deliverables": ["A prioritized improvement roadmap", "Performance and usability improvements", "Security updates for components"],
+              "involvement": ["Setting the next priorities", "Sharing changes in business needs"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "principles",
+          "eyebrow": "Constant principles",
+          "heading": "Principles we hold at every stage",
+          "items": [
+            { "title": "Regular communication", "text": "Clear, regular updates on progress, risks and the decisions needed." },
+            { "title": "Documented decisions", "text": "Every important decision is written down with its reasons and alternatives." },
+            { "title": "Security at every stage", "text": "Security is part of design, development, testing and operations." },
+            { "title": "Clear handover", "text": "What is delivered — code, documentation and data — and how it is handed over is agreed up front." }
+          ]
+        }
+      ],
+      "ctaTitle": "Ready to start the first stage?",
+      "ctaText": "We usually begin with a short discovery session to understand your situation and goals, then propose a clear plan for the next steps."
+    }
+  }
+}

@@ -10,11 +10,11 @@
 }
 @if (href is not null)
 {
-    <p>
-        <a href="@href" rel="@(Model.Cta.Url is not null ? "noopener" : null)">@Model.Cta.Label</a>
+    <p class="content-cta">
+        <a class="button button--primary" href="@href" rel="@(Model.Cta.Url is not null ? "noopener" : null)">@Model.Cta.Label</a>
         @if (!string.IsNullOrEmpty(Model.Cta.Secondary))
         {
-            <span>@Model.Cta.Secondary</span>
+            <span class="content-cta__secondary">@Model.Cta.Secondary</span>
         }
     </p>
 }

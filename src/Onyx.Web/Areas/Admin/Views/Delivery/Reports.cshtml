@@ -1,0 +1,164 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model ReportsPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryReports";
+    var a = Model.Analytics;
+    var rtl = DeliveryFormat.IsRtl;
+    var points = a.Timeline.Select(point => a.Bucket == "week" ? $"{DeliveryFormat.Day(point.Start)} – {DeliveryFormat.Day(point.End)}" : DeliveryFormat.Day(point.Start)).ToList();
+    var tips = a.Timeline.Select((point, index) => string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.TrendTip"], points[index], point.Created, point.Completed)).ToList();
+    var change = DeliveryFormat.ChangePercent(a.Kpis.CompletedInRange, a.Kpis.CompletedPreviousRange);
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+        <h1>@T["Delivery.Reports.Title"]</h1>
+        <p class="ws-sub">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.Subtitle"], DeliveryFormat.DayLong(a.From), DeliveryFormat.DayLong(a.To))</p>
+    </div>
+    <form method="get" class="ws-filter" asp-action="Reports">
+        <label class="visually-hidden" for="r-project">@T["Delivery.Field.Project"]</label>
+        <select id="r-project" name="projectId">
+            <option value="">@T["Delivery.AllProjects"]</option>
+            @foreach (var project in Model.Projects)
+            {
+                <option value="@project.Id" selected="@(Model.ProjectId == project.Id)">@project.Key · @project.Name</option>
+            }
+        </select>
+        <label class="visually-hidden" for="r-range">@T["Delivery.Ws.Period"]</label>
+        <select id="r-range" name="range">
+            @foreach (var range in new[] { 7, 30, 90 })
+            {
+                <option value="@range" selected="@(a.RangeDays == range)">@T["Delivery.Ws.Range." + range.ToString(CultureInfo.InvariantCulture)]</option>
+            }
+        </select>
+        <button type="submit" class="btn btn--small">@T["Delivery.Filter"]</button>
+    </form>
+</header>
+
+<nav class="ws-anchors" aria-label="@T["Delivery.Reports.Sections"]">
+    <a href="#productivity">@T["Delivery.Reports.Productivity"]</a>
+    <a href="#projects">@T["Delivery.Reports.Projects"]</a>
+    <a href="#team">@T["Delivery.Reports.Team"]</a>
+    <a href="#workload">@T["Delivery.Reports.Workload"]</a>
+</nav>
+
+<section class="widget report" id="productivity" aria-labelledby="r-productivity">
+    <header class="widget__head">
+        <h2 id="r-productivity">@T["Delivery.Reports.Productivity"]</h2>
+        @Chart.Legend([(T["Delivery.Ws.Created"].Value, "sky", (string?)null), (T["Delivery.Ws.Completed"].Value, "teal", (string?)null)])
+    </header>
+    <dl class="stat-row">
+        <div><dt>@T["Delivery.Ws.Created"]</dt><dd dir="ltr">@a.Kpis.CreatedInRange</dd></div>
+        <div><dt>@T["Delivery.Ws.Completed"]</dt><dd dir="ltr">@a.Kpis.CompletedInRange</dd></div>
+        <div><dt>@T["Delivery.Reports.PreviousPeriod"]</dt><dd dir="ltr">@a.Kpis.CompletedPreviousRange</dd></div>
+        <div><dt>@T["Delivery.Reports.Change"]</dt><dd dir="ltr">@(change is { } value ? (value > 0 ? "+" : string.Empty) + value.ToString(CultureInfo.InvariantCulture) + "%" : "—")</dd></div>
+    </dl>
+    @Chart.Line(points, [new ChartSeries(T["Delivery.Ws.Created"], "sky", a.Timeline.Select(point => (double?)point.Created).ToList()), new ChartSeries(T["Delivery.Ws.Completed"], "teal", a.Timeline.Select(point => (double?)point.Completed).ToList(), Area: true)], tips, rtl, T["Delivery.Reports.Productivity"], 8)
+    <p class="widget__foot">@T["Delivery.Reports.ProductivityNote"]</p>
+</section>
+
+<section class="widget report" id="projects" aria-labelledby="r-projects">
+    <header class="widget__head"><h2 id="r-projects">@T["Delivery.Reports.Projects"]</h2></header>
+    @if (a.Projects.Count == 0)
+    {
+        <p class="widget__empty">@T["Delivery.Dashboard.NoProjects"]</p>
+    }
+    else
+    {
+        <div class="d-table-wrap">
+            <table class="data-table report-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@T["Delivery.Field.Project"]</th>
+                        <th scope="col">@T["Delivery.Ws.Health"]</th>
+                        <th scope="col">@T["Delivery.Field.Progress"]</th>
+                        <th scope="col" class="d-num">@T["Delivery.Ws.S.Completed"]</th>
+                        <th scope="col" class="d-num">@T["Delivery.Ws.S.Overdue"]</th>
+                        <th scope="col" class="d-num">@T["Delivery.Members"]</th>
+                        <th scope="col">@T["Delivery.Field.TargetDate"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var project in a.Projects)
+                    {
+                        var percent = DeliveryDisplay.Percent(project.DoneIssues, project.TotalIssues);
+                        <tr>
+                            <td><a asp-controller="Delivery" asp-action="Project" asp-route-id="@project.Id"><span class="d-key" dir="ltr">@project.Key</span> <span dir="auto">@project.Name</span></a></td>
+                            <td><partial name="_Health" model="project.Health" /></td>
+                            <td class="report-table__progress">@Chart.Progress(project.TotalIssues == 0 ? 0 : (double)project.DoneIssues / project.TotalIssues, "teal", rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.ProgressLabel"], percent))<span dir="ltr">@percent%</span></td>
+                            <td class="d-num" dir="ltr">@project.DoneIssues / @project.TotalIssues</td>
+                            <td class="d-num@(project.OverdueIssues > 0 ? " d-overdue" : string.Empty)" dir="ltr">@project.OverdueIssues</td>
+                            <td class="d-num" dir="ltr">@project.MemberCount</td>
+                            <td>@(project.TargetDate is { } target ? DeliveryFormat.Day(target) : "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="widget__foot">@T["Delivery.Health.Rule"]</p>
+    }
+</section>
+
+<div class="report-pair">
+    <section class="widget report" id="team" aria-labelledby="r-team">
+        <header class="widget__head">
+            <h2 id="r-team">@T["Delivery.Reports.Team"]</h2>
+            @Chart.Legend([(T["Delivery.Ws.OpenNow"].Value, "sky", (string?)null), (T["Delivery.Ws.CompletedPeriod"].Value, "teal", (string?)null)])
+        </header>
+        @if (a.Team.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+        }
+        else
+        {
+            @Chart.Bars(a.Team.Select(member => member.DisplayName).ToList(),
+                [new ChartSeries(T["Delivery.Ws.OpenNow"], "sky", a.Team.Select(member => (double?)(member.ToDo + member.InProgress + member.Overdue)).ToList()),
+                 new ChartSeries(T["Delivery.Ws.CompletedPeriod"], "teal", a.Team.Select(member => (double?)member.CompletedInRange).ToList())],
+                stacked: false, rtl, T["Delivery.Reports.Team"])
+            <p class="widget__foot">@T["Delivery.Ws.TeamNote"]</p>
+        }
+    </section>
+
+    <section class="widget report" id="workload" aria-labelledby="r-workload">
+        <header class="widget__head">
+            <h2 id="r-workload">@T["Delivery.Reports.Workload"]</h2>
+            @Chart.Legend([(T["Delivery.Ws.S.Pending"].Value, "violet", (string?)null), (T["Delivery.Ws.S.InProgress"].Value, "sky", (string?)null), (T["Delivery.Ws.S.Overdue"].Value, "rose", (string?)null)])
+        </header>
+        @if (a.Team.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.Dashboard.NoWorkload"]</p>
+        }
+        else
+        {
+            @Chart.Bars(a.Team.Select(member => member.DisplayName).ToList(),
+                [new ChartSeries(T["Delivery.Ws.S.Pending"], "violet", a.Team.Select(member => (double?)member.ToDo).ToList()),
+                 new ChartSeries(T["Delivery.Ws.S.InProgress"], "sky", a.Team.Select(member => (double?)member.InProgress).ToList()),
+                 new ChartSeries(T["Delivery.Ws.S.Overdue"], "rose", a.Team.Select(member => (double?)member.Overdue).ToList())],
+                stacked: true, rtl, T["Delivery.Reports.Workload"])
+            <div class="d-table-wrap">
+                <table class="data-table report-table">
+                    <thead><tr><th scope="col">@T["Delivery.Field.Assignee"]</th><th scope="col" class="d-num">@T["Delivery.Ws.S.Pending"]</th><th scope="col" class="d-num">@T["Delivery.Ws.S.InProgress"]</th><th scope="col" class="d-num">@T["Delivery.Ws.S.Overdue"]</th><th scope="col" class="d-num">@T["Delivery.Field.StoryPointsShort"]</th></tr></thead>
+                    <tbody>
+                        @foreach (var member in a.Team)
+                        {
+                            <tr>
+                                <td><partial name="_Avatar" model="((Guid?)member.UserId, (string?)member.DisplayName)" /> <span dir="auto">@member.DisplayName</span></td>
+                                <td class="d-num" dir="ltr">@member.ToDo</td>
+                                <td class="d-num" dir="ltr">@member.InProgress</td>
+                                <td class="d-num@(member.Overdue > 0 ? " d-overdue" : string.Empty)" dir="ltr">@member.Overdue</td>
+                                <td class="d-num" dir="ltr">@member.OpenPoints</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>
+<p class="hint ws-foot">@T["Delivery.Ws.Source"]</p>

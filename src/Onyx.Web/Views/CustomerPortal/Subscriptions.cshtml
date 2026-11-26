@@ -1,0 +1,57 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    string Date(DateTimeOffset value) => value.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
+}
+@model IReadOnlyList<Onyx.Contracts.Customers.CustomerSubscriptionResponse>
+<section class="customer-portal">
+    <h1>@T["Customer.Subscriptions.Title"]</h1>
+    <partial name="_CustomerNav" model="CustomerPages.Subscriptions" />
+    <partial name="_CustomerNotice" />
+    @if (Model.Count == 0)
+    {
+        <p class="empty-state">@T["Customer.Subscriptions.Empty"]</p>
+        <a class="link-arrow" href="@Routes.PathFor(CustomerPages.Products, lang)">@T["Customer.BrowseProducts"]</a>
+    }
+    else
+    {
+        <table class="customer-table">
+            <thead>
+                <tr>
+                    <th scope="col">@T["Customer.Subscriptions.Product"]</th>
+                    <th scope="col">@T["Customer.Subscriptions.Plan"]</th>
+                    <th scope="col">@T["Customer.Subscriptions.Status"]</th>
+                    <th scope="col">@T["Customer.Subscriptions.Dates"]</th>
+                    <th scope="col"><span class="visually-hidden">@T["Customer.Subscriptions.Actions"]</span></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var subscription in Model)
+                {
+                    <tr>
+                        <td><a href="@Routes.PathFor(CustomerPages.Products, lang, subscription.ProductSlug)">@subscription.ProductName</a></td>
+                        <td>@(subscription.PlanName ?? "—")</td>
+                        <td><span class="status-pill status-pill--@subscription.Status.ToLowerInvariant()">@T["Customer.Status." + subscription.Status]</span></td>
+                        <td>
+                            @T["Customer.Subscriptions.Requested", Date(subscription.RequestedAtUtc)]
+                            @if (subscription.TrialEndsAtUtc is { } trialEnd) { <br>@T["Customer.Subscriptions.TrialEnds", Date(trialEnd)] }
+                            @if (subscription.EndsOn is { } endsOn) { <br>@T["Customer.Subscriptions.EndsOn", endsOn.ToString("d", CultureInfo.CurrentCulture)] }
+                        </td>
+                        <td>
+                            @if (subscription.Status is "Requested" or "Trial" or "Active")
+                            {
+                                <form method="post" action="@Routes.PathFor(CustomerPages.Subscriptions, lang)" asp-antiforgery="true">
+                                    <input type="hidden" name="id" value="@subscription.Id">
+                                    <input type="hidden" name="version" value="@subscription.Version">
+                                    <button class="button button--small" type="submit">@T["Customer.Subscriptions.Cancel"]</button>
+                                </form>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

@@ -1,0 +1,58 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@inject Onyx.Web.Content.SitePages.SitePageCatalog SitePages
+@model RegisterForm
+@{
+    var links = Onyx.Web.Content.SiteLinks.For(Routes, SitePages, lang);
+}
+<section class="customer-auth">
+    <h1>@T["Customer.Register.Title"]</h1>
+    <p>@T["Customer.Register.Intro"]</p>
+    <form method="post" action="@Routes.PathFor(CustomerPages.Register, lang)" asp-antiforgery="true" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <input type="hidden" asp-for="ReturnUrl">
+        <p>
+            <label asp-for="DisplayName">@T["Form.Name"]</label>
+            <input asp-for="DisplayName" autocomplete="name" required maxlength="100">
+            <span asp-validation-for="DisplayName"></span>
+        </p>
+        <p>
+            <label asp-for="Company">@T["Form.Company"] (@T["Form.Optional"])</label>
+            <input asp-for="Company" autocomplete="organization" maxlength="150">
+        </p>
+        <p>
+            <label asp-for="Email">@T["Form.Email"]</label>
+            <input asp-for="Email" type="email" autocomplete="email" dir="ltr" required maxlength="254">
+            <span asp-validation-for="Email"></span>
+        </p>
+        <p>
+            <label asp-for="Password">@T["Customer.Password"]</label>
+            <input asp-for="Password" type="password" autocomplete="new-password" required minlength="12" maxlength="128" aria-describedby="password-rule">
+            <span id="password-rule" class="note">@T["Customer.PasswordRule"]</span>
+            <span asp-validation-for="Password"></span>
+        </p>
+        <p>
+            <label asp-for="ConfirmPassword">@T["Customer.ConfirmPassword"]</label>
+            <input asp-for="ConfirmPassword" type="password" autocomplete="new-password" required maxlength="128">
+            <span asp-validation-for="ConfirmPassword"></span>
+        </p>
+        <p class="checkbox">
+            <input asp-for="AcceptTerms" type="checkbox">
+            <label asp-for="AcceptTerms">@T["Customer.Register.AcceptTerms"]
+                @if (links.Page("legal.terms") is { } terms) { <a href="@terms">@links.Label("legal.terms")</a> }
+                @if (links.Page("legal.privacy") is { } privacy) { <span>·</span> <a href="@privacy">@links.Label("legal.privacy")</a> }
+            </label>
+            <span asp-validation-for="AcceptTerms"></span>
+        </p>
+        <p class="checkbox">
+            <input asp-for="MarketingConsent" type="checkbox">
+            <label asp-for="MarketingConsent">@T["Customer.Register.Marketing"]</label>
+        </p>
+        <partial name="_CustomerSubmit" model='(CustomerPages.RegisterCaptchaAction, "Customer.Register.Submit")' />
+    </form>
+    <p><a href="@CustomerPages.WithReturn(Routes.PathFor(CustomerPages.SignIn, lang)!, Model.ReturnUrl)">@T["Customer.Register.HaveAccount"]</a></p>
+</section>

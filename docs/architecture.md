@@ -30,7 +30,7 @@ Items marked **[OPEN]** are listed in §29 and must not be guessed during implem
 | D9 | Regional GCC company. Saudi Arabia is the primary commercial and SEO market. Jordan has an operating presence. Other GCC countries are future markets. |
 | D10 | Public offices: **Riyadh, Granada District (KSA)** and **Amman (Jordan)** only. |
 | D11 | Audience is SMEs, mid-market and enterprise. |
-| D12 | No public pricing in any form. |
+| D12 | No public pricing for services. SaaS product plans may show a real, admin-entered price once marked public (owner decision 2026-10-27, §24.8). |
 | D13 | Proof policy: real, verified proof only. Product benchmarking is internal research and never a source of public claims (§9.3). |
 | D14 | Corporate site + interactive technology experience + lead-generation platform. |
 | D15 | Every inquiry is stored in Admin (system of record). Email is a notification channel only. |
@@ -861,6 +861,47 @@ Implements §15. No ad platforms (§15 future providers), no AI. Both providers 
   - the `AnalyticsAggregates` retention period;
   - whether to adopt Consent Mode v2;
   - whether to add a GA4 client-id custom dimension later (legal review).
+
+## 24.8 SaaS platform: customers, products, subscriptions, invoices and AI demos (owner-approved 2026-10-27)
+
+- **Scope.** Visitors browse SaaS products, plans and demos without an account. Customers register, verify their email and
+  manage their profile, subscriptions, trials, invoices and usage. Staff manage products, subscriptions, customers and invoices
+  in the Admin. Products are delivered as separate applications; this platform holds accounts, subscriptions and billing
+  records only (no multi-tenant product hosting).
+- **Customer identity (isolated from staff).** `customer_accounts` (never `users`), password hashing with the Identity hasher,
+  lockout, single-use hashed time-limited email tokens (verification, password reset), and opaque 256-bit session tokens stored
+  only as SHA-256 hashes with idle and absolute expiry. The API authenticates them with its own scheme (`OnyxCustomer`
+  authorization header); staff endpoints authenticate only the staff JWT scheme, so a customer credential is never even read
+  there. Customer endpoints live under `api/v1/customer/*` and declare the customer policy explicitly. Onyx.Web keeps the session
+  token inside its own encrypted cookie `__Host-onyx.customer` (separate scheme from `__Host-onyx.admin`).
+- **Sign-up.** Turnstile, strict rate limits, versioned terms acceptance (`ConsentRecord`-style receipt on the account),
+  separate optional marketing consent, no account enumeration (the same answer whether or not the email exists; an existing
+  owner is emailed instead), verification required before the first sign-in. Emails go through the existing outbox and Worker
+  from `Email:FromAddress` (configuration; SMTP secrets in the secret store only).
+- **Intent preservation.** Product pages link to `/{lang}/{account}/subscribe?product={slug}&intent=trial|subscribe|demo`;
+  sign-in, sign-up and verification carry a validated local `returnUrl` back to it. Intents and slugs are allow-listed.
+- **Products.** `saas_products` with Arabic/English translations, plans (price nullable; public only when set and marked
+  public), demo kind and link, trial days. Publishing needs both translations and a recorded verification (proof policy).
+- **Subscriptions and trials.** Requested → Active (staff) / Rejected; Trial → Active / Expired (Worker job) / Cancelled.
+  One trial per customer and product (unique index). Staff are notified through the notification centre.
+- **Invoices.** Recorded by staff (manual billing until a payment provider is approved): Draft → Issued → Paid, or Void.
+  Customers see only their own issued invoices. No payment provider or SDK yet.
+- **AI demos.** Verified customers only, Turnstile, per-customer daily and global daily limits, an on/off switch
+  (`AiDemo:Enabled`, off by default), prompt length cap, queued and processed by the Worker through `ITextGenerationService`
+  (skipped while no provider is connected), output treated as untrusted text. Every run is recorded for usage and cost review.
+
+## 24.9 One deployable application (owner decision 2026-11-16)
+
+- `src/Onyx.Host` is the only thing deployed. It builds the API first as an internal server (slim builder, Kestrel on
+  `http://127.0.0.1:0`, `AllowedHosts` loopback only, no IIS integration), then starts the public website with
+  `OnyxApi:BaseUrl` set to that internal address. Both keep their own pipelines, authentication schemes, Data Protection
+  application names and settings; the website never gets database access.
+- The API is not reachable from outside: `/api/*` and its health endpoints answer 404 on the public site.
+- `Host:RunWorker` (false by default, true in Development) registers the Worker's background jobs (email outbox, scheduling,
+  trial expiry, AI demo, retention, news) inside the internal API app. On hosts that recycle idle processes, jobs run only while
+  the site is awake; a separate Onyx.Worker host remains supported.
+- Settings: one `appsettings.json` (+ `appsettings.{Environment}.json`) for both apps (their sections never conflict). In
+  Development, secrets come from Onyx.API's user secrets. Operator commands (`bootstrap-superadmin`, …) run through the host too.
 
 ## 25. Security addendum (Rev 3)
 

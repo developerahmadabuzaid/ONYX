@@ -1,0 +1,35 @@
+@using System.Globalization
+@using Onyx.Contracts.SiteContent
+@model (string Key, uint Version, IReadOnlyList<SiteContentRevisionResponse> Revisions, string ReturnUrl)
+@* Published versions, newest first. Restoring copies a version into the draft; it goes live only when published again. *@
+<section class="panel">
+    <h2>@T["SiteContent.Revisions"]</h2>
+    @if (Model.Revisions.Count == 0)
+    {
+        <p class="muted">@T["SiteContent.NoRevisions"]</p>
+    }
+    else
+    {
+        <table class="data-table">
+            <thead><tr><th>#</th><th>@T["SiteContent.PublishedAt"]</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var revision in Model.Revisions)
+                {
+                    <tr>
+                        <td dir="ltr">@revision.Number</td>
+                        <td dir="ltr">@revision.PublishedAtUtc.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture)</td>
+                        <td class="actions">
+                            <form method="post" asp-controller="SiteContent" asp-action="Restore" class="inline">
+                                <input type="hidden" name="key" value="@Model.Key">
+                                <input type="hidden" name="number" value="@revision.Number">
+                                <input type="hidden" name="version" value="@Model.Version">
+                                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl">
+                                <button type="submit" class="btn btn--small">@T["SiteContent.RestoreToDraft"]</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

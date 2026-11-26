@@ -1,0 +1,16 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model string
+<nav class="customer-nav" aria-label="@T["Customer.Nav.Label"]">
+    @foreach (var (key, label) in new[] { (CustomerPages.Account, "Customer.Nav.Overview"), (CustomerPages.Subscriptions, "Customer.Nav.Subscriptions"), (CustomerPages.Invoices, "Customer.Nav.Invoices"), (CustomerPages.Profile, "Customer.Nav.Profile") })
+    {
+        <a class="customer-nav__link" href="@Routes.PathFor(key, lang)" aria-current="@(Model == key ? "page" : null)">@T[label]</a>
+    }
+    <form method="post" action="@Routes.PathFor(CustomerPages.SignOut, lang)" asp-antiforgery="true" class="customer-nav__signout">
+        <button type="submit" class="button button--small">@T["Customer.Nav.SignOut"]</button>
+    </form>
+</nav>

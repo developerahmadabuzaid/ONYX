@@ -15,4 +15,5 @@ public enum NotificationType
     SecurityAlert = 9,
     ContentPublishingFailed = 10,
     BookingCancelled = 11,
+    NewSubscriptionRequest = 12,
 }

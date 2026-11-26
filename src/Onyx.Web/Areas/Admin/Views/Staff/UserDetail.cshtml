@@ -1,0 +1,103 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Staff
+@model UserPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.StaffUsers";
+    var user = Model.User;
+}
+<header class="page-head">
+    <div>
+        <p class="eyebrow"><a asp-action="Users">@T["Nav.StaffUsers"]</a></p>
+        <h1 dir="auto">@user.DisplayName <partial name="_UserStatus" model="user" /></h1>
+        <p class="muted" dir="ltr">@user.Email</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<div class="staff-grid">
+    <section class="panel">
+        <h2>@T["Staff.Details"]</h2>
+        <form method="post" asp-action="UpdateUser" asp-route-id="@user.Id" class="staff-form">
+            <div class="field">
+                <label for="user-name">@T["Staff.Field.Name"]</label>
+                <input id="user-name" name="displayName" value="@user.DisplayName" required maxlength="100" dir="auto">
+            </div>
+            <div class="field">
+                <label for="user-language">@T["Staff.Field.Language"]</label>
+                <select id="user-language" name="language">
+                    <option value="ar" selected="@(user.PreferredLanguage == "ar")">العربية</option>
+                    <option value="en" selected="@(user.PreferredLanguage == "en")">English</option>
+                </select>
+            </div>
+            <p><button type="submit" class="btn btn--primary">@T["Cms.Save"]</button></p>
+        </form>
+        <dl class="staff-facts">
+            <dt>@T["Staff.Field.TwoFactor"]</dt><dd>@(user.TwoFactorEnabled ? T["Staff.On"] : T["Staff.Off"])</dd>
+            <dt>@T["Staff.Field.Created"]</dt><dd dir="ltr">@user.CreatedAtUtc.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</dd>
+            <dt>@T["Staff.Field.LastLogin"]</dt><dd dir="ltr">@(user.LastLoginAtUtc?.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture) ?? "—")</dd>
+        </dl>
+    </section>
+
+    <section class="panel">
+        <h2>@T["Staff.Field.Roles"]</h2>
+        <form method="post" asp-action="SetRoles" asp-route-id="@user.Id" class="staff-form">
+            <div class="staff-checks staff-checks--stack">
+                @foreach (var role in Model.Roles)
+                {
+                    <label class="check">
+                        <input type="checkbox" name="roles" value="@role.Name" checked="@user.Roles.Contains(role.Name)">
+                        <partial name="_RoleName" model="role.Name" />
+                        @if (role.Permissions.Count > 0) { <span class="muted">@T["Staff.Roles.PermissionCount", role.Permissions.Count]</span> }
+                    </label>
+                }
+            </div>
+            <p class="hint">@T["Staff.Roles.Hint"]</p>
+            <p><button type="submit" class="btn btn--primary">@T["Staff.Roles.Save"]</button></p>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>@T["Staff.Security"]</h2>
+        <div class="staff-actions">
+            @if (!user.EmailConfirmed)
+            {
+                <form method="post" asp-action="UserCommand" asp-route-id="@user.Id" asp-route-command="resend-invitation">
+                    <button type="submit" class="btn">@T["Staff.Action.ResendInvitation"]</button>
+                    <span class="hint">@T["Staff.Action.ResendInvitationHint"]</span>
+                </form>
+            }
+            @if (user.TwoFactorEnabled && !Model.IsSelf)
+            {
+                <form method="post" asp-action="UserCommand" asp-route-id="@user.Id" asp-route-command="reset-two-factor" data-confirm="@T["Staff.Confirm.ResetTwoFactor"]">
+                    <button type="submit" class="btn">@T["Staff.Action.ResetTwoFactor"]</button>
+                    <span class="hint">@T["Staff.Action.ResetTwoFactorHint"]</span>
+                </form>
+            }
+            <form method="post" asp-action="UserCommand" asp-route-id="@user.Id" asp-route-command="end-sessions" data-confirm="@T["Staff.Confirm.EndSessions"]">
+                <button type="submit" class="btn">@T["Staff.Action.EndSessions"]</button>
+                <span class="hint">@T["Staff.Action.EndSessionsHint"]</span>
+            </form>
+            @if (!Model.IsSelf)
+            {
+                @if (user.IsActive)
+                {
+                    <form method="post" asp-action="UserCommand" asp-route-id="@user.Id" asp-route-command="disable" data-confirm="@T["Staff.Confirm.Disable"]">
+                        <button type="submit" class="btn btn--danger">@T["Staff.Action.Disable"]</button>
+                        <span class="hint">@T["Staff.Action.DisableHint"]</span>
+                    </form>
+                }
+                else
+                {
+                    <form method="post" asp-action="UserCommand" asp-route-id="@user.Id" asp-route-command="enable">
+                        <button type="submit" class="btn btn--primary">@T["Staff.Action.Enable"]</button>
+                    </form>
+                }
+            }
+            else
+            {
+                <p class="hint">@T["Staff.SelfNote"]</p>
+            }
+        </div>
+    </section>
+</div>

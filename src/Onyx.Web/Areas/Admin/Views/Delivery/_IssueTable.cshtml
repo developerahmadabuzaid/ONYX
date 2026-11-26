@@ -1,0 +1,23 @@
+@model IReadOnlyList<Onyx.Contracts.Delivery.IssueListItemResponse>
+<div class="d-table-wrap">
+<table class="d-table">
+    <thead>
+        <tr>
+            <th scope="col"><span class="visually-hidden">@T["Delivery.Field.Type"]</span></th>
+            <th scope="col">@T["Delivery.Field.Key"]</th>
+            <th scope="col">@T["Delivery.Field.Title"]</th>
+            <th scope="col">@T["Delivery.Field.Status"]</th>
+            <th scope="col">@T["Delivery.Field.Priority"]</th>
+            <th scope="col">@T["Delivery.Field.Assignee"]</th>
+            <th scope="col">@T["Delivery.Field.DueDate"]</th>
+            <th scope="col" class="d-num">@T["Delivery.Field.StoryPointsShort"]</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var issue in Model)
+        {
+            <partial name="_IssueRow" model="issue" />
+        }
+    </tbody>
+</table>
+</div>

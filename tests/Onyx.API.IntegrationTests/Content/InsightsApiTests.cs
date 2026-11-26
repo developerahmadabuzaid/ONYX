@@ -181,7 +181,7 @@ public sealed class InsightsApiTests(PostgresFixture fixture) : ContentApiTestBa
             $"{Admin}/{insight.Id}/translations/en/seo", new UpdateContentSeoRequest(article, insight.Version), Token)));
         Assert.Contains("Article", (await ResolveAsync("en", "insights/sample-insight")).Content!.Seo.StructuredData);
 
-        var page = await CreatePageAsync(owner, "about-us", "من-نحن");
+        var page = await CreatePageAsync(owner, "about-us", "صفحة-تعريفية");
         await ReadAsync<ContentDetailResponse>(await owner.PutAsJsonAsync($"{Admin}/{page.Id}/translations/en/seo", new UpdateContentSeoRequest(article, page.Version), Token));
         var quality = await ReadAsync<QualityReportResponse>(await owner.GetAsync($"{Admin}/{page.Id}/quality", Token));
         Assert.Contains(quality.Findings, finding => finding.Code == "Schema.ArticleOnNonInsight" && finding.Severity == "Error");

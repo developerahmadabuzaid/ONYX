@@ -1,0 +1,121 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model CalendarPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryCalendar";
+    var culture = DeliveryFormat.Culture();
+    var week = Model.View == "week";
+    var project = Model.ProjectId is { } pid ? Model.Projects.FirstOrDefault(item => item.Id == pid) : null;
+    var previous = week ? Model.Anchor.AddDays(-7) : Model.Anchor.AddMonths(-1);
+    var next = week ? Model.Anchor.AddDays(7) : Model.Anchor.AddMonths(1);
+    var dayNames = Enumerable.Range(0, 7).Select(offset => culture.DateTimeFormat.GetAbbreviatedDayName((DayOfWeek)((offset + 1) % 7))).ToList();
+    var byDay = Model.Issues.Where(issue => issue.DueDate is not null).GroupBy(issue => issue.DueDate!.Value).ToDictionary(group => group.Key, group => group.ToList());
+    var title = week
+        ? $"{DeliveryFormat.Day(Model.From)} – {DeliveryFormat.Day(Model.To)} {Model.To.Year.ToString(CultureInfo.InvariantCulture)}"
+        : DeliveryFormat.Month(Model.Anchor);
+    static string Tone(string priority) => priority switch { "Highest" => "rose", "High" => "coral", "Medium" => "amber", "Low" => "sky", _ => "slate" };
+}
+@section Scripts {
+    <script src="~/js/delivery-workspace.js" asp-append-version="true" defer></script>
+}
+@if (project is not null)
+{
+    <partial name="_DeliveryTabs" model='(project.Id, project.Key, project.Name, "Calendar")' />
+}
+else
+{
+    <header class="ws-head">
+        <div class="ws-head__text">
+            <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+            <h1>@T["Nav.DeliveryCalendar"]</h1>
+            <p class="ws-sub">@T["Delivery.Calendar.Hint"]</p>
+        </div>
+    </header>
+}
+<partial name="_CmsMessages" />
+
+<div class="cal-toolbar">
+    <div class="cal-toolbar__nav">
+        <a class="a-icon-btn cal-prev" asp-action="Calendar" asp-route-view="@Model.View" asp-route-date="@DeliveryFormat.Iso(previous)" asp-route-projectId="@Model.ProjectId" aria-label="@T["Delivery.Calendar.Previous"]"><partial name="_AdminIcon" model='"chevron"' /></a>
+        <h2 class="cal-toolbar__title">@title</h2>
+        <a class="a-icon-btn cal-next" asp-action="Calendar" asp-route-view="@Model.View" asp-route-date="@DeliveryFormat.Iso(next)" asp-route-projectId="@Model.ProjectId" aria-label="@T["Delivery.Calendar.Next"]"><partial name="_AdminIcon" model='"chevron"' /></a>
+        <a class="btn btn--small" asp-action="Calendar" asp-route-view="@Model.View" asp-route-projectId="@Model.ProjectId">@T["Delivery.Calendar.Today"]</a>
+    </div>
+    <div class="cal-toolbar__tools">
+        <nav class="seg" aria-label="@T["Delivery.Calendar.View"]">
+            <a class="seg__item@(week ? string.Empty : " is-active")" asp-action="Calendar" asp-route-view="month" asp-route-date="@DeliveryFormat.Iso(Model.Anchor)" asp-route-projectId="@Model.ProjectId" aria-current="@(week ? null : "true")">@T["Delivery.Calendar.Month"]</a>
+            <a class="seg__item@(week ? " is-active" : string.Empty)" asp-action="Calendar" asp-route-view="week" asp-route-date="@DeliveryFormat.Iso(Model.Anchor)" asp-route-projectId="@Model.ProjectId" aria-current="@(week ? "true" : null)">@T["Delivery.Calendar.Week"]</a>
+        </nav>
+        @if (project is null)
+        {
+            <form method="get" asp-action="Calendar" class="ws-filter">
+                <input type="hidden" name="view" value="@Model.View">
+                <input type="hidden" name="date" value="@DeliveryFormat.Iso(Model.Anchor)">
+                <label class="visually-hidden" for="cal-project">@T["Delivery.Field.Project"]</label>
+                <select id="cal-project" name="projectId">
+                    <option value="">@T["Delivery.AllProjects"]</option>
+                    @foreach (var item in Model.Projects)
+                    {
+                        <option value="@item.Id" selected="@(Model.ProjectId == item.Id)">@item.Key · @item.Name</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn--small">@T["Delivery.Filter"]</button>
+            </form>
+        }
+    </div>
+</div>
+
+@if (Model.Truncated)
+{
+    <p class="errors" role="status">@T["Delivery.Calendar.Truncated"]</p>
+}
+<p class="d-live" data-calendar-status role="status" aria-live="polite"></p>
+<form id="d-calendar-token" hidden>@Html.AntiForgeryToken()</form>
+
+<div class="cal-wrap">
+    <table class="cal@(week ? " cal--week" : string.Empty)" data-calendar="editable" data-saving="@T["Delivery.Calendar.Saving"]" data-saved="@T["Delivery.Calendar.Saved"]" data-failed="@T["Delivery.Calendar.Failed"]">
+        <caption class="visually-hidden">@title — @T["Delivery.Calendar.Caption"]</caption>
+        <thead>
+            <tr>
+                @foreach (var name in dayNames)
+                {
+                    <th scope="col">@name</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @for (var day = Model.From; day <= Model.To; day = day.AddDays(7))
+            {
+                <tr>
+                    @for (var offset = 0; offset < 7; offset++)
+                    {
+                        var date = day.AddDays(offset);
+                        var outside = !week && date.Month != Model.Anchor.Month;
+                        var items = byDay.GetValueOrDefault(date) ?? [];
+                        <td class="cal__day@(outside ? " is-outside" : string.Empty)@(date == Model.Today ? " is-today" : string.Empty)" data-day="@DeliveryFormat.Iso(date)">
+                            <span class="cal__date"><time datetime="@DeliveryFormat.Iso(date)">@date.Day.ToString(CultureInfo.InvariantCulture)</time>
+                                @if (week || date.Day == 1)
+                                {
+                                    <span class="cal__month">@date.ToDateTime(TimeOnly.MinValue).ToString("MMM", culture)</span>
+                                }
+                            </span>
+                            <ul class="cal__list" role="list" data-day-list>
+                                @foreach (var issue in items)
+                                {
+                                    <li class="cal-chip tone-@Tone(issue.Priority)@(issue.IsOverdue ? " is-overdue" : string.Empty)@(issue.StatusCategory == "Done" ? " is-done" : string.Empty)"
+                                        data-chip data-issue-id="@issue.Id" data-version="@issue.Version" data-due="@DeliveryFormat.Iso(issue.DueDate!.Value)"
+                                        data-start="@(issue.StartDate is { } start ? DeliveryFormat.Iso(start) : null)"
+                                        data-dates-url="@Url.Action("Reschedule", "DeliveryPlanning", new { id = issue.Id })">
+                                        <a asp-controller="Delivery" asp-action="Issue" asp-route-id="@issue.Id" title="@issue.Key · @issue.Title" dir="auto"><span class="d-key" dir="ltr">@issue.Key</span> <span class="cal-chip__title">@issue.Title</span></a>
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<p class="hint">@T["Delivery.Calendar.DragHint"]</p>

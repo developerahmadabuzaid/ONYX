@@ -1,0 +1,59 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model Onyx.Contracts.Commerce.AdminInvoiceResponse
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.CommerceInvoices";
+    var canManage = ViewData["CanManage"] is true;
+    var form = new InvoiceForm { CustomerId = Model.CustomerId, SubscriptionId = Model.SubscriptionId, Currency = Model.Currency, DueOn = Model.DueOn, Notes = Model.Notes, Lines = InvoiceLines.Format(Model.Lines), Version = Model.Version };
+}
+<div class="d-head">
+    <h1><span dir="ltr">@(Model.Number ?? T["Commerce.InvoiceStatus.Draft"].Value)</span> <span class="badge">@T["Commerce.InvoiceStatus." + Model.Status]</span></h1>
+    <a asp-action="Invoices">@T["Commerce.Back"]</a>
+</div>
+<partial name="_CmsMessages" />
+<section class="d-panel">
+    <p>@T["Commerce.Invoice.Customer"]: <a asp-action="Customer" asp-route-id="@Model.CustomerId" dir="auto">@Model.CustomerName</a> <span dir="ltr">@Model.CustomerEmail</span></p>
+    <p><strong dir="ltr">@Model.Total.ToString("N2", CultureInfo.InvariantCulture) @Model.Currency</strong> · @T["Customer.Invoice.Due"]: <span dir="ltr">@Model.DueOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</span></p>
+    @if (Model.Status == "Draft" && canManage)
+    {
+        <form method="post" asp-action="UpdateInvoice" asp-route-id="@Model.Id" class="d-form">
+            <input type="hidden" name="CustomerId" value="@Model.CustomerId">
+            <input type="hidden" name="Version" value="@Model.Version">
+            <partial name="_InvoiceFields" model="(form, (IReadOnlyList<Onyx.Contracts.Commerce.AdminSubscriptionResponse>?)null)" />
+            <div class="d-form__actions"><button class="btn" type="submit">@T["Commerce.Invoice.SaveDraft"]</button></div>
+        </form>
+    }
+    else
+    {
+        <div class="d-table-wrap">
+            <table class="d-table">
+                <thead><tr><th scope="col">@T["Customer.Invoice.Description"]</th><th scope="col">@T["Customer.Invoice.Quantity"]</th><th scope="col">@T["Customer.Invoice.UnitPrice"]</th><th scope="col">@T["Customer.Invoice.Amount"]</th></tr></thead>
+                <tbody>
+                    @foreach (var line in Model.Lines)
+                    {
+                        <tr><td dir="auto">@line.Description</td><td dir="ltr">@line.Quantity.ToString("0.##", CultureInfo.InvariantCulture)</td><td dir="ltr">@line.UnitPrice.ToString("N2", CultureInfo.InvariantCulture)</td><td dir="ltr">@line.Amount.ToString("N2", CultureInfo.InvariantCulture)</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (canManage)
+    {
+        <div class="d-form__actions">
+            @if (Model.Status == "Draft")
+            {
+                <form method="post" asp-action="InvoiceCommand" asp-route-id="@Model.Id" asp-route-command="issue" class="d-inline-form"><input type="hidden" name="version" value="@Model.Version"><button class="btn btn--primary" type="submit">@T["Commerce.Invoice.Issue"]</button></form>
+            }
+            @if (Model.Status == "Issued")
+            {
+                <form method="post" asp-action="InvoiceCommand" asp-route-id="@Model.Id" asp-route-command="paid" class="d-inline-form"><input type="hidden" name="version" value="@Model.Version"><button class="btn btn--primary" type="submit">@T["Commerce.Invoice.MarkPaid"]</button></form>
+            }
+            @if (Model.Status is "Draft" or "Issued")
+            {
+                <form method="post" asp-action="InvoiceCommand" asp-route-id="@Model.Id" asp-route-command="void" class="d-inline-form"><input type="hidden" name="version" value="@Model.Version"><button class="btn" type="submit">@T["Commerce.Invoice.Void"]</button></form>
+            }
+        </div>
+        <p class="hint">@T["Commerce.Invoice.ManualNote"]</p>
+    }
+</section>

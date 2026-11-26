@@ -1,0 +1,126 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model SprintReportPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.SprintReport";
+    var report = Model.Report;
+    var sprint = report.Sprint;
+    var rtl = DeliveryFormat.IsRtl;
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    var started = sprint.StartedAtUtc is not null;
+    var remainingPoints = sprint.Points - sprint.DonePoints;
+    var daysLeft = sprint.EndDate is { } endDate && sprint.State == "Active" ? Math.Max(endDate.DayNumber - today.DayNumber, 0) : (int?)null;
+
+    // Burndown: every sprint day on the axis; the ideal line falls from the committed scope to zero, the actual line stops at the
+    // last measured day.
+    var first = sprint.StartDate ?? report.Burndown.FirstOrDefault()?.Day;
+    var last = sprint.EndDate ?? report.Burndown.LastOrDefault()?.Day;
+    var days = first is { } from && last is { } to && to >= from ? Enumerable.Range(0, to.DayNumber - from.DayNumber + 1).Select(offset => from.AddDays(offset)).ToList() : [];
+    var committed = sprint.CommittedPoints ?? report.Burndown.FirstOrDefault()?.RemainingPoints ?? sprint.Points;
+    var actual = days.Select(day => report.Burndown.FirstOrDefault(point => point.Day == day) is { } point ? (double?)point.RemainingPoints : null).ToList();
+    var ideal = days.Select((day, position) => (double?)(days.Count <= 1 ? 0 : committed * (1 - ((double)position / (days.Count - 1))))).ToList();
+    var tips = days.Select((day, position) => string.Format(CultureInfo.CurrentCulture, T["Delivery.Sprint.BurndownTip"], DeliveryFormat.Day(day), actual[position]?.ToString(CultureInfo.InvariantCulture) ?? "—", Math.Round(ideal[position] ?? 0, 1))).ToList();
+    var retro = report.Retrospective;
+    var canEditRetro = report.Can.ManageSprints && started;
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+<nav class="d-crumbs" aria-label="@T["Delivery.Breadcrumbs"]">
+    <a asp-controller="Delivery" asp-action="Index">@T["Nav.DeliveryDashboard"]</a><span aria-hidden="true">/</span>
+    <a asp-controller="Delivery" asp-action="Project" asp-route-id="@report.ProjectId"><span dir="auto">@report.ProjectName</span> <span class="d-key" dir="ltr">@report.ProjectKey</span></a><span aria-hidden="true">/</span>
+    <a asp-action="ProjectSprints" asp-route-id="@report.ProjectId">@T["Delivery.Tab.Sprints"]</a><span aria-hidden="true">/</span>
+    <span dir="auto">@sprint.Name</span>
+</nav>
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow"><span class="d-sstate d-sstate--@sprint.State.ToLowerInvariant()">@T["Delivery.SprintState." + sprint.State]</span></p>
+        <h1 dir="auto">@sprint.Name</h1>
+        <p class="ws-sub">@(sprint.StartDate is { } s ? DeliveryFormat.DayLong(s) : "…") → @(sprint.EndDate is { } e ? DeliveryFormat.DayLong(e) : "…")</p>
+        @if (sprint.Goal is not null)
+        {
+            <p class="sprint-goal"><partial name="_AdminIcon" model='"target"' /><span dir="auto">@sprint.Goal</span></p>
+        }
+    </div>
+    <div class="ws-head__tools">
+        <a class="btn btn--small" asp-controller="Delivery" asp-action="Board" asp-route-id="@report.ProjectId"><partial name="_AdminIcon" model='"kanban"' />@T["Delivery.Tab.Board"]</a>
+        <a class="btn btn--small" asp-controller="Delivery" asp-action="Backlog" asp-route-id="@report.ProjectId"><partial name="_AdminIcon" model='"list"' />@T["Delivery.Tab.Backlog"]</a>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<dl class="stat-row stat-row--cards">
+    <div><dt>@T["Delivery.Committed"]</dt><dd dir="ltr">@(sprint.CommittedPoints?.ToString(CultureInfo.InvariantCulture) ?? "—")</dd></div>
+    <div><dt>@T["Delivery.Sprint.Scope"]</dt><dd dir="ltr">@sprint.Points</dd></div>
+    <div><dt>@T["Delivery.Completed"]</dt><dd dir="ltr">@sprint.DonePoints</dd></div>
+    <div><dt>@T["Delivery.Sprint.Remaining"]</dt><dd dir="ltr">@remainingPoints</dd></div>
+    <div><dt>@T["Delivery.Sprint.IssuesDone"]</dt><dd dir="ltr">@sprint.DoneIssueCount / @sprint.IssueCount</dd></div>
+    @if (daysLeft is { } left)
+    {
+        <div><dt>@T["Delivery.Sprint.DaysLeft"]</dt><dd dir="ltr">@left</dd></div>
+    }
+</dl>
+
+<section class="widget" aria-labelledby="s-burndown">
+    <header class="widget__head">
+        <h2 id="s-burndown">@T["Delivery.Sprint.Burndown"]</h2>
+        @Chart.Legend([(T["Delivery.Sprint.Actual"].Value, "teal", (string?)null), (T["Delivery.Sprint.Ideal"].Value, "slate", (string?)null)])
+    </header>
+    @if (!started || days.Count == 0)
+    {
+        <p class="widget__empty">@T["Delivery.Sprint.NotStarted"]</p>
+    }
+    else
+    {
+        @Chart.Line(days.Select(DeliveryFormat.Day).ToList(),
+            [new ChartSeries(T["Delivery.Sprint.Ideal"], "slate", ideal, Dashed: true), new ChartSeries(T["Delivery.Sprint.Actual"], "teal", actual, Area: true)],
+            tips, rtl, T["Delivery.Sprint.Burndown"], 8)
+        <p class="widget__foot">@T["Delivery.Sprint.BurndownNote"]</p>
+    }
+</section>
+
+<div class="p-columns">
+    <section class="widget" aria-labelledby="s-issues">
+        <header class="widget__head"><h2 id="s-issues">@T["Delivery.Sprint.Issues"]</h2></header>
+        @if (report.Issues.Count == 0)
+        {
+            <p class="widget__empty">@T["Delivery.SprintEmptyHint"]</p>
+        }
+        else
+        {
+            <ul class="mini-list" role="list">@foreach (var issue in report.Issues) { <partial name="_IssueMini" model="issue" /> }</ul>
+        }
+    </section>
+
+    <section class="widget" id="retrospective" aria-labelledby="s-retro">
+        <header class="widget__head"><h2 id="s-retro">@T["Delivery.Retro.Title"]</h2></header>
+        @if (canEditRetro)
+        {
+            <form method="post" asp-action="SaveRetrospective" asp-route-sprintId="@sprint.Id" class="d-form retro-form">
+                <input type="hidden" name="version" value="@sprint.Version">
+                <label>@T["Delivery.Retro.WentWell"] <textarea name="wentWell" rows="3" maxlength="4000" dir="auto">@retro.WentWell</textarea></label>
+                <label>@T["Delivery.Retro.ToImprove"] <textarea name="toImprove" rows="3" maxlength="4000" dir="auto">@retro.ToImprove</textarea></label>
+                <label>@T["Delivery.Retro.Actions"] <textarea name="actionItems" rows="3" maxlength="4000" dir="auto">@retro.ActionItems</textarea></label>
+                <button type="submit" class="btn btn--primary btn--small">@T["Cms.Save"]</button>
+            </form>
+        }
+        else if (retro.WentWell is null && retro.ToImprove is null && retro.ActionItems is null)
+        {
+            <p class="widget__empty">@T[started ? "Delivery.Retro.None" : "Delivery.Retro.NotYet"]</p>
+        }
+        else
+        {
+            <dl class="retro">
+                <dt>@T["Delivery.Retro.WentWell"]</dt><dd class="d-pre" dir="auto">@(retro.WentWell ?? "—")</dd>
+                <dt>@T["Delivery.Retro.ToImprove"]</dt><dd class="d-pre" dir="auto">@(retro.ToImprove ?? "—")</dd>
+                <dt>@T["Delivery.Retro.Actions"]</dt><dd class="d-pre" dir="auto">@(retro.ActionItems ?? "—")</dd>
+            </dl>
+        }
+        @if (retro.UpdatedAtUtc is { } updated)
+        {
+            <p class="widget__foot">@T["Delivery.Retro.UpdatedBy"] @(retro.UpdatedByName ?? T["Delivery.System"]) · <partial name="_Utc" model="updated" /></p>
+        }
+    </section>
+</div>

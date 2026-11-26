@@ -1,0 +1,268 @@
+{
+  "key": "services.ai-agents",
+  "parent": "services",
+  "type": "service",
+  "icon": "agents",
+  "pillar": "agents",
+  "related": ["services.ai", "services.ai-as-service", "services.software", "services.cloud"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/هندسة-وكلاء-الذكاء-الاصطناعي",
+      "nav": "هندسة وكلاء الذكاء الاصطناعي",
+      "title": "هندسة وكلاء الذكاء الاصطناعي: تصميم وتطوير ونشر الوكلاء",
+      "description": "نصمم ونطور وكلاء ذكاء اصطناعي مخصصين لمهام محددة، ونبني أنظمة الوكلاء المتعددين، ونربطهم بأنظمتك وبياناتك وواجهاتك البرمجية، مع ضوابط واضحة على الصلاحيات والمخرجات.",
+      "eyebrow": "هندسة وكلاء الذكاء الاصطناعي",
+      "h1": "وكلاء ذكاء اصطناعي يخدمون أعمالك على مدار الساعة",
+      "lead": "نصمم ونطور وكلاء ذكاء اصطناعي ينفذون مهام محددة داخل أنظمتك، ويتخذون قرارات ضمن صلاحيات مرسومة، ويتعلمون من ملاحظات فريقك. وكل وكيل يبنى لغرض واضح، ويُختبر قبل النشر، ويُراقب بعده.",
+      "summary": "تصميم وتطوير وكلاء ذكاء اصطناعي مخصصين، وأنظمة وكلاء متعددين، وربط بالأنظمة والبيانات.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "ما هو وكيل الذكاء الاصطناعي في سياقنا؟",
+          "paragraphs": [
+            "الوكيل في عملنا ليس روبوت محادثة عاماً. هو برنامج يفهم طلباً بلغة طبيعية أو واجهة برمجية، ويقرر الخطوات اللازمة لتنفيذه، ويستدعي الأدوات والبيانات المسموح له بها، ثم يعيد النتيجة. كل وكيل يبنى لغرض محدد وله صلاحيات واضحة ومسار تدقيق.",
+            "نصمم الوكلاء وفق معمارية قابلة للتفكيك: النموذج اللغوي، والذاكرة، والأدوات، والضوابط، وقواعد الأمان، كلها طبقات منفصلة يمكن تحسينها أو استبدالها دون إعادة بناء الوكيل من الصفر."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "ما نقدمه",
+          "heading": "خدمات هندسة الوكلاء",
+          "items": [
+            {
+              "id": "agent-design",
+              "title": "تصميم الوكلاء وفق متطلبات العمل",
+              "text": "نبدأ من المهمة لا من التقنية: ما الذي ينفذه الوكيل، ومن سيتعامل معه، وما البيانات التي يصل إليها، وكيف يُختبر نجاحه. ثم نصمم الوكيل ونتفق معك على شكل مخرجاته وضوابطه قبل بدء التطوير.",
+              "points": ["تحديد الغرض والصلاحيات والمخرجات", "تصميم المعمارية والذاكرة والأدوات", "اختيار النموذج اللغوي المناسب والتكلفة المتوقعة"]
+            },
+            {
+              "id": "multi-step",
+              "title": "وكلاء ينفذون مهام متعددة الخطوات",
+              "text": "وكيل يقرأ الطلب، ويقسمه إلى خطوات، ويستدعي الأدوات المناسبة لكل خطوة، ويتحقق من النتائج قبل الانتقال للتالية، ويعلمك بحالة التقدم. مناسب للإجراءات التي تتطلب أكثر من استعلام أو إجراء واحد.",
+              "points": ["تخطيط المهمة وتنفيذها على مراحل", "استدعاء أدوات متعددة بترتيب منطقي", "تسجيل كل خطوة لأغراض التدقيق"]
+            },
+            {
+              "id": "tools-and-apis",
+              "title": "ربط الوكلاء بالأدوات وواجهات API",
+              "text": "نربط الوكيل بأنظمتك عبر واجهات برمجية آمنة: قواعد البيانات، وأنظمة ERP وCRM، وأنظمة التذاكر، وإدارة المستندات، وخدمات البريد والمراسلة، وأي خدمة خارجية يحتاجها عملك.",
+              "points": ["تصميم أدوات محددة لكل وكيل", "ضوابط على المدخلات والمخرجات", "اختبار شامل قبل كل ربط جديد"]
+            },
+            {
+              "id": "multi-agent",
+              "title": "أنظمة الوكلاء المتعددين (Multi-Agent Systems)",
+              "text": "حين تتطلب المهمة تخصصات مختلفة أو موازاة، نبني فريقاً من الوكلاء يتعاونون: وكيل يحلل، وآخر يبحث، وثالث يراجع. كل واحد له دوره وصلاحياته، ويمر القرار النهائي عبر إنسان في المواضع الحساسة.",
+              "points": ["تحديد أدوار كل وكيل وحدوده", "بروتوكولات التواصل بين الوكلاء", "نقطة قرار بشرية في المسارات الحساسة"]
+            },
+            {
+              "id": "llm-agents",
+              "title": "وكلاء مبنيون على نماذج اللغة الكبيرة (LLMs)",
+              "text": "نختار النموذج اللغوي المناسب لكل وكيل بحسب المهمة واللغة والتكلفة والخصوصية. ندمج النموذج بطريقة آمنة، ونحمي البيانات الحساسة، ونتحكم في ما يدخل إليه وما يخرج منه.",
+              "points": ["اختيار النموذج حسب المهمة", "حماية البيانات الحساسة", "متابعة الاستخدام والتكلفة"]
+            },
+            {
+              "id": "memory-and-context",
+              "title": "الذاكرة والسياق والمعرفة الخاصة",
+              "text": "الوكيل الجيد يتذكر محادثاته السابقة، ويفهم سياق مؤسستك، ويستند إلى مستنداتك لا إلى معلومات عامة. نجهز له ذاكرة قصيرة وطويلة الأجل، ونربطه بقاعدة معرفية مبنية على مستنداتك عبر تقنية RAG.",
+              "points": ["ذاكرة محادثة وقرارات", "ربط بمستندات الشركة وقواعدها", "تحديث تلقائي مع تغير المحتوى"]
+            },
+            {
+              "id": "guardrails",
+              "title": "الضوابط والحوكمة",
+              "text": "لكل وكيل ضوابط مكتوبة: ما الذي لا يفعله مهما كانت صياغة الطلب، وكيف يستجيب حين يطلب أمراً خارج صلاحياته، ومتى يحوّل المهمة إلى إنسان. الضوابط ليست ميزة إضافية، بل جزء من التصميم.",
+              "points": ["قواعد رفض واضحة", "تصنيف الطلبات وتوجيهها", "مراجعة بشرية للقرارات الحساسة"]
+            },
+            {
+              "id": "human-in-the-loop",
+              "title": "الموافقات والتدخل البشري",
+              "text": "نحدد لكل وكيل متى يطلب موافقة بشرية، وكيف يعرض ملخصاً واضحاً للموظف المسؤول، ومتى يكتفي بإعلام دون انتظار. التدخل البشري ليس استثناء، بل خطوة مدمجة في كل إجراء مهم.",
+              "points": ["موافقات قبل الإجراءات الحساسة", "ملخص واضح للموظف", "إشعارات تلقائية"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "capabilities",
+          "eyebrow": "ما الذي يستطيع الوكلاء تنفيذه",
+          "heading": "حالات استخدام عملية في المؤسسات",
+          "items": [
+            { "title": "إجراءات موظفين طويلة", "text": "تلخيص قضية عميل أو طلب، جمع المعلومات من أنظمة مختلفة، إعداد مسودة رد." },
+            { "title": "معالجة المستندات", "text": "استخراج بيانات من الفواتير والعقود والنماذج، والتحقق منها، وإدخالها في النظام." },
+            { "title": "الإجابة من مستندات الشركة", "text": "مساعد يجيب فريقك أو عملاءك من السياسات والإجراءات والوثائق المعتمدة." },
+            { "title": "تحليل البيانات", "text": "وكيل يقرأ بياناتك وينتج ملخصات وتقارير، ويشير إلى المصدر عند الحاجة." },
+            { "title": "دعم العملاء", "text": "مساعد يفهم السؤال، يبحث في قاعدة المعرفة، يرد بدقة، ويحوّل للموظف البشري حين يلزم." },
+            { "title": "مهام سير العمل", "text": "تنفيذ سلسلة إجراءات عبر أنظمة متعددة، مع إشعارات في كل مرحلة وموافقات عند الحاجة." }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "منهجيتنا",
+          "heading": "كيف نطور وكيلاً ذكياً",
+          "items": [
+            { "title": "تحديد المهمة", "text": "نحدد ما الذي ينجزه الوكيل فعلاً، وكيف نقيس نجاحه، ومن يتفاعل معه." },
+            { "title": "تصميم الصلاحيات", "text": "نرسم ما يمكنه الوصول إليه وما لا يمكنه، وكيف يستجيب للطلبات خارج نطاقه." },
+            { "title": "النموذج الأولي", "text": "نبني نسخة مبدئية ونختبرها على حالات حقيقية من عملك قبل توسيعها." },
+            { "title": "الربط والاختبار", "text": "نربط الوكيل بأنظمتك عبر واجهات آمنة، ونختبره بدقة على سيناريوهات النجاح والفشل." },
+            { "title": "النشر والمراقبة", "text": "ننشره في البيئة المناسبة، ونتابع الأداء والاستخدام والتكلفة، ونحسّنه باستمرار." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "responsible-agents",
+          "eyebrow": "الحوكمة",
+          "heading": "وكلاء تحت سيطرتك",
+          "paragraphs": [
+            "نصمم الوكلاء ليعملوا ضمن صلاحيات كل مستخدم، فلا يصل أي وكيل إلى بيانات لا يحق له الاطلاع عليها. ونتعامل مع مخرجات الذكاء الاصطناعي كمقترحات تحتاج إلى ضوابط: التحقق من الصيغة، والاستناد إلى المصادر، والمراجعة البشرية للقرارات الحساسة.",
+            "نوثق ما يفعله كل وكيل، ومن يتحمل مسؤولية قراره، وكيف تراجع نتائجه. وتكون لديك سجل واضح لكل عملية: من اتخذ القرار، وعلى أي أساس، وبأي بيانات."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "what-you-get",
+          "eyebrow": "المخرجات",
+          "heading": "ما الذي تحصل عليه",
+          "items": [
+            { "title": "وكيل جاهز للإنتاج", "text": "مطور، مختبر، موثق، ومجهز للنشر في بيئتك." },
+            { "title": "لوحة مراقبة", "text": "مؤشرات عن الاستخدام والأداء والأخطاء والتكلفة." },
+            { "title": "وثائق تقنية وتشغيلية", "text": "شرح البنية، طريقة التشغيل، طريقة التطوير، حدود الوكيل." },
+            { "title": "تسليم تدريجي", "text": "نبدأ بحالات محددة ونتوسع بعد التأكد من النتائج." },
+            { "title": "دعم بعد الإطلاق", "text": "مراقبة وتطوير وتحسين حسب تغير احتياجاتك وبياناتك." }
+          ]
+        }
+      ],
+      "ctaTitle": "لديك عملية تريد أتمتتها بذكاء اصطناعي؟",
+      "ctaText": "حدّثنا عن الإجراء أو المهمة التي تريد تنفيذها، وسنقترح عليك تصميم وكيل مناسب لها، مع تحديد الصلاحيات والضوابط من البداية."
+    },
+    "en": {
+      "path": "services/ai-agent-engineering",
+      "nav": "AI Agent Engineering",
+      "title": "AI Agent Engineering: Design, Build and Deploy",
+      "description": "We design and build custom AI agents for defined tasks, build multi-agent systems, and connect them to your systems, data and APIs, with clear controls on permissions and outputs.",
+      "eyebrow": "AI Agent Engineering",
+      "h1": "AI agents that serve your business around the clock",
+      "lead": "We design and build AI agents that carry out defined tasks inside your systems, make decisions within scoped permissions, and learn from your team's feedback. Every agent is built for a clear purpose, tested before launch, and monitored after it.",
+      "summary": "Custom AI agent design, multi-agent systems, and integration with your systems and data.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "What is an AI agent, in our work?",
+          "paragraphs": [
+            "For us, an agent is not a general chatbot. It is a program that understands a request in natural language or via an API, decides the steps to fulfil it, calls the tools and data it is allowed to use, and returns a result. Every agent is built for a defined purpose, with clear permissions and an audit trail.",
+            "We design agents with a decomposable architecture: the language model, memory, tools, guardrails and safety rules are separate layers that can be improved or replaced without rebuilding the agent from scratch."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "What we deliver",
+          "heading": "AI agent engineering services",
+          "items": [
+            {
+              "id": "agent-design",
+              "title": "Agent design for your business requirements",
+              "text": "We start with the task, not the technology: what the agent does, who interacts with it, what data it can reach, and how we measure its success. We then design the agent and agree on its outputs and controls before we start building.",
+              "points": ["Purpose, permissions and outputs defined", "Architecture, memory and tools designed", "Right model picked for the task and cost"]
+            },
+            {
+              "id": "multi-step",
+              "title": "Agents that run multi-step tasks",
+              "text": "An agent that reads the request, breaks it into steps, calls the right tools in order, checks each result before moving on, and keeps you informed of progress. Useful for processes that need more than one query or action.",
+              "points": ["Plans and runs the task in stages", "Calls multiple tools in the right order", "Records every step for audit"]
+            },
+            {
+              "id": "tools-and-apis",
+              "title": "Connecting agents to your tools and APIs",
+              "text": "We connect the agent to your systems through safe APIs: databases, ERP and CRM, ticketing, document management, email and messaging, and any external service your business needs.",
+              "points": ["Defined tools per agent", "Controls on inputs and outputs", "Full testing before any new connection"]
+            },
+            {
+              "id": "multi-agent",
+              "title": "Multi-agent systems",
+              "text": "When a task needs different specialisms or parallelism, we build a team of cooperating agents: one analyses, one searches, one reviews. Each has its role and its limits, and important decisions still pass through a person.",
+              "points": ["Roles and limits defined per agent", "Inter-agent communication protocols", "Human checkpoint on sensitive paths"]
+            },
+            {
+              "id": "llm-agents",
+              "title": "Agents built on large language models (LLMs)",
+              "text": "We pick the right language model for each agent by task, language, cost and privacy. We integrate it safely, protect sensitive data, and control what goes in and what comes out.",
+              "points": ["Model chosen per task", "Sensitive data protected", "Usage and cost tracked"]
+            },
+            {
+              "id": "memory-and-context",
+              "title": "Memory, context and private knowledge",
+              "text": "A good agent remembers prior conversations, understands your company's context, and grounds answers in your documents, not general knowledge. We give it short- and long-term memory, and connect it to a knowledge base built on your content with RAG.",
+              "points": ["Conversation and decision memory", "Grounded in your documents and rules", "Updates as your content changes"]
+            },
+            {
+              "id": "guardrails",
+              "title": "Guardrails and governance",
+              "text": "Every agent has written guardrails: what it never does no matter how the request is phrased, how it responds when asked to go beyond its scope, and when it hands the task to a human. Guardrails are part of the design, not an add-on.",
+              "points": ["Clear refusal rules", "Request classification and routing", "Human review on important decisions"]
+            },
+            {
+              "id": "human-in-the-loop",
+              "title": "Approvals and human-in-the-loop",
+              "text": "For every agent we define when it asks for human approval, how it shows the responsible person a clear summary, and when it just notifies without waiting. Human oversight is a built-in step, not an exception.",
+              "points": ["Approvals before sensitive actions", "A clear summary for the reviewer", "Automatic notifications"]
+            }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "capabilities",
+          "eyebrow": "What agents can do",
+          "heading": "Practical enterprise use cases",
+          "items": [
+            { "title": "Long staff tasks", "text": "Summarising a customer case or request, gathering information across systems, drafting a reply." },
+            { "title": "Document processing", "text": "Extracting data from invoices, contracts and forms, validating it, and entering it into your system." },
+            { "title": "Answers from company documents", "text": "An assistant that answers your team or customers from your approved policies and procedures." },
+            { "title": "Data analysis", "text": "An agent that reads your data, produces summaries and reports, and points to the source when needed." },
+            { "title": "Customer support", "text": "An assistant that understands the question, searches the knowledge base, answers accurately, and hands off to a person when needed." },
+            { "title": "Workflow tasks", "text": "Running sequences of actions across multiple systems, with notifications at every step and approvals where required." }
+          ]
+        },
+        {
+          "kind": "steps",
+          "id": "approach",
+          "eyebrow": "Our approach",
+          "heading": "How we build an agent",
+          "items": [
+            { "title": "Define the task", "text": "What the agent actually does, how we measure success, and who interacts with it." },
+            { "title": "Design the permissions", "text": "What it can and cannot access, and how it responds to requests outside its scope." },
+            { "title": "Prototype", "text": "We build a first version and test it on real cases from your business before scaling." },
+            { "title": "Integrate and test", "text": "We connect the agent to your systems with safe APIs, and test it carefully on success and failure paths." },
+            { "title": "Deploy and monitor", "text": "We deploy it in the right environment, monitor performance, usage and cost, and keep improving it." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "responsible-agents",
+          "eyebrow": "Governance",
+          "heading": "Agents under your control",
+          "paragraphs": [
+            "We design agents to work within each user's permissions, so no agent can reach data the user is not entitled to see. We treat AI outputs as suggestions that need controls: format checks, source grounding, and human review on important decisions.",
+            "We document what each agent does, who owns its decisions, and how its results are reviewed. You get a clear record of every action: who decided what, on what basis, and with which data."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "what-you-get",
+          "eyebrow": "Deliverables",
+          "heading": "What you get",
+          "items": [
+            { "title": "A production-ready agent", "text": "Built, tested, documented and ready to deploy in your environment." },
+            { "title": "A monitoring dashboard", "text": "Metrics on usage, performance, errors and cost." },
+            { "title": "Technical and operational docs", "text": "Architecture, how to run it, how to extend it, and its limits." },
+            { "title": "Staged delivery", "text": "We start with a defined scope and expand once results are confirmed." },
+            { "title": "Post-launch support", "text": "Monitoring, development and improvement as your data and needs change." }
+          ]
+        }
+      ],
+      "ctaTitle": "Have a process you want to automate with AI?",
+      "ctaText": "Tell us about the task or procedure you want an agent for, and we'll propose a design with the right permissions and guardrails from day one."
+    }
+  }
+}

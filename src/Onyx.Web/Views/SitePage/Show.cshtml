@@ -1,0 +1,329 @@
+@using System.Globalization
+@using Onyx.Web.Content.SitePages
+@using Onyx.Web.Leads
+@model SitePageViewModel
+@inject SitePageCatalog Catalog
+@inject LocalizedRouteTable Routes
+@{
+    var lang = Model.LanguageCode;
+    var text = Model.Text;
+    var page = Model.Page;
+    string? Href(string? key) => key is null ? null : Catalog.PathFor(key, lang) ?? Routes.PathFor(key, lang);
+    var contact = Routes.PathFor(LeadPages.Contact, lang);
+    var startProject = Routes.PathFor(LeadPages.StartProject, lang) is { } start && page.Pillar is not null ? $"{start}?pillar={page.Pillar}" : Routes.PathFor(LeadPages.StartProject, lang);
+    var consultation = Routes.PathFor(LeadPages.BookConsultation, lang);
+    var index = text.Sections.Where(entry => entry.Id is not null && entry.Heading is not null).ToList();
+    var isLegal = page.Type == "legal";
+}
+
+<partial name="_Breadcrumbs" model="Model.Breadcrumbs" />
+
+<header class="page-hero@(page.Type == "service" ? " page-hero--service" : string.Empty)">
+    <div class="container page-hero__inner">
+        <div class="page-hero__copy">
+            @if (!string.IsNullOrEmpty(text.Eyebrow))
+            {
+                <p class="label">@text.Eyebrow</p>
+            }
+            <h1 class="page-title">@text.H1</h1>
+            @if (!string.IsNullOrEmpty(text.Lead))
+            {
+                <p class="lead page-hero__lead">@text.Lead</p>
+            }
+            @if (!isLegal)
+            {
+                <div class="page-hero__actions">
+                    @if (page.Pillar is not null && startProject is not null)
+                    {
+                        <a class="button button--primary button--arrow" href="@startProject"><span>@T["Public.Cta.StartProject"]</span></a>
+                    }
+                    else if (contact is not null)
+                    {
+                        <a class="button button--primary button--arrow" href="@contact"><span>@T["Public.Cta.Talk"]</span></a>
+                    }
+                    @if (consultation is not null)
+                    {
+                        <a class="button button--secondary" href="@consultation"><span>@T["Public.Cta.BookConsultation"]</span></a>
+                    }
+                </div>
+            }
+        </div>
+        @if (ViewData["HeroImage"] is string heroImage)
+        {
+            <div class="page-hero__image"><img src="@heroImage" alt="" width="640" height="480" fetchpriority="high" decoding="async"></div>
+        }
+        else if (page.Icon is not null)
+        {
+            <div class="page-hero__mark" aria-hidden="true"><partial name="_Icon" model="page.Icon" /></div>
+        }
+    </div>
+</header>
+
+@if (page.Draft)
+{
+    <div class="container">
+        <p class="callout callout--draft" role="note">@T["SitePage.DraftNotice"]</p>
+    </div>
+}
+
+<div class="container page-layout@(index.Count >= 3 ? " page-layout--indexed" : string.Empty)">
+    @if (index.Count >= 3)
+    {
+        <nav class="page-index" aria-label="@T["SitePage.OnThisPage"]">
+            <p class="page-index__title">@T["SitePage.OnThisPage"]</p>
+            <ol role="list">
+                @foreach (var block in index)
+                {
+                    <li><a href="#@block.Id">@block.Heading</a></li>
+                }
+            </ol>
+        </nav>
+    }
+    <div class="page-body">
+        @for (var s = 0; s < text.Sections.Count; s++)
+        {
+            var block = text.Sections[s];
+            var headingId = block.Id is not null ? block.Id + "-title" : $"section-{s}-title";
+            <section class="block block--@block.Kind" id="@block.Id" aria-labelledby="@(block.Heading is not null ? headingId : null)" data-reveal>
+                @if (block.Heading is not null)
+                {
+                    <header class="block__head">
+                        @if (!string.IsNullOrEmpty(block.Eyebrow))
+                        {
+                            <p class="label">@block.Eyebrow</p>
+                        }
+                        <h2 id="@headingId" class="block__title">@block.Heading</h2>
+                        @if (!string.IsNullOrEmpty(block.Lead))
+                        {
+                            <p class="block__lead">@block.Lead</p>
+                        }
+                    </header>
+                }
+                @foreach (var paragraph in block.Paragraphs)
+                {
+                    <p class="block__text">@paragraph</p>
+                }
+                @switch (block.Kind)
+                {
+                    case "offerings":
+                        <div class="offering-grid">
+                            @foreach (var item in block.Items)
+                            {
+                                <article class="offering" id="@item.Id">
+                                    @if (item.Icon is not null)
+                                    {
+                                        <span class="offering__icon"><partial name="_Icon" model="item.Icon" /></span>
+                                    }
+                                    <h3 class="offering__title">@item.Title</h3>
+                                    @if (item.Text is not null)
+                                    {
+                                        <p class="offering__text">@item.Text</p>
+                                    }
+                                    @if (item.Points.Count > 0)
+                                    {
+                                        <ul class="offering__points" role="list">
+                                            @foreach (var point in item.Points)
+                                            {
+                                                <li>@point</li>
+                                            }
+                                        </ul>
+                                    }
+                                    @if (item.Flag == "verify")
+                                    {
+                                        <p class="flag">@T["SitePage.Verify"]</p>
+                                    }
+                                </article>
+                            }
+                        </div>
+                        break;
+                    case "steps":
+                        <ol class="steps" role="list">
+                            @for (var i = 0; i < block.Items.Count; i++)
+                            {
+                                var item = block.Items[i];
+                                <li class="step" id="@item.Id">
+                                    <span class="step__number" dir="ltr">@((i + 1).ToString("00", CultureInfo.InvariantCulture))</span>
+                                    <div class="step__body">
+                                        <h3 class="step__title">@item.Title</h3>
+                                        @if (item.Text is not null)
+                                        {
+                                            <p class="step__text">@item.Text</p>
+                                        }
+                                        @if (item.Deliverables.Count > 0 || item.Involvement.Count > 0)
+                                        {
+                                            <div class="step__details">
+                                                @if (item.Deliverables.Count > 0)
+                                                {
+                                                    <div>
+                                                        <h4 class="step__label">@T["SitePage.Deliverables"]</h4>
+                                                        <ul role="list">@foreach (var entry in item.Deliverables) { <li>@entry</li> }</ul>
+                                                    </div>
+                                                }
+                                                @if (item.Involvement.Count > 0)
+                                                {
+                                                    <div>
+                                                        <h4 class="step__label">@T["SitePage.Involvement"]</h4>
+                                                        <ul role="list">@foreach (var entry in item.Involvement) { <li>@entry</li> }</ul>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                    </div>
+                                </li>
+                            }
+                        </ol>
+                        break;
+                    case "compare":
+                        <div class="compare-grid">
+                            @foreach (var item in block.Items)
+                            {
+                                <div class="compare-card" id="@item.Id">
+                                    @if (item.Icon is not null)
+                                    {
+                                        <partial name="_Icon" model="item.Icon" />
+                                    }
+                                    <h3 class="compare-card__title">@item.Title</h3>
+                                    @if (item.Text is not null)
+                                    {
+                                        <p class="compare-card__text">@item.Text</p>
+                                    }
+                                    @if (item.Points.Count > 0)
+                                    {
+                                        <ul class="compare-card__points" role="list">@foreach (var point in item.Points) { <li>@point</li> }</ul>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        break;
+                    case "stack":
+                        <div class="stack__groups stack__groups--page">
+                            @foreach (var item in block.Items)
+                            {
+                                <div class="stack__group" id="@item.Id">
+                                    <h3 class="stack__title">@item.Title</h3>
+                                    @if (item.Text is not null)
+                                    {
+                                        <p class="stack__text">@item.Text</p>
+                                    }
+                                    <ul class="stack__list" role="list">
+                                        @foreach (var tag in item.Tags)
+                                        {
+                                            <li dir="auto">@tag</li>
+                                        }
+                                    </ul>
+                                    @if (item.Pending.Count > 0)
+                                    {
+                                        <p class="flag">@T["SitePage.Verify"]: <span dir="auto">@string.Join(" · ", item.Pending)</span></p>
+                                    }
+                                </div>
+                            }
+                        </div>
+                        break;
+                    case "pages":
+                        <ul class="page-cards" role="list">
+                            @foreach (var item in block.Items)
+                            {
+                                var href = Href(item.Page);
+                                <li class="page-card">
+                                    @if (item.Icon is not null)
+                                    {
+                                        <span class="page-card__icon"><partial name="_Icon" model="item.Icon" /></span>
+                                    }
+                                    <h3 class="page-card__title">
+                                        @if (href is not null)
+                                        {
+                                            <a class="page-card__link" href="@href">@item.Title</a>
+                                        }
+                                        else
+                                        {
+                                            @item.Title
+                                        }
+                                    </h3>
+                                    @if (item.Text is not null)
+                                    {
+                                        <p class="page-card__text">@item.Text</p>
+                                    }
+                                    @if (item.Points.Count > 0)
+                                    {
+                                        <ul class="page-card__points" role="list">@foreach (var point in item.Points) { <li>@point</li> }</ul>
+                                    }
+                                    @if (href is not null)
+                                    {
+                                        <span class="link-arrow page-card__more" aria-hidden="true">@T["Home.Service.More"]</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                        break;
+                    case "checklist":
+                        <ul class="checklist" role="list">
+                            @foreach (var item in block.Items)
+                            {
+                                <li class="checklist__item">
+                                    <span class="checklist__title">@item.Title</span>
+                                    @if (item.Text is not null)
+                                    {
+                                        <span class="checklist__text">@item.Text</span>
+                                    }
+                                </li>
+                            }
+                        </ul>
+                        break;
+                }
+                @if (!string.IsNullOrEmpty(block.Note))
+                {
+                    <p class="note block__note">@block.Note</p>
+                }
+            </section>
+        }
+    </div>
+</div>
+
+@if (Model.Related.Count > 0)
+{
+    <section class="section related" aria-labelledby="related-title">
+        <div class="container">
+            <h2 id="related-title" class="heading-xl related__title">@T["SitePage.Related"]</h2>
+            <ul class="page-cards page-cards--compact" role="list">
+                @foreach (var (relatedPage, relatedText, relatedPath) in Model.Related)
+                {
+                    <li class="page-card">
+                        @if (relatedPage.Icon is not null)
+                        {
+                            <span class="page-card__icon"><partial name="_Icon" model="relatedPage.Icon" /></span>
+                        }
+                        <h3 class="page-card__title"><a class="page-card__link" href="@relatedPath">@relatedText.Nav</a></h3>
+                        @if (relatedText.Summary is not null)
+                        {
+                            <p class="page-card__text">@relatedText.Summary</p>
+                        }
+                        <span class="link-arrow page-card__more" aria-hidden="true">@T["Home.Service.More"]</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </section>
+}
+
+@if (!isLegal)
+{
+    <section class="cta cta--page" aria-labelledby="cta-title">
+        <div class="cta__visual" aria-hidden="true">
+            <img src="~/images/onyx-stone.webp" asp-append-version="true" width="1000" height="1000" alt="" loading="lazy" decoding="async">
+        </div>
+        <div class="container cta__inner" data-reveal>
+            <h2 id="cta-title" class="heading-xl">@(text.CtaTitle ?? T["Home.Cta.Title"].Value)</h2>
+            <p class="lead">@(text.CtaText ?? T["Home.Cta.Text"].Value)</p>
+            <div class="cta__actions">
+                @if (contact is not null)
+                {
+                    <a class="button button--primary button--arrow" href="@contact"><span>@T["Public.Cta.Talk"]</span></a>
+                }
+                @if (startProject is not null)
+                {
+                    <a class="button button--secondary" href="@startProject"><span>@T["Public.Cta.StartProject"]</span></a>
+                }
+            </div>
+        </div>
+    </section>
+}

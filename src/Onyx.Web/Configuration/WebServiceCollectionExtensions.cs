@@ -50,9 +50,19 @@ public static class WebServiceCollectionExtensions
 
             routes.Register(Search.SearchPages.Route);
             routes.Register(News.NewsPages.Route);
+            foreach (var route in Customers.CustomerPages.Routes)
+            {
+                routes.Register(route);
+            }
 
             return routes;
         });
+        services.AddSingleton(Content.SitePages.SitePageCatalog.LoadEmbedded());
+        services.AddOptions<Content.SiteContent.SiteContentOptions>().Bind(configuration.GetSection(Content.SiteContent.SiteContentOptions.SectionName));
+        services.AddSingleton<Content.SiteContent.SiteContentProvider>();
+        services.AddScoped<Content.SiteContent.SiteContentContext>();
+        services.AddScoped<Content.SiteContent.SiteCopy>();
+        services.AddScoped<Content.SiteContent.EffectiveSitePages>();
         services.AddSingleton<LocalizedRouteTransformer>();
         services.AddScoped<SeoContext>();
         services.AddScoped<ConsentState>();
@@ -75,11 +85,13 @@ public static class WebServiceCollectionExtensions
             {
                 options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
                 options.Filters.Add<AdminSessionEndedFilter>();
+                options.Filters.Add<Customers.CustomerSessionEndedFilter>();
                 options.Filters.Add<ApiUnavailableFilter>();
                 options.Filters.Add<Analytics.AnalyticsTagFilter>();
             })
             .AddViewLocalization()
             .AddDataAnnotationsLocalization(options => options.DataAnnotationLocalizerProvider = (_, factory) => factory.Create(typeof(SharedResource)));
+        services.Configure<Microsoft.AspNetCore.Mvc.Razor.RazorViewEngineOptions>(options => options.ViewLocationExpanders.Add(new Areas.Admin.Delivery.DeliveryViewLocationExpander()));
 
         services.AddAntiforgery(options =>
         {
@@ -176,8 +188,25 @@ public static class WebServiceCollectionExtensions
                 options.AccessDeniedPath = "/admin/account/access-denied";
                 options.ReturnUrlParameter = "returnUrl";
                 options.EventsType = typeof(BffCookieEvents);
+            })
+            // Customers (docs/architecture.md §24.8): a separate scheme and cookie. Admin pages authenticate only the staff scheme
+            // (the default); customer pages declare this one, so neither sign-in is ever accepted in the other area.
+            .AddCookie(Customers.CustomerWebAuth.Scheme, options =>
+            {
+                options.Cookie.Name = Customers.CustomerWebAuth.CookieName;
+                options.Cookie.HttpOnly = true;
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+
+                // Lax so the first visit from an emailed link is already signed in; every POST is still antiforgery-protected.
+                options.Cookie.SameSite = SameSiteMode.Lax;
+                options.Cookie.Path = "/";
+                options.Cookie.IsEssential = true;
+                options.SlidingExpiration = false;
+                options.ReturnUrlParameter = Customers.CustomerPages.ReturnUrlParameter;
+                options.EventsType = typeof(Customers.CustomerCookieEvents);
             });
 
+        services.AddScoped<Customers.CustomerCookieEvents>();
         services.AddAuthorization();
     }
 
@@ -185,21 +214,30 @@ public static class WebServiceCollectionExtensions
     {
         services.AddTransient<RequestContextHandler>();
         services.AddTransient<AccessTokenHandler>();
+        services.AddTransient<Customers.CustomerSessionHandler>();
 
         Configure(services.AddHttpClient<IAuthApiClient, AuthApiClient>());
         Configure(services.AddHttpClient<IConsentApiClient, ConsentApiClient>());
         Configure(services.AddHttpClient<IAdminApiClient, AdminApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminCmsApiClient, AdminCmsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
-        Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>());
-        Configure(services.AddHttpClient<ISearchApiClient, SearchApiClient>());
-        Configure(services.AddHttpClient<IPublicNewsApiClient, PublicNewsApiClient>());
+        Configure(services.AddHttpClient<IPublicContentApiClient, PublicContentApiClient>(), publicRead: true);
+        Configure(services.AddHttpClient<ISearchApiClient, SearchApiClient>(), publicRead: true);
+        Configure(services.AddHttpClient<IPublicNewsApiClient, PublicNewsApiClient>(), publicRead: true);
+        Configure(services.AddHttpClient<IPublicSiteContentApiClient, PublicSiteContentApiClient>(), publicRead: true);
+        Configure(services.AddHttpClient<IAdminSiteContentApiClient, AdminSiteContentApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminNewsApiClient, AdminNewsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminDeliveryApiClient, AdminDeliveryApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminAnalyticsApiClient, AdminAnalyticsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<ILeadsApiClient, LeadsApiClient>());
         Configure(services.AddHttpClient<IAdminLeadsApiClient, AdminLeadsApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
         Configure(services.AddHttpClient<IAdminPrivacyApiClient, AdminPrivacyApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminStaffApiClient, AdminStaffApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<IAdminCommerceApiClient, AdminCommerceApiClient>().AddHttpMessageHandler<AccessTokenHandler>());
+        Configure(services.AddHttpClient<ICustomerAuthApiClient, CustomerAuthApiClient>());
+        Configure(services.AddHttpClient<ICustomerApiClient, CustomerApiClient>().AddHttpMessageHandler<Customers.CustomerSessionHandler>());
+        Configure(services.AddHttpClient<IProductsApiClient, ProductsApiClient>(), publicRead: true);
 
-        static void Configure(IHttpClientBuilder builder)
+        static void Configure(IHttpClientBuilder builder, bool publicRead = false)
         {
             builder.ConfigureHttpClient((provider, client) =>
             {
@@ -211,7 +249,26 @@ public static class WebServiceCollectionExtensions
             builder.AddHttpMessageHandler<RequestContextHandler>();
 
             // Never retry POSTs: a retried refresh would look like token reuse and end the session.
-            builder.AddStandardResilienceHandler(options => options.Retry.DisableForUnsafeHttpMethods());
+            builder.AddStandardResilienceHandler(options =>
+            {
+                options.Retry.DisableForUnsafeHttpMethods();
+                if (publicRead)
+                {
+                    // Visitor page views: one quick retry, then render without the optional data (or the service page) instead
+                    // of holding the visitor through the default exponential back-off (seconds per call).
+                    options.Retry.MaxRetryAttempts = 1;
+                    options.Retry.Delay = TimeSpan.FromMilliseconds(200);
+                    options.Retry.BackoffType = Polly.DelayBackoffType.Constant;
+                    options.AttemptTimeout.Timeout = TimeSpan.FromSeconds(3);
+                    options.TotalRequestTimeout.Timeout = TimeSpan.FromSeconds(7);
+
+                    // While the API is failing, stop waiting on it: after a handful of failures the circuit opens for a short
+                    // break and calls fail immediately (rendered as "unavailable"), then it probes again.
+                    options.CircuitBreaker.MinimumThroughput = 4;
+                    options.CircuitBreaker.FailureRatio = 0.5;
+                    options.CircuitBreaker.BreakDuration = TimeSpan.FromSeconds(15);
+                }
+            });
         }
     }
 

@@ -1,0 +1,17 @@
+@model Onyx.Contracts.Administration.UserSummaryResponse
+@if (!Model.IsActive)
+{
+    <span class="status status--warning">@T["Staff.Status.Disabled"]</span>
+}
+else if (!Model.EmailConfirmed)
+{
+    <span class="status status--draft">@T["Staff.Status.Invited"]</span>
+}
+else if (Model.IsLockedOut)
+{
+    <span class="status status--warning">@T["Staff.Status.Locked"]</span>
+}
+else
+{
+    <span class="status status--live">@T["Staff.Status.Active"]</span>
+}

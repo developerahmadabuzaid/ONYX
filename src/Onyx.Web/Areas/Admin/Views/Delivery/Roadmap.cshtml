@@ -1,0 +1,84 @@
+@using Onyx.Contracts.Delivery
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model RoadmapPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryRoadmap";
+    var zoom = Context.Request.Query["zoom"].ToString() == "week" ? "week" : "month";
+    var today = DateOnly.FromDateTime(DateTime.UtcNow);
+    static string HealthTone(string health) => health switch { "Delayed" => "rose", "AtRisk" => "amber", "OnHold" => "slate", "Completed" => "green", _ => "teal" };
+    var rows = new List<GanttRow>();
+    var undated = new List<RoadmapProjectResponse>();
+    foreach (var project in Model.Roadmap.Projects)
+    {
+        if (project.StartDate is null && project.TargetDate is null && project.Epics.Count == 0)
+        {
+            undated.Add(project);
+            continue;
+        }
+
+        var progress = project.TotalIssues == 0 ? (double?)null : (double)project.DoneIssues / project.TotalIssues;
+        rows.Add(new GanttRow(
+            project.Name, project.Key, Url.Action("Project", "Delivery", new { id = project.Id }),
+            project.StartDate ?? project.Epics.Select(epic => epic.StartDate ?? epic.DueDate).Min(), project.TargetDate,
+            HealthTone(project.Health), progress, 0,
+            $"{project.Key} · {project.Name} — {T["Delivery.Health." + project.Health]} · {DeliveryDisplay.Percent(project.DoneIssues, project.TotalIssues)}%",
+            T["Delivery.Health." + project.Health]));
+        foreach (var epic in project.Epics)
+        {
+            rows.Add(new GanttRow(
+                epic.Title, epic.Key, Url.Action("Issue", "Delivery", new { id = epic.Id }), epic.StartDate, epic.DueDate,
+                epic.IsOverdue ? "rose" : epic.StatusCategory == "Done" ? "green" : "violet",
+                epic.ChildCount == 0 ? null : (double)epic.DoneChildCount / epic.ChildCount, 1,
+                $"{epic.Key} · {epic.Title} — {epic.DoneChildCount}/{epic.ChildCount}"));
+        }
+    }
+}
+@section Scripts {
+    <script src="~/js/admin-charts.js" asp-append-version="true" defer></script>
+}
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+        <h1>@T["Nav.DeliveryRoadmap"]</h1>
+        <p class="ws-sub">@T["Delivery.Roadmap.Hint"]</p>
+    </div>
+    <div class="ws-head__tools">
+        <nav class="seg" aria-label="@T["Delivery.Timeline.Zoom"]">
+            <a class="seg__item@(zoom == "month" ? " is-active" : string.Empty)" asp-action="Roadmap" aria-current="@(zoom == "month" ? "true" : null)">@T["Delivery.Timeline.Months"]</a>
+            <a class="seg__item@(zoom == "week" ? " is-active" : string.Empty)" asp-action="Roadmap" asp-route-zoom="week" aria-current="@(zoom == "week" ? "true" : null)">@T["Delivery.Timeline.Weeks"]</a>
+        </nav>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+@Chart.Legend([
+    (T["Delivery.Health.OnTrack"].Value, "teal", (string?)null),
+    (T["Delivery.Health.AtRisk"].Value, "amber", (string?)null),
+    (T["Delivery.Health.Delayed"].Value, "rose", (string?)null),
+    (T["Delivery.Health.OnHold"].Value, "slate", (string?)null),
+    (T["Delivery.Roadmap.Epic"].Value, "violet", (string?)null),
+])
+@if (rows.Count == 0)
+{
+    <partial name="_Empty" model='("Delivery.Roadmap.EmptyTitle", "Delivery.Roadmap.EmptyText", Url.Action("Projects", "Delivery"), "Nav.DeliveryProjects")' />
+}
+else
+{
+    @Gantt.Render(rows, [], [], [], today, zoom == "week" ? 10 : 4, DeliveryFormat.IsRtl, DeliveryFormat.Culture(), T["Nav.DeliveryRoadmap"], T["Delivery.Calendar.Today"])
+    <p class="hint">@T["Delivery.Health.Rule"]</p>
+}
+@if (undated.Count > 0)
+{
+    <section class="widget" aria-labelledby="r-undated">
+        <header class="widget__head"><h2 id="r-undated">@T["Delivery.Roadmap.Undated"]</h2></header>
+        <ul class="tile-list" role="list">
+            @foreach (var project in undated)
+            {
+                <li><a class="tile-list__link" asp-controller="Delivery" asp-action="Project" asp-route-id="@project.Id"><span class="d-key" dir="ltr">@project.Key</span> <span dir="auto">@project.Name</span></a><partial name="_Health" model="project.Health" /></li>
+            }
+        </ul>
+    </section>
+}

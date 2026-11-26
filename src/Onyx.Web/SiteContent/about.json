@@ -1,0 +1,219 @@
+{
+  "key": "about",
+  "type": "page",
+  "related": ["how-we-work", "services", "technologies", "services.ai-agents"],
+  "translations": {
+    "ar": {
+      "path": "من-نحن",
+      "nav": "من نحن",
+      "title": "من نحن: شركة تقنية تبدأ بفهم أعمالك",
+      "description": "تعرّف على أونيكس فانغارد سوليوشنز: شركة تقنية تساعد المؤسسات على بناء أنظمتها الرقمية وتطويرها وتشغيلها وحمايتها، بفلسفة تبدأ من فهم العمل قبل اختيار التقنية.",
+      "eyebrow": "من نحن",
+      "h1": "شركة تقنية تبدأ بفهم أعمالك",
+      "lead": "أونيكس فانغارد سوليوشنز شركة تقنية تعمل مع الشركات والمؤسسات على بناء أنظمتها الرقمية وتطويرها وتشغيلها وحمايتها. نبدأ دائماً بفهم عملك وإجراءاته والتحديات التي تواجهه، ثم نصمم التقنية التي تخدمه.",
+      "summary": "من نحن، وكيف نفكر، وكيف نعمل مع عملائنا.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "who-we-are",
+          "heading": "من نحن",
+          "paragraphs": [
+            "نحن فريق من المهندسين والمتخصصين في البرمجيات والذكاء الاصطناعي والبنية التحتية والأمن السيبراني. نعمل مع المنشآت الصغيرة والمتوسطة ومع المؤسسات الكبيرة، في قطاعات مختلفة، دون أن نحصر أنفسنا في قطاع واحد.",
+            "ما يجمع مشاريعنا طريقة تفكير واحدة: لا نبدأ بالسؤال عن التقنية، بل عن طريقة عمل الشركة، وما الذي يعيقها، وما الذي تريد الوصول إليه. التقنية بعد ذلك وسيلة لتحقيق الهدف، لا هدف بحد ذاتها."
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "what-we-do",
+          "heading": "بماذا نساعدك",
+          "lead": "تخصصات أساسية تعمل معاً، تدعمها خدمات للنمو الرقمي.",
+          "items": [
+            { "title": "هندسة وكلاء الذكاء الاصطناعي", "page": "services.ai-agents", "icon": "agents", "text": "وكلاء ذكاء اصطناعي ينفذون مهام محددة داخل أنظمتك، بصلاحيات واضحة وضوابط حوكمة." },
+            { "title": "حلول الذكاء الاصطناعي والأتمتة", "page": "services.ai", "icon": "ai", "text": "تكامل LLM، بحث ذكي في مستنداتك عبر RAG، معالجة مستندات، وأتمتة للإجراءات." },
+            { "title": "هندسة البرمجيات والمنصات الرقمية", "page": "services.software", "icon": "software", "text": "أنظمة إدارية ومنصات وتطبيقات، وتحديث للأنظمة القائمة." },
+            { "title": "الاستضافة والسحابة والبنية التحتية", "page": "services.cloud", "icon": "cloud", "text": "استضافة مستقرة، وبنية سحابية، ونشر مؤتمت ومراقبة مستمرة." },
+            { "title": "الأمن السيبراني والحماية الرقمية", "page": "services.security", "icon": "shield", "text": "تقييمات أمنية وحماية للتطبيقات والبنية التحتية والهوية." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "philosophy",
+          "eyebrow": "فلسفتنا",
+          "heading": "كيف نفكر",
+          "items": [
+            { "title": "نفهم قبل أن نبني", "text": "نستثمر الوقت في فهم إجراءاتك ومستخدميك قبل أن نقترح أي حل." },
+            { "title": "البساطة اختيار", "text": "أبسط حل يلبي الحاجة بموثوقية أفضل من حل معقد يبدو مبهراً." },
+            { "title": "الجودة من اليوم الأول", "text": "المراجعة والاختبار والتوثيق جزء من العمل، لا مرحلة تأتي لاحقاً." },
+            { "title": "الأمان في التصميم", "text": "نبني الحماية في أساس النظام منذ البداية." },
+            { "title": "الصراحة", "text": "نوضح القرارات والمخاطر والبدائل، ونقول بوضوح ما لا نعرفه." },
+            { "title": "أنظمة تدوم", "text": "أنظمة يستطيع فريقك فهمها وصيانتها وتطويرها بعد التسليم." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "modernization",
+          "eyebrow": "التحديث",
+          "heading": "تطوير التقنية دون تعطيل العمل",
+          "paragraphs": [
+            "معظم الشركات لا تبدأ من الصفر؛ لديها أنظمة تعمل، وبيانات متراكمة، وفرق اعتادت على أدوات معينة. لذلك نتعامل مع التحديث كرحلة تدريجية: نقيّم الوضع الحالي، ونحدد ما يستحق الإبقاء عليه وما يحتاج إلى تحسين أو استبدال، ثم ننفّذ على مراحل لا توقف عملك.",
+            "نفضّل الخطوات الصغيرة التي يمكن قياس أثرها على المشاريع الضخمة دفعة واحدة؛ فكل مرحلة تقدّم قيمة واضحة، وتكشف ما تعلمناه قبل الانتقال إلى ما بعدها."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "security-scalability",
+          "eyebrow": "التزامنا",
+          "heading": "أنظمة آمنة وقادرة على النمو",
+          "items": [
+            { "title": "صلاحيات بقدر الحاجة", "text": "كل مستخدم وكل جزء من النظام يحصل فقط على الوصول الذي يحتاجه." },
+            { "title": "حماية البيانات", "text": "تشفير وضوابط وصول وسياسات واضحة للاحتفاظ بالبيانات." },
+            { "title": "تصميم يستوعب النمو", "text": "بنية تتحمل زيادة المستخدمين والبيانات دون إعادة بناء غير ضرورية." },
+            { "title": "مراقبة واستعداد", "text": "مراقبة مستمرة، ونسخ احتياطي مختبر، وخطط للتعامل مع الأعطال." }
+          ],
+          "note": "لا ندّعي أن أي نظام آمن بالكامل؛ نلتزم بحماية متعددة الطبقات وتقليل المخاطر بشكل مستمر."
+        },
+        {
+          "kind": "checklist",
+          "id": "collaboration",
+          "eyebrow": "التعاون",
+          "heading": "كيف نعمل معك",
+          "items": [
+            { "title": "فريق واحد ومسؤول واضح", "text": "جهة تواصل محددة ومسؤولية واضحة عن التسليم." },
+            { "title": "أنت شريك في القرار", "text": "نشركك في القرارات المهمة ونعرض البدائل بوضوح." },
+            { "title": "تسليم على مراحل", "text": "أجزاء جاهزة تراجعها مبكراً بدل انتظار النهاية." },
+            { "title": "نقل المعرفة لفريقك", "text": "توثيق وجلسات تسليم تمكّن فريقك من إدارة ما نبنيه." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "long-term",
+          "eyebrow": "على المدى البعيد",
+          "heading": "علاقة تستمر بعد الإطلاق",
+          "paragraphs": [
+            "إطلاق النظام بداية رحلته لا نهايتها. نصمم الأنظمة لتبقى قابلة للتطوير، ونتابع أداءها بعد التشغيل، ونعمل مع عملائنا على تحسينها كلما تغيرت احتياجاتهم وأسواقهم.",
+            "هدفنا علاقة طويلة قائمة على الثقة والنتائج الملموسة، لا مشاريع منفصلة تنتهي عند التسليم."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "where-we-work",
+          "eyebrow": "مكاتبنا",
+          "heading": "أين تجدنا",
+          "items": [
+            { "title": "الرياض — حي غرناطة", "text": "المملكة العربية السعودية." },
+            { "title": "عمّان", "text": "الأردن." }
+          ],
+          "note": "يسعدنا التواصل معك عبر صفحة التواصل أو حجز استشارة في الموعد الذي يناسبك."
+        }
+      ],
+      "ctaTitle": "لنتحدث عن أعمالك",
+      "ctaText": "أخبرنا عن شركتك والتحديات التقنية التي تواجهها، وسنقترح عليك الخطوة الأولى المناسبة."
+    },
+    "en": {
+      "path": "about",
+      "nav": "About",
+      "title": "About ONYX: A Technology Company That Starts With Your Business",
+      "description": "Meet Onyx Vanguard Solutions: a technology company that helps organizations build, improve, run and protect their digital systems — starting from how the business works before choosing the technology.",
+      "eyebrow": "About us",
+      "h1": "A technology company that starts with your business",
+      "lead": "Onyx Vanguard Solutions is a technology company that works with businesses and organizations to build, improve, run and protect their digital systems. We always start by understanding your business, its processes and its challenges — then design the technology that serves it.",
+      "summary": "Who we are, how we think and how we work with clients.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "who-we-are",
+          "heading": "Who we are",
+          "paragraphs": [
+            "We're a team of engineers and specialists in software, artificial intelligence, infrastructure and cybersecurity. We work with small and mid-sized businesses as well as large organizations, across many industries rather than within a single sector.",
+            "What connects our projects is one way of thinking: we don't start by asking about technology, but about how the business works, what's holding it back and where it wants to go. Technology then becomes the way to get there, not the goal in itself."
+          ]
+        },
+        {
+          "kind": "pages",
+          "id": "what-we-do",
+          "heading": "How we can help",
+          "lead": "Core disciplines working together, supported by digital growth services.",
+          "items": [
+            { "title": "AI Agent Engineering", "page": "services.ai-agents", "icon": "agents", "text": "AI agents that run defined tasks inside your systems, with clear permissions and governance guardrails." },
+            { "title": "AI & Automation Solutions", "page": "services.ai", "icon": "ai", "text": "LLM integration, smart document search with RAG, document processing, and process automation." },
+            { "title": "Software Engineering & Digital Platforms", "page": "services.software", "icon": "software", "text": "Business systems, platforms and applications, and modernization of existing systems." },
+            { "title": "Hosting, Cloud & Infrastructure", "page": "services.cloud", "icon": "cloud", "text": "Reliable hosting, cloud infrastructure, automated deployment and continuous monitoring." },
+            { "title": "Cybersecurity & Digital Protection", "page": "services.security", "icon": "shield", "text": "Security assessments and protection for applications, infrastructure and identity." }
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "philosophy",
+          "eyebrow": "Our philosophy",
+          "heading": "How we think",
+          "items": [
+            { "title": "Understand before building", "text": "We take the time to understand your processes and users before proposing any solution." },
+            { "title": "Simplicity by choice", "text": "The simplest solution that meets the need reliably beats a complex one that merely impresses." },
+            { "title": "Quality from day one", "text": "Review, testing and documentation are part of the work, not a later phase." },
+            { "title": "Security by design", "text": "We build protection into the foundations of the system from the start." },
+            { "title": "Straight talk", "text": "We explain decisions, risks and alternatives — and say clearly what we don't know." },
+            { "title": "Systems that last", "text": "Systems your team can understand, maintain and develop after handover." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "modernization",
+          "eyebrow": "Modernization",
+          "heading": "Improving your technology without disrupting your business",
+          "paragraphs": [
+            "Most companies don't start from scratch: they have working systems, years of data and teams used to particular tools. So we treat modernization as a gradual journey — we assess where you are, decide what's worth keeping and what needs improving or replacing, then deliver in stages that keep your business running.",
+            "We prefer small steps with measurable impact to one huge project. Each stage delivers clear value and shows what we've learned before we move on to the next."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "security-scalability",
+          "eyebrow": "Our commitment",
+          "heading": "Systems that are secure and ready to grow",
+          "items": [
+            { "title": "Access only where needed", "text": "Every user and every part of the system gets only the access it needs." },
+            { "title": "Data protection", "text": "Encryption, access controls and clear data retention policies." },
+            { "title": "Designed for growth", "text": "Architecture that absorbs more users and data without unnecessary rebuilds." },
+            { "title": "Monitoring and readiness", "text": "Continuous monitoring, tested backups and plans for handling incidents." }
+          ],
+          "note": "We never claim a system is completely secure; we commit to layered protection and continuous risk reduction."
+        },
+        {
+          "kind": "checklist",
+          "id": "collaboration",
+          "eyebrow": "Collaboration",
+          "heading": "How we work with you",
+          "items": [
+            { "title": "One team, one clear owner", "text": "A named point of contact and clear accountability for delivery." },
+            { "title": "You're part of the decisions", "text": "We involve you in the important decisions and lay out the alternatives." },
+            { "title": "Delivery in stages", "text": "Working parts you review early instead of waiting for the end." },
+            { "title": "Knowledge for your team", "text": "Documentation and handover sessions so your team can run what we build." }
+          ]
+        },
+        {
+          "kind": "prose",
+          "id": "long-term",
+          "eyebrow": "For the long term",
+          "heading": "A relationship that continues after launch",
+          "paragraphs": [
+            "Launch is the start of a system's life, not the end. We design systems to stay easy to develop, follow their performance once they're live, and keep improving them with our clients as their needs and markets change.",
+            "Our aim is a long relationship built on trust and tangible results — not isolated projects that end at handover."
+          ]
+        },
+        {
+          "kind": "checklist",
+          "id": "where-we-work",
+          "eyebrow": "Our offices",
+          "heading": "Where to find us",
+          "items": [
+            { "title": "Riyadh — Granada District", "text": "Saudi Arabia." },
+            { "title": "Amman", "text": "Jordan." }
+          ],
+          "note": "Get in touch through our contact page, or book a consultation at a time that suits you."
+        }
+      ],
+      "ctaTitle": "Let's talk about your business",
+      "ctaText": "Tell us about your company and the technology challenges you face, and we'll suggest the right first step."
+    }
+  }
+}

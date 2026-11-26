@@ -1,0 +1,23 @@
+@using Onyx.Contracts.Media
+@model (string Name, string Label, string? Selected, IReadOnlyList<MediaAssetResponse> Images, string? Hint)
+@* Image picker over the media library (images only). The API re-checks that the chosen file exists and is an image. *@
+<div class="field field--media">
+    <label for="@Model.Name.Replace('|', '-')">@Model.Label</label>
+    <div class="media-select">
+        @if (Guid.TryParse(Model.Selected, out var selectedId))
+        {
+            <img src="@Url.Action("Raw", "MediaLibrary", new { id = selectedId })" alt="" class="media-select__thumb">
+        }
+        <select id="@Model.Name.Replace('|', '-')" name="@Model.Name" dir="ltr" data-raw-url="@Url.Action("Raw", "MediaLibrary", new { id = Guid.Empty })">
+            <option value="">@T["SiteContent.NoImage"]</option>
+            @foreach (var image in Model.Images)
+            {
+                <option value="@image.Id" selected="@(image.Id.ToString("D") == Model.Selected)">@image.FileName</option>
+            }
+        </select>
+    </div>
+    @if (Model.Hint is not null)
+    {
+        <p class="hint">@Model.Hint</p>
+    }
+</div>

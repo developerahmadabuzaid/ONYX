@@ -1,0 +1,16 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Commerce
+@model (InvoiceForm Form, IReadOnlyList<Onyx.Contracts.Commerce.AdminSubscriptionResponse>? Subscriptions)
+<label>@T["Customer.Subscriptions.Product"]
+    <select name="SubscriptionId">
+        <option value="">—</option>
+        @foreach (var subscription in Model.Subscriptions ?? [])
+        {
+            <option value="@subscription.Id" selected="@(Model.Form.SubscriptionId == subscription.Id)">@subscription.ProductName (@T["Customer.Status." + subscription.Status])</option>
+        }
+    </select>
+</label>
+<label>@T["Commerce.Plan.Currency"] <input name="Currency" value="@Model.Form.Currency" required maxlength="3" dir="ltr"></label>
+<label>@T["Customer.Invoice.Due"] <input type="date" name="DueOn" value="@Model.Form.DueOn.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" required></label>
+<label class="d-form__wide">@T["Commerce.Invoice.Lines"] <textarea name="Lines" rows="6" dir="auto" placeholder="Implementation | 1 | 1000.00">@Model.Form.Lines</textarea> <span class="hint">@T["Commerce.Invoice.LinesHint"]</span></label>
+<label class="d-form__wide">@T["Commerce.Invoice.Notes"] <textarea name="Notes" rows="2" maxlength="1000" dir="auto">@Model.Form.Notes</textarea></label>

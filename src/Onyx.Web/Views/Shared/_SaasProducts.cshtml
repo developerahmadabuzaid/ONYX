@@ -1,0 +1,53 @@
+@using System.Globalization
+@using Onyx.Web.Content
+@using Onyx.Web.Content.SiteContent
+@inject LocalizedRouteTable Routes
+@inject Onyx.Web.Content.SitePages.SitePageCatalog SitePages
+@inject SiteCopy Copy
+@{
+    // SaaS products (owner request 2026-10-15). Each product shows only its confirmed purpose and who it is
+    // for: no feature lists, screenshots, client names or figures until they are confirmed (CLAUDE.md
+    // §2.1, architecture.md §9). Each card's art is an original illustrated scene of what the system is for (_SaasArt).
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var links = SiteLinks.For(Routes, SitePages, lang);
+    var products = new (string Key, string Icon, string Tone)[]
+    {
+        ("Clinics", "health", "sky"),
+        ("Support", "headset", "violet"),
+        ("Talent", "camera", "coral"),
+        ("Erp", "modules", "teal"),
+        ("Retail", "store", "amber"),
+    };
+}
+
+<section id="saas" class="section saas" aria-labelledby="saas-title">
+    <div class="container">
+        <header class="section-head" data-reveal>
+            <div class="section-head__main">
+                <p class="label">@Copy["Home.Saas.Eyebrow"]</p>
+                <h2 id="saas-title" class="heading-xl">@Copy["Home.Saas.Title"]</h2>
+            </div>
+            <p class="section-head__lead">@Copy["Home.Saas.Lead"]</p>
+        </header>
+
+        <ul class="saas__grid" role="list">
+            @foreach (var product in products)
+            {
+                <li class="saas-card saas-card--@product.Tone" data-reveal>
+                    <div class="saas-card__art" aria-hidden="true">
+                        <partial name="_SaasArt" model="product.Key" />
+                    </div>
+                    <div class="saas-card__body">
+                        <span class="saas-card__for">@Copy[$"Home.Saas.{product.Key}.For"]</span>
+                        <h3 class="saas-card__title">@Copy[$"Home.Saas.{product.Key}.Title"]</h3>
+                        <p class="saas-card__text">@Copy[$"Home.Saas.{product.Key}.Text"]</p>
+                        @if (links.Contact is not null)
+                        {
+                            <a class="saas-card__link link-arrow" href="@links.Contact">@Copy["Home.Saas.Ask"]<span class="visually-hidden">: @Copy[$"Home.Saas.{product.Key}.Title"]</span></a>
+                        }
+                    </div>
+                </li>
+            }
+        </ul>
+    </div>
+</section>

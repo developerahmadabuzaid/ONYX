@@ -41,6 +41,14 @@ public sealed class PublicContentApiClient(HttpClient httpClient) : OnyxApiClien
         return result.IsSuccess && result.Value is not null ? result.Value : [];
     }
 
+    public async Task<IReadOnlyList<ListingItemResponse>> GetLatestInsightsAsync(string languageCode, int count, CancellationToken cancellationToken)
+    {
+        // Optional on the homepage: unlike the listing page, an unreachable API simply means no insights block.
+        var result = await GetAsync<PagedResult<ListingItemResponse>>(
+            $"api/v1/content/listing?language={Uri.EscapeDataString(languageCode)}&section=insights&page=1", cancellationToken).ConfigureAwait(false);
+        return result.IsSuccess && result.Value is not null ? result.Value.Items.Take(count).ToList() : [];
+    }
+
     public async Task<string?> GetIndexNowKeyAsync(CancellationToken cancellationToken)
     {
         await using var file = await GetStreamAsync("api/v1/search-engine-verification/indexnow-key", cancellationToken).ConfigureAwait(false);

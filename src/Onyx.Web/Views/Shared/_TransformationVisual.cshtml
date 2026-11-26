@@ -1,0 +1,114 @@
+@using Onyx.Web.Content.SiteContent
+@inject SiteCopy Copy
+@* Homepage hero illustration: what Onyx delivers, drawn rather than photographed (owner decision
+   2026-10-15). A central dashboard window stands for the business running on its new systems; three
+   illustrated tiles name the offering — AI agents, digital transformation, business solutions. Every
+   panel shows activity, never a figure: no invented metrics (CLAUDE.md §2.7). Original inline SVG and
+   CSS only — no image request, no licence to track, CSP unchanged. Decorative: the stage is aria-hidden.
+   Under reduced motion the global rule freezes it on its final frame. *@
+<div class="tv">
+    <span class="tv__halo"></span>
+    <span class="tv__orbit"></span>
+    <span class="tv__spark tv__spark--a"></span>
+    <span class="tv__spark tv__spark--b"></span>
+    <span class="tv__spark tv__spark--c"></span>
+
+    @* The business, running on its new systems. *@
+    <div class="tv__window">
+        <div class="tv__bar"><i></i><i></i><i></i><span class="tv__url"></span></div>
+        <div class="tv__body">
+            <div class="tv__side"><i class="is-on"></i><i></i><i></i><i></i></div>
+            <div class="tv__main">
+                <span class="tv__line tv__line--title"></span>
+                <svg class="tv__chart" viewBox="0 0 200 70" preserveAspectRatio="none" focusable="false">
+                    <defs>
+                        <linearGradient id="tv-area" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="#3aa0ff" stop-opacity="0.32" />
+                            <stop offset="100%" stop-color="#3aa0ff" stop-opacity="0" />
+                        </linearGradient>
+                        <linearGradient id="tv-stroke" x1="0" y1="0" x2="1" y2="0">
+                            <stop offset="0%" stop-color="#0fb5a8" />
+                            <stop offset="100%" stop-color="#7c4dff" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M0 18 H200 M0 40 H200 M0 62 H200" class="tv__grid" />
+                    <path class="tv__area" d="M0 58 C 20 56, 30 48, 50 50 S 80 38, 100 40 S 135 22, 150 26 S 180 10, 200 8 L 200 70 L 0 70 Z" />
+                    <path class="tv__trend" pathLength="100" d="M0 58 C 20 56, 30 48, 50 50 S 80 38, 100 40 S 135 22, 150 26 S 180 10, 200 8" />
+                    <circle class="tv__dot" cx="200" cy="8" r="4" />
+                </svg>
+                <div class="tv__stats">
+                    <span class="tv__stat tv__stat--teal"><b></b><i></i><i></i></span>
+                    <span class="tv__stat tv__stat--violet"><b></b><i></i><i></i></span>
+                    <span class="tv__stat tv__stat--amber"><b></b><i></i><i></i></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @* AI agents: a robot at work, answering in a chat bubble. *@
+    <div class="tv__tile tv__tile--agents">
+        <span class="tv__art">
+            <svg viewBox="0 0 64 64" focusable="false">
+                <circle cx="32" cy="34" r="26" fill="var(--violet-soft)" />
+                <line x1="32" y1="9" x2="32" y2="15" stroke="var(--violet-2)" stroke-width="2.2" stroke-linecap="round" />
+                <circle class="tv__antenna" cx="32" cy="8" r="3" fill="var(--violet)" />
+                <rect x="15" y="15" width="34" height="27" rx="9" fill="#fff" stroke="var(--violet-2)" stroke-width="2.2" />
+                <rect x="20" y="21" width="24" height="13" rx="5" fill="var(--violet-soft)" />
+                <g class="tv__eyes"><circle cx="27" cy="27.5" r="2.4" fill="var(--violet-2)" /><circle cx="37" cy="27.5" r="2.4" fill="var(--violet-2)" /></g>
+                <path d="M27 46 h10 v6 h-10 z" fill="#fff" stroke="var(--violet-2)" stroke-width="2" stroke-linejoin="round" />
+            </svg>
+        </span>
+        <span class="tv__text">
+            <span class="tv__title">@Copy["Home.Hero.Visual.Agents"]</span>
+            <span class="tv__sub">@Copy["Home.Hero.Visual.AgentsSub"]</span>
+        </span>
+        <span class="tv__typing"><i></i><i></i><i></i></span>
+    </div>
+
+    @* Digital transformation: paper becomes a connected digital workflow. *@
+    <div class="tv__tile tv__tile--transform">
+        <span class="tv__art">
+            <svg viewBox="0 0 64 64" focusable="false">
+                <circle cx="32" cy="32" r="28" fill="var(--teal-soft)" />
+                <g class="tv__paper">
+                    <path d="M10 18h13l5 5v20H10z" fill="#fff" stroke="var(--teal-2)" stroke-width="2" stroke-linejoin="round" />
+                    <path d="M14 27h10M14 32h10M14 37h7" stroke="var(--teal-2)" stroke-width="1.8" stroke-linecap="round" />
+                </g>
+                <path class="tv__arrow" d="M29 31h7m-3-3.5 3.5 3.5-3.5 3.5" fill="none" stroke="var(--teal)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+                <g class="tv__device">
+                    <rect x="39" y="15" width="17" height="30" rx="4" fill="#fff" stroke="var(--teal-2)" stroke-width="2" />
+                    <rect x="42" y="20" width="11" height="8" rx="2" fill="var(--sky-soft)" />
+                    <path d="M43.5 35l2.5 2.5 4.5-5" fill="none" stroke="var(--green-2)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </g>
+                <path d="M19 49c6 6 20 6 26 0" fill="none" stroke="var(--teal)" stroke-width="1.8" stroke-dasharray="2 3" stroke-linecap="round" />
+            </svg>
+        </span>
+        <span class="tv__text">
+            <span class="tv__title">@Copy["Home.Hero.Visual.Transform"]</span>
+            <span class="tv__sub">@Copy["Home.Hero.Visual.TransformSub"]</span>
+        </span>
+    </div>
+
+    @* Business solutions: a briefcase with growth built around it. *@
+    <div class="tv__tile tv__tile--business">
+        <span class="tv__art">
+            <svg viewBox="0 0 64 64" focusable="false">
+                <circle cx="32" cy="32" r="28" fill="var(--amber-soft)" />
+                <rect x="12" y="24" width="30" height="22" rx="4" fill="#fff" stroke="var(--amber-2)" stroke-width="2.2" />
+                <path d="M21 24v-4a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v4" fill="none" stroke="var(--amber-2)" stroke-width="2.2" />
+                <path d="M12 33h30" stroke="var(--amber-2)" stroke-width="2" />
+                <rect x="24" y="31" width="6" height="5" rx="1.5" fill="var(--amber)" />
+                <g class="tv__bars">
+                    <rect x="44" y="38" width="4" height="8" rx="1.5" fill="var(--amber)" />
+                    <rect x="49.5" y="32" width="4" height="14" rx="1.5" fill="var(--amber)" />
+                    <rect x="55" y="25" width="4" height="21" rx="1.5" fill="var(--amber)" />
+                </g>
+                <path class="tv__rise" d="M43 30l6-6 4 3 7-8m0 0h-5m5 0v5" fill="none" stroke="var(--green-2)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+        <span class="tv__text">
+            <span class="tv__title">@Copy["Home.Hero.Visual.Business"]</span>
+            <span class="tv__sub">@Copy["Home.Hero.Visual.BusinessSub"]</span>
+        </span>
+    </div>
+</div>

@@ -1,0 +1,3 @@
+@using Onyx.Web.Areas.Admin.Delivery
+@model Onyx.Contracts.Delivery.IssueListItemResponse
+<span class="d-status d-status--@Model.StatusCategory.ToLowerInvariant()">@DeliveryDisplay.Status(T, Model)</span>

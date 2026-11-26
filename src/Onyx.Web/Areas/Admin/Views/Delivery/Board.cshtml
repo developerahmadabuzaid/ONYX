@@ -1,0 +1,112 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model BoardPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.Tab.Board";
+    var board = Model.Board;
+    var filter = Model.Filter;
+    var canMove = board.Can.EditIssues && !filter.IsActive;
+    var transitions = string.Join(",", board.Transitions.Select(t => $"{t.FromStatusId:D}>{t.ToStatusId:D}"));
+}
+<partial name="_DeliveryTabs" model='(board.ProjectId, board.ProjectKey, board.ProjectName, "Board")' />
+<partial name="_CmsMessages" />
+<div class="d-board-head">
+    @if (board.ActiveSprint is { } sprint)
+    {
+        <p><strong>@T["Delivery.ScrumBoard"]</strong> · @sprint.Name
+            <span class="hint" dir="ltr">@sprint.StartDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) → @sprint.EndDate?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)</span>
+            @if (sprint.Goal is not null)
+            {
+                <span class="hint" dir="auto">· @sprint.Goal</span>
+            }
+        </p>
+    }
+    else
+    {
+        <p><strong>@T["Delivery.KanbanBoard"]</strong> <span class="hint">@T["Delivery.KanbanHint"]</span></p>
+    }
+    <form method="get" asp-action="Board" asp-route-id="@board.ProjectId" class="d-filters" role="search">
+        <label class="visually-hidden" for="board-text">@T["Delivery.Search"]</label>
+        <input id="board-text" type="search" name="text" value="@filter.Text" placeholder="@T["Delivery.Search"]" dir="auto">
+        <label class="visually-hidden" for="board-assignee">@T["Delivery.Field.Assignee"]</label>
+        <select id="board-assignee" name="assignee">
+            <option value="">@T["Delivery.AnyAssignee"]</option>
+            <option value="none" selected="@(filter.Assignee == "none")">@T["Delivery.Unassigned"]</option>
+            @foreach (var member in board.Members)
+            {
+                <option value="@member.UserId" selected="@(filter.Assignee == member.UserId.ToString())">@member.DisplayName</option>
+            }
+        </select>
+        <label class="visually-hidden" for="board-type">@T["Delivery.Field.Type"]</label>
+        <select id="board-type" name="type">
+            <option value="">@T["Delivery.AnyType"]</option>
+            @foreach (var type in DeliveryDisplay.StandardIssueTypes)
+            {
+                <option value="@type" selected="@(filter.Type == type)">@T["Delivery.Type." + type]</option>
+            }
+        </select>
+        <label class="visually-hidden" for="board-priority">@T["Delivery.Field.Priority"]</label>
+        <select id="board-priority" name="priority">
+            <option value="">@T["Delivery.AnyPriority"]</option>
+            @foreach (var priority in DeliveryDisplay.Priorities)
+            {
+                <option value="@priority" selected="@(filter.Priority == priority)">@T["Delivery.Priority." + priority]</option>
+            }
+        </select>
+        <label class="visually-hidden" for="board-label">@T["Delivery.Field.Labels"]</label>
+        <input id="board-label" name="label" value="@filter.Label" placeholder="@T["Delivery.Field.Label"]" dir="auto" class="d-input-small">
+        <button type="submit" class="btn btn--small">@T["Delivery.Filter"]</button>
+        @if (filter.IsActive)
+        {
+            <a class="btn btn--ghost btn--small" asp-action="Board" asp-route-id="@board.ProjectId">@T["Delivery.ClearFilters"]</a>
+        }
+    </form>
+</div>
+@if (filter.IsActive && board.Can.EditIssues)
+{
+    <p class="hint">@T["Delivery.DragDisabledWhileFiltered"]</p>
+}
+<p class="d-live" role="status" aria-live="polite" data-board-status></p>
+<form id="d-board-token" method="post" asp-action="MoveIssue" asp-route-id="00000000-0000-0000-0000-000000000000" hidden></form>
+<div class="d-board" data-board="@(canMove ? "editable" : "readonly")" data-transitions="@transitions"
+     data-move-url="@Url.Action("MoveIssue", new { id = "__id__" })"
+     data-msg-saving="@T["Delivery.Board.Saving"]" data-msg-saved="@T["Delivery.Board.Saved"]" data-msg-not-allowed="@T["Delivery.Board.NotAllowed"]"
+     data-msg-failed="@T["Delivery.Board.Failed"]" data-msg-picked="@T["Delivery.Board.Picked"]" data-msg-dropped="@T["Delivery.Board.Dropped"]">
+    @foreach (var column in board.Columns)
+    {
+        var issues = column.Issues.Where(filter.Matches).ToList();
+        var over = column.Status.WipLimit is { } limit && column.Issues.Count > limit;
+        <section class="d-column @(over ? "is-over" : null)" data-status-id="@column.Status.Id" aria-labelledby="col-@column.Status.Id">
+            <header class="d-column__head">
+                <h2 id="col-@column.Status.Id">@DeliveryDisplay.Status(T, column.Status)</h2>
+                <span class="d-count" data-column-count>@column.Issues.Count@(column.Status.WipLimit is { } wip ? "/" + wip.ToString(CultureInfo.InvariantCulture) : null)</span>
+                @if (over)
+                {
+                    <span class="visually-hidden">@T["Delivery.WipExceeded"]</span>
+                }
+            </header>
+            <ol class="d-column__list" role="list">
+                @foreach (var issue in issues)
+                {
+                    <partial name="_IssueCard" model="issue" />
+                }
+            </ol>
+            @if (issues.Count == 0)
+            {
+                <p class="d-column__empty hint">@T["Delivery.ColumnEmpty"]</p>
+            }
+            @if (column.Status.Order == 0 && board.Can.CreateIssues)
+            {
+                <a class="d-column__add" asp-action="NewIssue" asp-route-projectId="@board.ProjectId" asp-route-sprintId="@board.ActiveSprint?.Id">+ @T["Delivery.CreateIssue"]</a>
+            }
+        </section>
+    }
+</div>
+@if (canMove)
+{
+    <p class="hint d-board-help">@T["Delivery.Board.KeyboardHelp"]</p>
+}
+@section Scripts {
+    <script src="~/js/delivery-board.js" asp-append-version="true"></script>
+}

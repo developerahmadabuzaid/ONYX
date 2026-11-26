@@ -1,0 +1,7 @@
+@model string
+@* "Products.Publish" → "Products · Publish", in the Admin language where a translation exists. *@
+@{
+    var dot = Model.LastIndexOf('.');
+    var action = T["Permission.Action." + Model[(dot + 1)..]];
+}
+<span>@(action.ResourceNotFound ? Model[(dot + 1)..] : action.Value)</span>

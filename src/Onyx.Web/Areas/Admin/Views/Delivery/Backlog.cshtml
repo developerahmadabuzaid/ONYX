@@ -1,0 +1,175 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Delivery
+@model BacklogPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.Tab.Backlog";
+    var backlog = Model.Backlog;
+    var can = backlog.Can;
+    var openSprints = backlog.Sprints.Select(item => item.Sprint).ToList();
+    string D(DateOnly? date) => date?.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture) ?? string.Empty;
+}
+<partial name="_DeliveryTabs" model='(backlog.ProjectId, backlog.ProjectKey, backlog.ProjectName, "Backlog")' />
+<partial name="_CmsMessages" />
+<p class="d-live" role="status" aria-live="polite" data-board-status></p>
+<form id="d-board-token" method="post" asp-action="MoveIssue" asp-route-id="00000000-0000-0000-0000-000000000000" hidden></form>
+
+<div class="d-backlog" data-board="@(can.EditIssues ? "backlog" : "readonly")" data-move-url="@Url.Action("MoveIssue", new { id = "__id__" })"
+     data-msg-saving="@T["Delivery.Board.Saving"]" data-msg-saved="@T["Delivery.Board.Saved"]" data-msg-not-allowed="@T["Delivery.Board.NotAllowed"]"
+     data-msg-failed="@T["Delivery.Board.Failed"]" data-msg-picked="@T["Delivery.Board.Picked"]" data-msg-dropped="@T["Delivery.Board.Dropped"]">
+    @foreach (var item in backlog.Sprints)
+    {
+        var sprint = item.Sprint;
+        var active = sprint.State == "Active";
+        <section class="d-sprint @(active ? "is-active" : null)" aria-labelledby="sprint-@sprint.Id">
+            <header class="d-sprint__head">
+                <h2 id="sprint-@sprint.Id">@sprint.Name <span class="d-sstate d-sstate--@sprint.State.ToLowerInvariant()">@DeliveryDisplay.Value(T, "SprintState", sprint.State)</span></h2>
+                <span class="hint" dir="ltr">@D(sprint.StartDate) → @D(sprint.EndDate)</span>
+                <span class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.SprintTotals"].Value, sprint.IssueCount, sprint.Points, sprint.DonePoints)</span>
+            </header>
+            @if (sprint.Goal is not null)
+            {
+                <p class="d-sprint__goal" dir="auto">@sprint.Goal</p>
+            }
+            <ol class="d-list" role="list" data-sprint-id="@sprint.Id">
+                @foreach (var issue in item.Issues)
+                {
+                    <partial name="_BacklogItem" model="(issue, openSprints, can.EditIssues)" />
+                }
+            </ol>
+            @if (item.Issues.Count == 0)
+            {
+                <p class="hint d-list__empty">@T["Delivery.SprintEmptyHint"]</p>
+            }
+            @if (can.ManageSprints)
+            {
+                <details class="d-sprint__manage">
+                    <summary>@T["Delivery.ManageSprint"]</summary>
+                    <form method="post" asp-action="PlanSprint" asp-route-id="@backlog.ProjectId" asp-route-sprintId="@sprint.Id" class="d-form d-form--row">
+                        <input type="hidden" name="version" value="@sprint.Version">
+                        <label>@T["Delivery.Field.Name"] <input name="Name" value="@sprint.Name" required maxlength="80" dir="auto"></label>
+                        <label>@T["Delivery.Field.StartDate"] <input type="date" name="StartDate" value="@D(sprint.StartDate)"></label>
+                        <label>@T["Delivery.Field.EndDate"] <input type="date" name="EndDate" value="@D(sprint.EndDate)"></label>
+                        <label class="d-form__wide">@T["Delivery.Field.Goal"] <input name="Goal" value="@sprint.Goal" maxlength="500" dir="auto"></label>
+                        <button type="submit" class="btn btn--small">@T["Cms.Save"]</button>
+                    </form>
+                    <div class="d-sprint__actions">
+                        @if (sprint.State == "Planned")
+                        {
+                            <form method="post" asp-action="ChangeSprint" asp-route-id="@backlog.ProjectId" asp-route-sprintId="@sprint.Id" asp-route-command="start">
+                                <input type="hidden" name="version" value="@sprint.Version">
+                                <button type="submit" class="btn btn--accent btn--small">@T["Delivery.StartSprint"]</button>
+                            </form>
+                        }
+                        <form method="post" asp-action="ChangeSprint" asp-route-id="@backlog.ProjectId" asp-route-sprintId="@sprint.Id" asp-route-command="@(active ? "complete" : "cancel")"
+                              data-confirm="@T[active ? "Delivery.ConfirmCompleteSprint" : "Delivery.ConfirmCancelSprint"]">
+                            <input type="hidden" name="version" value="@sprint.Version">
+                            <label>@T["Delivery.MoveUnfinishedTo"]
+                                <select name="moveTo">
+                                    <option value="">@T["Delivery.Backlog"]</option>
+                                    @foreach (var other in openSprints.Where(other => other.Id != sprint.Id))
+                                    {
+                                        <option value="@other.Id">@other.Name</option>
+                                    }
+                                </select>
+                            </label>
+                            <button type="submit" class="btn btn--small">@T[active ? "Delivery.CompleteSprint" : "Delivery.CancelSprint"]</button>
+                        </form>
+                        @if (active)
+                        {
+                            <form method="post" asp-action="ChangeSprint" asp-route-id="@backlog.ProjectId" asp-route-sprintId="@sprint.Id" asp-route-command="cancel" data-confirm="@T["Delivery.ConfirmCancelSprint"]">
+                                <input type="hidden" name="version" value="@sprint.Version">
+                                <button type="submit" class="btn btn--ghost btn--small">@T["Delivery.CancelSprint"]</button>
+                            </form>
+                        }
+                    </div>
+                </details>
+            }
+        </section>
+    }
+
+    <section class="d-sprint d-sprint--backlog" aria-labelledby="backlog-list">
+        <header class="d-sprint__head">
+            <h2 id="backlog-list">@T["Delivery.Backlog"]</h2>
+            <span class="hint">@string.Format(CultureInfo.CurrentCulture, T["Delivery.BacklogTotals"].Value, backlog.Backlog.Count, backlog.Backlog.Sum(issue => issue.StoryPoints ?? 0))</span>
+            @if (can.CreateIssues)
+            {
+                <a class="btn btn--small" asp-action="NewIssue" asp-route-projectId="@backlog.ProjectId">+ @T["Delivery.CreateIssue"]</a>
+            }
+        </header>
+        <ol class="d-list" role="list" data-sprint-id="">
+            @foreach (var issue in backlog.Backlog)
+            {
+                <partial name="_BacklogItem" model="(issue, openSprints, can.EditIssues)" />
+            }
+        </ol>
+        @if (backlog.Backlog.Count == 0)
+        {
+            <p class="hint d-list__empty">@T["Delivery.BacklogEmpty"]</p>
+        }
+    </section>
+</div>
+@if (can.EditIssues)
+{
+    <p class="hint d-board-help">@T["Delivery.Backlog.KeyboardHelp"]</p>
+}
+
+<div class="d-grid">
+    @if (can.ManageSprints)
+    {
+        <section class="d-panel" aria-labelledby="d-new-sprint">
+            <h2 id="d-new-sprint">@T["Delivery.NewSprint"]</h2>
+            <form method="post" asp-action="CreateSprint" asp-route-id="@backlog.ProjectId" class="d-form">
+                <label>@T["Delivery.Field.Name"] <input name="Name" required maxlength="80" dir="auto" value="@string.Format(CultureInfo.CurrentCulture, T["Delivery.SprintDefaultName"].Value, openSprints.Count + Model.ClosedSprints.Count + 1)"></label>
+                <label>@T["Delivery.Field.StartDate"] <input type="date" name="StartDate"></label>
+                <label>@T["Delivery.Field.EndDate"] <input type="date" name="EndDate"></label>
+                <label class="d-form__wide">@T["Delivery.Field.Goal"] <input name="Goal" maxlength="500" dir="auto"></label>
+                <button type="submit" class="btn btn--primary btn--small">@T["Delivery.CreateSprint"]</button>
+            </form>
+        </section>
+    }
+
+    <section class="d-panel" aria-labelledby="d-epics">
+        <h2 id="d-epics">@T["Delivery.Epics"]</h2>
+        @if (backlog.Epics.Count == 0)
+        {
+            <p class="hint">@T["Delivery.NoEpics"]</p>
+        }
+        <ul class="d-epics" role="list">
+            @foreach (var epic in backlog.Epics)
+            {
+                <li><a asp-action="Issue" asp-route-id="@epic.Id"><span class="d-key" dir="ltr">@epic.Key</span> @epic.Title</a> <partial name="_StatusPill" model="epic" />
+                    <a class="hint" asp-action="Issues" asp-route-projectId="@backlog.ProjectId" asp-route-epicId="@epic.Id">@T["Delivery.ViewEpicIssues"]</a></li>
+            }
+        </ul>
+    </section>
+
+    <section class="d-panel" aria-labelledby="d-sprint-report">
+        <h2 id="d-sprint-report">@T["Delivery.SprintReport"]</h2>
+        <p class="hint">@T["Delivery.SprintReportHint"]</p>
+        @if (Model.ClosedSprints.Count == 0)
+        {
+            <p class="hint">@T["Delivery.NoClosedSprints"]</p>
+        }
+        else
+        {
+            <table class="d-table">
+                <thead><tr><th scope="col">@T["Delivery.Field.Name"]</th><th scope="col">@T["Delivery.Field.State"]</th><th scope="col" class="d-num">@T["Delivery.Committed"]</th><th scope="col" class="d-num">@T["Delivery.Completed"]</th></tr></thead>
+                <tbody>
+                    @foreach (var sprint in Model.ClosedSprints)
+                    {
+                        <tr>
+                            <td>@sprint.Name <span class="hint" dir="ltr">@D(sprint.StartDate) → @D(sprint.EndDate)</span></td>
+                            <td>@DeliveryDisplay.Value(T, "SprintState", sprint.State)</td>
+                            <td class="d-num">@(sprint.CommittedPoints?.ToString(CultureInfo.InvariantCulture) ?? "–")</td>
+                            <td class="d-num">@(sprint.CompletedPoints?.ToString(CultureInfo.InvariantCulture) ?? "–")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </section>
+</div>
+@section Scripts {
+    <script src="~/js/delivery-board.js" asp-append-version="true"></script>
+}

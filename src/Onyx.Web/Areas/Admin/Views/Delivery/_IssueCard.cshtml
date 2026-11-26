@@ -1,0 +1,35 @@
+@using System.Globalization
+@model Onyx.Contracts.Delivery.IssueListItemResponse
+@* A board / backlog card. data-* carry what the drag-and-drop script posts back; the link works without JavaScript. *@
+<li class="d-card" data-issue-id="@Model.Id" data-version="@Model.Version" draggable="false">
+    <div class="d-card__top">
+        <partial name="_IssueTypeBadge" model="Model.Type" />
+        <a class="d-key" dir="ltr" asp-action="Issue" asp-route-id="@Model.Id">@Model.Key</a>
+        @if (Model.StoryPoints is { } points)
+        {
+            <span class="d-points" title="@T["Delivery.Field.StoryPoints"]">@points</span>
+        }
+    </div>
+    <a class="d-card__title" asp-action="Issue" asp-route-id="@Model.Id">@Model.Title</a>
+    <div class="d-card__meta">
+        <partial name="_Priority" model="Model.Priority" />
+        @if (Model.DueDate is { } due)
+        {
+            <time class="@(Model.IsOverdue ? "d-overdue" : null)" datetime="@due.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture)" dir="ltr">@due.ToString("MM-dd", CultureInfo.InvariantCulture)</time>
+        }
+        <span class="d-avatar" title="@(Model.AssigneeName ?? T["Delivery.Unassigned"])">@(string.IsNullOrEmpty(Model.AssigneeName) ? "–" : Model.AssigneeName[..1])</span>
+    </div>
+    @if (Model.Labels.Count > 0 || Model.EpicTitle is not null)
+    {
+        <div class="d-card__labels">
+            @if (Model.EpicTitle is not null)
+            {
+                <span class="d-epic" dir="auto">@Model.EpicTitle</span>
+            }
+            @foreach (var label in Model.Labels)
+            {
+                <span class="d-label" dir="auto">@label</span>
+            }
+        </div>
+    }
+</li>

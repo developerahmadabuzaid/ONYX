@@ -87,6 +87,17 @@ public static class ContentRouteSegments
 
         // Stage 11 News Hub (News.NewsRouteSegments).
         "news", "آخر-الأخبار",
+
+        // Code-owned company and legal pages (Onyx.Web SiteContent). Service pages live under "services"/"الخدمات" above.
+        "about", "how-we-work", "technologies", "idea-to-digital-product", "privacy-policy", "terms", "cookie-policy",
+        "من-نحن", "كيف-نعمل", "التقنيات", "من-الفكرة-إلى-منتج-رقمي", "سياسة-الخصوصية", "الشروط-والأحكام", "سياسة-ملفات-الارتباط",
+
+        // SaaS products (Products.ProductRouteSegments) and customer pages (Customers.CustomerRouteSegments).
+        "products", "المنتجات",
+        "sign-in", "create-account", "verify-email", "forgot-password", "reset-password", "sign-out", "account", "profile",
+        "subscriptions", "subscribe", "invoices", "ai-demo",
+        "تسجيل-الدخول", "إنشاء-حساب", "تأكيد-البريد", "نسيت-كلمة-المرور", "إعادة-تعيين-كلمة-المرور", "تسجيل-الخروج", "حسابي",
+        "الملف-الشخصي", "اشتراكاتي", "اشترك", "فواتيري", "تجربة-الذكاء-الاصطناعي",
     };
 
     private static Dictionary<string, string> Join(IReadOnlyDictionary<string, string> first, IReadOnlyDictionary<string, string> second) =>

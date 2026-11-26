@@ -1,0 +1,105 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Charts
+@using Onyx.Web.Areas.Admin.Delivery
+@model ProjectsPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.DeliveryProjects";
+    var status = Context.Request.Query["status"].ToString();
+    var shown = string.IsNullOrEmpty(status)
+        ? Model.Projects.Where(project => project.Status != "Archived").ToList()
+        : Model.Projects.Where(project => project.Status == status).ToList();
+    var rtl = DeliveryFormat.IsRtl;
+}
+<header class="ws-head">
+    <div class="ws-head__text">
+        <p class="ws-eyebrow">@T["Nav.Group.Delivery"]</p>
+        <h1>@T["Nav.DeliveryProjects"]</h1>
+        <p class="ws-sub">@string.Format(CultureInfo.CurrentCulture, T["Delivery.Projects.Count"], Model.Projects.Count(project => project.Status != "Archived"))</p>
+    </div>
+    <div class="ws-head__tools">
+        <a class="btn btn--small" asp-controller="DeliveryPlanning" asp-action="Roadmap"><partial name="_AdminIcon" model='"roadmap"' />@T["Nav.DeliveryRoadmap"]</a>
+        @if (Model.CanCreate)
+        {
+            <a class="btn btn--primary btn--small" href="#new-project"><partial name="_AdminIcon" model='"plus"' />@T["Delivery.NewProject"]</a>
+        }
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<nav class="chips" aria-label="@T["Delivery.Field.ProjectStatus"]">
+    <a class="chip@(string.IsNullOrEmpty(status) ? " is-active" : string.Empty)" asp-action="Projects" aria-current="@(string.IsNullOrEmpty(status) ? "true" : null)">@T["Delivery.Projects.Open"]</a>
+    @foreach (var value in DeliveryDisplay.ProjectStatuses)
+    {
+        var count = Model.Projects.Count(project => project.Status == value);
+        <a class="chip@(status == value ? " is-active" : string.Empty)" asp-action="Projects" asp-route-status="@value" aria-current="@(status == value ? "true" : null)">@DeliveryDisplay.Value(T, "ProjectStatus", value) <span class="chip__count" dir="ltr">@count</span></a>
+    }
+</nav>
+
+@if (Model.Projects.Count == 0)
+{
+    <partial name="_Empty" model='("Delivery.Empty.NoProjectsTitle", Model.CanCreate ? "Delivery.Empty.NoProjectsTextAdmin" : "Delivery.Empty.NoProjectsText", Model.CanCreate ? "#new-project" : null, Model.CanCreate ? "Delivery.NewProject" : null)' />
+}
+else if (shown.Count == 0)
+{
+    <p class="widget__empty">@T["Delivery.Projects.NoneInStatus"]</p>
+}
+else
+{
+    <ul class="pcards" role="list">
+        @foreach (var project in shown)
+        {
+            var percent = DeliveryDisplay.Percent(project.DoneIssues, project.TotalIssues);
+            <li class="pcard">
+                <div class="pcard__head">
+                    <span class="pcard__badge tone-@DeliveryFormat.Tone(project.Id)" aria-hidden="true" dir="ltr">@project.Key[..Math.Min(2, project.Key.Length)]</span>
+                    <div class="pcard__title">
+                        <a class="pcard__name" asp-action="Project" asp-route-id="@project.Id" dir="auto">@project.Name</a>
+                        <span class="d-key" dir="ltr">@project.Key</span>
+                    </div>
+                    <span class="d-pstatus d-pstatus--@project.Status.ToLowerInvariant()">@DeliveryDisplay.Value(T, "ProjectStatus", project.Status)</span>
+                </div>
+                <p class="pcard__meta">
+                    <span>@DeliveryDisplay.Value(T, "ProjectType", project.Type)</span>
+                    <span class="badge">@DeliveryDisplay.Value(T, "Classification", project.Classification)</span>
+                    @if (project.ClientName is not null)
+                    {
+                        <span dir="auto">@project.ClientName</span>
+                    }
+                </p>
+                <div class="pcard__progress">
+                    @Chart.Progress(project.TotalIssues == 0 ? 0 : (double)project.DoneIssues / project.TotalIssues, "teal", rtl, string.Format(CultureInfo.CurrentCulture, T["Delivery.Ws.ProgressLabel"], percent))
+                    <span class="pcard__percent" dir="ltr">@percent%</span>
+                </div>
+                <dl class="pcard__facts">
+                    <div><dt>@T["Delivery.Dashboard.OpenIssues"]</dt><dd dir="ltr">@project.OpenIssues</dd></div>
+                    <div><dt>@T["Delivery.Ws.S.Completed"]</dt><dd dir="ltr">@project.DoneIssues</dd></div>
+                    <div><dt>@T["Delivery.Field.TargetDate"]</dt><dd>@(project.TargetDate is { } target ? DeliveryFormat.Day(target) : "—")</dd></div>
+                    <div><dt>@T["Delivery.Field.Priority"]</dt><dd><partial name="_Priority" model="project.Priority" /></dd></div>
+                </dl>
+                <div class="pcard__foot">
+                    <span class="hint">@(project.MyRole is null ? T["Delivery.Role.WorkspaceAdmin"] : DeliveryDisplay.Value(T, "Role", project.MyRole))</span>
+                    <nav class="pcard__links" aria-label="@project.Name">
+                        <a asp-action="Board" asp-route-id="@project.Id">@T["Delivery.Tab.Board"]</a>
+                        <a asp-action="Backlog" asp-route-id="@project.Id">@T["Delivery.Tab.Backlog"]</a>
+                        <a asp-controller="DeliveryPlanning" asp-action="Timeline" asp-route-id="@project.Id">@T["Delivery.Tab.Timeline"]</a>
+                    </nav>
+                </div>
+            </li>
+        }
+    </ul>
+}
+
+@if (Model.CanCreate)
+{
+    <details class="d-panel d-panel--form" id="new-project" open="@(Model.Projects.Count == 0)">
+        <summary><h2 id="d-new-project"><partial name="_AdminIcon" model='"plus"' /> @T["Delivery.NewProject"]</h2></summary>
+        <p class="hint">@T["Delivery.NewProjectHint"]</p>
+        <form method="post" asp-action="CreateProject" class="d-form">
+            <label>@T["Delivery.Field.Key"] <input name="Key" required maxlength="10" pattern="[A-Za-z][A-Za-z0-9]{1,9}" dir="ltr" autocomplete="off" class="d-input-key"></label>
+            <label>@T["Delivery.Field.Name"] <input name="Name" required maxlength="120" dir="auto"></label>
+            <partial name="_ProjectFields" model='new ProjectForm { Type = "Software", Classification = "Internal", Status = "Active", Priority = "Medium" }' />
+            <button type="submit" class="btn btn--primary">@T["Delivery.CreateProject"]</button>
+        </form>
+    </details>
+}

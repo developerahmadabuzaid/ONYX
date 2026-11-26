@@ -41,7 +41,8 @@ public sealed class FakeOnyxApi : HttpMessageHandler
             request.Headers.Authorization?.Parameter,
             request.Headers.TryGetValues("X-Forwarded-For", out var forwarded) ? forwarded.Single() : null,
             request.Headers.AcceptLanguage.ToString(),
-            body);
+            body,
+            request.Headers.Authorization?.Scheme);
         Requests.Enqueue(recorded);
 
         return _routes.TryGetValue($"{request.Method.Method} {recorded.Path}", out var respond)

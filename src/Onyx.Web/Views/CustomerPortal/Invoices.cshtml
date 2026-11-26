@@ -1,0 +1,43 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    string Date(DateTimeOffset value) => value.ToLocalTime().ToString("d", CultureInfo.CurrentCulture);
+    string Money(decimal value, string currency) => value.ToString("N2", CultureInfo.CurrentCulture) + " " + currency;
+}
+@model IReadOnlyList<Onyx.Contracts.Customers.CustomerInvoiceResponse>
+<section class="customer-portal">
+    <h1>@T["Customer.Invoices.Title"]</h1>
+    <partial name="_CustomerNav" model="CustomerPages.Invoices" />
+    @if (Model.Count == 0)
+    {
+        <p class="empty-state">@T["Customer.Invoices.Empty"]</p>
+    }
+    else
+    {
+        <table class="customer-table">
+            <thead>
+                <tr>
+                    <th scope="col">@T["Customer.Invoice.Number"]</th>
+                    <th scope="col">@T["Customer.Invoice.Issued"]</th>
+                    <th scope="col">@T["Customer.Invoice.Due"]</th>
+                    <th scope="col">@T["Customer.Invoice.Total"]</th>
+                    <th scope="col">@T["Customer.Subscriptions.Status"]</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var invoice in Model)
+                {
+                    <tr>
+                        <td><a href="@Routes.PathFor(CustomerPages.Invoices, lang, invoice.Id.ToString("D"))"><bdi dir="ltr">@invoice.Number</bdi></a></td>
+                        <td>@Date(invoice.IssuedAtUtc)</td>
+                        <td>@invoice.DueOn.ToString("d", CultureInfo.CurrentCulture)</td>
+                        <td><bdi dir="ltr">@Money(invoice.Total, invoice.Currency)</bdi></td>
+                        <td><span class="status-pill status-pill--@invoice.Status.ToLowerInvariant()">@T["Customer.Invoice.Status." + invoice.Status]</span></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</section>

@@ -55,7 +55,7 @@ public sealed class LocalizationAndHandlerUnitTests
     {
         var table = new LocalizedRouteTable();
         table.Register(Services());
-        var transformer = new LocalizedRouteTransformer(table);
+        var transformer = new LocalizedRouteTransformer(table, new Onyx.Web.Content.SitePages.SitePageCatalog([]));
 
         var matched = await transformer.TransformAsync(new DefaultHttpContext(), new RouteValueDictionary { ["lang"] = "ar", ["path"] = "الخدمات/حلول-الذكاء-الاصطناعي" });
         var unknown = await transformer.TransformAsync(new DefaultHttpContext(), new RouteValueDictionary { ["lang"] = "en", ["path"] = "nope" });

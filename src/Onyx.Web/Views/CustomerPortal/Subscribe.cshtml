@@ -1,0 +1,47 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model SubscribePage
+@{
+    var trial = Model.Intent == Onyx.Contracts.Customers.CustomerIntents.Trial;
+}
+<section class="customer-portal">
+    <h1>@(trial ? T["Customer.Subscribe.TrialHeading", Model.Product.Name] : T["Customer.Subscribe.Heading", Model.Product.Name])</h1>
+    <p>@Model.Product.Summary</p>
+    <form method="post" action="@Routes.PathFor(CustomerPages.Subscribe, lang)" asp-antiforgery="true" class="customer-card" novalidate>
+        <div asp-validation-summary="ModelOnly" role="alert"></div>
+        <input type="hidden" name="Product" value="@Model.Form.Product">
+        <input type="hidden" name="Intent" value="@Model.Form.Intent">
+        @if (Model.Product.Plans.Count > 0)
+        {
+            <fieldset>
+                <legend>@T["Customer.Subscribe.ChoosePlan"]</legend>
+                @foreach (var plan in Model.Product.Plans)
+                {
+                    <p class="checkbox">
+                        <input type="radio" id="plan-@plan.Id" name="PlanId" value="@plan.Id" checked="@(Model.Form.PlanId == plan.Id)">
+                        <label for="plan-@plan.Id">@plan.Name
+                            @if (plan.Price is { } price && plan.Currency is { } currency) { <bdi dir="ltr">— @price.ToString("N2", CultureInfo.CurrentCulture) @currency</bdi> <span>@T["Products.Period." + plan.BillingPeriod]</span> }
+                        </label>
+                    </p>
+                }
+            </fieldset>
+        }
+        @if (!trial)
+        {
+            <p>
+                <label for="Note">@T["Customer.Subscribe.Note"] (@T["Form.Optional"])</label>
+                <textarea id="Note" name="Note" rows="3" maxlength="1000">@Model.Form.Note</textarea>
+            </p>
+            <p class="note">@T["Customer.Subscribe.RequestNote"]</p>
+        }
+        else
+        {
+            <p class="note">@T["Customer.Subscribe.TrialNote", Model.Product.TrialDays ?? 0]</p>
+        }
+        <p><button class="button button--primary" type="submit">@(trial ? T["Customer.Subscribe.StartTrial"] : T["Customer.Subscribe.Submit"])</button></p>
+    </form>
+</section>

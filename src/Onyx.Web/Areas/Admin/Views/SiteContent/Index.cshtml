@@ -1,0 +1,91 @@
+@using System.Globalization
+@using Onyx.Contracts.SiteContent
+@using Onyx.Web.Areas.Admin.SiteContent
+@model SiteContentIndexModel
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.SitePages";
+    var lang = Model.LanguageCode;
+    string Status(string key)
+    {
+        var status = Model.Status(key);
+        if (status is null)
+        {
+            return T["SiteContent.Status.Default"].Value;
+        }
+
+        if (status.HasDraft)
+        {
+            return T["SiteContent.Status.Draft"].Value;
+        }
+
+        return status.IsPublished ? string.Format(CultureInfo.InvariantCulture, T["SiteContent.Status.Published"].Value, status.PublishedRevision) : T["SiteContent.Status.Default"].Value;
+    }
+
+    string StatusClass(string key) => Model.Status(key) switch { null => "status status--default", { HasDraft: true } => "status status--draft", { IsPublished: true } => "status status--live", _ => "status status--default" };
+    var groups = new[]
+    {
+        ("SiteContent.Group.services", Model.Pages.Where(page => page.Key.StartsWith("services", StringComparison.Ordinal) || page.Key == "idea-to-product")),
+        ("SiteContent.Group.Company", Model.Pages.Where(page => page.Type == "page" && page.Key != "idea-to-product")),
+        ("SiteContent.Group.Legal", Model.Pages.Where(page => page.Type == "legal")),
+    };
+}
+<header class="page-head">
+    <div>
+        <h1>@T["Nav.SitePages"]</h1>
+        <p class="hint">@T["SiteContent.Index.Hint"]</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<section class="panel">
+    <h2>@T["SiteContent.Group.Shared"]</h2>
+    <table class="data-table">
+        <thead><tr><th>@T["SiteContent.Column.Area"]</th><th>@T["SiteContent.Column.Status"]</th><th></th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>@T["Nav.Homepage"]</strong><span class="muted" dir="ltr">/@lang/</span></td>
+                <td><span class="@StatusClass(SiteContentKeys.Home)">@Status(SiteContentKeys.Home)</span></td>
+                <td class="actions"><a class="btn btn--small" asp-action="Home">@T["SiteContent.Edit"]</a></td>
+            </tr>
+            <tr>
+                <td><strong>@T["Nav.SiteNavigation"]</strong></td>
+                <td><span class="@StatusClass(SiteContentKeys.Shared)">@Status(SiteContentKeys.Shared)</span></td>
+                <td class="actions"><a class="btn btn--small" asp-action="Shared">@T["SiteContent.Edit"]</a></td>
+            </tr>
+            <tr>
+                <td><strong>@T["Nav.SiteSettings"]</strong></td>
+                <td><span class="muted">@T["SiteContent.SettingsPermission"]</span></td>
+                <td class="actions"><a class="btn btn--small" asp-controller="SiteSettings" asp-action="Index">@T["SiteContent.Edit"]</a></td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+@foreach (var (titleKey, pages) in groups)
+{
+    <section class="panel">
+        <h2>@T[titleKey]</h2>
+        <table class="data-table">
+            <thead><tr><th>@T["SiteContent.Column.Page"]</th><th>@T["SiteContent.Column.Status"]</th><th></th></tr></thead>
+            <tbody>
+                @foreach (var page in pages)
+                {
+                    var text = page.Translations.GetValueOrDefault(lang) ?? page.Translations.Values.First();
+                    var key = SiteContentKeys.Page(page.Key);
+                    <tr>
+                        <td><strong>@text.Nav</strong><span class="muted" dir="ltr">/@lang/@text.Path</span></td>
+                        <td>
+                            <span class="@StatusClass(key)">@Status(key)</span>
+                            @if (page.Draft)
+                            {
+                                <span class="status status--warning">@T["SiteContent.LegalDraft"]</span>
+                            }
+                        </td>
+                        <td class="actions"><a class="btn btn--small" asp-action="Page" asp-route-page="@(page.Key)">@T["SiteContent.Edit"]</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </section>
+}

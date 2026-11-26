@@ -1,0 +1,56 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model AiDemoPage
+<section class="customer-portal">
+    <p><a href="@Routes.PathFor(CustomerPages.Products, lang, Model.Product.Slug)">@Model.Product.Name</a></p>
+    <h1>@T["Customer.Demo.Heading", Model.Product.Name]</h1>
+    <p class="note">@T["Customer.Demo.Label"]</p>
+    <partial name="_CustomerNotice" />
+    @if (!Model.Available)
+    {
+        <p class="empty-state" role="status">@T["Customer.Demo.Unavailable"]</p>
+    }
+    else
+    {
+        <form method="post" action="@Routes.PathFor(CustomerPages.AiDemo, lang, Model.Product.Slug)" asp-antiforgery="true" class="customer-card" novalidate>
+            <div asp-validation-summary="All" role="alert"></div>
+            <p>
+                <label for="Prompt">@T["Customer.Demo.Prompt"]</label>
+                <textarea id="Prompt" name="Prompt" rows="4" maxlength="1000" required>@Model.Form.Prompt</textarea>
+                <span class="note">@T["Customer.Demo.PromptNote"]</span>
+            </p>
+            <partial name="_CustomerSubmit" model='(CustomerPages.AiDemoCaptchaAction, "Customer.Demo.Submit")' />
+        </form>
+    }
+    @if (Model.Runs.Count > 0)
+    {
+        <section aria-labelledby="runs-title">
+            <h2 id="runs-title">@T["Customer.Demo.Recent"]</h2>
+            <ul class="demo-runs" role="list">
+                @foreach (var run in Model.Runs)
+                {
+                    <li class="customer-card">
+                        <p><strong>@T["Customer.Demo.Question"]</strong> @run.Prompt</p>
+                        @if (run.Status == "Completed")
+                        {
+                            <p class="demo-runs__answer">@run.Output</p>
+                        }
+                        else if (run.Status == "Failed")
+                        {
+                            <p class="note">@T[run.FailureCode == "AiDemo.NotConnected" ? "Customer.Demo.NotConnected" : "Customer.Demo.Failed"]</p>
+                        }
+                        else
+                        {
+                            <p class="note" role="status">@T["Customer.Demo.Pending"]</p>
+                        }
+                    </li>
+                }
+            </ul>
+            <p><a href="@Routes.PathFor(CustomerPages.AiDemo, lang, Model.Product.Slug)">@T["Customer.Demo.Refresh"]</a></p>
+        </section>
+    }
+</section>

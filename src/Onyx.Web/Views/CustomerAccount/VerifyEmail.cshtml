@@ -1,0 +1,27 @@
+@using System.Globalization
+@using Onyx.Web.Customers
+@inject LocalizedRouteTable Routes
+@{
+    var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+}
+@model VerifyEmailForm
+<section class="customer-auth">
+    <h1>@T["Customer.Verify.Title"]</h1>
+    @if (ViewData["Verified"] is true)
+    {
+        <p role="status">@T["Customer.Verify.Done"]</p>
+        <p><a class="button button--primary" href="@CustomerPages.WithReturn(Routes.PathFor(CustomerPages.SignIn, lang)!, Model.ReturnUrl)">@T["Customer.Verify.Continue"]</a></p>
+    }
+    else
+    {
+        <p>@T["Customer.Verify.Intro"]</p>
+        <form method="post" action="@Routes.PathFor(CustomerPages.VerifyEmail, lang)" asp-antiforgery="true">
+            <div asp-validation-summary="ModelOnly" role="alert"></div>
+            <input type="hidden" asp-for="Id">
+            <input type="hidden" asp-for="Token">
+            <input type="hidden" asp-for="ReturnUrl">
+            <p><button class="button button--primary" type="submit">@T["Customer.Verify.Submit"]</button></p>
+        </form>
+        <p><a href="@CustomerPages.WithReturn(Routes.PathFor(CustomerPages.VerifyEmail, lang, "resend")!, Model.ReturnUrl)">@T["Customer.SignIn.ResendLink"]</a></p>
+    }
+</section>

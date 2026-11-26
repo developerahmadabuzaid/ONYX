@@ -1,0 +1,118 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.Staff
+@model UsersPage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.StaffUsers";
+    var users = Model.Users;
+    var pages = (int)Math.Ceiling(users.TotalCount / (double)Math.Max(1, users.PageSize));
+}
+<header class="page-head">
+    <div>
+        <h1>@T["Nav.StaffUsers"]</h1>
+        <p class="hint">@T["Staff.Users.Intro"]</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+
+<details class="panel staff-invite">
+    <summary class="staff-invite__summary"><partial name="_AdminIcon" model='"plus"' />@T["Staff.Invite.Title"]</summary>
+    <form method="post" asp-action="Invite" class="staff-form">
+        <p class="hint">@T["Staff.Invite.Intro"]</p>
+        <div class="field-grid">
+            <div class="field">
+                <label for="invite-name">@T["Staff.Field.Name"]</label>
+                <input id="invite-name" name="DisplayName" required maxlength="100" dir="auto" autocomplete="off">
+            </div>
+            <div class="field">
+                <label for="invite-email">@T["Staff.Field.Email"]</label>
+                <input id="invite-email" name="Email" type="email" required maxlength="254" dir="ltr" autocomplete="off">
+            </div>
+            <div class="field">
+                <label for="invite-language">@T["Staff.Field.Language"]</label>
+                <select id="invite-language" name="Language">
+                    <option value="ar">العربية</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
+        <fieldset>
+            <legend>@T["Staff.Field.Roles"]</legend>
+            <div class="staff-checks">
+                @foreach (var role in Model.Roles)
+                {
+                    <label class="check"><input type="checkbox" name="Roles" value="@role.Name"> <partial name="_RoleName" model="role.Name" /></label>
+                }
+            </div>
+            <p class="hint">@T["Staff.Roles.Hint"]</p>
+        </fieldset>
+        <p><button type="submit" class="btn btn--primary">@T["Staff.Invite.Submit"]</button></p>
+    </form>
+</details>
+
+<form method="get" asp-action="Users" class="staff-search" role="search">
+    <label for="staff-search" class="visually-hidden">@T["Staff.Search"]</label>
+    <input id="staff-search" name="search" value="@Model.Search" placeholder="@T["Staff.Search"]" maxlength="100">
+    <button type="submit" class="btn">@T["Staff.Search"]</button>
+</form>
+
+@if (users.Items.Count == 0)
+{
+    <div class="a-empty">
+        <span class="a-empty__icon"><partial name="_AdminIcon" model='"users"' /></span>
+        <p>@T["Staff.Users.Empty"]</p>
+    </div>
+}
+else
+{
+    <section class="panel a-table-card">
+        <div class="a-table-scroll">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th scope="col">@T["Staff.Field.Name"]</th>
+                        <th scope="col">@T["Staff.Field.Roles"]</th>
+                        <th scope="col">@T["Staff.Field.Status"]</th>
+                        <th scope="col">@T["Staff.Field.TwoFactor"]</th>
+                        <th scope="col">@T["Staff.Field.LastLogin"]</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var user in users.Items)
+                    {
+                        <tr>
+                            <td>
+                                <a class="staff-person" asp-action="UserDetail" asp-route-id="@user.Id">
+                                    <span class="a-avatar" aria-hidden="true">@string.Concat(user.DisplayName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => char.ToUpperInvariant(part[0])))</span>
+                                    <span><strong dir="auto">@user.DisplayName</strong><span class="muted" dir="ltr">@user.Email</span></span>
+                                </a>
+                            </td>
+                            <td>
+                                @foreach (var role in user.Roles)
+                                {
+                                    <span class="badge"><partial name="_RoleName" model="role" /></span>
+                                }
+                            </td>
+                            <td><partial name="_UserStatus" model="user" /></td>
+                            <td>@(user.TwoFactorEnabled ? T["Staff.On"] : T["Staff.Off"])</td>
+                            <td class="a-nowrap" dir="ltr">@(user.LastLoginAtUtc?.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture) ?? "—")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </section>
+    @if (pages > 1)
+    {
+        <nav class="pager" aria-label="@T["Staff.Pages"]">
+            @for (var pageNumber = 1; pageNumber <= pages; pageNumber++)
+            {
+                <a asp-action="Users" asp-route-search="@Model.Search" asp-route-page="@pageNumber" aria-current="@(pageNumber == users.Page ? "page" : null)">@pageNumber</a>
+            }
+        </nav>
+    }
+}
+@if (Model.CanManageRoles)
+{
+    <p><a class="btn btn--ghost" asp-action="Roles"><partial name="_AdminIcon" model='"shield"' />@T["Nav.StaffRoles"]</a></p>
+}

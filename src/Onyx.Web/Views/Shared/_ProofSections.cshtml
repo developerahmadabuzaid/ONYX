@@ -3,7 +3,7 @@
 @* Only verified, published proof reaches this partial; empty sections are not rendered (never padded). *@
 @if (Model.Capabilities.Count > 0)
 {
-    <section aria-labelledby="capabilities-heading">
+    <section class="proof-section proof-section--capabilities" aria-labelledby="capabilities-heading">
         <h2 id="capabilities-heading">@T["Proof.Capabilities"]</h2>
         <ul>
             @foreach (var capability in Model.Capabilities)
@@ -21,7 +21,7 @@
 }
 @if (Model.Metrics.Count > 0)
 {
-    <section aria-labelledby="metrics-heading">
+    <section class="proof-section proof-section--metrics" aria-labelledby="metrics-heading">
         <h2 id="metrics-heading">@T["Proof.Metrics"]</h2>
         <dl>
             @foreach (var metric in Model.Metrics)
@@ -44,7 +44,7 @@
 }
 @if (Model.Testimonials.Count > 0)
 {
-    <section aria-labelledby="testimonials-heading">
+    <section class="proof-section proof-section--testimonials" aria-labelledby="testimonials-heading">
         <h2 id="testimonials-heading">@T["Proof.Testimonials"]</h2>
         @foreach (var testimonial in Model.Testimonials)
         {

@@ -1,0 +1,117 @@
+{
+  "key": "services.growth",
+  "parent": "services",
+  "type": "service",
+  "icon": "growth",
+  "pillar": "digital-growth",
+  "secondary": true,
+  "related": ["services.software", "idea-to-product", "services.ai"],
+  "translations": {
+    "ar": {
+      "path": "الخدمات/النمو-الرقمي-والإبداع",
+      "nav": "النمو الرقمي والإبداع",
+      "title": "تحسين محركات البحث والتسويق الرقمي والهوية البصرية",
+      "description": "خدمات النمو الرقمي من أونيكس: التخطيط الرقمي، تحسين محركات البحث والسيو التقني، التسويق الرقمي وتسويق الأداء، الهوية البصرية، وتصميم تجربة وواجهة المستخدم.",
+      "eyebrow": "خدمات مساندة",
+      "h1": "حضور رقمي يوصلك إلى عملائك",
+      "lead": "نساعدك على تطوير حضورك الرقمي والوصول إلى عملائك بصورة أكثر فاعلية، من خلال حلول تجمع بين التخطيط والتصميم والتسويق الرقمي، وتنطلق من أساس تقني سليم.",
+      "summary": "التخطيط الرقمي، تحسين محركات البحث، التسويق الرقمي، الهوية وتجربة المستخدم.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "نبدأ من الأساس قبل الحملات",
+          "paragraphs": [
+            "كثير من مشكلات الظهور الرقمي تبدأ تقنية: موقع بطيء، أو صفحات لا تظهر في محركات البحث، أو تجربة استخدام مربكة تجعل الزائر يغادر. ولأننا نبني المنصات الرقمية أيضاً، نعالج هذه الأسباب أولاً قبل أن تستثمر في الإعلانات والحملات.",
+            "نقدّم هذه الخدمات مكمّلةً لتخصصاتنا الأساسية، ونقيس النتائج بمؤشرات حقيقية من أدوات التحليل المرتبطة بموقعك، دون وعود بترتيب معين في نتائج البحث أو نتائج مضمونة."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "ما نقدمه",
+          "heading": "خدمات النمو الرقمي والإبداع",
+          "items": [
+            { "id": "digital-strategy", "title": "التخطيط الرقمي", "text": "نحدد معك جمهورك والقنوات الأنسب للوصول إليه والرسائل والأولويات، في خطة قابلة للتنفيذ والقياس تخدم أهداف عملك.", "points": ["دراسة الجمهور والمنافسين", "اختيار القنوات وترتيب الأولويات", "مؤشرات قياس واضحة"] },
+            { "id": "seo", "title": "تحسين محركات البحث (SEO)", "text": "نحسّن محتوى موقعك وبنيته وروابطه الداخلية، ليفهم محرك البحث والزائر صفحاتك بوضوح، بالعربية والإنجليزية.", "points": ["بحث الكلمات المفتاحية لكل لغة", "تحسين المحتوى والعناوين والأوصاف", "خطة محتوى مبنية على ما يبحث عنه عملاؤك"] },
+            { "id": "technical-seo", "title": "السيو التقني", "text": "نعالج الجوانب التقنية التي تؤثر في ظهور موقعك: السرعة، والروابط الأساسية، وربط الصفحات بين اللغتين، وخرائط الموقع، والبيانات المنظمة.", "points": ["تدقيق تقني شامل", "تحسين السرعة ومؤشرات Core Web Vitals", "إعداد البيانات المنظمة وخرائط الموقع"] },
+            { "id": "digital-marketing", "title": "التسويق الرقمي", "text": "نخطط حضورك على القنوات الرقمية التي يوجد فيها جمهورك وننفذه، بمحتوى متسق ومتابعة مستمرة للأداء.", "points": ["تخطيط الحملات والمحتوى", "إدارة القنوات الرقمية", "تقارير أداء دورية"] },
+            { "id": "performance-marketing", "title": "تسويق الأداء", "text": "حملات مدفوعة مرتبطة بأهداف يمكن قياسها، مع تتبع دقيق للتحويلات وتحسين مستمر بناءً على البيانات.", "points": ["إعداد تتبع التحويلات", "اختبار الرسائل والجماهير", "تحسين مستمر لاستخدام الميزانية"] },
+            { "id": "brand-identity", "title": "الهوية البصرية", "text": "نطوّر هوية بصرية متسقة تعبّر عن شركتك: الشعار والألوان والخطوط وقواعد استخدامها.", "points": ["تطوير عناصر الهوية", "دليل استخدام الهوية", "تطبيق الهوية على القنوات الرقمية"] },
+            { "id": "ui-ux", "title": "تصميم تجربة وواجهة المستخدم", "text": "نصمم تجارب استخدام واضحة وسهلة لكل المستخدمين، بدءاً من فهم احتياجاتهم وحتى النماذج التفاعلية وأنظمة التصميم.", "points": ["فهم المستخدمين ورحلتهم", "نماذج أولية تفاعلية", "أنظمة تصميم تدعم العربية والإنجليزية"] },
+            { "id": "graphic-design", "title": "التصميم الجرافيكي", "text": "تصاميم للعروض التقديمية والمطبوعات والمحتوى الرقمي، متسقة مع هويتك ومتقنة في الخط العربي وتنسيقه.", "points": ["عروض تقديمية ومطبوعات", "تصاميم للمحتوى الرقمي", "عناية خاصة بالخط العربي"] },
+            { "id": "creative-content", "title": "إنتاج المحتوى الإبداعي", "text": "نكتب وننتج محتوى أصيلاً بالعربية والإنجليزية لموقعك وحملاتك ومنصاتك الرقمية.", "points": ["كتابة محتوى أصيل باللغتين", "محتوى بصري للحملات", "تخطيط جدول النشر"] }
+          ],
+          "note": "لا نعد بترتيب محدد في نتائج البحث أو بأعداد زيارات أو تحويلات، ونعرض أي مؤشرات من مصادرها الفعلية مع تاريخها."
+        },
+        {
+          "kind": "checklist",
+          "id": "connection",
+          "eyebrow": "التكامل",
+          "heading": "حين يلتقي التسويق بالتقنية",
+          "items": [
+            { "title": "موقع أسرع", "text": "تحسين سرعة الموقع واستقراره ينعكس على تجربة الزائر وظهورك في البحث معاً." },
+            { "title": "صفحات تفهمها محركات البحث", "text": "روابط واضحة باللغتين وبيانات منظمة صحيحة منذ البناء." },
+            { "title": "قياس يمكن الوثوق به", "text": "تتبع يحترم موافقة الزائر ويعتمد على بيانات حقيقية." },
+            { "title": "تجربة متسقة", "text": "تصميم وهوية متسقان بين الموقع والتطبيقات والحملات." }
+          ]
+        }
+      ],
+      "ctaTitle": "تريد أن تصل إلى عملائك بفاعلية أكبر؟",
+      "ctaText": "حدّثنا عن موقعك وأهدافك، وسنبدأ بتقييم واضح للجوانب التقنية والمحتوى قبل أي خطة."
+    },
+    "en": {
+      "path": "services/digital-growth-creative",
+      "nav": "Digital Growth & Creative",
+      "title": "SEO, Digital Marketing and Brand Identity Services",
+      "description": "ONYX digital growth services: digital planning, search engine optimization and technical SEO, digital and performance marketing, brand identity, and UI/UX design.",
+      "eyebrow": "Supporting services",
+      "h1": "A digital presence that brings customers to you",
+      "lead": "We help you grow your digital presence and reach your customers more effectively, with work that brings together planning, design and digital marketing — built on a sound technical foundation.",
+      "summary": "Digital planning, SEO, digital marketing, brand identity and UX design.",
+      "sections": [
+        {
+          "kind": "prose",
+          "id": "overview",
+          "heading": "Fix the foundation before the campaigns",
+          "paragraphs": [
+            "Many visibility problems start with technology: a slow website, pages that don't show up in search, or a confusing experience that makes visitors leave. Because we also build digital platforms, we fix those causes first, before you spend money on ads and campaigns.",
+            "We offer these services alongside our core disciplines, and measure results with real indicators from the analytics tools connected to your site — without promising specific search rankings or guaranteed results."
+          ]
+        },
+        {
+          "kind": "offerings",
+          "id": "offerings",
+          "eyebrow": "What we deliver",
+          "heading": "Digital growth and creative services",
+          "items": [
+            { "id": "digital-strategy", "title": "Digital planning", "text": "We work out with you who your audience is, the best channels to reach them, and the messages and priorities — in a plan you can carry out and measure, serving your business goals.", "points": ["Audience and competitor research", "Channel selection and priorities", "Clear measurement indicators"] },
+            { "id": "seo", "title": "Search engine optimization (SEO)", "text": "We improve your site's content, structure and internal links so search engines and visitors understand your pages clearly, in Arabic and English.", "points": ["Keyword research for each language", "Content, title and description improvements", "A content plan based on what your customers search for"] },
+            { "id": "technical-seo", "title": "Technical SEO", "text": "We fix the technical factors that affect how your site appears in search: speed, canonical links, linking between language versions, sitemaps and structured data.", "points": ["A complete technical audit", "Speed and Core Web Vitals improvements", "Structured data and sitemap setup"] },
+            { "id": "digital-marketing", "title": "Digital marketing", "text": "We plan and run your presence on the digital channels where your audience spends time, with consistent content and ongoing performance tracking.", "points": ["Campaign and content planning", "Digital channel management", "Regular performance reports"] },
+            { "id": "performance-marketing", "title": "Performance marketing", "text": "Paid campaigns tied to measurable goals, with accurate conversion tracking and continuous data-driven improvement.", "points": ["Conversion tracking setup", "Testing messages and audiences", "Ongoing budget optimization"] },
+            { "id": "brand-identity", "title": "Brand identity", "text": "We develop a consistent visual identity that expresses who you are: logo, colour, typography and the rules for using them.", "points": ["Identity elements", "Brand guidelines", "Applying the identity across digital channels"] },
+            { "id": "ui-ux", "title": "UI/UX design", "text": "We design clear, easy experiences for every user, from understanding their needs to interactive prototypes and design systems.", "points": ["Understanding users and their journeys", "Interactive prototypes", "Design systems for Arabic and English"] },
+            { "id": "graphic-design", "title": "Graphic design", "text": "Design for presentations, print and digital content, consistent with your identity and careful with Arabic typography.", "points": ["Presentations and print", "Digital content design", "Careful Arabic typography"] },
+            { "id": "creative-content", "title": "Creative content production", "text": "We write and produce original Arabic and English content for your website, campaigns and digital platforms.", "points": ["Original copywriting in both languages", "Visual content for campaigns", "Publishing calendar planning"] }
+          ],
+          "note": "We don't promise specific search rankings, traffic or conversion numbers; any metrics we report come from their actual source, with the date shown."
+        },
+        {
+          "kind": "checklist",
+          "id": "connection",
+          "eyebrow": "Integration",
+          "heading": "Where marketing meets technology",
+          "items": [
+            { "title": "A faster website", "text": "A faster, more stable site improves both the visitor's experience and your search visibility." },
+            { "title": "Pages search engines understand", "text": "Clear links in both languages and correct structured data, built in from the start." },
+            { "title": "Measurement you can trust", "text": "Tracking that respects visitor consent and relies on real data." },
+            { "title": "A consistent experience", "text": "Consistent design and identity across your site, apps and campaigns." }
+          ]
+        }
+      ],
+      "ctaTitle": "Want to reach your customers more effectively?",
+      "ctaText": "Tell us about your website and goals; we start with a clear look at the technical and content picture before any plan."
+    }
+  }
+}

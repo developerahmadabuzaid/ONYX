@@ -1,0 +1,179 @@
+@using System.Globalization
+@using Onyx.Web.Areas.Admin.SiteContent
+@using Onyx.Web.Content.SiteContent
+@using Onyx.Web.Content.SitePages
+@model PageEditorModel
+@inject LanguageCatalog Languages
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Nav.SitePages";
+    var adminLang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
+    var sitePage = Model.Page;
+    var primary = sitePage.Translations.GetValueOrDefault(adminLang) ?? sitePage.Translations.Values.First();
+    var returnUrl = Url.Action("Page", new { page = sitePage.Key })!;
+    var previews = Model.Languages.ToDictionary(code => code, code => Url.Action("PreviewPage", new { page = sitePage.Key, lang = code })!, StringComparer.Ordinal);
+    var settings = Model.Current.Settings;
+    var sectionKeys = primary.Sections.Select(SitePageOverlay.SectionKey).ToList();
+    var docBar = (Model.Document, "page-editor", (IReadOnlyDictionary<string, string>)previews, returnUrl);
+    var socialImage = (SiteContentForms.Field("set", "socialImageMediaId"), T["SiteContent.Field.SocialImage"].Value, settings.SocialImageMediaId, Model.Images, (string?)T["SiteContent.Field.SocialImageHint"].Value);
+    var heroImage = (SiteContentForms.Field("set", "heroImageMediaId"), T["SiteContent.Field.HeroImage"].Value, settings.HeroImageMediaId, Model.Images, (string?)T["SiteContent.Field.HeroImageHint"].Value);
+    var revisions = (Model.Key, Model.Document.Version, Model.Revisions, returnUrl);
+
+    string Dir(string code) => Languages.Direction(code);
+
+    // One labelled row with a field per language. Values show the editor's override, else the code-owned text.
+    void Row(string label, Func<string, string> name, Func<string, string> value, bool multiline = false, int rows = 3, string? hint = null)
+    {
+        <div class="bi-row">
+            <div class="bi-row__label">@label@if (hint is not null) { <span class="hint">@hint</span> }</div>
+            @foreach (var code in Model.Languages)
+            {
+                <div class="bi-row__field" lang="@code" dir="@Dir(code)">
+                    <span class="bi-row__lang">@code.ToUpperInvariant()</span>
+                    @if (multiline)
+                    {
+                        <textarea name="@name(code)" rows="@rows" dir="@Dir(code)">@value(code)</textarea>
+                    }
+                    else
+                    {
+                        <input name="@name(code)" value="@value(code)" dir="@Dir(code)">
+                    }
+                </div>
+            }
+        </div>
+    }
+
+    string Text(string code, Func<SitePageText, string?> pick, Func<PageTextOverride?, string?> overridePick) =>
+        PageEditorModel.Show(overridePick(Model.TextOverride(code)), pick(sitePage.Translations[code]));
+}
+<header class="page-head">
+    <div>
+        <p class="eyebrow"><a asp-action="Index">@T["Nav.SitePages"]</a></p>
+        <h1>@primary.Nav</h1>
+        <p class="hint">@T["SiteContent.Page.Hint"]</p>
+        <p class="muted">
+            @foreach (var (code, path) in Model.PublicPaths)
+            {
+                <a href="@path" target="_blank" rel="noopener" dir="ltr">@code.ToUpperInvariant(): @Uri.UnescapeDataString(path)</a>
+            }
+        </p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+<partial name="_DocumentBar" model="docBar" />
+
+<form method="post" asp-action="SavePage" asp-route-page="@sitePage.Key" id="page-editor" class="editor">
+    <section class="panel">
+        <h2>@T["SiteContent.Seo"]</h2>
+        <p class="hint">@T["SiteContent.Seo.Hint"]</p>
+        @{ Row(T["SiteContent.Field.Title"].Value, code => SiteContentForms.Field(code, "title"), code => Text(code, t => t.Title, o => o?.Title), hint: T["SiteContent.Field.TitleHint"].Value); }
+        @{ Row(T["SiteContent.Field.Description"].Value, code => SiteContentForms.Field(code, "description"), code => Text(code, t => t.Description, o => o?.Description), multiline: true, hint: T["SiteContent.Field.DescriptionHint"].Value); }
+        @{ Row(T["SiteContent.Field.OgTitle"].Value, code => SiteContentForms.Field(code, "ogTitle"), code => Model.TextOverride(code)?.OgTitle ?? string.Empty, hint: T["SiteContent.Field.OgHint"].Value); }
+        @{ Row(T["SiteContent.Field.OgDescription"].Value, code => SiteContentForms.Field(code, "ogDescription"), code => Model.TextOverride(code)?.OgDescription ?? string.Empty, multiline: true, rows: 2); }
+        <div class="field-grid">
+            <partial name="_ImageSelect" model="socialImage" />
+            <div class="field">
+                <label class="check"><input type="checkbox" name="set|noIndex" value="true" checked="@settings.NoIndex"> @T["SiteContent.Field.NoIndex"]</label>
+                <p class="hint">@T["SiteContent.Field.NoIndexHint"]</p>
+            </div>
+        </div>
+        <p class="hint">@T["SiteContent.Field.UrlLocked"]</p>
+    </section>
+
+    <section class="panel">
+        <h2>@T["SiteContent.Header"]</h2>
+        @{ Row(T["SiteContent.Field.Nav"].Value, code => SiteContentForms.Field(code, "nav"), code => Text(code, t => t.Nav, o => o?.Nav), hint: T["SiteContent.Field.NavHint"].Value); }
+        @{ Row(T["SiteContent.Field.Summary"].Value, code => SiteContentForms.Field(code, "summary"), code => Text(code, t => t.Summary, o => o?.Summary), hint: T["SiteContent.Field.SummaryHint"].Value); }
+        @{ Row(T["SiteContent.Field.Eyebrow"].Value, code => SiteContentForms.Field(code, "eyebrow"), code => Text(code, t => t.Eyebrow, o => o?.Eyebrow)); }
+        @{ Row(T["SiteContent.Field.H1"].Value, code => SiteContentForms.Field(code, "h1"), code => Text(code, t => t.H1, o => o?.H1)); }
+        @{ Row(T["SiteContent.Field.Lead"].Value, code => SiteContentForms.Field(code, "lead"), code => Text(code, t => t.Lead, o => o?.Lead), multiline: true); }
+        <partial name="_ImageSelect" model="heroImage" />
+    </section>
+
+    <section class="panel">
+        <h2>@T["SiteContent.Sections"]</h2>
+        <p class="hint">@T["SiteContent.Sections.Hint"]</p>
+        @for (var s = 0; s < primary.Sections.Count; s++)
+        {
+            var pageSection = primary.Sections[s];
+            var sectionKey = sectionKeys[s];
+            var position = settings.SectionOrder.IndexOf(sectionKey) is var index && index >= 0 ? index + 1 : s + 1;
+            var hidden = settings.HiddenSections.Contains(sectionKey);
+            string SF(string code, params string[] parts) => SiteContentForms.Field([code, "s", sectionKey, .. parts]);
+            SitePageSection CodeSection(string code) => sitePage.Translations[code].Sections[s];
+            <details class="editor-section@(hidden ? " is-hidden" : string.Empty)" open="@(s == 0)">
+                <summary>
+                    <span class="editor-section__title">@(pageSection.Heading ?? T["SiteContent.Section.Untitled"].Value)</span>
+                    <span class="badge" dir="ltr">@pageSection.Kind · #@sectionKey</span>
+                    @if (hidden)
+                    {
+                        <span class="status status--warning">@T["SiteContent.Section.HiddenBadge"]</span>
+                    }
+                </summary>
+                <div class="field-grid field-grid--compact">
+                    <label class="check"><input type="checkbox" name="set|hidden" value="@sectionKey" checked="@hidden"> @T["SiteContent.Section.Hide"]</label>
+                    <label class="inline-field">@T["SiteContent.Section.Order"] <input type="number" name="set|order|@sectionKey" value="@position" min="1" max="99" dir="ltr"></label>
+                </div>
+                @{ Row(T["SiteContent.Field.Eyebrow"].Value, code => SF(code, "eyebrow"), code => PageEditorModel.Show(Model.SectionOverride(code, sectionKey)?.Eyebrow, CodeSection(code).Eyebrow)); }
+                @{ Row(T["SiteContent.Field.Heading"].Value, code => SF(code, "heading"), code => PageEditorModel.Show(Model.SectionOverride(code, sectionKey)?.Heading, CodeSection(code).Heading)); }
+                @{ Row(T["SiteContent.Field.Lead"].Value, code => SF(code, "lead"), code => PageEditorModel.Show(Model.SectionOverride(code, sectionKey)?.Lead, CodeSection(code).Lead), multiline: true, rows: 2); }
+                @if (pageSection.Paragraphs.Count > 0)
+                {
+                    Row(T["SiteContent.Field.Paragraphs"].Value, code => SF(code, "paragraphs"), code => PageEditorModel.ShowList(Model.SectionOverride(code, sectionKey)?.Paragraphs, CodeSection(code).Paragraphs, paragraphs: true), multiline: true, rows: 7, hint: T["SiteContent.Field.ParagraphsHint"].Value);
+                }
+                @{ Row(T["SiteContent.Field.Note"].Value, code => SF(code, "note"), code => PageEditorModel.Show(Model.SectionOverride(code, sectionKey)?.Note, CodeSection(code).Note), multiline: true, rows: 2); }
+
+                @for (var i = 0; i < pageSection.Items.Count; i++)
+                {
+                    var item = pageSection.Items[i];
+                    var itemKey = SitePageOverlay.ItemKey(item, i);
+                    SitePageItem CodeItem(string code) => CodeSection(code).Items[i];
+                    ItemOverride? IO(string code) => Model.ItemOverride(code, sectionKey, itemKey);
+                    <details class="editor-item">
+                        <summary><span>@item.Title</span><span class="badge" dir="ltr">#@itemKey</span>@if (item.Flag == "verify") { <span class="status status--warning">@T["SitePage.Verify"]</span> }</summary>
+                        @{ Row(T["SiteContent.Field.ItemTitle"].Value, code => SF(code, "i", itemKey, "title"), code => PageEditorModel.Show(IO(code)?.Title, CodeItem(code).Title)); }
+                        @if (item.Text is not null || pageSection.Kind != "stack")
+                        {
+                            Row(T["SiteContent.Field.ItemText"].Value, code => SF(code, "i", itemKey, "text"), code => PageEditorModel.Show(IO(code)?.Text, CodeItem(code).Text), multiline: true, rows: 3);
+                        }
+                        @if (item.Points.Count > 0)
+                        {
+                            Row(T["SiteContent.Field.Points"].Value, code => SF(code, "i", itemKey, "points"), code => PageEditorModel.ShowList(IO(code)?.Points, CodeItem(code).Points), multiline: true, rows: 4, hint: T["SiteContent.Field.OnePerLine"].Value);
+                        }
+                        @if (item.Tags.Count > 0)
+                        {
+                            Row(T["SiteContent.Field.Tags"].Value, code => SF(code, "i", itemKey, "tags"), code => PageEditorModel.ShowList(IO(code)?.Tags, CodeItem(code).Tags), multiline: true, rows: 4, hint: T["SiteContent.Field.OnePerLine"].Value);
+                        }
+                        @if (item.Deliverables.Count > 0)
+                        {
+                            Row(T["SitePage.Deliverables"].Value, code => SF(code, "i", itemKey, "deliverables"), code => PageEditorModel.ShowList(IO(code)?.Deliverables, CodeItem(code).Deliverables), multiline: true, rows: 4, hint: T["SiteContent.Field.OnePerLine"].Value);
+                        }
+                        @if (item.Involvement.Count > 0)
+                        {
+                            Row(T["SitePage.Involvement"].Value, code => SF(code, "i", itemKey, "involvement"), code => PageEditorModel.ShowList(IO(code)?.Involvement, CodeItem(code).Involvement), multiline: true, rows: 3, hint: T["SiteContent.Field.OnePerLine"].Value);
+                        }
+                        @if (item.Page is not null)
+                        {
+                            <p class="hint" dir="ltr">@T["SiteContent.LinkLocked"]: @item.Page</p>
+                        }
+                    </details>
+                }
+            </details>
+        }
+    </section>
+
+    @if (sitePage.Type != "legal")
+    {
+        <section class="panel">
+            <h2>@T["SiteContent.Cta"]</h2>
+            @{ Row(T["SiteContent.Field.CtaTitle"].Value, code => SiteContentForms.Field(code, "ctaTitle"), code => Text(code, t => t.CtaTitle, o => o?.CtaTitle)); }
+            @{ Row(T["SiteContent.Field.CtaText"].Value, code => SiteContentForms.Field(code, "ctaText"), code => Text(code, t => t.CtaText, o => o?.CtaText), multiline: true, rows: 2); }
+            <p class="hint">@T["SiteContent.CtaLinksLocked"]</p>
+        </section>
+    }
+    <div class="editor-footer">
+        <button type="submit" class="btn btn--primary">@T["SiteContent.SaveDraft"]</button>
+    </div>
+</form>
+
+<partial name="_Revisions" model="revisions" />

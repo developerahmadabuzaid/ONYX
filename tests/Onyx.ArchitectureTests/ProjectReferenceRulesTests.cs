@@ -12,7 +12,21 @@ public sealed class ProjectReferenceRulesTests
         { "Onyx.API", ["Onyx.Application", "Onyx.Contracts", "Onyx.Infrastructure"] },
         { "Onyx.Worker", ["Onyx.Application", "Onyx.Infrastructure"] },
         { "Onyx.Web", ["Onyx.Contracts"] },
+
+        // The single deployable application: it only starts the website and the internal API side by side.
+        { "Onyx.Host", ["Onyx.API", "Onyx.Web"] },
     };
+
+    [Theory]
+    [InlineData("Onyx.Domain")]
+    [InlineData("Onyx.Contracts")]
+    [InlineData("Onyx.Application")]
+    [InlineData("Onyx.Infrastructure")]
+    [InlineData("Onyx.API")]
+    [InlineData("Onyx.Web")]
+    [InlineData("Onyx.Worker")]
+    public void Nothing_references_the_host(string project) =>
+        Assert.DoesNotContain("Onyx.Host", SolutionLayout.ProjectReferences(project));
 
     [Theory]
     [MemberData(nameof(AllowedProjectReferences))]

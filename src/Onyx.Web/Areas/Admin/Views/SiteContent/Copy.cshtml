@@ -1,0 +1,123 @@
+@using Onyx.Web.Areas.Admin.SiteContent
+@using Onyx.Web.Content.SiteContent
+@model CopyEditorModel
+@{
+    Layout = "_AdminLayout";
+    var titleKey = Model.IsHome ? "Nav.Homepage" : "Nav.SiteNavigation";
+    ViewData["TitleKey"] = titleKey;
+    var editor = Model.IsHome ? "Home" : "Shared";
+    var returnUrl = Url.Action(editor)!;
+    IReadOnlyDictionary<string, string> previews = Model.IsHome
+        ? Model.Languages.ToDictionary(code => code, code => Url.Action("PreviewHome", new { lang = code })!, StringComparer.Ordinal)
+        : new Dictionary<string, string>();
+    var settings = Model.Current.Settings;
+    var docBar = (Model.Document, "copy-editor", previews, returnUrl);
+    var revisions = (Model.Key, Model.Document.Version, Model.Revisions, returnUrl);
+    var whyImage = (SiteContentForms.Field("set", "whyImageMediaId"), T["SiteContent.Field.WhyImage"].Value, settings.WhyImageMediaId, Model.Images, (string?)T["SiteContent.Field.WhyImageHint"].Value);
+    var socialImage = (SiteContentForms.Field("set", "socialImageMediaId"), T["SiteContent.Field.SocialImage"].Value, settings.SocialImageMediaId, Model.Images, (string?)T["SiteContent.Field.SocialImageHint"].Value);
+
+    // "Home.Process.Step1.Title" → "Step1 · Title": the group already names the section.
+    static string Label(string key)
+    {
+        var parts = key.Split('.');
+        return string.Join(" · ", parts.Skip(parts.Length > 2 ? 2 : 1));
+    }
+
+    static bool Long(string key) => key.EndsWith(".Lead", StringComparison.Ordinal) || key.EndsWith(".Text", StringComparison.Ordinal)
+        || key.EndsWith(".Note", StringComparison.Ordinal) || key.EndsWith(".Description", StringComparison.Ordinal)
+        || key.EndsWith(".Statement", StringComparison.Ordinal) || SiteCopyCatalog.IsList(key);
+}
+<header class="page-head">
+    <div>
+        <p class="eyebrow"><a asp-action="Index">@T["Nav.SitePages"]</a></p>
+        <h1>@T[titleKey]</h1>
+        <p class="hint">@T[Model.IsHome ? "SiteContent.Home.Hint" : "SiteContent.Shared.Hint"]</p>
+    </div>
+</header>
+<partial name="_CmsMessages" />
+<partial name="_DocumentBar" model="docBar" />
+
+<form method="post" asp-action="@(Model.IsHome ? "SaveHome" : "SaveShared")" id="copy-editor" class="editor">
+    @if (Model.IsHome)
+    {
+        <section class="panel">
+            <h2>@T["SiteContent.Home.Layout"]</h2>
+            <p class="hint">@T["SiteContent.Home.LayoutHint"]</p>
+            <div class="field-grid">
+                <partial name="_ImageSelect" model="whyImage" />
+                <partial name="_ImageSelect" model="socialImage" />
+            </div>
+        </section>
+    }
+
+    @foreach (var group in Model.Groups)
+    {
+        var hideable = Model.IsHome && SiteCopyCatalog.HomeHideableSections.Contains(group.Id);
+        var movable = Model.IsHome && SiteCopyCatalog.HomeMovableSections.Contains(group.Id);
+        var hidden = hideable && settings.HiddenSections.Contains(group.Id);
+        var defaultIndex = SiteCopyCatalog.HomeMovableSections.ToList().IndexOf(group.Id);
+        var position = settings.SectionOrder.IndexOf(group.Id) is var index && index >= 0 ? index + 1 : defaultIndex + 1;
+        var changed = group.Keys.Count(key => Model.Languages.Any(code => Model.IsChanged(code, key)));
+        <details class="editor-section@(hidden ? " is-hidden" : string.Empty)" open="@(group == Model.Groups[0])">
+            <summary>
+                <span class="editor-section__title">@T["SiteContent.Group." + group.Id]</span>
+                @if (changed > 0)
+                {
+                    <span class="status status--draft">@T["SiteContent.ChangedCount", changed]</span>
+                }
+                @if (hidden)
+                {
+                    <span class="status status--warning">@T["SiteContent.Section.HiddenBadge"]</span>
+                }
+            </summary>
+            @if (hideable || movable)
+            {
+                <div class="field-grid field-grid--compact">
+                    @if (hideable)
+                    {
+                        <label class="check"><input type="checkbox" name="set|hidden" value="@group.Id" checked="@hidden"> @T["SiteContent.Section.Hide"]</label>
+                    }
+                    @if (movable)
+                    {
+                        <label class="inline-field">@T["SiteContent.Section.Order"] <input type="number" name="set|order|@group.Id" value="@position" min="1" max="9" dir="ltr"></label>
+                    }
+                </div>
+            }
+            @foreach (var key in group.Keys)
+            {
+                <div class="bi-row">
+                    <div class="bi-row__label">
+                        @Label(key)
+                        <span class="hint" dir="ltr">@key</span>
+                        @if (SiteCopyCatalog.IsList(key))
+                        {
+                            <span class="hint">@T["SiteContent.Field.OnePerLine"]</span>
+                        }
+                    </div>
+                    @foreach (var code in Model.Languages)
+                    {
+                        var dir = Languages.Direction(code);
+                        <div class="bi-row__field@(Model.IsChanged(code, key) ? " is-changed" : string.Empty)" lang="@code" dir="@dir">
+                            <span class="bi-row__lang">@code.ToUpperInvariant()</span>
+                            @if (Long(key))
+                            {
+                                <textarea name="@SiteContentForms.Field(code, key)" rows="@(SiteCopyCatalog.IsList(key) ? 5 : 3)" dir="@dir">@Model.Value(code, key)</textarea>
+                            }
+                            else
+                            {
+                                <input name="@SiteContentForms.Field(code, key)" value="@Model.Value(code, key)" dir="@dir">
+                            }
+                        </div>
+                    }
+                </div>
+            }
+        </details>
+    }
+    <p class="hint">@T["SiteContent.Copy.Fallback"]</p>
+    <div class="editor-footer">
+        <button type="submit" class="btn btn--primary">@T["SiteContent.SaveDraft"]</button>
+    </div>
+</form>
+
+<partial name="_Revisions" model="revisions" />
+@inject LanguageCatalog Languages

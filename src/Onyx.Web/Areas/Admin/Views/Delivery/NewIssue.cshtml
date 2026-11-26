@@ -1,0 +1,46 @@
+@using Onyx.Web.Areas.Admin.Delivery
+@model NewIssuePage
+@{
+    Layout = "_AdminLayout";
+    ViewData["TitleKey"] = "Delivery.CreateIssue";
+}
+<div class="d-head"><h1>@T["Delivery.CreateIssue"]</h1></div>
+<partial name="_CmsMessages" />
+@if (Model.Projects.Count == 0)
+{
+    <partial name="_Empty" model='("Delivery.Empty.NoProjectsTitle", "Delivery.Empty.NoProjectsText", Url.Action("Projects"), "Nav.DeliveryProjects")' />
+}
+else if (Model.Options is null)
+{
+    <form method="get" asp-action="NewIssue" class="d-form d-form--row">
+        <label>@T["Delivery.Field.Project"]
+            <select name="projectId" required>
+                @foreach (var project in Model.Projects)
+                {
+                    <option value="@project.Id">@project.Key · @project.Name</option>
+                }
+            </select>
+        </label>
+        <button type="submit" class="btn btn--primary btn--small">@T["Delivery.Continue"]</button>
+    </form>
+}
+else
+{
+    var project = Model.Options.Project;
+    <p class="hint">@T["Delivery.Field.Project"]: <strong><span class="d-key" dir="ltr">@project.Key</span> @project.Name</strong>
+        · <a asp-action="NewIssue">@T["Delivery.ChangeProject"]</a></p>
+    @if (!project.Can.CreateIssues)
+    {
+        <p class="errors" role="alert">@T["Delivery.CannotCreateHere"]</p>
+    }
+    else
+    {
+        <form method="post" asp-action="CreateIssue" class="d-form editor">
+            <partial name="_IssueFields" model="(Model.Form, Model.Options, true)" />
+            <div class="d-form__actions">
+                <button type="submit" class="btn btn--primary">@T["Delivery.CreateIssue"]</button>
+                <a class="btn btn--ghost" asp-action="Board" asp-route-id="@project.Id">@T["Delivery.Cancel"]</a>
+            </div>
+        </form>
+    }
+}

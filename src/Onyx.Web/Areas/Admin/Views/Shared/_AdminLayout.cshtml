@@ -1,43 +1,195 @@
 @using System.Globalization
+@using Onyx.Contracts.Authorization
+@using Onyx.Web.Areas.Admin.Navigation
 @inject LanguageCatalog Languages
 @{
     var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
     var shell = ViewData[AdminShellFilter.ViewDataKey] as AdminShellModel;
+    var currentController = ViewContext.RouteData.Values["controller"] as string;
+    var currentAction = ViewContext.RouteData.Values["action"] as string;
+    var items = shell?.Navigation ?? [];
+    // The most specific item wins: SiteContent/Home highlights "Homepage", the page editor falls back to "Site pages".
+    var active = items.FirstOrDefault(item => item.Controller == currentController && item.Action == currentAction)
+        ?? items.FirstOrDefault(item => item.Controller == currentController && item.Action == "Index")
+        ?? items.FirstOrDefault(item => item.Controller == currentController);
+    var pageTitle = T[(string?)ViewData["TitleKey"] ?? "Admin.Title"].Value;
+    var displayName = shell?.DisplayName ?? string.Empty;
+    var initials = string.Concat(displayName.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(2).Select(part => char.ToUpperInvariant(part[0])));
+    var unread = shell?.UnreadNotifications ?? 0;
+
+    // Theme: an explicit choice ("dark"/"light") is kept in a small preference cookie; "system" follows the device (tokens.css).
+    var themeCookie = Context.Request.Cookies["onyx-admin-theme"];
+    var theme = themeCookie is "dark" or "light" ? themeCookie : null;
+
+    // Shortcuts offered in the "New" menu and the command palette; the API still decides what is allowed.
+    var canDelivery = shell?.Can(Permissions.Delivery.Access) == true;
+    var creates = new List<(string Label, string Url, string Icon)>();
+    if (canDelivery)
+    {
+        creates.Add(("Shell.New.Issue", Url.Action("NewIssue", "Delivery", new { area = "Admin" })!, "list"));
+        if (shell!.Can(Permissions.Delivery.Administer))
+        {
+            creates.Add(("Shell.New.Project", Url.Action("Projects", "Delivery", new { area = "Admin" }) + "#new-project", "folder"));
+        }
+    }
+
+    if (shell?.Can(Permissions.Users.Manage) == true)
+    {
+        creates.Add(("Shell.New.Staff", Url.Action("Users", "Staff", new { area = "Admin" }) + "#invite", "users"));
+    }
 }
 <!DOCTYPE html>
-<html lang="@lang" dir="@Languages.Direction(lang)">
+<html lang="@lang" dir="@Languages.Direction(lang)" data-surface="admin" data-theme="@(theme ?? "system")">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="noindex, nofollow">
-    <title>@T[(string?)ViewData["TitleKey"] ?? "Admin.Title"] | @T["Admin.Title"]</title>
+    <title>@pageTitle | @T["Admin.Title"]</title>
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true">
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true">
+    <script src="~/js/admin.js" asp-append-version="true" defer></script>
 </head>
 <body class="admin">
-    <header class="admin-header">
-        <a class="brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">@T["Admin.Title"]</a>
-        @if (shell is not null)
-        {
-            <span class="user">@shell.DisplayName</span>
-            <a asp-area="Admin" asp-controller="Notifications" asp-action="Index" class="unread">@T["Notifications.UnreadCount", shell.UnreadNotifications]</a>
-        }
-        <a asp-area="Admin" asp-controller="Account" asp-action="ChangePassword">@T["Nav.ChangePassword"]</a>
-        <form method="post" asp-area="Admin" asp-controller="Account" asp-action="Logout" class="inline">
-            <button type="submit">@T["Nav.SignOut"]</button>
-        </form>
-    </header>
-    <div class="admin-body">
-        <nav class="admin-nav" aria-label="@T["Nav.Main"]">
-            <ul>
-                @foreach (var item in shell?.Navigation ?? [])
+    <a class="skip-link" href="#main">@T["Admin.SkipToContent"]</a>
+    <div class="a-shell" data-shell>
+        <aside class="a-sidebar" id="admin-sidebar" aria-label="@T["Nav.Main"]">
+            <div class="a-sidebar__head">
+                <a class="a-brand" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                    <span class="brand__mark" aria-hidden="true"></span>
+                    <span class="a-brand__text"><strong>ONYX</strong><span>@T["Admin.Title"]</span></span>
+                </a>
+                <button type="button" class="a-icon-btn a-sidebar__close" data-nav-close aria-label="@T["Admin.CloseMenu"]"><partial name="_AdminIcon" model='"close"' /></button>
+            </div>
+            <nav class="a-nav" data-palette-source>
+                @foreach (var group in items.GroupBy(item => item.Group))
                 {
-                    <li><a asp-area="Admin" asp-controller="@item.Controller" asp-action="@item.Action">@T[item.ResourceKey]</a></li>
+                    var groupActive = group.Any(item => ReferenceEquals(item, active));
+                    var list = group.Select(item => (item, isActive: ReferenceEquals(item, active))).ToList();
+                    if (group.Key == AdminNavigation.Overview)
+                    {
+                        <ul class="a-nav__list" role="list">
+                            @foreach (var (item, isActive) in list)
+                            {
+                                <li><partial name="_AdminNavLink" model='(item, isActive, item.ResourceKey == "Nav.Notifications" ? unread : 0)' /></li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <details class="a-nav__group" open="@groupActive" data-nav-group="@group.Key">
+                            <summary class="a-nav__summary" title="@T[group.Key]">
+                                <partial name="_AdminIcon" model="AdminIcons.For(group.Key)" />
+                                <span class="a-nav__label">@T[group.Key]</span>
+                                <span class="a-nav__chevron"><partial name="_AdminIcon" model='"chevron"' /></span>
+                            </summary>
+                            <ul class="a-nav__list" role="list">
+                                @foreach (var (item, isActive) in list)
+                                {
+                                    <li><partial name="_AdminNavLink" model="(item, isActive, 0)" /></li>
+                                }
+                            </ul>
+                        </details>
+                    }
                 }
-            </ul>
-        </nav>
-        <main id="main">
-            @RenderBody()
-        </main>
+            </nav>
+        </aside>
+        <div class="a-overlay" data-nav-close hidden></div>
+        <div class="a-main">
+            <header class="a-topbar">
+                <button type="button" class="a-icon-btn a-topbar__menu" data-nav-toggle aria-controls="admin-sidebar" aria-expanded="false" aria-label="@T["Admin.OpenMenu"]"><partial name="_AdminIcon" model='"menu"' /></button>
+                <button type="button" class="a-icon-btn a-topbar__collapse" data-nav-collapse aria-controls="admin-sidebar" aria-pressed="false" aria-label="@T["Admin.CollapseMenu"]" title="@T["Admin.CollapseMenu"]"><partial name="_AdminIcon" model='"sidebar"' /></button>
+                <p class="a-topbar__title">@pageTitle</p>
+                @if (shell is not null)
+                {
+                    <button type="button" class="a-search" data-palette-open aria-keyshortcuts="Control+K Meta+K" aria-haspopup="dialog" hidden>
+                        <partial name="_AdminIcon" model='"search"' />
+                        <span class="a-search__text">@T["Shell.Search"]</span>
+                        <kbd class="a-search__kbd" dir="ltr">Ctrl K</kbd>
+                    </button>
+                }
+                <div class="a-topbar__actions">
+                    @if (creates.Count > 0)
+                    {
+                        <details class="a-create" data-menu>
+                            <summary class="btn btn--primary btn--small a-create__toggle"><partial name="_AdminIcon" model='"plus"' /><span>@T["Shell.New"]</span></summary>
+                            <div class="a-menu a-menu--start" role="menu">
+                                @foreach (var create in creates)
+                                {
+                                    <a class="a-menu__item" role="menuitem" href="@create.Url" data-palette-action="@T[create.Label]"><partial name="_AdminIcon" model="create.Icon" />@T[create.Label]</a>
+                                }
+                            </div>
+                        </details>
+                    }
+                    <a class="a-topbar__link" href="/@lang/" target="_blank" rel="noopener">
+                        <partial name="_AdminIcon" model='"external"' /><span>@T["Admin.ViewSite"]</span>
+                    </a>
+                    <button type="button" class="a-icon-btn a-theme" data-theme-toggle hidden
+                            data-label-dark="@T["Shell.Theme.ToDark"]" data-label-light="@T["Shell.Theme.ToLight"]" aria-label="@T["Shell.Theme.ToDark"]" title="@T["Shell.Theme.ToDark"]">
+                        <span class="a-theme__moon"><partial name="_AdminIcon" model='"moon"' /></span>
+                        <span class="a-theme__sun"><partial name="_AdminIcon" model='"sun"' /></span>
+                    </button>
+                    @if (shell is not null)
+                    {
+                        <a class="a-icon-btn a-bell@(unread > 0 ? " a-bell--unread" : string.Empty)" asp-area="Admin" asp-controller="Notifications" asp-action="Index"
+                           aria-label="@T["Notifications.UnreadCount", unread]" title="@T["Notifications.UnreadCount", unread]">
+                            <partial name="_AdminIcon" model='"bell"' />
+                            @if (unread > 0)
+                            {
+                                <span class="a-bell__count" dir="ltr">@(unread > 99 ? "99+" : unread.ToString(CultureInfo.InvariantCulture))</span>
+                            }
+                        </a>
+                        <details class="a-user" data-user-menu data-menu>
+                            <summary class="a-user__toggle" aria-label="@T["Admin.UserMenu"]">
+                                <span class="a-avatar" aria-hidden="true">@initials</span>
+                                <span class="a-user__name">@displayName</span>
+                                <span class="a-user__chevron"><partial name="_AdminIcon" model='"chevron"' /></span>
+                            </summary>
+                            <div class="a-menu" role="menu">
+                                <p class="a-menu__head"><span class="a-avatar a-avatar--large" aria-hidden="true">@initials</span><span><strong>@displayName</strong><span class="hint">@T["Admin.SignedIn"]</span></span></p>
+                                <a class="a-menu__item" role="menuitem" asp-area="Admin" asp-controller="Notifications" asp-action="Index"><partial name="_AdminIcon" model='"bell"' />@T["Nav.Notifications"]</a>
+                                <a class="a-menu__item" role="menuitem" asp-area="Admin" asp-controller="Account" asp-action="ChangePassword"><partial name="_AdminIcon" model='"lock"' />@T["Nav.ChangePassword"]</a>
+                                <a class="a-menu__item" role="menuitem" href="/@lang/" target="_blank" rel="noopener"><partial name="_AdminIcon" model='"external"' />@T["Admin.ViewSite"]</a>
+                                <form method="post" asp-area="Admin" asp-controller="Account" asp-action="Logout" class="a-menu__form">
+                                    <button type="submit" class="a-menu__item a-menu__item--danger" role="menuitem"><partial name="_AdminIcon" model='"logout"' />@T["Nav.SignOut"]</button>
+                                </form>
+                            </div>
+                        </details>
+                    }
+                </div>
+            </header>
+            <main id="main" class="a-content">
+                @RenderBody()
+            </main>
+        </div>
     </div>
+
+    @if (shell is not null)
+    {
+        @* Command palette (Ctrl+K): pages come from the menu above, actions from the "New" menu, issues from a search. *@
+        <dialog class="palette" data-palette aria-label="@T["Shell.Palette.Title"]"
+                data-search-url="@(canDelivery ? Url.Action("Search", "DeliveryPlanning", new { area = "Admin" }) : null)"
+                data-group-pages="@T["Shell.Palette.Pages"]" data-group-actions="@T["Shell.Palette.Actions"]" data-group-issues="@T["Shell.Palette.Issues"]">
+            <div class="palette__search">
+                <partial name="_AdminIcon" model='"search"' />
+                <input type="text" class="palette__input" data-palette-input role="combobox" aria-expanded="true" aria-controls="palette-results" aria-autocomplete="list"
+                       autocomplete="off" spellcheck="false" placeholder="@T["Shell.Palette.Placeholder"]" aria-label="@T["Shell.Palette.Placeholder"]">
+                <kbd dir="ltr">Esc</kbd>
+            </div>
+            <ul class="palette__results" id="palette-results" role="listbox" data-palette-results aria-label="@T["Shell.Palette.Results"]"></ul>
+            <p class="palette__empty" data-palette-empty hidden>@T["Shell.Palette.Empty"]</p>
+            <p class="palette__hint">@T["Shell.Palette.Hint"]</p>
+        </dialog>
+    }
+    <dialog class="confirm" data-confirm-dialog aria-labelledby="confirm-title">
+        <form method="dialog">
+            <p class="confirm__title" id="confirm-title">@T["Shell.Confirm.Title"]</p>
+            <p class="confirm__message" data-confirm-message></p>
+            <div class="confirm__actions">
+                <button type="submit" value="cancel" class="btn" autofocus>@T["Shell.Confirm.Cancel"]</button>
+                <button type="submit" value="ok" class="btn btn--danger">@T["Shell.Confirm.Ok"]</button>
+            </div>
+        </form>
+    </dialog>
+    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

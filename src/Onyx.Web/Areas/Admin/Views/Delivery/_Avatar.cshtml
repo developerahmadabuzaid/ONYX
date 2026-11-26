@@ -1,0 +1,4 @@
+@using Onyx.Web.Areas.Admin.Delivery
+@model (Guid? Id, string? Name)
+@* A person's initials in a stable colour; the name is in the title and announced by the surrounding text. *@
+<span class="avatar tone-@(Model.Id is { } id ? DeliveryFormat.Tone(id) : "slate")" title="@(Model.Name ?? T["Delivery.Unassigned"])" aria-hidden="true">@(Model.Name is null ? "–" : DeliveryFormat.Initials(Model.Name))</span>

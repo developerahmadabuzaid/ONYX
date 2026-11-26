@@ -1,20 +1,47 @@
 @using System.Globalization
+@using Microsoft.AspNetCore.Authentication
 @using Microsoft.Extensions.Options
 @using Onyx.Web.Configuration
+@using Onyx.Web.Content
+@using Onyx.Web.Content.SitePages
 @inject LanguageCatalog Languages
 @inject LanguageSuggestion Suggestion
 @inject SeoContext Seo
 @inject ConsentState Consent
 @inject IOptions<SiteOptions> Site
+@inject LocalizedRouteTable Routes
+@inject SitePageCatalog SitePages
+@inject Onyx.Web.Content.SiteContent.SiteCopy Copy
+@inject Onyx.Web.Content.SiteContent.EffectiveSitePages EditedPages
+@inject TimeProvider Clock
 @{
     var lang = CultureInfo.CurrentUICulture.TwoLetterISOLanguageName;
     var baseUrl = (Site.Value.PublicBaseUrl ?? string.Empty).TrimEnd('/');
     var suggested = Suggestion.Suggest(Context, lang);
-    var siteName = T["Site.Name"].Value;
+    var settings = Copy.Settings;
+    var siteName = Onyx.Web.Content.SiteContent.SiteCopy.Localized(settings?.CompanyName) ?? T["Site.Name"].Value;
     var title = string.IsNullOrEmpty(Seo.Title) ? siteName : $"{Seo.Title} | {siteName}";
     var returnPath = Context.Request.Path.Value ?? $"/{lang}/";
     string PathIn(string code) => Seo.Alternates.TryGetValue(code, out var path) ? path : $"/{code}/";
     var xDefault = Seo.XDefaultPath ?? (Seo.Alternates.TryGetValue(Languages.DefaultLanguage, out var defaultPath) ? defaultPath : null);
+    var links = SiteLinks.For(Routes, SitePages, lang);
+    var otherLanguages = Languages.Languages.Where(l => l.Code != lang).ToList();
+    var readingFont = lang == "ar" ? "readex-pro-arabic-400" : "geist-latin-400";
+    var displayFont = lang == "ar" ? "readex-pro-arabic-600" : "geist-latin-600";
+    var year = Clock.GetUtcNow().Year.ToString(CultureInfo.InvariantCulture);
+    var current = ViewData["Nav"] as string;
+    // Customer sign-in (its own cookie, never the staff one): "My account" when signed in, otherwise "Sign in".
+    var customerSignedIn = (await Context.AuthenticateAsync(Onyx.Web.Customers.CustomerWebAuth.Scheme)).Succeeded;
+    var accountHref = Routes.PathFor(customerSignedIn ? Onyx.Web.Customers.CustomerPages.Account : Onyx.Web.Customers.CustomerPages.SignIn, CultureInfo.CurrentUICulture.TwoLetterISOLanguageName);
+    var accountLabel = customerSignedIn ? T["Customer.Nav.MyAccount"].Value : T["Customer.Nav.SignIn"].Value;
+
+    // Site-page menus: only pages that exist in this language are listed.
+    (string Key, string Label, string Href, string? Summary, string? Icon)? Entry(string key) =>
+        EditedPages.Find(key) is { } page && page.Translations.TryGetValue(lang, out var text) ? (key, text.Nav, SitePages.PathFor(key, lang)!, text.Summary, page.Icon) : null;
+    var primaryServices = new[] { "services.ai", "services.software", "services.cloud", "services.security" }.Select(Entry).OfType<(string Key, string Label, string Href, string? Summary, string? Icon)>().ToList();
+    var moreServices = new[] { "services.ai-agents", "services.ai-as-service", "services.growth", "idea-to-product" }.Select(Entry).OfType<(string Key, string Label, string Href, string? Summary, string? Icon)>().ToList();
+    var company = new[] { "about", "how-we-work", "technologies" }.Select(Entry).OfType<(string Key, string Label, string Href, string? Summary, string? Icon)>().ToList();
+    var legal = new[] { "legal.privacy", "legal.terms", "legal.cookies" }.Select(Entry).OfType<(string Key, string Label, string Href, string? Summary, string? Icon)>().ToList();
 }
 <!DOCTYPE html>
 <html lang="@lang" dir="@Languages.Direction(lang)">
@@ -50,6 +77,7 @@
     {
         <meta property="og:type" content="website">
         <meta property="og:site_name" content="@siteName">
+        <meta property="og:locale" content="@(lang == "ar" ? "ar_SA" : "en_US")">
         <meta property="og:title" content="@Seo.OpenGraphTitle">
         if (Seo.OpenGraphDescription is not null)
         {
@@ -73,32 +101,402 @@
         @* Serialized with an HTML-safe JSON encoder (StructuredDataBuilder): <, > and & are escaped, so the data cannot end the element. *@
         <!script type="application/ld+json">@Html.Raw(Seo.StructuredDataJson)</!script>
     }
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    <meta name="theme-color" content="#ffffff">
+    @* Self-hosted Geist (Latin) and Readex Pro (Arabic), SIL OFL 1.1 (/fonts/LICENSE-*.txt). Reading and display weights of the page language are preloaded. *@
+    <link rel="preload" href="/fonts/@(readingFont).woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="/fonts/@(displayFont).woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="~/css/tokens.css" asp-append-version="true">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true">
+    @* Progressive enhancement only (menu behaviour, header state, reveals); every page works without it. Same-origin, so the CSP is unchanged. *@
+    <script src="~/js/site.js" asp-append-version="true" defer></script>
+    <script src="~/js/support-chat.js" asp-append-version="true" defer></script>
+    <script src="~/js/agent-field.js" asp-append-version="true" defer></script>
+    @await RenderSectionAsync("Scripts", required: false)
     <partial name="_AnalyticsTag" />
 </head>
 <body>
+    @* Page-wide Luminous Onyx background. CSS-only layers: a restrained mineral facet and soft
+       prismatic light fields, with rare hairline glints. The old radar sweep is retired; subtle
+       signal points are homepage-only. Reduced-motion and small-screen fallbacks are in site.css.
+       Hidden from assistive tech; printed pages hide the whole layer. *@
+    <div class="page-bg@(ViewData["PageClass"] as string == "home" ? " page-bg--home" : null)" aria-hidden="true">
+        @* Faint engineering grid: a graph-paper field that fades in from the top so the canvas reads as a
+           technical surface without repeating a grid across every band. *@
+        <div class="page-bg__grid"></div>
+        <div class="page-bg__pattern"></div>
+        <div class="page-bg__orb page-bg__orb--a"></div>
+        <div class="page-bg__orb page-bg__orb--b"></div>
+        <div class="page-bg__orb page-bg__orb--c"></div>
+        <span class="page-bg__stream page-bg__stream--a"></span>
+        <span class="page-bg__stream page-bg__stream--b"></span>
+        @* Living agent field (agent-field.js): drifting agents that link, pass messages and lean toward the
+           pointer. When the script runs it marks .page-bg as .is-live and the static mesh below steps aside;
+           without script the mesh remains as the fallback. *@
+        <canvas class="page-bg__field" data-agent-field></canvas>
+        @* Agent mesh: a sparse, self-contained network that suggests connected agents and work flowing
+           between them. Inline SVG (no request, CSP unchanged), decorative and inert to pointer and
+           assistive tech. Hairline links, a handful of breathing nodes and signal dashes on three
+           routes; the global reduced-motion rule hides it entirely. *@
+        <svg class="page-bg__mesh" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" focusable="false" aria-hidden="true">
+            <g class="page-bg__mesh-links">
+                <line x1="150" y1="150" x2="420" y2="80" />
+                <line x1="150" y1="150" x2="250" y2="400" />
+                <line x1="420" y1="80" x2="760" y2="140" />
+                <line x1="250" y1="400" x2="520" y2="560" />
+                <line x1="250" y1="400" x2="120" y2="720" />
+                <line x1="120" y1="720" x2="430" y2="830" />
+                <line x1="430" y1="830" x2="700" y2="700" />
+                <line x1="520" y1="560" x2="900" y2="520" />
+                <line x1="520" y1="560" x2="700" y2="700" />
+                <line x1="760" y1="140" x2="1120" y2="90" />
+                <line x1="760" y1="140" x2="900" y2="520" />
+                <line x1="1120" y1="90" x2="1360" y2="250" />
+                <line x1="1360" y1="250" x2="1420" y2="600" />
+                <line x1="1420" y1="600" x2="1180" y2="760" />
+                <line x1="1420" y1="600" x2="1300" y2="880" />
+                <line x1="1180" y1="760" x2="1300" y2="880" />
+                <line x1="1180" y1="760" x2="700" y2="700" />
+            </g>
+            <g class="page-bg__mesh-links page-bg__mesh-links--alt">
+                <line x1="900" y1="520" x2="700" y2="700" />
+                <line x1="900" y1="520" x2="1180" y2="760" />
+                <line x1="900" y1="520" x2="1360" y2="250" />
+            </g>
+            <g fill="none" stroke-linecap="round">
+                <path class="page-bg__mesh-ray" d="M150 150 L420 80 L760 140 L1120 90" />
+                <path class="page-bg__mesh-ray page-bg__mesh-ray--2" d="M250 400 L520 560 L900 520 L1180 760" />
+                <path class="page-bg__mesh-ray page-bg__mesh-ray--3" d="M1420 600 L1360 250 L900 520" />
+            </g>
+            <g class="page-bg__mesh-nodes">
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse"><circle cx="150" cy="150" r="3.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--sky"><circle cx="420" cy="80" r="3" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse page-bg__mesh-node--violet"><circle cx="250" cy="400" r="3.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--hub"><circle cx="520" cy="560" r="6" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse"><circle cx="120" cy="720" r="3.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--sky"><circle cx="430" cy="830" r="3" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse page-bg__mesh-node--violet"><circle cx="760" cy="140" r="3.4" /></g>
+                <g class="page-bg__mesh-node"><circle cx="1120" cy="90" r="3" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--hub page-bg__mesh-node--sky"><circle cx="1360" cy="250" r="4.6" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse"><circle cx="1420" cy="600" r="3.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--pulse"><circle cx="1180" cy="760" r="3.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--hub page-bg__mesh-node--violet"><circle cx="900" cy="520" r="6.4" /></g>
+                <g class="page-bg__mesh-node page-bg__mesh-node--sky"><circle cx="700" cy="700" r="3.4" /></g>
+                <g class="page-bg__mesh-node"><circle cx="1300" cy="880" r="3" /></g>
+            </g>
+        </svg>
+    @* Homepage-only indicators: the radar sweep and the signal nodes. Rendered only on the
+       homepage so inner pages carry no empty decoration in the DOM. *@
+    @if (ViewData["PageClass"] as string == "home")
+    {
+        <span class="page-bg__radar"></span>
+        <span class="page-bg__node page-bg__node--a"></span>
+        <span class="page-bg__node page-bg__node--b"></span>
+        <span class="page-bg__node page-bg__node--c"></span>
+    }
+    </div>
+    <a class="skip-link" href="#main">@T["Public.SkipToContent"]</a>
     @if (suggested is not null)
     {
-        <aside class="notice" lang="@suggested" dir="@Languages.Direction(suggested)">
-            <a href="/@suggested/language?return=@Uri.EscapeDataString(PathIn(suggested))" rel="nofollow">@Languages.NativeName(suggested)</a>
+        @* Offered, never forced (CLAUDE.md §7): written in the suggested language. Closing it records the current language as the
+           visitor's choice (same page, no JavaScript needed), so it does not come back. *@
+        <aside class="lang-suggest" lang="@suggested" dir="@Languages.Direction(suggested)" aria-label="@T["Language.Label"]">
+            <div class="container lang-suggest__inner">
+                <span class="lang-suggest__icon" aria-hidden="true"><partial name="_Icon" model='"globe"' /></span>
+                <p class="lang-suggest__text">@T["Language.Suggestion." + suggested]</p>
+                <a class="lang-suggest__switch" href="/@suggested/language?return=@Uri.EscapeDataString(PathIn(suggested))" rel="nofollow">@T["Language.SuggestionSwitch." + suggested]</a>
+                <a class="lang-suggest__close" href="/@lang/language?return=@Uri.EscapeDataString(PathIn(lang))" rel="nofollow" aria-label="@T["Language.SuggestionDismiss." + suggested]" title="@T["Language.SuggestionDismiss." + suggested]">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18" /></svg>
+                </a>
+            </div>
         </aside>
     }
-    <header class="site-header">
-        <a class="brand" href="/@lang/">@siteName</a>
-        <nav aria-label="@T["Language.Label"]">
-            @foreach (var language in Languages.Languages.Where(l => l.Code != lang))
-            {
-                <a href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code" rel="nofollow">@language.NativeName</a>
-            }
-        </nav>
-        <partial name="_SearchForm" model="(string?)null" />
+    <header class="site-header" data-header>
+        <div class="container site-header__inner">
+            @* Official ONYX logo (supplied raster, background removed without altering the mark). *@
+            <a class="brand" href="@links.Home">
+                <img class="brand__logo" src="~/images/onyx-logo.png" asp-append-version="true" width="643" height="231" alt="ONYX">
+            </a>
+            <nav class="site-nav" aria-label="@T["Public.Nav.Label"]">
+                <ul class="site-nav__list" role="list">
+                    <li><a class="site-nav__link nav-tone-teal" href="@links.Home" aria-current="@(current == "home" ? "page" : null)"><span class="nav-icon nav-icon--teal" aria-hidden="true"><partial name="_Icon" model='"home"' /></span><span>@Copy["Public.Nav.Home"]</span></a></li>
+                    <li class="site-nav__item">
+                        @* Services mega menu: native disclosure (works without JS); site.js adds hover intent, Escape, outside click and arrow keys. *@
+                        <details class="mega" data-mega>
+                            <summary class="site-nav__link nav-tone-violet mega__trigger@(current == "services" ? " is-current" : string.Empty)">
+                                <span class="nav-icon nav-icon--violet" aria-hidden="true"><partial name="_Icon" model='"ai"' /></span><span>@Copy["Public.Nav.Services"]</span><span class="mega__chevron" aria-hidden="true"></span>
+                            </summary>
+                            <div class="mega__panel">
+                                <div class="container mega__grid">
+                                    <div class="mega__intro">
+                                        <p class="label">@Copy["Public.Nav.Services"]</p>
+                                        <p class="mega__statement">@Copy["Public.Mega.Statement"]</p>
+                                        <a class="link-arrow" href="@links.Services">@Copy["Public.Mega.All"]</a>
+                                    </div>
+                                    <ul class="mega__primary" role="list">
+                                        @foreach (var entry in primaryServices)
+                                        {
+                                            <li>
+                                                <a class="mega__link" href="@entry.Href">
+                                                    @if (entry.Icon is not null)
+                                                    {
+                                                        <span class="mega__icon"><partial name="_Icon" model="entry.Icon" /></span>
+                                                    }
+                                                    <span class="mega__text">
+                                                        <span class="mega__title">@entry.Label</span>
+                                                        @if (entry.Summary is not null)
+                                                        {
+                                                            <span class="mega__summary">@entry.Summary</span>
+                                                        }
+                                                    </span>
+                                                </a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div class="mega__aside">
+                                        <p class="label">@Copy["Public.Mega.More"]</p>
+                                        <ul class="mega__secondary" role="list">
+                                            @foreach (var entry in moreServices.Concat(company.Where(c => c.Key != "about")))
+                                            {
+                                                <li><a href="@entry.Href">@entry.Label</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                    <li><a class="site-nav__link nav-tone-sky" href="@links.About" aria-current="@(current == "about" ? "page" : null)"><span class="nav-icon nav-icon--sky" aria-hidden="true"><partial name="_Icon" model='"briefcase"' /></span><span>@Copy["Public.Nav.About"]</span></a></li>
+                    @if (links.Insights is not null)
+                    {
+                        <li><a class="site-nav__link nav-tone-amber" href="@links.Insights" aria-current="@(current == "insights" ? "page" : null)"><span class="nav-icon nav-icon--amber" aria-hidden="true"><partial name="_Icon" model='"bulb"' /></span><span>@Copy["Public.Nav.Insights"]</span></a></li>
+                    }
+                    @if (links.Contact is not null)
+                    {
+                        <li><a class="site-nav__link nav-tone-coral" href="@links.Contact" aria-current="@(current == "contact" ? "page" : null)"><span class="nav-icon nav-icon--coral" aria-hidden="true"><partial name="_Icon" model='"chat"' /></span><span>@Copy["Public.Nav.Contact"]</span></a></li>
+                    }
+                </ul>
+            </nav>
+            <div class="site-header__tools">
+                @if (links.Search is not null)
+                {
+                    <a class="icon-button site-header__search" href="@links.Search" aria-label="@T["Public.Search"]"><partial name="_Icon" model='"search"' /></a>
+                }
+                @if (otherLanguages.Count > 0)
+                {
+                    <nav class="lang-switch" aria-label="@T["Language.Label"]">
+                        @foreach (var language in otherLanguages)
+                        {
+                            <a class="lang-button" href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code" rel="nofollow" aria-label="@T["Language.SwitchTo", language.NativeName]">
+                                <partial name="_Icon" model='"globe"' /><span>@language.NativeName</span>
+                            </a>
+                        }
+                    </nav>
+                }
+                @if (accountHref is not null)
+                {
+                    <a class="icon-button site-header__account" href="@accountHref" aria-label="@accountLabel" title="@accountLabel"><partial name="_Icon" model='"user"' /></a>
+                }
+                @if (links.Contact is not null)
+                {
+                    <a class="button button--primary button--small button--arrow site-header__cta" href="@links.Contact"><span>@Copy["Public.Cta.Talk"]</span></a>
+                }
+                <details class="sheet" data-sheet>
+                    <summary class="sheet__toggle" aria-label="@Copy["Public.Menu"]">
+                        <span class="sheet__bars" aria-hidden="true"></span>
+                    </summary>
+                    <div class="sheet__panel">
+                        <nav class="sheet__nav" aria-label="@T["Public.Nav.Label"]">
+                            <a class="sheet__link" href="@links.Home" aria-current="@(current == "home" ? "page" : null)"><span class="nav-icon nav-icon--teal" aria-hidden="true"><partial name="_Icon" model='"home"' /></span><span>@Copy["Public.Nav.Home"]</span></a>
+                            <details class="sheet__group">
+                                <summary class="sheet__link"><span class="nav-icon nav-icon--violet" aria-hidden="true"><partial name="_Icon" model='"ai"' /></span><span>@Copy["Public.Nav.Services"]</span></summary>
+                                <ul class="sheet__sublist" role="list">
+                                    <li><a href="@links.Services">@Copy["Public.Mega.All"]</a></li>
+                                    @foreach (var entry in primaryServices.Concat(moreServices))
+                                    {
+                                        <li><a href="@entry.Href">@entry.Label</a></li>
+                                    }
+                                </ul>
+                            </details>
+                            <a class="sheet__link" href="@links.About" aria-current="@(current == "about" ? "page" : null)"><span class="nav-icon nav-icon--sky" aria-hidden="true"><partial name="_Icon" model='"briefcase"' /></span><span>@Copy["Public.Nav.About"]</span></a>
+                            @foreach (var entry in company.Where(c => c.Key != "about"))
+                            {
+                                <a class="sheet__link" href="@entry.Href"><span class="nav-icon nav-icon--green" aria-hidden="true"><partial name="_Icon" model='"expertise"' /></span><span>@entry.Label</span></a>
+                            }
+                            @if (links.Insights is not null)
+                            {
+                                <a class="sheet__link" href="@links.Insights"><span class="nav-icon nav-icon--amber" aria-hidden="true"><partial name="_Icon" model='"bulb"' /></span><span>@Copy["Public.Nav.Insights"]</span></a>
+                            }
+                            @if (links.Contact is not null)
+                            {
+                                <a class="sheet__link" href="@links.Contact"><span class="nav-icon nav-icon--coral" aria-hidden="true"><partial name="_Icon" model='"chat"' /></span><span>@Copy["Public.Nav.Contact"]</span></a>
+                            }
+                            @if (accountHref is not null)
+                            {
+                                <a class="sheet__link" href="@accountHref"><span class="nav-icon nav-icon--violet" aria-hidden="true"><partial name="_Icon" model='"user"' /></span><span>@accountLabel</span></a>
+                            }
+                        </nav>
+                        <div class="sheet__tools">
+                            <partial name="_SearchForm" model="(string?)null" />
+                            @if (otherLanguages.Count > 0)
+                            {
+                                <nav class="lang-switch" aria-label="@T["Language.Label"]">
+                                    @foreach (var language in otherLanguages)
+                                    {
+                                        <a class="lang-button" href="/@language.Code/language?return=@Uri.EscapeDataString(PathIn(language.Code))" lang="@language.Code" hreflang="@language.Code" rel="nofollow" aria-label="@T["Language.SwitchTo", language.NativeName]">
+                                            <partial name="_Icon" model='"globe"' /><span>@language.NativeName</span>
+                                        </a>
+                                    }
+                                </nav>
+                            }
+                        </div>
+                        @if (links.Contact is not null)
+                        {
+                            <a class="button button--primary button--block button--arrow" href="@links.Contact"><span>@Copy["Public.Cta.Talk"]</span></a>
+                        }
+                    </div>
+                </details>
+            </div>
+        </div>
     </header>
-    <main id="main">
+    @if (Copy.IsPreview)
+    {
+        @* Admin preview of an unpublished draft (authenticated, noindex). *@
+        <p class="preview-banner" role="status">@T["SiteContent.PreviewBanner"]</p>
+    }
+    <main id="main" tabindex="-1" class="@(ViewData["PageClass"] as string ?? "page")">
         @RenderBody()
     </main>
+    <footer class="site-footer">
+        <div class="container site-footer__top">
+            <div class="site-footer__brand">
+                <a class="brand" href="@links.Home">
+                    <img class="brand__logo" src="~/images/onyx-logo.png" asp-append-version="true" width="643" height="231" alt="ONYX" loading="lazy">
+                </a>
+                <p class="site-footer__statement">@Copy["Public.Footer.Statement"]</p>
+                <div class="site-footer__offices">
+                    <h2 class="site-footer__heading">@Copy["Public.Footer.Offices"]</h2>
+                    <ul role="list" class="site-footer__plain">
+                        @* Offices from Admin → Website settings; the verified Riyadh and Amman offices are the fallback. *@
+                        @if (settings?.Offices is { Count: > 0 } offices)
+                        {
+                            foreach (var office in offices)
+                            {
+                                var officeName = Onyx.Web.Content.SiteContent.SiteCopy.Localized(office.Name);
+                                var officeAddress = Onyx.Web.Content.SiteContent.SiteCopy.Localized(office.Address);
+                                <li>@officeName@(officeAddress is not null ? " — " + officeAddress : string.Empty)</li>
+                            }
+                        }
+                        else
+                        {
+                            <li>@T["Public.Footer.Office.Riyadh"]</li>
+                            <li>@T["Public.Footer.Office.Amman"]</li>
+                        }
+                    </ul>
+                </div>
+                @if (!string.IsNullOrEmpty(settings?.ContactEmail) || settings?.Phones is { Count: > 0 })
+                {
+                    <ul role="list" class="site-footer__contact">
+                        @if (!string.IsNullOrEmpty(settings?.ContactEmail))
+                        {
+                            <li><a href="mailto:@settings.ContactEmail" dir="ltr">@settings.ContactEmail</a></li>
+                        }
+                        @foreach (var phone in settings?.Phones ?? [])
+                        {
+                            var phoneLabel = Onyx.Web.Content.SiteContent.SiteCopy.Localized(phone.Label);
+                            <li>@(phoneLabel is not null ? phoneLabel + ": " : string.Empty)<a href="tel:@(new string(phone.Number.Where(c => char.IsDigit(c) || c == '+').ToArray()))" dir="ltr">@phone.Number</a></li>
+                        }
+                    </ul>
+                }
+                @if (settings?.SocialLinks is { Count: > 0 } socialLinks)
+                {
+                    <ul role="list" class="site-footer__social">
+                        @foreach (var social in socialLinks)
+                        {
+                            <li><a href="@social.Url" rel="noopener me" target="_blank">@T["Social." + social.Network]</a></li>
+                        }
+                    </ul>
+                }
+            </div>
+            <nav class="site-footer__nav" aria-label="@T["Public.Footer.Nav"]">
+                <div>
+                    <h2 class="site-footer__heading">@Copy["Public.Footer.Services"]</h2>
+                    <ul role="list">
+                        @foreach (var entry in primaryServices.Concat(moreServices))
+                        {
+                            <li><a href="@entry.Href">@entry.Label</a></li>
+                        }
+                        <li><a href="@links.Services">@Copy["Public.Mega.All"]</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="site-footer__heading">@Copy["Public.Footer.Company"]</h2>
+                    <ul role="list">
+                        @foreach (var entry in company)
+                        {
+                            <li><a href="@entry.Href">@entry.Label</a></li>
+                        }
+                        @if (links.Insights is not null)
+                        {
+                            <li><a href="@links.Insights">@Copy["Public.Nav.Insights"]</a></li>
+                        }
+                        @if (links.Work is not null)
+                        {
+                            <li><a href="@links.Work">@Copy["Public.Nav.Work"]</a></li>
+                        }
+                        @if (links.News is not null)
+                        {
+                            <li><a href="@links.News">@Copy["Public.Nav.News"]</a></li>
+                        }
+                    </ul>
+                </div>
+                <div>
+                    <h2 class="site-footer__heading">@Copy["Public.Footer.Contact"]</h2>
+                    <ul role="list">
+                        @if (links.Contact is not null)
+                        {
+                            <li><a href="@links.Contact">@Copy["Public.Nav.Contact"]</a></li>
+                        }
+                        @if (links.StartProject is not null)
+                        {
+                            <li><a href="@links.StartProject">@Copy["Public.Cta.StartProject"]</a></li>
+                        }
+                        @if (links.BookConsultation is not null)
+                        {
+                            <li><a href="@links.BookConsultation">@Copy["Public.Cta.BookConsultation"]</a></li>
+                        }
+                    </ul>
+                </div>
+                @if (legal.Count > 0)
+                {
+                    <div>
+                        <h2 class="site-footer__heading">@Copy["Public.Footer.Legal"]</h2>
+                        <ul role="list">
+                            @foreach (var entry in legal)
+                            {
+                                <li><a href="@entry.Href">@entry.Label</a></li>
+                            }
+                        </ul>
+                    </div>
+                }
+            </nav>
+        </div>
+        <div class="container site-footer__base">
+            <div class="site-footer__legal">
+                <p class="site-footer__brand-line">@T["Public.Footer.Brand"]</p>
+                @* The operating company's registered name stays in Latin script in both languages (legal name). *@
+                <p>@T["Public.Footer.OperatedBy"] <bdi dir="ltr" lang="en">Qowat Al Roeya Lil Barmajiat LLC</bdi></p>
+                <p>@string.Format(CultureInfo.InvariantCulture, T["Public.Footer.Copyright"].Value, year)</p>
+            </div>
+            @* Staff entry point; the Admin itself enforces authentication and 2FA. *@
+            <a class="site-footer__staff" href="/admin" rel="nofollow">@T["Public.Footer.EmployeeLogin"]</a>
+        </div>
+    </footer>
     @if (!Consent.HasDecision)
     {
         <partial name="_ConsentBanner" model="returnPath" />
     }
+    @* Customer-service chat. A rule-based concierge: fixed bilingual strings plus quick replies that link
+       to real routes. No conversational AI, no invented answers, no data collected. *@
+    <partial name="_SupportChat" model="(links.Contact, links.StartProject, links.BookConsultation, links.Services, links.Work, returnPath)" />
 </body>
 </html>

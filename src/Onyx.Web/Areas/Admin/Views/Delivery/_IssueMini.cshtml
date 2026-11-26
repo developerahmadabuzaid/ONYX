@@ -1,0 +1,14 @@
+@using Onyx.Web.Areas.Admin.Delivery
+@model Onyx.Contracts.Delivery.IssueListItemResponse
+@* A compact issue line for dashboard lists. *@
+<li class="mini">
+    <partial name="_IssueTypeBadge" model="Model.Type" />
+    <a class="mini__title" asp-controller="Delivery" asp-action="Issue" asp-route-id="@Model.Id" dir="auto"><span class="d-key" dir="ltr">@Model.Key</span> @Model.Title</a>
+    <span class="mini__meta">
+        @if (Model.DueDate is { } due)
+        {
+            <time class="mini__due@(Model.IsOverdue ? " is-overdue" : string.Empty)" datetime="@DeliveryFormat.Iso(due)">@DeliveryFormat.Day(due)</time>
+        }
+        <partial name="_StatusPill" model="Model" />
+    </span>
+</li>
